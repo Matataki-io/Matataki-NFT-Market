@@ -747,6 +747,11 @@ inherits@2.0.4, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, inherits@~2.0
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
+inter-ui@^3.15.1:
+  version "3.15.1"
+  resolved "https://registry.yarnpkg.com/inter-ui/-/inter-ui-3.15.1.tgz#0456db99290ab970684d6a83b2b9d2abd43bf43b"
+  integrity sha512-yMWNvcMdVUpQ/gj+NhZBRhq/CTA84u09Sascx+hXyNM/G7PmVjE3zqZKNWQluHSxsDGeBB0plWwOZpsFPV2J8w==
+
 is-binary-path@~2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/is-binary-path/-/is-binary-path-2.1.0.tgz#ea1f7f3b80f064236e83470f86c09c254fb45b09"
