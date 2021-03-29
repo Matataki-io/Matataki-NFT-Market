@@ -4,7 +4,7 @@ import { light, dark } from "../themes";
 import 'inter-ui/inter.css'
 // import { useState } from "react";
 
-// import "../styles/globals.css";
+import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <GeistProvider themes={[ light, dark ]}>
