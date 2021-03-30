@@ -4,5 +4,6 @@ module.exports = (phase, { defaultConfig }) => {
     //     locales: ['en-US', 'zh-CN', 'ja-JP'],
     //     defaultLocale: 'en-US',
     // }
+    target: 'serverless'
   }
 }
