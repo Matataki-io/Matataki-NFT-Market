@@ -4,7 +4,7 @@ import { Carousel } from 'react-responsive-carousel';
 import { CSSProperties } from 'react';
 
 const unitedSize: CSSProperties = {
-  maxHeight: '720px',
+  maxHeight: '480px',
   objectFit: 'cover'
 }
 
@@ -12,7 +12,7 @@ export default function NFTsList() {
   const carouselInterval = 5 * 1000
   return (
     <div className="home">
-      <div className="carousel-wrapper" style={{ maxHeight: '720px' }}>
+      <div className="carousel-wrapper" style={{ maxHeight: '480px' }}>
         <Carousel autoPlay interval={carouselInterval} infiniteLoop
         swipeable emulateTouch 
         centerMode centerSlidePercentage={100} dynamicHeight={false}
