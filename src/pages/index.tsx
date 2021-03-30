@@ -1,4 +1,4 @@
-import { Button, ButtonDropdown, Grid, Text } from '@geist-ui/react'
+import { Button, ButtonDropdown, Divider, Grid, Text, Tooltip } from '@geist-ui/react'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
@@ -27,14 +27,16 @@ export default function Home() {
           <Grid xs={12} md={6}><MockItem /></Grid>
           <Grid xs={12} md={6}><MockItem /></Grid>
         </Grid.Container>
-        <Grid.Container gap={2} justify="space-between">
+        <Divider />
+        <Grid.Container gap={2} justify="space-around">
           <Grid xs={24} md={6}><Text size={14}>Meta Network All Right Reserved.</Text></Grid>
-          <Grid xs={24} md={4}>
+          <Grid xs={24} md={4} style={{ float: 'right' }}>
             <div className="i18n-switch">
-              <ButtonDropdown size="mini" auto>
-              <ButtonDropdown.Item main>English</ButtonDropdown.Item>
-              <ButtonDropdown.Item>简体中文</ButtonDropdown.Item>
-            </ButtonDropdown>
+              <Tooltip text={<>
+                <Button auto size="small">中文</Button>
+                <Button auto size="small">日本语</Button>
+                <Button auto size="small">English</Button>
+                </>}>English</Tooltip>
             </div>
           </Grid>
         </Grid.Container>
