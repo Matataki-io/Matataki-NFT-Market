@@ -24,7 +24,11 @@ export function Header() {
             </Grid>
             <Grid xs={0} sm={10} justify="flex-end">
                 <Input size="medium" placeholder="Search NFTs" />
-                <Button size="small" type="secondary">Sign In</Button>
+                <a href={process.env.NEXT_PUBLIC_MATATAKI_OAUTH_URL}>
+                    <Button size="small" type="secondary">
+                        Sign In
+                    </Button>
+                </a>
             </Grid>
             <Grid xs={8} sm={0}>
                 <Button auto size="small"><MenuIcon /></Button>
