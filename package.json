@@ -13,7 +13,8 @@
     "inter-ui": "^3.15.1",
     "next": "10.0.9",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-responsive-carousel": "^3.2.16"
   },
   "devDependencies": {
     "@types/node": "^14.14.37",

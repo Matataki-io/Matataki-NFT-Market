@@ -4,7 +4,8 @@ import { AlignJustify as MenuIcon } from '@geist-ui/react-icons'
 import { CSSProperties } from "react";
 
 const NavBarBtnStyle: CSSProperties = {
-    margin: "4px"
+    margin: "4px",
+    fontWeight: 500
 };
 
 export function Header() {
