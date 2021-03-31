@@ -27,13 +27,13 @@ const StyledHeaderWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1480px;
 	min-height: 80px;
   padding: 0 20px;
   box-sizing: border-box;
   margin: 0 auto;
   @media screen and (max-width: 768px) {
-    padding: 10px;
+    padding: 0 10px;
   }
 `
 const StyledHeaderLeft = styled.div`

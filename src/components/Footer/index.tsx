@@ -20,7 +20,7 @@ const StyledFooter = styled.div`
 `
 const StyledFooterWrapper = styled.div`
   width: 100%;
-  max-width: 1440px;
+  max-width: 1480px;
   padding: 48px 20px 24px;
   box-sizing: border-box;
   margin: 0 auto;

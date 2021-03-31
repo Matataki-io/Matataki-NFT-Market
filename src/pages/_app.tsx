@@ -18,9 +18,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </NextHead>
       <CssBaseline />
       <Header />
-      <div className="page-content" style={{ margin: "0 12.5% " }}>
-        <Component {...pageProps} />
-      </div>
+      <Component {...pageProps} />
       <Footer />
     </GeistProvider>
   );
