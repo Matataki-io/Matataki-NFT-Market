@@ -5,6 +5,7 @@
 declare module "*.png"
 declare module "*.svg"
 
+
 interface NFTFiedlsStringValueProps {
   stringValue: string
 }
