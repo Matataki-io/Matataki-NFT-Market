@@ -6,22 +6,22 @@ import 'inter-ui/inter.css'
 // import { useState } from "react";
 
 import "../styles/globals.css";
-import { Footer } from "../components/Footer";
-import { Header } from "../components/Header";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <GeistProvider themes={[light, dark]}>
-          <NextHead>
+  return (
+    <GeistProvider themes={[light, dark]}>
+      <NextHead>
         <title>Meta NFT Market</title>
         <link rel="icon" href="/favicon.ico" />
       </NextHead>
-    <CssBaseline />
-    <Header />
-    <div className="page-content" style={{ margin: "0 12.5% " }}>
-      <Component {...pageProps}  />
-    </div>
-    <Footer />
-    </GeistProvider>;
+      <CssBaseline />
+      <Header />
+      <Component {...pageProps} />
+      <Footer />
+    </GeistProvider>
+  );
 }
 
 export default MyApp;
