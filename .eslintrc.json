@@ -1,6 +1,10 @@
 {
     "extends": [
-        "plugin:@next/next/recommended"
+        "plugin:@next/next/recommended",
+        "plugin:react/recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:react-hooks/recommended"
     ],
     "parser": "@babel/eslint-parser",
     "parserOptions": {
@@ -10,6 +14,16 @@
             "presets": [
                 "next/babel"
             ]
+        },
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [".js", ".jsx", ".ts", ".tsx"]
+            }
         }
     }
 }
