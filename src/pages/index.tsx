@@ -2,6 +2,9 @@ import { Button, ButtonDropdown, Divider, Grid, Text, Tooltip } from '@geist-ui/
 import Banner from '../components/Banner';
 import styled from 'styled-components';
 
+import Creators from '../components/Creators';
+import About from '../components/About';
+
 const StyledWrapper = styled.div`
   width: 100%;
   max-width: 1480px;
@@ -27,7 +30,7 @@ span {
   position: absolute;
   top: -10px;
   font-size: 24px;
-  font-family: Playlist-Script, Playlist;
+  font-family: Playlist-Script, Playlist, 'Dancing Script', cursive;;
   font-weight: normal;
   color: #F4CF1F;
   line-height: 37px;
@@ -98,26 +101,7 @@ const StyledAbout = styled.div`
     }
   }
 `
-const StyledAboutComponents = styled.div`
-  .cover {
-    width: 100%;
-    overflow: hidden;
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-  p {
-    font-size: 20px;
-    font-family: BigCaslon-Medium, BigCaslon;
-    font-weight: 500;
-    color: #333333;
-    line-height: 24px;
-    padding: 0;
-    margin: 16px 0 0 0;
-  }
-`
+
 
 const StyledCreators = styled.div`
   display: grid;
@@ -129,100 +113,58 @@ const StyledCreators = styled.div`
     width: 100%;
     height: 100%;
     /* background: red; */
-    &:nth-of-type(1) {
-    }
-    &:nth-of-type(2) {
-    }
-    &:nth-of-type(3),
-    &:nth-of-type(4) {
-    }
   }
-`
-
-const StyledCreatorsComponents = styled.div`
-  .cover {
-    height: 184px;
-    position: relative;
-    &-bc {
-      width: calc(100% - 122px);
-      height: 100%;
-      margin-left: 122px;
-      }
-      .avatar-box {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 184px;
-        height: 184px;
-        &::after {
-          content: "";
-          display: block;
-          position: absolute;
-          border-radius: 50%;
-          background: linear-gradient(180deg ,#fd9d00,#fa6400);
-          z-index: 1;
-          /* animation: _rotate-data-v-8cb9f5fa 3s linear infinite; */
-          top: -4px;
-          left: -4px;
-          right: -4px;
-          bottom: -4px;
-        }
-      }
-      .avatar {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        border-radius: 50%;
-        border: 4px solid #fff;
-        z-index: 2;
-        position: relative;
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-      }
-    }
-    p {
-      font-size: 20px;
-      font-family: BigCaslon-Medium, BigCaslon;
-      font-weight: 500;
-      color: #333333;
-      line-height: 24px;
-      padding: 0;
-      margin: 24px 0 0 0;
-    }
 `
 
 export default function NFTsList() {
 
-  const AboutComponents = () => {
-    return (
-      <StyledAboutComponents>
-        <div className="cover">
-          <img src="https://placeimg.com/1280/720/arch/grayscale" alt="About" />
-        </div>
-        <p>How to collect your favorite NFTs at NFT Market?</p>
-      </StyledAboutComponents>
-    )
-  }
+  // 作家列表
+  const creatorsList = [
+    {
+      bc: 'https://placeimg.com/540/184/nature?t=1617247698083',
+      avatar: 'https://placeimg.com/200/200/people',
+      username: '@Skull Pedestal'
+    },
+    {
+      bc: 'https://placeimg.com/540/184/nature',
+      avatar: 'https://placeimg.com/200/200/people?t=1617247587231',
+      username: '@Skull Pedestal'
+    },
+    {
+      bc: 'https://placeimg.com/540/184/nature?t=1617247711431',
+      avatar: 'https://placeimg.com/200/200/people?t=1617247595366',
+      username: '@Skull Pedestal'
+    },
+    {
+      bc: 'https://placeimg.com/540/184/nature?t=1617247718870',
+      avatar: 'https://placeimg.com/200/200/people?t=1617247602577',
+      username: '@Skull Pedestal'
+    }
+  ]
 
-  const CreatorsComponents = () => {
-    return (
-      <StyledCreatorsComponents>
-        <div className="cover">
-          <img className="cover-bc" src="https://placeimg.com/1280/720/arch/grayscale" alt="About" />
-          <div className="avatar-box">
-            <div className="avatar">
-              <img src="https://placeimg.com/1280/720/arch/grayscale" alt="Avatar" />
-            </div>
-          </div>
-        </div>
-        <p>@Skull Pedestal</p>
-      </StyledCreatorsComponents>
-    )
-  }
+  // 关于更多 NFT
+  const AboutNFT = [
+    {
+      img: 'https://placeimg.com/700/340/arch',
+      text: 'How to collect your favorite NFTs at NFT Market?',
+      link: 'https://matataki.io'
+    },
+    {
+      img: 'https://placeimg.com/700/340/arch?t=1617248569810',
+      text: 'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
+      link: 'https://matataki.io'
+    },
+    {
+      img: 'https://placeimg.com/700/340/arch?t=1617248576772',
+      text: 'NFTs, explained: what they are,why are some worth millions?',
+      link: 'https://matataki.io'
+    },
+    {
+      img: 'https://placeimg.com/700/340/arch?t=1617248585076',
+      text: 'How to make, buy and sell NFTs',
+      link: 'https://matataki.io'
+    }
+  ]
 
   return (
     <StyledWrapper>
@@ -241,10 +183,11 @@ export default function NFTsList() {
           <span className="more">VIEW MORE</span>
         </StyledModuleHead>
         <StyledCreators>
-          <div className="box"><CreatorsComponents></CreatorsComponents></div>
-          <div className="box"><CreatorsComponents></CreatorsComponents></div>
-          <div className="box"><CreatorsComponents></CreatorsComponents></div>
-          <div className="box"><CreatorsComponents></CreatorsComponents></div>
+          {
+            creatorsList.map(i => (
+              <div className="box"><Creators bc={ i.bc } avatar={ i.avatar } username= { i.username }></Creators></div>
+            ))
+          }
         </StyledCreators>
       </StyledModule>
 
@@ -254,18 +197,11 @@ export default function NFTsList() {
           <span className="more">VIEW MORE</span>
         </StyledModuleHead>
         <StyledAbout>
-          <div className="box">
-            <AboutComponents></AboutComponents>
-          </div>
-          <div className="box">
-            <AboutComponents></AboutComponents>
-          </div>
-          <div className="box">
-            <AboutComponents></AboutComponents>
-          </div>
-          <div className="box">
-            <AboutComponents></AboutComponents>
-          </div>
+        {
+            AboutNFT.map(i => (
+              <div className="box"><About img={ i.img } text={ i.text } link={ i.link }></About></div>
+            ))
+          }
         </StyledAbout>
       </StyledModule>
     </StyledWrapper>

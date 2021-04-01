@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+
 html,
 body {
   padding: 0;
@@ -17,4 +19,14 @@ a {
 
 #__next {
   overflow-x: unset !important;
+}
+
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
