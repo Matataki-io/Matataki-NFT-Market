@@ -1,6 +1,6 @@
 import { Input, } from "@geist-ui/react";
 import Link from "next/link";
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Logo from "../../assets/images/logo.png";
 
 const StyledHeader = styled.div`
@@ -72,28 +72,58 @@ const StyledHeaderSearch = styled(Input)`
 	width: 320px !important;
 	margin-right: 16px;
 `
-const StyledHeaderButtonLink = styled.a`
-	display: inline-block;
+const StyledHeaderContainer = styled.div`
+	display: flex;
+	align-items: center;
 `
-const StyledHeaderButton = styled.button`
-	background-color: #333333;
-	font-size: 14px;
-	font-family: PingFangSC-Medium,PingFang SC;
-	font-weight: 500;
-	color: #FFFFFF;
+
+const StyledHeaderButton = styled.button<{ color?: string }>`
 	line-height: 20px;
 	border: none;
 	outline: none;
-	padding: 10px 38px;
 	cursor: pointer;
 	transition: all .2s;
-	&:hover {
-		background-color: #222;
+	padding: 10px 15px;
+	font-weight: 500;
+	font-size: 14px;
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	cursor: pointer;
+	text-decoration: none;
+	white-space: nowrap;
+	appearance: none;
+	margin-left: 5px;
+	color: #000;
+  background: transparent;
+	/* &:hover {
+		background: transparent;
+	} */
+	${ props => props.color === 'dark' && css`
+		color: #FFFFFF;
+		background: rgb(0, 0, 0);
+		&:hover {
+			background: rgb(64, 64, 64);
+		}
+	`}
+	${ props =>props.color === 'gray' && css`
+		color: rgb(0, 0, 0);
+    background: rgb(230, 230, 230);
+		&:hover {
+      border-color: rgb(0, 0, 0);
+		}
+	`}
+
+	&.hover-underline {
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 `
 
-
-export default function Header() {
+export default function HeaderComponents() {
 	return (
 		<StyledHeader>
 			<StyledHeaderWrapper>
@@ -113,12 +143,19 @@ export default function Header() {
 						</Link>
 					</StyledHeaderNav>
 				</StyledHeaderLeft>
-				<div>
+				<StyledHeaderContainer>
 					<StyledHeaderSearch placeholder="Search NFTs" />
-					<StyledHeaderButtonLink href={process.env.NEXT_PUBLIC_MATATAKI_OAUTH_URL}>
-						<StyledHeaderButton>Sign In</StyledHeaderButton>
-					</StyledHeaderButtonLink>
-				</div>
+					<div>
+						<a href="https://matataki.io/">
+							<StyledHeaderButton className="hover-underline">Learn</StyledHeaderButton>
+						</a>
+						<StyledHeaderButton color="gray">@xiaotian</StyledHeaderButton>
+						<a href={process.env.NEXT_PUBLIC_MATATAKI_OAUTH_URL}>
+							<StyledHeaderButton color="dark">Connect Wallet</StyledHeaderButton>
+						</a>
+						<StyledHeaderButton color="dark">Create</StyledHeaderButton>
+					</div>
+				</StyledHeaderContainer>
 			</StyledHeaderWrapper>
 		</StyledHeader>
 	)
