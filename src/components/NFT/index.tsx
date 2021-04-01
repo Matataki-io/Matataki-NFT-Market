@@ -1,0 +1,180 @@
+import React from "react";
+import styled from 'styled-components';
+import { Avatar } from '@geist-ui/react'
+import Link from 'next/link'
+import { NFTProps } from '../../../next-env'
+import moment from 'moment'
+
+
+const StyledNFT = styled.a`
+  display: block;
+  color: #000;
+  /* height: 200px; */
+  /* background: red; */
+  .wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+`
+const StyledNFTHead = styled.div`
+  padding: 20px 15px;
+  height: 70px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .user {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .username {
+    font-weight: 500;
+    font-size: 16px;
+    color: #000;
+    margin: 0px 0px 0px 10px;
+  }
+  .time {
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 0.5;
+    margin: 0px;
+    color: #000;
+  }
+`
+const StyledNFTContent = styled.div`
+  overflow: hidden;
+  z-index: 0;
+  position: relative;
+  height: 100%;
+  border-left: 2px solid rgba(0, 0, 0, 0.1);
+  border-right: 2px solid rgba(0, 0, 0, 0.1);
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    margin: 0px auto;
+    object-fit: contain;
+  }
+`
+const StyledNFTFooter = styled.div`
+  padding: 15px;
+  min-height: 100px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  h5 {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 30px;
+    margin-bottom: 10px;
+    margin-top: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+  }
+`
+const StyledNFTFooterUser = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  .user {
+    font-weight: 500;
+    width: auto;
+    flex: 0 1 auto;
+    margin-bottom: 0px;
+    line-height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .subtitle {
+    font-size: 15px;
+    margin: 0px 5px 0px 0px;
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 30px;
+    font-weight: 400;
+  }
+  .owner {
+    width: auto;
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    .owner-name {
+      font-weight: 500;
+      font-size: 15px;
+      line-height: 30px;
+      white-space: nowrap;
+      margin: 0px 5px 0px 0px;
+    }
+  }
+  .id {
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .custom-avatar {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+`
+
+const NFTComponents: React.FC<NFTProps> = ({ id, type, img, avatar_url, username, title, time }) => {
+  return (
+    <Link href={ `/${id}` }>
+      <StyledNFT target="_blank">
+        <div className="wrapper">
+          <StyledNFTHead>
+            <div className="user">
+              <Avatar src={ avatar_url } />
+              <span className="username">{ username }</span>
+            </div>
+            <span className="time">{ moment(time).format('YYYY-MM-DD HH:mm:ss') }</span>
+          </StyledNFTHead>
+          <StyledNFTContent>
+            <img src={ img } alt="Content"/>
+          </StyledNFTContent>
+          <StyledNFTFooter>
+            <h5>{ title }</h5>
+            <StyledNFTFooterUser>
+              <div className="user">
+                <span className="subtitle">Collected by</span>
+                <div className="owner">
+                  <span className="owner-name">{ username }</span>
+                  <Avatar className="custom-avatar" size={ 16 } src={ avatar_url } />
+                </div>
+              </div>
+              <div className="id">#{id}</div>
+            </StyledNFTFooterUser>
+          </StyledNFTFooter>
+        </div>
+      </StyledNFT>
+    </Link>
+  )
+}
+export default NFTComponents

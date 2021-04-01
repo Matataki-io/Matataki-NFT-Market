@@ -2,8 +2,11 @@ import { Button, ButtonDropdown, Divider, Grid, Text, Tooltip } from '@geist-ui/
 import Banner from '../components/Banner';
 import styled from 'styled-components';
 
+import { NFTProps } from '../../next-env'
+
 import Creators from '../components/Creators';
 import About from '../components/About';
+import NFT from '../components/NFT';
 
 const StyledWrapper = styled.div`
   width: 100%;
@@ -109,14 +112,92 @@ const StyledCreators = styled.div`
   grid-row-gap: 48px;
   grid-column-gap: 80px;
   margin-top: 48px;
-  .box {
-    width: 100%;
-    height: 100%;
-    /* background: red; */
-  }
+`
+
+const StyledNfts = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0px, 1fr));
+  gap: 50px 30px;
+  margin-top: 48px;
 `
 
 export default function NFTsList() {
+    // 关于更多 NFT
+    const NFTList: Array<NFTProps> = [
+      {
+        id: 2020,
+        type: 'img',
+        img: 'https://placeimg.com/700/340/arch', // 暂时先展示 img
+        avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+        username: '@subtle-bubble',
+        title: 'Scream Alone',
+        time: Date.now()
+      },
+      {
+        id: 2024,
+        type: 'img',
+        img: 'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a', // 暂时先展示 img
+        avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+        username: '@subtle-bubble',
+        title: 'Scream Alone',
+        time: Date.now()
+      },
+      {
+        id: 2065,
+        type: 'img',
+        img: 'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4', // 暂时先展示 img
+        avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+        username: '@subtle-bubble',
+        title: 'Scream Alone',
+        time: Date.now()
+      },
+      {
+        id: 2265,
+        type: 'img',
+        img: 'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli', // 暂时先展示 img
+        avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+        username: '@subtle-bubble',
+        title: 'Scream Alone',
+        time: Date.now()
+      },
+      {
+        id: 1065,
+        type: 'img',
+        img: 'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4', // 暂时先展示 img
+        avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+        username: '@subtle-bubble',
+        title: 'Scream Alone',
+        time: Date.now()
+      },
+      {
+        id: 2475,
+        type: 'img',
+        img: 'https://ipfs.fleek.co/ipfs/bafybeiedsxxcvdtx7nker4xrhgaex5encj6p5u3qlfzkloduusnodt76pu', // 暂时先展示 img
+        avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+        username: '@subtle-bubble',
+        title: 'Scream Alone',
+        time: Date.now()
+      },
+      {
+        id: 2085,
+        type: 'img',
+        img: 'https://ipfs.fleek.co/ipfs/bafybeigknh3nyru3rl5tqslctz52ymfulo3pzsz73ydojlkkpqxjb2shoe', // 暂时先展示 img
+        avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+        username: '@subtle-bubble',
+        title: 'Scream Alone',
+        time: Date.now()
+      },
+      {
+        id: 2034,
+        type: 'img',
+        img: 'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli', // 暂时先展示 img
+        avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+        username: '@subtle-bubble',
+        title: 'Scream Alone',
+        time: Date.now()
+      }
+    ]
 
   // 作家列表
   const creatorsList = [
@@ -143,7 +224,7 @@ export default function NFTsList() {
   ]
 
   // 关于更多 NFT
-  const AboutNFT = [
+  const AboutNFTList = [
     {
       img: 'https://placeimg.com/700/340/arch',
       text: 'How to collect your favorite NFTs at NFT Market?',
@@ -174,7 +255,11 @@ export default function NFTsList() {
           <StyledTitle>Upcoming NFTs<span>New</span></StyledTitle>
           <span className="more">VIEW MORE</span>
         </StyledModuleHead>
-        <div className="empty"></div>
+        <StyledNfts>
+        {
+          NFTList.map(i => <NFT { ...i }></NFT>)
+        }
+        </StyledNfts>
       </StyledModule>
 
       <StyledModule className="creators">
@@ -183,11 +268,9 @@ export default function NFTsList() {
           <span className="more">VIEW MORE</span>
         </StyledModuleHead>
         <StyledCreators>
-          {
-            creatorsList.map(i => (
-              <div className="box"><Creators bc={ i.bc } avatar={ i.avatar } username= { i.username }></Creators></div>
-            ))
-          }
+        {
+          creatorsList.map(i => <Creators bc={ i.bc } avatar={ i.avatar } username= { i.username }></Creators>)
+        }
         </StyledCreators>
       </StyledModule>
 
@@ -198,10 +281,8 @@ export default function NFTsList() {
         </StyledModuleHead>
         <StyledAbout>
         {
-            AboutNFT.map(i => (
-              <div className="box"><About img={ i.img } text={ i.text } link={ i.link }></About></div>
-            ))
-          }
+          AboutNFTList.map(i => <div className="box"><About img={ i.img } text={ i.text } link={ i.link }></About></div>)
+        }
         </StyledAbout>
       </StyledModule>
     </StyledWrapper>
