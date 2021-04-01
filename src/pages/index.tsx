@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Button, ButtonDropdown, Divider, Grid, Text, Tooltip } from '@geist-ui/react'
 import Banner from '../components/Banner';
 import styled from 'styled-components';
@@ -8,123 +9,15 @@ import Creators from '../components/Creators';
 import About from '../components/About';
 import NFT from '../components/NFT';
 
-const StyledWrapper = styled.div`
-  width: 100%;
-  max-width: 1480px;
-  padding: 0 20px 200px;
-  box-sizing: border-box;
-  margin: 0 auto;
-  @media screen and (max-width: 768px) {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-`
+import InfiniteScroll from 'react-infinite-scroller';
 
-const StyledTitle = styled.h3`
-font-size: 32px;
-font-family: BigCaslon-Medium, BigCaslon;
-font-weight: 500;
-color: #333333;
-line-height: 39px;
-padding: 0;
-margin: 0;
-position: relative;
-span {
-  position: absolute;
-  top: -10px;
-  font-size: 24px;
-  font-family: Playlist-Script, Playlist, 'Dancing Script', cursive;;
-  font-weight: normal;
-  color: #F4CF1F;
-  line-height: 37px;
-}
-`
+export default function Home() {
+  // 更多 NFT
+  const [NFTList, setNFTList] = useState<Array<NFTProps>>([])
+  const [loading, setLoading] = useState<Boolean>(false)
+  const [hasMore, setHasMore] = useState<Boolean>(true)
 
-const StyledModule = styled.h3`
-  .empty {
-    height: 800px;
-    background-color: #f1f1f1;
-  }
-
-  &.nfts {
-    margin-top: 46px;
-  }
-  &.creators {
-    margin-top: 100px;
-  }
-  &.about {
-    margin-top: 100px;
-  }
-
-`
-
-const StyledModuleHead = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0;
-  margin: 20px 0;
-  .more {
-    font-size: 16px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 500;
-    color: #333333;
-    line-height: 22px;
-  }
-`
-const StyledAbout = styled.div`
-  display: grid;
-  grid: repeat(2, 1fr) / repeat(4, 1fr);
-  grid-row-gap: 22px;
-  grid-column-gap: 24px;
-  margin-top: 48px;
-  .box {
-    width: 100%;
-    height: 100%;
-    /* background: red; */
-    &:nth-of-type(1) {
-      grid-row: 1 / 3;
-      grid-column: 1 / 3;
-      .cover {
-        height: 342px;
-      }
-    }
-    &:nth-of-type(2) {
-      grid-row: 1 / 3;
-      grid-column: 3 / 4;
-      .cover {
-        height: 342px;
-      }
-    }
-    &:nth-of-type(3),
-    &:nth-of-type(4) {
-      .cover {
-        height: 128px;
-      }
-    }
-  }
-`
-
-
-const StyledCreators = styled.div`
-  display: grid;
-  grid: repeat(2, 1fr) / repeat(2, 1fr);
-  grid-row-gap: 48px;
-  grid-column-gap: 80px;
-  margin-top: 48px;
-`
-
-const StyledNfts = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0px, 1fr));
-  gap: 50px 30px;
-  margin-top: 48px;
-`
-
-export default function NFTsList() {
-  // 关于更多 NFT
-  const NFTList: Array<NFTProps> = [
+  const NFTListData: Array<NFTProps> = [
     {
       id: 2020,
       type: 'image', // type is image video audio text file url
@@ -381,6 +274,29 @@ export default function NFTsList() {
     }
   ]
 
+  useEffect(() => {
+    console.log('222')
+    fetchNFTData()
+  }, [])
+
+  // 获取NFT数据
+  const fetchNFTData = () => {
+    let list = NFTList.concat(NFTListData)
+    setNFTList(list)
+  }
+  // 处理滚动Load
+  const handleInfiniteOnLoad = async () => {
+    setLoading(true)
+    console.log('1111')
+    if (NFTList.length > 60) {
+      setLoading(false)
+      setHasMore(false)
+      return
+    }
+    await fetchNFTData()
+    setLoading(false)
+  }
+
   return (
     <StyledWrapper>
       <Banner></Banner>
@@ -389,11 +305,18 @@ export default function NFTsList() {
           <StyledTitle>Upcoming NFTs<span>New</span></StyledTitle>
           <span className="more">VIEW MORE</span>
         </StyledModuleHead>
-        <StyledNfts>
-          {
-            NFTList.map((i, idx) => <NFT key={idx} {...i}></NFT>)
-          }
-        </StyledNfts>
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={handleInfiniteOnLoad}
+          hasMore={!loading && hasMore}
+          loader={<div className="loader" key={0}>Loading ...</div>}
+        >
+          <StyledNfts>
+            {
+              NFTList.map((i, idx) => <NFT key={idx} {...i}></NFT>)
+            }
+          </StyledNfts>
+        </InfiniteScroll>
       </StyledModule>
 
       <StyledModule className="creators">
@@ -422,3 +345,118 @@ export default function NFTsList() {
     </StyledWrapper>
   )
 }
+
+
+const StyledWrapper = styled.div`
+  width: 100%;
+  max-width: 1480px;
+  padding: 0 20px 200px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  @media screen and (max-width: 768px) {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+`
+
+const StyledTitle = styled.h3`
+font-size: 32px;
+font-family: BigCaslon-Medium, BigCaslon;
+font-weight: 500;
+color: #333333;
+line-height: 39px;
+padding: 0;
+margin: 0;
+position: relative;
+span {
+  position: absolute;
+  top: -10px;
+  font-size: 24px;
+  font-family: Playlist-Script, Playlist, 'Dancing Script', cursive;;
+  font-weight: normal;
+  color: #F4CF1F;
+  line-height: 37px;
+}
+`
+
+const StyledModule = styled.h3`
+  .empty {
+    height: 800px;
+    background-color: #f1f1f1;
+  }
+
+  &.nfts {
+    margin-top: 46px;
+  }
+  &.creators {
+    margin-top: 100px;
+  }
+  &.about {
+    margin-top: 100px;
+  }
+
+`
+
+const StyledModuleHead = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  margin: 20px 0;
+  .more {
+    font-size: 16px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: #333333;
+    line-height: 22px;
+  }
+`
+const StyledAbout = styled.div`
+  display: grid;
+  grid: repeat(2, 1fr) / repeat(4, 1fr);
+  grid-row-gap: 22px;
+  grid-column-gap: 24px;
+  margin-top: 48px;
+  .box {
+    width: 100%;
+    height: 100%;
+    /* background: red; */
+    &:nth-of-type(1) {
+      grid-row: 1 / 3;
+      grid-column: 1 / 3;
+      .cover {
+        height: 342px;
+      }
+    }
+    &:nth-of-type(2) {
+      grid-row: 1 / 3;
+      grid-column: 3 / 4;
+      .cover {
+        height: 342px;
+      }
+    }
+    &:nth-of-type(3),
+    &:nth-of-type(4) {
+      .cover {
+        height: 128px;
+      }
+    }
+  }
+`
+
+
+const StyledCreators = styled.div`
+  display: grid;
+  grid: repeat(2, 1fr) / repeat(2, 1fr);
+  grid-row-gap: 48px;
+  grid-column-gap: 80px;
+  margin-top: 48px;
+`
+
+const StyledNfts = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0px, 1fr));
+  gap: 50px 30px;
+  margin-top: 48px;
+`
