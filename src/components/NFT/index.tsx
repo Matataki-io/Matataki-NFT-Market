@@ -1,23 +1,21 @@
 import React from "react";
 import styled from 'styled-components';
-import { Avatar } from '@geist-ui/react'
+import { Avatar, Button } from '@geist-ui/react'
 import Link from 'next/link'
 import { NFTProps } from '../../../next-env'
 import moment from 'moment'
 
 
-const StyledNFT = styled.a`
-  display: block;
+const StyledNFT = styled(Link)`
+
+`
+const StyledNFTWrapper = styled.div`
   color: #000;
-  /* height: 200px; */
-  /* background: red; */
-  .wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 `
 const StyledNFTHead = styled.div`
   padding: 20px 15px;
@@ -60,7 +58,12 @@ const StyledNFTContent = styled.div`
   justify-content: space-between;
   align-items: center;
   flex: 1;
-  img {
+  .media-images,
+  .media-video,
+  .media-audio,
+  .media-text,
+  .media-file,
+  .media-url {
     display: block;
     max-width: 100%;
     max-height: 100%;
@@ -144,11 +147,11 @@ const StyledNFTFooterUser = styled.div`
   }
 `
 
-const NFTComponents: React.FC<NFTProps> = ({ id, type, img, avatar_url, username, title, time }) => {
+const NFTComponents: React.FC<NFTProps> = ({ id, type, fields, img, content, avatar_url, username, title, time }) => {
   return (
-    <Link href={ `/${id}` }>
-      <StyledNFT target="_blank">
-        <div className="wrapper">
+    <StyledNFT href={ `/${id}` }>
+      <a target="_blank">
+        <StyledNFTWrapper>
           <StyledNFTHead>
             <div className="user">
               <Avatar src={ avatar_url } />
@@ -157,7 +160,36 @@ const NFTComponents: React.FC<NFTProps> = ({ id, type, img, avatar_url, username
             <span className="time">{ moment(time).format('YYYY-MM-DD HH:mm:ss') }</span>
           </StyledNFTHead>
           <StyledNFTContent>
-            <img src={ img } alt="Content"/>
+            {
+              type === 'image' ?
+              <img src={ content?.medium } alt="Content" className="media-images" /> :
+              type === 'video' ?
+              <video src={ fields?.low.stringValue } loop playsInline autoPlay poster={ fields?.thumbnail.stringValue } className="media-video"></video> :
+              type === 'audio' ?
+              <div className="media-audio">
+                <a href={ content?.medium } target="_blank">
+                  <Button style={{ margin: '40px 0' }}>Audio Play</Button>
+                </a>
+              </div> :
+              type === 'text' ?
+              <div className="media-text">
+                <a href={ content?.medium } target="_blank">
+                  <Button style={{ margin: '40px 0' }}>Text View</Button>
+                </a>
+              </div> :
+                type === 'file' ?
+                <div className="media-file">
+                  <a href={ content?.medium } target="_blank">
+                    <Button style={{ margin: '40px 0' }}>File View</Button>
+                  </a>
+                </div> :
+                type === 'url' ?
+                <div className="media-url">
+                  <a href={ content?.medium } target="_blank">
+                    <Button style={{ margin: '40px 0' }}>Url View</Button>
+                  </a>
+                </div> : ''
+            }
           </StyledNFTContent>
           <StyledNFTFooter>
             <h5>{ title }</h5>
@@ -172,9 +204,9 @@ const NFTComponents: React.FC<NFTProps> = ({ id, type, img, avatar_url, username
               <div className="id">#{id}</div>
             </StyledNFTFooterUser>
           </StyledNFTFooter>
-        </div>
-      </StyledNFT>
-    </Link>
+        </StyledNFTWrapper>
+      </a>
+    </StyledNFT>
   )
 }
 export default NFTComponents
