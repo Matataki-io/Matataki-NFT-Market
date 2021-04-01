@@ -173,7 +173,7 @@ export default function NFTsList() {
       {
         id: 2475,
         type: 'img',
-        img: 'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4', // 暂时先展示 img
+        img: 'https://ipfs.fleek.co/ipfs/bafybeiedsxxcvdtx7nker4xrhgaex5encj6p5u3qlfzkloduusnodt76pu', // 暂时先展示 img
         avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
         username: '@subtle-bubble',
         title: 'Scream Alone',
@@ -182,7 +182,7 @@ export default function NFTsList() {
       {
         id: 2085,
         type: 'img',
-        img: 'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4', // 暂时先展示 img
+        img: 'https://ipfs.fleek.co/ipfs/bafybeigknh3nyru3rl5tqslctz52ymfulo3pzsz73ydojlkkpqxjb2shoe', // 暂时先展示 img
         avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
         username: '@subtle-bubble',
         title: 'Scream Alone',
