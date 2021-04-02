@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Input } from '@geist-ui/react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import Logo from '../../assets/images/logo.png';
+import { useWallet } from 'use-wallet';
 
 const StyledHeader = styled.div`
   color: #fff;
@@ -93,7 +94,28 @@ const StyledHeaderButton = styled.button`
   }
 `;
 
+const StyledHeaderUsername = styled.button`
+  color: rgb(0, 0, 0);
+  background: rgb(230, 230, 230);
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  line-height: 20px;
+  border: none;
+  outline: none;
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+`;
+
 export default function Header() {
+  const wallet = useWallet();
+
+  const shortedWalletAccount = useMemo(() => {
+    if (wallet.status !== 'connected') return 'Not Connected';
+    return wallet.account?.slice(0, 6) + '...' + wallet.account?.slice(-4);
+  }, [wallet]);
+
   return (
     <StyledHeader>
       <StyledHeaderWrapper>
@@ -115,10 +137,23 @@ export default function Header() {
         </StyledHeaderLeft>
         <div>
           <StyledHeaderSearch placeholder='Search NFTs' />
-          <StyledHeaderButtonLink
-            href={process.env.NEXT_PUBLIC_MATATAKI_OAUTH_URL}>
-            <StyledHeaderButton>Sign In</StyledHeaderButton>
-          </StyledHeaderButtonLink>
+          {/* <StyledHeaderButtonLink
+            href={process.env.NEXT_PUBLIC_MATATAKI_OAUTH_URL}> */}
+          {wallet.status === 'connected' ? (
+            <>
+              <StyledHeaderUsername>
+                {shortedWalletAccount}
+              </StyledHeaderUsername>
+              <StyledHeaderButton onClick={() => wallet.reset()}>
+                Disconnect
+              </StyledHeaderButton>
+            </>
+          ) : (
+            <StyledHeaderButton onClick={() => wallet.connect('injected')}>
+              Sign In
+            </StyledHeaderButton>
+          )}
+          {/* </StyledHeaderButtonLink> */}
         </div>
       </StyledHeaderWrapper>
     </StyledHeader>
