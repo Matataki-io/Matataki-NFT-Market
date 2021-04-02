@@ -5,7 +5,69 @@ import Link from 'next/link';
 import { NFTProps } from '../../../next-env';
 import moment from 'moment';
 
-const StyledNFT = styled(Link)``;
+const NFTComponents: React.FC<NFTProps> = ({ id, type, fields, content, avatar_url, username, title, time }) => {
+  return (
+    <StyledNFTWrapper>
+      <StyledNFTHead>
+        <div className="user">
+          {
+            avatar_url ? <Avatar src={avatar_url} /> : ''
+          }
+          <span className="username">{username}</span>
+        </div>
+        <span className="time">{time && moment(time).format('YYYY-MM-DD HH:mm:ss')}</span>
+      </StyledNFTHead>
+      <StyledNFTContent>
+        {
+          type === 'image' ?
+            <img src={content?.medium} alt="Content" className="media-images" /> :
+            type === 'video' ?
+              <video src={fields?.low.stringValue} loop playsInline autoPlay poster={fields?.thumbnail.stringValue} className="media-video"></video> :
+              type === 'audio' ?
+                <div className="media-audio">
+                  <a href={content?.medium} target="_blank">
+                    <Button style={{ margin: '40px 0' }}>Audio Play</Button>
+                  </a>
+                </div> :
+                type === 'text' ?
+                  <div className="media-text">
+                    <a href={content?.medium} target="_blank">
+                      <Button style={{ margin: '40px 0' }}>Text View</Button>
+                    </a>
+                  </div> :
+                  type === 'file' ?
+                    <div className="media-file">
+                      <a href={content?.medium} target="_blank">
+                        <Button style={{ margin: '40px 0' }}>File View</Button>
+                      </a>
+                    </div> :
+                    type === 'url' ?
+                      <div className="media-url">
+                        <a href={content?.medium} target="_blank">
+                          <Button style={{ margin: '40px 0' }}>Url View</Button>
+                        </a>
+                      </div> : ''
+        }
+      </StyledNFTContent>
+      <StyledNFTFooter>
+        <h5>{title}</h5>
+        <StyledNFTFooterUser>
+          <div className="user">
+            <span className="subtitle">{username ? 'Collected by' : ''}</span>
+            <div className="owner">
+              <span className="owner-name">{username}</span>
+              {
+                avatar_url ? <Avatar className="custom-avatar" size={16} src={avatar_url} /> : ''
+              }
+            </div>
+          </div>
+          <div className="id">{id ? `#${id}` : ''}</div>
+        </StyledNFTFooterUser>
+      </StyledNFTFooter>
+    </StyledNFTWrapper>
+  )
+}
+
 const StyledNFTWrapper = styled.div`
   color: #000;
   width: 100%;
@@ -144,93 +206,4 @@ const StyledNFTFooterUser = styled.div`
   }
 `;
 
-const NFTComponents: React.FC<NFTProps> = ({
-  id,
-  type,
-  fields,
-  img,
-  content,
-  avatar_url,
-  username,
-  title,
-  time,
-}) => {
-  return (
-    <StyledNFT href={`/${id}`}>
-      <a target='_blank'>
-        <StyledNFTWrapper>
-          <StyledNFTHead>
-            <div className='user'>
-              <Avatar src={avatar_url} />
-              <span className='username'>{username}</span>
-            </div>
-            <span className='time'>
-              {moment(time).format('YYYY-MM-DD HH:mm:ss')}
-            </span>
-          </StyledNFTHead>
-          <StyledNFTContent>
-            {type === 'image' ? (
-              <img
-                src={content?.medium}
-                alt='Content'
-                className='media-images'
-              />
-            ) : type === 'video' ? (
-              <video
-                src={fields?.low.stringValue}
-                loop
-                playsInline
-                autoPlay
-                poster={fields?.thumbnail.stringValue}
-                className='media-video'></video>
-            ) : type === 'audio' ? (
-              <div className='media-audio'>
-                <a href={content?.medium} target='_blank' rel='noreferrer'>
-                  <Button style={{ margin: '40px 0' }}>Audio Play</Button>
-                </a>
-              </div>
-            ) : type === 'text' ? (
-              <div className='media-text'>
-                <a href={content?.medium} target='_blank' rel='noreferrer'>
-                  <Button style={{ margin: '40px 0' }}>Text View</Button>
-                </a>
-              </div>
-            ) : type === 'file' ? (
-              <div className='media-file'>
-                <a href={content?.medium} target='_blank' rel='noreferrer'>
-                  <Button style={{ margin: '40px 0' }}>File View</Button>
-                </a>
-              </div>
-            ) : type === 'url' ? (
-              <div className='media-url'>
-                <a href={content?.medium} target='_blank' rel='noreferrer'>
-                  <Button style={{ margin: '40px 0' }}>Url View</Button>
-                </a>
-              </div>
-            ) : (
-              ''
-            )}
-          </StyledNFTContent>
-          <StyledNFTFooter>
-            <h5>{title}</h5>
-            <StyledNFTFooterUser>
-              <div className='user'>
-                <span className='subtitle'>Collected by</span>
-                <div className='owner'>
-                  <span className='owner-name'>{username}</span>
-                  <Avatar
-                    className='custom-avatar'
-                    size={16}
-                    src={avatar_url}
-                  />
-                </div>
-              </div>
-              <div className='id'>#{id}</div>
-            </StyledNFTFooterUser>
-          </StyledNFTFooter>
-        </StyledNFTWrapper>
-      </a>
-    </StyledNFT>
-  );
-};
-export default NFTComponents;
+export default NFTComponents

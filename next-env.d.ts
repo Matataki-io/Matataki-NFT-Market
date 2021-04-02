@@ -22,13 +22,12 @@ interface NFTContentProps {
 }
 
 export interface NFTProps {
-  id: number;
-  type: string;
-  fields?: NFTFiedlsProps;
-  content?: NFTContentProps;
-  img?: string;
-  avatar_url: string;
-  username: string;
-  title: string;
-  time: string | number;
+  id?: number,
+  type?: string
+  fields?: NFTFiedlsProps
+  content?: NFTContentProps
+  avatar_url?: string
+  username?: string,
+  title?: string
+  time?: string|number
 }

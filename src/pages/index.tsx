@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Banner from '../components/Banner';
+import { useState, useEffect } from 'react';
+import { Button, ButtonDropdown, Divider, Grid, Text, Tooltip } from '@geist-ui/react'
+// import Banner from '../components/Banner';
 import styled from 'styled-components';
-
-import { NFTProps } from '../../next-env';
+import Link from "next/link";
+import { NFTProps } from '../../next-env'
 
 import Creators from '../components/Creators';
 import About from '../components/About';
@@ -93,27 +94,6 @@ export default function Home() {
           'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
         thumbnail:
           'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 1065,
-      type: 'image',
-      img:
-        'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4', // 暂时先展示 img
-      content: {
-        low:
-          'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-        medium:
-          'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-        high:
-          'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-        thumbnail:
-          'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
         stream: '',
       },
       avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
@@ -346,8 +326,8 @@ export default function Home() {
 
   return (
     <StyledWrapper>
-      <Banner></Banner>
-      <StyledModule className='nfts'>
+      {/* <Banner></Banner> */}
+      <StyledModule className="nfts">
         <StyledModuleHead>
           <StyledTitle>
             Upcoming NFTs<span>New</span>
@@ -409,11 +389,16 @@ export default function Home() {
 }
 
 const StyledWrapper = styled.div`
-  width: 100%;
-  max-width: 1480px;
-  padding: 0 20px 200px;
+  /* max-width: 1480px; */
+  /* padding: 0 20px 200px; */
   box-sizing: border-box;
-  margin: 0 auto;
+
+  /* padding: 30px; */
+  padding: 30px 30px 200px;
+  margin: 0px auto;
+  width: 100%;
+  max-width: calc(1460px);
+
   @media screen and (max-width: 768px) {
     padding-left: 10px;
     padding-right: 10px;
