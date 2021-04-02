@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import React, { useState, Fragment } from "react";
 import styled, { css } from 'styled-components';
 import ButtonCustom from '../Button';
 import NFT from '../NFT';
@@ -14,9 +14,15 @@ interface mediaTypeState {
   url: string
 }
 
-const CreateComponents = () => {
+interface Props {
+	setIsCreate: (value: boolean) => void
+}
 
-  const [step, setStep] = useState<number>(2)
+const CreateComponents: React.FC<Props> = ({
+  setIsCreate
+}) => {
+
+  const [step, setStep] = useState<number>(0)
   const [mediaType, setMediaType] = useState<string>('image')
   const [mediaUrl, setMediaUrl] = useState<string>('')
   const [formNameAndDescription] = Form.useForm();
@@ -71,7 +77,7 @@ const CreateComponents = () => {
                     }
                   </StyledMultiiMediaInput>
                   <StyledMultiiMediaActions>
-                    <ButtonCustom color="gray">Back</ButtonCustom>
+                    <ButtonCustom color="gray" onClick={ () => setIsCreate(false) }>Back</ButtonCustom>
                     <ButtonCustom color="dark" disabled={false} onClick={() => setStep(1)}>Continue</ButtonCustom>
                   </StyledMultiiMediaActions>
                 </Fragment> :
@@ -140,7 +146,9 @@ const CreateComponents = () => {
           </StyledContainerGridCol>
           <StyledContainerGridCol start="7" end="12">
             <StyledSubtitle>Preview</StyledSubtitle>
-            <NFT></NFT>
+            <div style={{ width: '100%', minHeight: '133%' }}>
+              <NFT></NFT>
+            </div>
           </StyledContainerGridCol>
         </StyledContainerGrid>
       </StyledContainer>
@@ -154,6 +162,10 @@ const StyledWrapper = styled.div`
   background: rgb(255, 255, 255);
   z-index: 3;
   position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   inset: 0px;
 
   width: 100%;

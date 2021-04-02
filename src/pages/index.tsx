@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Button, ButtonDropdown, Divider, Grid, Text, Tooltip } from '@geist-ui/react'
-import Banner from '../components/Banner';
+// import Banner from '../components/Banner';
 import styled from 'styled-components';
-
+import Link from "next/link";
 import { NFTProps } from '../../next-env'
 
 import Creators from '../components/Creators';
@@ -299,7 +299,7 @@ export default function Home() {
 
   return (
     <StyledWrapper>
-      <Banner></Banner>
+      {/* <Banner></Banner> */}
       <StyledModule className="nfts">
         <StyledModuleHead>
           <StyledTitle>Upcoming NFTs<span>New</span></StyledTitle>
@@ -313,7 +313,13 @@ export default function Home() {
         >
           <StyledNfts>
             {
-              NFTList.map((i, idx) => <NFT key={idx} {...i}></NFT>)
+              NFTList.map((i, idx) => (
+                <Link href={ `/${i.id}` }>
+                  <a>
+                    <NFT key={idx} {...i}></NFT>
+                  </a>
+                </Link>
+              ))
             }
           </StyledNfts>
         </InfiniteScroll>
@@ -348,11 +354,16 @@ export default function Home() {
 
 
 const StyledWrapper = styled.div`
-  width: 100%;
-  max-width: 1480px;
-  padding: 0 20px 200px;
+  /* max-width: 1480px; */
+  /* padding: 0 20px 200px; */
   box-sizing: border-box;
-  margin: 0 auto;
+
+  /* padding: 30px; */
+  padding: 30px 30px 200px;
+  margin: 0px auto;
+  width: 100%;
+  max-width: calc(1460px);
+
   @media screen and (max-width: 768px) {
     padding-left: 10px;
     padding-right: 10px;

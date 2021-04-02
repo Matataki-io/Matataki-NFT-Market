@@ -1,45 +1,66 @@
+import React, { useState, Fragment } from "react";
 import { Input, } from "@geist-ui/react";
 import Link from "next/link";
 import styled from 'styled-components';
 import Logo from "../../assets/images/logo.png";
 import Button from '../Button/index';
 
-import Create from "../Create";
+interface HeaderProps {
+	isCreate: Boolean
+	setIsCreate: (value: boolean) => void
+}
 
-const HeaderComponents = () => {
+const HeaderComponents: React.FC<HeaderProps> = ({
+	isCreate,
+	setIsCreate
+}) => {
+
 	return (
 		<StyledHeader>
 			<StyledHeaderWrapper>
-				<StyledHeaderLeft>
-					<Link href="/">
-						<StyledHeaderLogo>
-							<img src={Logo} alt="NFT Logo" />
-							<h1>NFT Market</h1>
-						</StyledHeaderLogo>
-					</Link>
-					<StyledHeaderNav>
-						<Link href="/">
-							<a>NFTS</a>
-						</Link>
-						<Link href="/">
-							<a>CREATE NFT</a>
-						</Link>
-					</StyledHeaderNav>
-				</StyledHeaderLeft>
-				<StyledHeaderContainer>
-					<StyledHeaderSearch placeholder="Search NFTs" />
-					<div>
-						<a href="https://matataki.io/">
-							<Button className="hover-underline">Learn</Button>
-						</a>
-						<Button color="gray">@xiaotian</Button>
-						<a href={process.env.NEXT_PUBLIC_MATATAKI_OAUTH_URL}>
-							<Button color="dark">Connect Wallet</Button>
-						</a>
-						<Button color="dark">Create</Button>
-					</div>
-					<Create></Create>
-				</StyledHeaderContainer>
+				{
+					isCreate ?
+						<Fragment>
+							<Button color="gray" onClick={() => setIsCreate(false)}>Back</Button>
+							<div>
+								<a href="https://matataki.io/">
+									<Button className="hover-underline">Learn</Button>
+								</a>
+								<Button color="gray">@xiaotian</Button>
+							</div>
+						</Fragment> :
+						<Fragment>
+							<StyledHeaderLeft>
+								<Link href="/">
+									<StyledHeaderLogo>
+										<img src={Logo} alt="NFT Logo" />
+										<h1>NFT Market</h1>
+									</StyledHeaderLogo>
+								</Link>
+								{/* <StyledHeaderNav>
+									<Link href="/">
+										<a>NFTS</a>
+									</Link>
+									<Link href="/">
+										<a>CREATE NFT</a>
+									</Link>
+								</StyledHeaderNav> */}
+							</StyledHeaderLeft>
+							<StyledHeaderContainer>
+								<StyledHeaderSearch placeholder="Search NFTs" />
+								<div>
+									<a href="https://matataki.io/">
+										<Button className="hover-underline">Learn</Button>
+									</a>
+									<Button color="gray">@xiaotian</Button>
+									<a href={process.env.NEXT_PUBLIC_MATATAKI_OAUTH_URL}>
+										<Button color="dark">Connect Wallet</Button>
+									</a>
+									<Button color="dark" onClick={ () => setIsCreate(true) }>Create</Button>
+								</div>
+							</StyledHeaderContainer>
+						</Fragment>
+				}
 			</StyledHeaderWrapper>
 		</StyledHeader>
 	)
@@ -54,11 +75,18 @@ const StyledHeader = styled.div`
   /* left: 0; */
   /* right: 0; */
   /* background: transparent; */
-	background-color: #fff;
 	/* box-shadow: 0 2px 10px rgb(0 0 0 / 10%); */
 	box-shadow: 0px 1px 0px 0px #DBDBDB;
   transition: all .3s;
-  z-index: 10;
+	position: sticky;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 3;
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(20px);
+	transform: translateZ(0px);
+	will-change: transform;
   &.active {
     background-color: #fff;
     color: #542DE0;
@@ -71,9 +99,10 @@ const StyledHeaderWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 1480px;
-	min-height: 80px;
-  padding: 0 20px;
+  /* max-width: 1480px; */
+	padding: 0px 25px;
+  min-height: 80px;
+  /* padding: 0 20px; */
   box-sizing: border-box;
   margin: 0 auto;
   @media screen and (max-width: 768px) {
