@@ -27,6 +27,7 @@
     "react-responsive-carousel": "^3.2.16",
     "react-svg": "^12.1.0",
     "styled-components": "^5.2.3",
+    "swr": "^0.5.5",
     "use-wallet": "^0.8.1"
   },
   "devDependencies": {
