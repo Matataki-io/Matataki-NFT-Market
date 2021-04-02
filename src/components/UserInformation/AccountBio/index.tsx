@@ -1,11 +1,9 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 
 const AccountBio: React.FC = ({ children }) => (
-  <StyledBio>
-    {children}
-  </StyledBio>
-)
+  <StyledBio>{children}</StyledBio>
+);
 
 const StyledBio = styled.h5`
   font-size: 17px;
@@ -14,6 +12,6 @@ const StyledBio = styled.h5`
   color: rgba(0, 0, 0, 0.7);
   line-height: 25px;
   margin-bottom: 10px;
-`
+`;
 
-export default AccountBio
+export default AccountBio;

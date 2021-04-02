@@ -1,12 +1,15 @@
-import React from 'react'
-import styled from 'styled-components'
-import { IconVerified } from '../../Icons'
+import React from 'react';
+import styled from 'styled-components';
+import { IconVerified } from '../../Icons';
 
 export interface AccountUsernameProps {
-  isVerified?: boolean
+  isVerified?: boolean;
 }
 
-const AccountUsername: React.FC<AccountUsernameProps> = ({ children, isVerified = false }) => (
+const AccountUsername: React.FC<AccountUsernameProps> = ({
+  children,
+  isVerified = false,
+}) => (
   <StyledContainer>
     <StyledUsername>@{children}</StyledUsername>
     {isVerified && (
@@ -15,7 +18,7 @@ const AccountUsername: React.FC<AccountUsernameProps> = ({ children, isVerified 
       </StyledIcon>
     )}
   </StyledContainer>
-)
+);
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -24,7 +27,7 @@ const StyledContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin-bottom: 30px;
-`
+`;
 
 const StyledUsername = styled.h4`
   font-size: 17px;
@@ -32,12 +35,12 @@ const StyledUsername = styled.h4`
   text-transform: lowercase;
   color: rgba(0, 0, 0, 0.5);
   margin-bottom: 0;
-`
+`;
 
 const StyledIcon = styled.div`
   width: 24px;
   height: 24px;
   margin-left: 5px;
-`
+`;
 
-export default AccountUsername
+export default AccountUsername;

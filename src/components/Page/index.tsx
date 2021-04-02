@@ -1,11 +1,9 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 
 const Page: React.FC = ({ children }) => (
-  <StyledWrapper>
-    {children}
-  </StyledWrapper>
-)
+  <StyledWrapper>{children}</StyledWrapper>
+);
 
 const StyledWrapper = styled.div`
   width: 100%;
@@ -17,6 +15,6 @@ const StyledWrapper = styled.div`
     padding-left: 10px;
     padding-right: 10px;
   }
-`
+`;
 
-export default Page
+export default Page;

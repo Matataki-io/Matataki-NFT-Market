@@ -1,15 +1,15 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 
 export interface AccountWebsiteProps {
-  href: string
+  href: string;
 }
 
 const AccountWebsite: React.FC<AccountWebsiteProps> = ({ href }) => (
   <StyledLink href={href} target='_blank' rel='noopener noreferrer'>
     {href.replace(/(^\w+:|^)\/\//, '')}
   </StyledLink>
-)
+);
 
 const StyledLink = styled.a`
   text-align: center;
@@ -17,6 +17,6 @@ const StyledLink = styled.a`
   color: rgb(0, 0, 0);
   text-decoration: none;
   margin-bottom: 10px;
-`
+`;
 
-export default AccountWebsite
+export default AccountWebsite;
