@@ -16,7 +16,7 @@ import { NFTProps } from '../../../next-env';
 import { default as MediaCard } from '../../components/NFT';
 import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 
-const Post: React.FC = () => {
+const UserInfoPage: React.FC = () => {
   const router = useRouter();
   const { username } = router.query;
   const [userInfo, setUserInfo] = useState<UserInfoState>({
@@ -176,4 +176,4 @@ const StyledMediaCardContainer = styled.div`
   gap: 50px 30px;
 `;
 
-export default Post;
+export default UserInfoPage;
