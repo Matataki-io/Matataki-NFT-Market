@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import styled from 'styled-components';
 
 const StyledAboutComponents = styled.a`
@@ -20,22 +20,22 @@ const StyledAboutComponents = styled.a`
     padding: 0;
     margin: 16px 0 0 0;
   }
-`
+`;
 
 interface AboutProps {
-  img: string
-  text: string
-  link: string
+  img: string;
+  text: string;
+  link: string;
 }
 
 const AboutComponents: React.FC<AboutProps> = ({ img, text, link }) => {
   return (
-    <StyledAboutComponents target="_blank" href={ link }>
-      <div className="cover">
-        <img src={ img } alt="About" />
+    <StyledAboutComponents target='_blank' href={link}>
+      <div className='cover'>
+        <img src={img} alt='About' />
       </div>
-      <p>{ text }</p>
+      <p>{text}</p>
     </StyledAboutComponents>
-  )
-}
-export default AboutComponents
+  );
+};
+export default AboutComponents;

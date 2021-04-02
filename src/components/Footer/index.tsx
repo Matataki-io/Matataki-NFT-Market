@@ -1,12 +1,13 @@
-import { Button, Tooltip } from '@geist-ui/react'
+import React from 'react';
+import { Button, Tooltip } from '@geist-ui/react';
 import styled from 'styled-components';
-import Link from "next/link";
-import { ReactSVG } from 'react-svg'
+import Link from 'next/link';
+import { ReactSVG } from 'react-svg';
 
-import IconGithub from "../../assets/icons/github.svg";
-import IconTelegram from "../../assets/icons/telegram.svg";
-import IconDiscord from "../../assets/icons/discord.svg";
-import IconTwitter from "../../assets/icons/twitter.svg";
+import IconGithub from '../../assets/icons/github.svg';
+import IconTelegram from '../../assets/icons/telegram.svg';
+import IconDiscord from '../../assets/icons/discord.svg';
+import IconTwitter from '../../assets/icons/twitter.svg';
 
 // const MockItem = () => <div className="footer-nav-bar">
 //   <Text h4>Support</Text>
@@ -16,8 +17,8 @@ import IconTwitter from "../../assets/icons/twitter.svg";
 // </div>
 
 const StyledFooter = styled.div`
-  background: #F1F1F1;
-`
+  background: #f1f1f1;
+`;
 const StyledFooterWrapper = styled.div`
   width: 100%;
   max-width: 1480px;
@@ -28,38 +29,38 @@ const StyledFooterWrapper = styled.div`
     padding-left: 10px;
     padding-right: 10px;
   }
-`
+`;
 const StyledFooterItem = styled.div`
-&.item-social {
-  display: flex;
-  flex-wrap:wrap;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-&.item-rights {
-  display: flex;
-  flex-wrap:wrap;
-  justify-content: space-between;
-  margin-top: 56px;
-  .rights {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #777777;
-    line-height: 20px;
+  &.item-social {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
   }
-  .language {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #777777;
-    line-height: 20px;
+  &.item-rights {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 56px;
+    .rights {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #777777;
+      line-height: 20px;
+    }
+    .language {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #777777;
+      line-height: 20px;
+    }
   }
-}
-`
+`;
 const StyledFooterNav = styled.div`
   display: flex;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
   ul {
     padding: 0;
     margin: 0 160px 0 0;
@@ -87,7 +88,7 @@ const StyledFooterNav = styled.div`
       }
     }
   }
-`
+`;
 
 const StyledFooterSocial = styled.div`
   display: flex;
@@ -104,48 +105,73 @@ const StyledFooterSocial = styled.div`
       color: #333333;
     }
   }
-`
+`;
 
 export default function Footer() {
   return (
     <StyledFooter>
       <StyledFooterWrapper>
-        <StyledFooterItem className="item-social">
+        <StyledFooterItem className='item-social'>
           <StyledFooterNav>
             <ul>
-              <li><h3>SUPPORT</h3></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Suggestions</a></li>
-              <li><a href="#">FAQ</a></li>
+              <li>
+                <h3>SUPPORT</h3>
+              </li>
+              <li>
+                <a href='#'>About</a>
+              </li>
+              <li>
+                <a href='#'>Suggestions</a>
+              </li>
+              <li>
+                <a href='#'>FAQ</a>
+              </li>
             </ul>
             <ul>
-              <li><h3>MORE</h3></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms of Service</a></li>
+              <li>
+                <h3>MORE</h3>
+              </li>
+              <li>
+                <a href='#'>Privacy Policy</a>
+              </li>
+              <li>
+                <a href='#'>Terms of Service</a>
+              </li>
             </ul>
           </StyledFooterNav>
           <StyledFooterSocial>
-            <ReactSVG className="icon" src={ IconGithub } />
-            <ReactSVG className="icon" src={ IconTelegram } />
-            <ReactSVG className="icon" src={ IconDiscord } />
-            <ReactSVG className="icon" src={ IconTwitter } />
+            <ReactSVG className='icon' src={IconGithub} />
+            <ReactSVG className='icon' src={IconTelegram} />
+            <ReactSVG className='icon' src={IconDiscord} />
+            <ReactSVG className='icon' src={IconTwitter} />
           </StyledFooterSocial>
         </StyledFooterItem>
-        <StyledFooterItem className="item-rights">
-          <span className="rights">© 2021 MetaNetwork All Rights Reserved </span>
-          <div className="i18n-switch">
-            <Tooltip text={<>
-              <div style={{ display: 'flex' }}>
-                <Button auto size="small">中文</Button>
-                <Button auto size="small">日本语</Button>
-                <Button auto size="small">English</Button>
-              </div>
-            </>}>
-              <span className="language">English</span>
+        <StyledFooterItem className='item-rights'>
+          <span className='rights'>
+            © 2021 MetaNetwork All Rights Reserved{' '}
+          </span>
+          <div className='i18n-switch'>
+            <Tooltip
+              text={
+                <>
+                  <div style={{ display: 'flex' }}>
+                    <Button auto size='small'>
+                      中文
+                    </Button>
+                    <Button auto size='small'>
+                      日本语
+                    </Button>
+                    <Button auto size='small'>
+                      English
+                    </Button>
+                  </div>
+                </>
+              }>
+              <span className='language'>English</span>
             </Tooltip>
           </div>
         </StyledFooterItem>
       </StyledFooterWrapper>
     </StyledFooter>
-  )
+  );
 }
