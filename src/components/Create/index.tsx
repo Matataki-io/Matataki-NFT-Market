@@ -2,7 +2,9 @@ import React, { useState, Fragment } from "react";
 import styled, { css } from 'styled-components';
 import ButtonCustom from '../Button';
 import NFT from '../NFT';
-import { Form, Input, Checkbox } from 'antd';
+import { Form, Input, Checkbox, Upload, message, Button } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
+const { Dragger } = Upload;
 
 interface mediaTypeState {
   [key: string]: string
@@ -15,7 +17,7 @@ interface mediaTypeState {
 }
 
 interface Props {
-	setIsCreate: (value: boolean) => void
+  setIsCreate: (value: boolean) => void
 }
 
 const CreateComponents: React.FC<Props> = ({
@@ -28,6 +30,109 @@ const CreateComponents: React.FC<Props> = ({
   const [formNameAndDescription] = Form.useForm();
   const [formPricingAndFees] = Form.useForm();
 
+  const [mediaData, setMediaData] = useState<object>({})
+
+  const NFTTempImage = {
+    id: 0,
+    type: '', // type is image video audio text file url
+    content: {
+      low: "",
+      medium: "",
+      high: "",
+      thumbnail: "",
+      stream: ""
+    },
+    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+    username: '@subtle-bubble',
+    title: 'Scream Alone',
+    time: Date.now()
+  }
+  const NFTTempVideo = {
+    id: 2504,
+    type: 'video',
+    fields: {
+      low: {
+        stringValue: "https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/low.mp4"
+      },
+      stream: {
+        stringValue: "https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY.m3u8"
+      },
+      medium: {
+        stringValue: "https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/medium.mp4"
+      },
+      high: {
+        stringValue: "https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/high.mp4"
+      },
+      thumbnail: {
+        stringValue: "https://image.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/thumbnail.png"
+      }
+    },
+    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+    username: '@subtle-bubble',
+    title: 'Scream Alone',
+    time: Date.now()
+  }
+  const NFTTempAudio = {
+    id: 2505,
+    type: 'audio',
+    content: {
+      low: "https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264",
+      medium: "https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264",
+      high: "https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264",
+      thumbnail: "https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264",
+      stream: ""
+    },
+    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+    username: '@subtle-bubble',
+    title: 'Scream Alone',
+    time: Date.now()
+  }
+  const NFTTempText = {
+    id: 2506,
+    type: 'text',
+    content: {
+      low: "https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi",
+      medium: "https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi",
+      high: "https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi",
+      thumbnail: "https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi",
+      stream: ""
+    },
+    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+    username: '@subtle-bubble',
+    title: 'Scream Alone',
+    time: Date.now()
+  }
+  const NFTTempFile = {
+    id: 2505,
+    type: 'file',
+    content: {
+      thumbnail: "https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy",
+      low: "https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy",
+      medium: "https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy",
+      high: "https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy",
+      stream: ""
+    },
+    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+    username: '@subtle-bubble',
+    title: 'Scream Alone',
+    time: Date.now()
+  }
+  const NFTTempUrl = {
+    id: 2508,
+    type: 'url',
+    content: {
+      thumbnail: "https://matataki.io",
+      low: "https://matataki.io",
+      medium: "https://matataki.io",
+      high: "https://matataki.io",
+      stream: ""
+    },
+    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
+    username: '@subtle-bubble',
+    title: 'Scream Alone',
+    time: Date.now()
+  }
+
   const mediaPlaceholder: mediaTypeState = {
     image: `You can drag and drop your file here.\n.png, .jpg, and .gif are supported`,
     video: `You can drag and drop your file here.\n.mp4, and .mov are supported`,
@@ -36,6 +141,136 @@ const CreateComponents: React.FC<Props> = ({
     file: `You can drag and drop your file here.\n.pdf, .psd, and .ai are supported`,
     url: ``,
   }
+  function getBase64(img: any, callback: any) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+  const setMediaDataFn = (url: string, type: string) => {
+    let mediaData: object = Object.create(null)
+    if (type === 'image') {
+      let data = Object.assign({}, NFTTempImage)
+      mediaData = Object.assign(data, {
+        type: 'image',
+        content: {
+          low: url,
+          medium: url,
+          high: url,
+          thumbnail: url,
+          stream: ""
+        }
+      })
+    } else if (type === 'video') {
+      let data = Object.assign({}, NFTTempVideo)
+      mediaData = Object.assign(data, {
+        type: 'video',
+        fields: {
+          low: {
+            stringValue: "https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/low.mp4"
+          },
+          stream: {
+            stringValue: "https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY.m3u8"
+          },
+          medium: {
+            stringValue: "https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/medium.mp4"
+          },
+          high: {
+            stringValue: "https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/high.mp4"
+          },
+          thumbnail: {
+            stringValue: "https://image.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/thumbnail.png"
+          }
+        }
+      })
+    } else if (type === 'audio') {
+      let data = Object.assign({}, NFTTempAudio)
+      mediaData = Object.assign(data, {
+        type: 'audio',
+        content: {
+          low: "https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264",
+          medium: "https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264",
+          high: "https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264",
+          thumbnail: "https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264",
+          stream: ""
+        },
+      })
+    } else if (type === 'text') {
+      let data = Object.assign({}, NFTTempText)
+      mediaData = Object.assign(data, {
+        type: 'text',
+        content: {
+          low: "https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi",
+          medium: "https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi",
+          high: "https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi",
+          thumbnail: "https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi",
+          stream: ""
+        },
+      })
+    } else if (type === 'file') {
+      let data = Object.assign({}, NFTTempFile)
+      mediaData = Object.assign(data, {
+        type: 'text',
+        content: {
+          thumbnail: "https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy",
+          low: "https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy",
+          medium: "https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy",
+          high: "https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy",
+          stream: ""
+        },
+      })
+    } else if (type === 'url') {
+      let data = Object.assign({}, NFTTempUrl)
+      mediaData = Object.assign(data, {
+        type: 'url',
+        content: {
+          thumbnail: mediaUrl,
+          low: mediaUrl,
+          medium: mediaUrl,
+          high: mediaUrl,
+          stream: ""
+        },
+      })
+    } else {
+      console.warn('type is undefined', type)
+      return
+    }
+    setMediaData(mediaData)
+  }
+
+  const uploadProps = {
+    name: 'file',
+    multiple: true,
+    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    maxCount: 1,
+    onChange(info: any) {
+      console.log('info', info)
+      const { status } = info.file;
+      if (status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully.`);
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, (imageUrl: any) => {
+          setMediaDataFn(imageUrl, mediaType)
+        })
+      } else if (status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    beforeUpload(file: any) {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!');
+      }
+      const isLt2M = file.size / 1024 / 1024 < 4;
+      if (!isLt2M) {
+        message.error('Image must smaller than 4MB!');
+      }
+      return isJpgOrPng && isLt2M;
+    }
+  };
 
   const onFinish = (values: any) => {
     console.log('Success:', values);
@@ -67,17 +302,19 @@ const CreateComponents: React.FC<Props> = ({
                     {
                       mediaType !== 'url' ?
                         <StyledMultiiMediaInputWrapper>
-                          <p>{mediaPlaceholder[mediaType]}</p>
+                          <Dragger {...uploadProps}>
+                            <p>{mediaPlaceholder[mediaType]}</p>
+                          </Dragger>
                         </StyledMultiiMediaInputWrapper> :
                         // bottom, type is url show
                         <StyledMultiiMediaInputContainer>
                           <label className="label">Enter URL</label>
-                          <input type="text" className="input" value={mediaUrl} onChange={e => setMediaUrl(e.target.value)}></input>
+                          <input type="text" className="input" value={mediaUrl} onChange={e => { setMediaUrl(e.target.value);setMediaDataFn(e.target.value, 'url') }}></input>
                         </StyledMultiiMediaInputContainer>
                     }
                   </StyledMultiiMediaInput>
                   <StyledMultiiMediaActions>
-                    <ButtonCustom color="gray" onClick={ () => setIsCreate(false) }>Back</ButtonCustom>
+                    <ButtonCustom color="gray" onClick={() => setIsCreate(false)}>Back</ButtonCustom>
                     <ButtonCustom color="dark" disabled={false} onClick={() => setStep(1)}>Continue</ButtonCustom>
                   </StyledMultiiMediaActions>
                 </Fragment> :
@@ -147,7 +384,7 @@ const CreateComponents: React.FC<Props> = ({
           <StyledContainerGridCol start="7" end="12">
             <StyledSubtitle>Preview</StyledSubtitle>
             <div style={{ width: '100%', minHeight: '133%' }}>
-              <NFT></NFT>
+              <NFT {...mediaData}></NFT>
             </div>
           </StyledContainerGridCol>
         </StyledContainerGrid>

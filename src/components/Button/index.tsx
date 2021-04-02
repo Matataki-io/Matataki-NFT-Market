@@ -4,7 +4,7 @@ interface ButtonProps {
   children?: React.ReactNode,
   disabled?: boolean,
   onClick?: React.MouseEventHandler<HTMLElement>
-  color?: string
+  color?: "dark" | "gray" | undefined
   className?: string
   type?: "button" | "submit" | "reset" | undefined
 }

@@ -314,9 +314,9 @@ export default function Home() {
           <StyledNfts>
             {
               NFTList.map((i, idx) => (
-                <Link href={ `/${i.id}` }>
+                <Link href={ `/${i.id}` } key={idx}>
                   <a>
-                    <NFT key={idx} {...i}></NFT>
+                    <NFT {...i}></NFT>
                   </a>
                 </Link>
               ))
