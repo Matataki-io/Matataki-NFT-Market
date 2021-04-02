@@ -21,8 +21,14 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
       }
+    },
+    "react": {
+      "version": "detect"
     }
+  },
+  "rules": {
+    "react/prop-types": [0]
   }
 }
