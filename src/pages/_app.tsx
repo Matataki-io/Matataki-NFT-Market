@@ -1,9 +1,10 @@
+// import { useState } from "react";
 import type { AppProps /*, AppContext */ } from "next/app";
 import NextHead from "next/head";
 import { GeistProvider, CssBaseline } from '@geist-ui/react'
 import { light, dark } from "../themes";
 import 'inter-ui/inter.css'
-// import { useState } from "react";
+import 'antd/dist/antd.css';
 
 import "../styles/globals.css";
 import Footer from "../components/Footer";

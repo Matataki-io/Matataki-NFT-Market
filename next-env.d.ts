@@ -1,10 +1,8 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
 
-
-declare module "*.png"
 declare module "*.svg"
-
+declare module "*.png"
 
 interface NFTFiedlsStringValueProps {
   stringValue: string
@@ -27,13 +25,12 @@ interface NFTContentProps {
 }
 
 export interface NFTProps {
-  id: number,
-  type: string
+  id?: number,
+  type?: string
   fields?: NFTFiedlsProps
   content?: NFTContentProps
-  img?: string
-  avatar_url: string
-  username: string,
-  title: string
-  time: string|number
+  avatar_url?: string
+  username?: string,
+  title?: string
+  time?: string|number
 }
