@@ -1,9 +1,6 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
 
-declare module '*.png';
-declare module '*.svg';
-
 interface NFTFiedlsStringValueProps {
   stringValue: string;
 }
