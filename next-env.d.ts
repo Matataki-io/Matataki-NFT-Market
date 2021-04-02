@@ -1,27 +1,24 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
 
-declare module "*.svg"
-declare module "*.png"
-
 interface NFTFiedlsStringValueProps {
-  stringValue: string
+  stringValue: string;
 }
 
 interface NFTFiedlsProps {
-  low: NFTFiedlsStringValueProps
-  stream: NFTFiedlsStringValueProps
-  medium: NFTFiedlsStringValueProps
-  high: NFTFiedlsStringValueProps
-  thumbnail: NFTFiedlsStringValueProps
+  low: NFTFiedlsStringValueProps;
+  stream: NFTFiedlsStringValueProps;
+  medium: NFTFiedlsStringValueProps;
+  high: NFTFiedlsStringValueProps;
+  thumbnail: NFTFiedlsStringValueProps;
 }
 
 interface NFTContentProps {
-  low: string
-  stream: string
-  medium: string
-  high: string
-  thumbnail: string
+  low: string;
+  stream: string;
+  medium: string;
+  high: string;
+  thumbnail: string;
 }
 
 export interface NFTProps {

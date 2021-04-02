@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 import styled from 'styled-components';
-import { Avatar, Button } from '@geist-ui/react'
-import Link from 'next/link'
-import { NFTProps } from '../../../next-env'
-import moment from 'moment'
+import { Avatar, Button } from '@geist-ui/react';
+import Link from 'next/link';
+import { NFTProps } from '../../../next-env';
+import moment from 'moment';
 
 const NFTComponents: React.FC<NFTProps> = ({ id, type, fields, content, avatar_url, username, title, time }) => {
   return (
@@ -75,7 +75,7 @@ const StyledNFTWrapper = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-`
+`;
 const StyledNFTHead = styled.div`
   padding: 20px 15px;
   height: 70px;
@@ -103,7 +103,7 @@ const StyledNFTHead = styled.div`
     margin: 0px;
     color: #000;
   }
-`
+`;
 const StyledNFTContent = styled.div`
   overflow: hidden;
   z-index: 0;
@@ -131,7 +131,7 @@ const StyledNFTContent = styled.div`
     margin: 0px auto;
     object-fit: contain;
   }
-`
+`;
 const StyledNFTFooter = styled.div`
   padding: 15px;
   min-height: 100px;
@@ -152,7 +152,7 @@ const StyledNFTFooter = styled.div`
     white-space: nowrap;
     width: 100%;
   }
-`
+`;
 const StyledNFTFooterUser = styled.div`
   width: 100%;
   display: flex;
@@ -204,6 +204,6 @@ const StyledNFTFooterUser = styled.div`
     align-items: center;
     justify-content: center;
   }
-`
+`;
 
 export default NFTComponents
