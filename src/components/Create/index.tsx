@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import ButtonCustom from '../Button';
 import NFT from '../NFT';
 import { firstUpperCase } from '../../utils/index';
+import { storageUploadToIpfsUrl } from '../../api/api';
 import { Form, Input, Checkbox, Upload, message, Button } from 'antd';
 const { Dragger } = Upload;
 
@@ -67,8 +68,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   }, [mediaType]);
 
   const actionFn = async (file: any): Promise<string> => {
-    await console.log(file);
-    return 'https://api.mttk.net/oss/uploadImage?folder=article';
+    await console.log(file, storageUploadToIpfsUrl);
+    return storageUploadToIpfsUrl;
   };
 
   // 媒体上传 props
@@ -78,10 +79,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     multiple: true,
     action: actionFn,
     data: {
-      token: 'token',
-      xxx: 'xxx',
+      name: `upload-image-${Date.now()}`,
+      description: `upload-image-description-${Date.now()}`,
     },
-    headers: {},
+    method: 'put',
     maxCount: 1,
     onChange(info: any) {
       console.log('info', info);
@@ -96,14 +97,17 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         //   setMediaDataFn(imageUrl, mediaType);
         // });
         if (mediaType === 'image') {
-          if (info.file.response.code === 0) {
-            setMediaDataFn(
-              `https://ssimg.frontenduse.top/${info.file.response.data}`,
-              mediaType
-            );
-          }
+          setMediaDataFn({
+            url: info.file.response.data.MediaData.tokenURI,
+            type: mediaType,
+            storage: info.file.response.data,
+          });
         } else {
-          setMediaDataFn('', mediaType);
+          setMediaDataFn({
+            url: '',
+            type: mediaType,
+            storage: {},
+          });
         }
       } else if (status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
@@ -255,9 +259,17 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     reader.readAsDataURL(img);
   }
 
-  const setMediaDataFn = (url: string, type: string) => {
+  const setMediaDataFn = ({
+    url,
+    type,
+    storage,
+  }: {
+    url: string;
+    type: string;
+    storage: any;
+  }) => {
     console.log('setMediaDataFn url', url);
-    let mediaData: object = Object.create(null);
+    let mediaData: { [key: string]: any } = Object.create(null);
     if (type === 'image') {
       let data = Object.assign({}, NFTTempImage);
       mediaData = Object.assign(data, {
@@ -361,6 +373,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       console.warn('type is undefined', type);
       return;
     }
+    mediaData['storage'] = storage;
     setMediaData(mediaData);
   };
 
@@ -430,7 +443,11 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                         value={mediaUrl}
                         onChange={e => {
                           setMediaUrl(e.target.value);
-                          setMediaDataFn(e.target.value, 'url');
+                          setMediaDataFn({
+                            url: e.target.value,
+                            type: 'url',
+                            storage: {},
+                          });
                         }}></input>
                     </StyledMultiiMediaInputContainer>
                   )}
@@ -693,6 +710,9 @@ const StyledMultiiMediaInputWrapper = styled.div`
   & > span {
     width: 100%;
     height: 100%;
+  }
+  .ant-upload-list {
+    display: none;
   }
 `;
 const StyledMultiiMediaInputContainer = styled.div`
