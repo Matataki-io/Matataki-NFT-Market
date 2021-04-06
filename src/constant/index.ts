@@ -37,3 +37,7 @@ export const LATEST_METADATA_VERSION = MetadataVersion.Apr2021;
 
 const MegaByte = 1024 * 1024;
 export const MAX_FILE_SIZE = 10 * MegaByte;
+
+export const MINUTE = 1000 * 60;
+export const AppName = 'VICKREY NFT';
+export const MessageForLogin = `${AppName} uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address`;
