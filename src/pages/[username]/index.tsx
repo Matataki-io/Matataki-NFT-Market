@@ -82,8 +82,6 @@ const UserInfoPage: React.FC = () => {
         {
           id: 1065,
           type: 'image',
-          img:
-            'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4', // 暂时先展示 img
           content: {
             low:
               'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
