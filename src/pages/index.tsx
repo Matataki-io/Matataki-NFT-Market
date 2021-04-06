@@ -1,9 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Button, ButtonDropdown, Divider, Grid, Text, Tooltip } from '@geist-ui/react'
+import React, { useState, useEffect } from 'react';
+import {
+  Button,
+  ButtonDropdown,
+  Divider,
+  Grid,
+  Text,
+  Tooltip,
+} from '@geist-ui/react';
 // import Banner from '../components/Banner';
 import styled from 'styled-components';
-import Link from "next/link";
-import { NFTProps } from '../../next-env'
+import Link from 'next/link';
+import { NFTProps } from '../../next-env';
 
 import Creators from '../components/Creators';
 import About from '../components/About';
@@ -11,7 +18,7 @@ import NFT from '../components/NFT';
 
 import InfiniteScroll from 'react-infinite-scroller';
 
-export default function Home() {
+const Home: React.FC<void> = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
   const [loading, setLoading] = useState<Boolean>(false);
@@ -326,8 +333,7 @@ export default function Home() {
 
   return (
     <StyledWrapper>
-      {/* <Banner></Banner> */}
-      <StyledModule className="nfts">
+      <StyledModule className='nfts'>
         <StyledModuleHead>
           <StyledTitle>
             Upcoming NFTs<span>New</span>
@@ -345,7 +351,11 @@ export default function Home() {
           }>
           <StyledNfts>
             {NFTList.map((i, idx) => (
-              <NFT key={idx} {...i}></NFT>
+              <Link href={`/${i.id}`} key={idx}>
+                <a>
+                  <NFT {...i}></NFT>
+                </a>
+              </Link>
             ))}
           </StyledNfts>
         </InfiniteScroll>
@@ -386,7 +396,7 @@ export default function Home() {
       </StyledModule>
     </StyledWrapper>
   );
-}
+};
 
 const StyledWrapper = styled.div`
   /* max-width: 1480px; */
@@ -504,3 +514,5 @@ const StyledNfts = styled.div`
   gap: 50px 30px;
   margin-top: 48px;
 `;
+
+export default Home;
