@@ -7,6 +7,8 @@ import { storageUploadToIpfsUrl } from '../../api/api';
 import { Form, Input, Checkbox, Upload, message, Button } from 'antd';
 const { Dragger } = Upload;
 
+import { UploadProps } from 'antd/lib/upload/interface';
+
 interface mediaTypeState {
   [key: string]: string;
   image: string;
@@ -40,7 +42,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     url: ``,
   };
   // 媒体上传 accept
-  const mediaAccept = useMemo(() => {
+  const mediaAccept: string = useMemo(() => {
     let list: { [key: string]: string } = {
       image: 'image/jpeg, image/png, image/gif',
       video: 'video/mp4, video/quicktime',
@@ -67,22 +69,22 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     return list[mediaType] || 2;
   }, [mediaType]);
 
-  const actionFn = async (file: any): Promise<string> => {
-    await console.log(file, storageUploadToIpfsUrl);
-    return storageUploadToIpfsUrl;
-  };
+  // const actionFn = async (file: File): Promise<string> => {
+  //   await console.log(file, storageUploadToIpfsUrl);
+  //   return storageUploadToIpfsUrl;
+  // };
 
   // 媒体上传 props
-  const uploadProps = {
+  const uploadProps: UploadProps = {
     accept: mediaAccept,
     name: 'file',
     multiple: true,
-    action: actionFn,
+    action: storageUploadToIpfsUrl,
     data: {
       name: `upload-image-${Date.now()}`,
       description: `upload-image-description-${Date.now()}`,
     },
-    method: 'put',
+    method: 'PUT',
     maxCount: 1,
     onChange(info: any) {
       console.log('info', info);
@@ -113,7 +115,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-    beforeUpload(file: any) {
+    beforeUpload(file: File): boolean {
       console.log('file', file);
       let mediaAcceptList = mediaAccept.split(',');
       const mediaAcceptResult = mediaAcceptList.find(
