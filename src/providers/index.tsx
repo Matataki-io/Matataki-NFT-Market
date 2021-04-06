@@ -12,8 +12,9 @@ const Providers: React.FC = ({ children }) => (
       chainId={currentChainId}
       connectors={{
         injected: {},
-        // @todo: use constant for `rpcUrl`
-        // walletconnect: { rpcUrl: '' }
+        walletconnect: {
+          rpcUrl: process.env.NEXT_PUBLIC_USE_WALLET_WC_RPC as string,
+        },
       }}>
       <GeistProvider themes={[light, dark]}>
         <CssBaseline />
