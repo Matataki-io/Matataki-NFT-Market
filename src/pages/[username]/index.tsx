@@ -47,12 +47,16 @@ const UserInfoPage: React.FC = () => {
       const exampleNFTListData: Array<NFTProps> = [
         {
           id: 2020,
-          type: 'image', // type is image video audio text file url
+          type: 'image',
           content: {
-            low: 'https://placeimg.com/700/340/arch',
-            medium: 'https://placeimg.com/700/340/arch',
-            high: 'https://placeimg.com/700/340/arch',
-            thumbnail: 'https://placeimg.com/700/340/arch',
+            low:
+              'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
+            medium:
+              'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
+            high:
+              'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
+            thumbnail:
+              'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
             stream: '',
           },
           avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
@@ -80,10 +84,8 @@ const UserInfoPage: React.FC = () => {
           time: Date.now(),
         },
         {
-          id: 1065,
+          id: 2025,
           type: 'image',
-          img:
-            'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4', // 暂时先展示 img
           content: {
             low:
               'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
