@@ -6,13 +6,30 @@ export const SUPPORTED_MIME_TYPES = [
   'image/png',
   'audio/mp4',
   'audio/mpeg',
+  'audio/mp3',
+  'audio/vnd.wav',
   'audio/wav',
+  'audio/vnd.wave',
+  'audio/wave',
+  'audio/x-wav',
   'text/markdown',
   'text/x-markdown', // .md
   'text/plain', // .txt
   'video/mp4', // mp4
+  'image/vnd.adobe.photoshop',
+  'application/pdf',
+  'application/postscript',
 ];
 
+export const typeAndMime: { [key: string]: string } = {
+  image: 'image/jpeg, image/png, image/gif',
+  video: 'video/mp4, video/quicktime',
+  audio:
+    'audio/mpeg, audio/mp3, audio/vnd.wav, audio/wav, audio/vnd.wave, audio/wave, audio/x-wav',
+  text: 'text/markdown, text/x-markdown, text/plain',
+  file: 'image/vnd.adobe.photoshop, application/pdf, application/postscript',
+  url: '',
+};
 export enum MetadataVersion {
   Apr2021 = 'meta-nft-20210401',
 }
