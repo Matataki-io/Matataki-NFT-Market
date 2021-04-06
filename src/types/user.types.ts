@@ -1,3 +1,5 @@
+import { Media } from '../blockchain/contracts/Media';
+
 export type MatatakiUserStat = {
   id: number;
   username: string;
@@ -27,3 +29,14 @@ export type MatatakiUserStat = {
   referral_amount: number;
   bookmarks: number;
 };
+
+export interface User {
+  id: number;
+  address: string;
+  username: string;
+  avatar: string;
+  nickname: string;
+  bio: string;
+  createdMedia: Media[];
+  ownedMedia: Media[];
+}
