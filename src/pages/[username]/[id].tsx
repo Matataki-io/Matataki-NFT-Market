@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Page from '../../components/Page';
@@ -12,8 +12,75 @@ import MediaOwnershipInfo, {
   MediaOwnership,
 } from '../../components/MediaOwnershipInfo';
 import ProofOfAuthenticity from '../../components/ProofOfAuthenticity';
+import {
+  getMediaById,
+  getMediaList,
+  getMediaMetadata,
+  MediaListItem,
+  MediaMetadata,
+} from '../../api/api';
+import {
+  GetStaticPathsContext,
+  GetStaticPathsResult,
+  GetStaticPropsContext,
+  GetStaticPropsResult,
+} from 'next';
+import { getTokenOnScan } from '../../utils/token';
 
-const MediaPage: React.FC = () => {
+export type MediaPagePost = {
+  id: number;
+  backendData: MediaListItem;
+  metadata: MediaMetadata;
+};
+
+export interface MediaPageProps {
+  post?: MediaPagePost;
+  isError?: boolean;
+}
+
+export type RealPostInfo = {
+  post: MediaPagePost;
+  ownership: MediaOwnership;
+  scanLink: string;
+  ipfsLink: string;
+};
+
+const initRealPostInfo: RealPostInfo = {
+  post: {
+    id: -1,
+    backendData: {
+      id: -1,
+      isBurn: false,
+      tokenURI: '',
+      metadataURI: '',
+      contentHash: '',
+      metadataHash: '',
+      creationTx: '',
+    },
+    metadata: {
+      description: '',
+      mimeType: '',
+      name: '',
+      version: '',
+    },
+  },
+  ownership: {
+    creator: {
+      avatar: '',
+      username: '',
+      isVerified: false,
+    },
+    owner: {
+      avatar: '',
+      username: '',
+      isVerified: false,
+    },
+  },
+  scanLink: '',
+  ipfsLink: '',
+};
+
+const MediaPage: React.FC<MediaPageProps> = ({ post, isError }) => {
   const router = useRouter();
   const { id } = router.query;
   const switchOptions = ['Media', 'Market'] as const;
@@ -23,23 +90,51 @@ const MediaPage: React.FC = () => {
     console.log(o.option);
   };
 
-  const exampleMediaOwnership: MediaOwnership = {
-    creator: {
-      avatar:
-        'https://ipfs.fleek.co/ipfs/bafybeib6gfnnniiapr7haxeo7ao36ffzcvm6xwjvsl4sfzvf2p7yxkwyei',
-      username: 'kikillo',
-      isVerified: true,
-    },
-    owner: {
-      avatar: '',
-      username: 'mattjrob',
-      isVerified: true,
-    },
-  };
-  const scanLink =
-    'https://etherscan.io/token/0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7?a=2284';
-  const ipfsLink =
-    'https://ipfs.fleek.co/ipfs/bafybeichszqqkvvqpy53cwg6hpv623m2jf6xerz66cxdnxaq7siksnlo2i';
+  const [postInfo, setPostInfo] = useState<RealPostInfo>(initRealPostInfo);
+
+  useEffect(() => {
+    const fetchData = async (): Promise<void> => {
+      try {
+        // Call an external API endpoint to get posts
+        const { data: backendData } = await getMediaById(id as string);
+        const { data: metadata } = await getMediaMetadata(
+          backendData.metadataURI
+        );
+        const scanLink = getTokenOnScan(backendData.id);
+        const ipfsLink = backendData.tokenURI;
+
+        const realPostInfo: RealPostInfo = {
+          ...post,
+          post: {
+            id: Number(backendData.id),
+            backendData,
+            metadata,
+          },
+          ownership: {
+            creator: {
+              avatar:
+                'https://ipfs.fleek.co/ipfs/bafybeib6gfnnniiapr7haxeo7ao36ffzcvm6xwjvsl4sfzvf2p7yxkwyei',
+              username: 'kikillo',
+              isVerified: true,
+            },
+            owner: {
+              avatar: '',
+              username: 'mattjrob',
+              isVerified: true,
+            },
+          },
+          scanLink,
+          ipfsLink,
+        };
+
+        setPostInfo(realPostInfo);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, [id, post]);
 
   return (
     <Page>
@@ -49,7 +144,7 @@ const MediaPage: React.FC = () => {
             <StyledMarketContainer>
               <MediaViewer
                 type='image'
-                src='https://ipfs.fleek.co/ipfs/bafybeichszqqkvvqpy53cwg6hpv623m2jf6xerz66cxdnxaq7siksnlo2i'
+                src={postInfo.post.backendData.tokenURI}
               />
               <SwitchOptions
                 options={switchOptions}
@@ -58,19 +153,70 @@ const MediaPage: React.FC = () => {
             </StyledMarketContainer>
           </StyledContentLeft>
           <StyledContentRight>
-            <StyledMediaTitle>Oktarpia 1</StyledMediaTitle>
+            <StyledMediaTitle>{postInfo.post.metadata.name}</StyledMediaTitle>
             <MediaMarketInfo value={20} />
             <MediaTradeActions />
-            <StyledAuthor>by Kikillo®</StyledAuthor>
-            <MediaOwnershipInfo info={exampleMediaOwnership} />
-            <ProofOfAuthenticity scanLink={scanLink} ipfsLink={ipfsLink} />
+            <StyledAuthor>
+              {postInfo.post.metadata.name} by{' '}
+              {postInfo.ownership.creator?.username}
+            </StyledAuthor>
+            <StyledAuthor>{postInfo.post.metadata.description}</StyledAuthor>
+            <MediaOwnershipInfo info={postInfo.ownership} />
+            <ProofOfAuthenticity
+              scanLink={postInfo.scanLink}
+              ipfsLink={postInfo.ipfsLink}
+            />
           </StyledContentRight>
         </StyledContentWrapper>
       </StyledWrapper>
-      <p>{id}</p>
     </Page>
   );
 };
+
+export type UrlQueryParams = {
+  id: string;
+  username: string;
+};
+
+// This function gets called at build time
+export async function getStaticPaths(): Promise<
+  GetStaticPathsResult<UrlQueryParams>
+> {
+  const { data } = await getMediaList();
+
+  // Get the paths we want to pre-render based on posts
+  const paths = data.map(post => ({
+    params: { id: String(post.id), username: 'jah' },
+  }));
+
+  // We'll pre-render only these paths at build time.
+  return { paths, fallback: true };
+}
+
+// This function gets called at build time
+export async function getStaticProps(
+  context: GetStaticPropsContext<UrlQueryParams>
+): Promise<GetStaticPropsResult<MediaPageProps>> {
+  const { id } = context.params as UrlQueryParams;
+  try {
+    // Call an external API endpoint to get posts
+    const { data: backendData } = await getMediaById(id);
+    const { data: metadata } = await getMediaMetadata(backendData.metadataURI);
+
+    return {
+      props: {
+        post: {
+          id: Number(id),
+          backendData,
+          metadata,
+        },
+        isError: false,
+      },
+    };
+  } catch (error) {
+    return { props: { isError: true } };
+  }
+}
 
 const StyledWrapper = styled.div`
   box-sizing: border-box;
