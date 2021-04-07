@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Logo from '../../assets/images/logo.png';
 import Button from '../Button/index';
 import { useWallet } from 'use-wallet';
+import UserDropdown from '../UserDropdown';
 
 interface HeaderProps {
   isCreate: Boolean;
@@ -54,9 +55,14 @@ const HeaderComponents: React.FC<HeaderProps> = ({ isCreate, setIsCreate }) => {
             <StyledHeaderContainer>
               <StyledHeaderSearch placeholder='Search NFTs' />
               <div>
-                <a href='https://matataki.io/'>
+                <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
                   <Button className='hover-underline'>Learn</Button>
                 </a>
+                <UserDropdown>
+                  <StyledHeaderUserdorpdownContainer>
+                    <Button color='gray'>@xiaotian</Button>
+                  </StyledHeaderUserdorpdownContainer>
+                </UserDropdown>
                 {wallet.status === 'connected' ? (
                   <>
                     <Button color='gray'>{shortedWalletAccount}</Button>
@@ -165,4 +171,7 @@ const StyledHeaderSearch = styled(Input)`
 const StyledHeaderContainer = styled.div`
   display: flex;
   align-items: center;
+`;
+const StyledHeaderUserdorpdownContainer = styled.div`
+  display: inline-block;
 `;
