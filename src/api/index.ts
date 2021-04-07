@@ -21,7 +21,7 @@ client.interceptors.request.use(
 client.interceptors.response.use(
   response => {
     // if(loadingInstance) loadingInstance.close();
-    return response.data;
+    return response;
   },
   error => {
     // loadingInstance.close()
