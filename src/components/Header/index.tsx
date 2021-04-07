@@ -58,14 +58,13 @@ const HeaderComponents: React.FC<HeaderProps> = ({ isCreate, setIsCreate }) => {
                 <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
                   <Button className='hover-underline'>Learn</Button>
                 </a>
-                <UserDropdown>
-                  <StyledHeaderUserdorpdownContainer>
-                    <Button color='gray'>@xiaotian</Button>
-                  </StyledHeaderUserdorpdownContainer>
-                </UserDropdown>
                 {wallet.status === 'connected' ? (
                   <>
-                    <Button color='gray'>{shortedWalletAccount}</Button>
+                    <UserDropdown>
+                      <StyledHeaderUserdorpdownContainer>
+                        <Button color='gray'>{shortedWalletAccount}</Button>
+                      </StyledHeaderUserdorpdownContainer>
+                    </UserDropdown>
                     <Button color='dark' onClick={() => wallet.reset()}>
                       Disconnect
                     </Button>
