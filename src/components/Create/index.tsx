@@ -81,8 +81,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     multiple: true,
     action: storageUploadToIpfsUrl,
     data: {
-      name: `upload-image-${Date.now()}`,
-      description: `upload-image-description-${Date.now()}`,
+      name: formNameAndDescription.getFieldsValue().name,
+      description: formNameAndDescription.getFieldsValue().description,
     },
     method: 'PUT',
     maxCount: 1,
@@ -379,12 +379,181 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     setMediaData(mediaData);
   };
 
-  const onFinish = (values: any) => {
+  const onFinishInfo = (values: any) => {
     console.log('Success:', values);
+
+    // let formalue = formNameAndDescription.getFieldsValue();
+    // console.log('formValue', formValue);
+
+    setStep(1);
   };
 
-  const onFinishFailed = (errorInfo: any) => {
+  const onFinishFailedInfo = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
+  };
+
+  const Step0: React.FC = () => {
+    return (
+      <Fragment>
+        <StyledSubtitle>Add information</StyledSubtitle>
+        <StyledMultiiMediaForm
+          name='nameAndDescription'
+          form={formNameAndDescription}
+          layout='vertical'
+          initialValues={{}}
+          onFinish={onFinishInfo}
+          onFinishFailed={onFinishFailedInfo}>
+          <StyledMultiiMediaFormItem className='input'>
+            <Form.Item
+              label='Name'
+              name='name'
+              rules={[{ required: true, message: 'Name is required' }]}>
+              <Input placeholder='Enter Name' className='input-name' />
+            </Form.Item>
+
+            <Form.Item
+              label='Description'
+              name='description'
+              rules={[{ required: true, message: 'Description is required' }]}>
+              <Input.TextArea
+                placeholder='Enter Description'
+                className='input-textarea'
+              />
+            </Form.Item>
+          </StyledMultiiMediaFormItem>
+          <StyledMultiiMediaFormItem className='footer'>
+            <ButtonCustom color='gray' onClick={() => setIsCreate(false)}>
+              Back
+            </ButtonCustom>
+            <ButtonCustom color='dark' disabled={false} type='submit'>
+              Continue
+            </ButtonCustom>
+          </StyledMultiiMediaFormItem>
+        </StyledMultiiMediaForm>
+      </Fragment>
+    );
+  };
+
+  const Step1: React.FC = () => {
+    return (
+      <Fragment>
+        <StyledSubtitle>Upload</StyledSubtitle>
+        <StyledMultiiMediaInput>
+          <StyledMultiiMediaInputHead>
+            <StyledMultiiMediaInputHeadTab
+              actions={mediaType === 'image'}
+              onClick={() => setMediaType('image')}>
+              Image
+            </StyledMultiiMediaInputHeadTab>
+            <StyledMultiiMediaInputHeadTab
+              actions={mediaType === 'video'}
+              onClick={() => setMediaType('video')}>
+              Video
+            </StyledMultiiMediaInputHeadTab>
+            <StyledMultiiMediaInputHeadTab
+              actions={mediaType === 'audio'}
+              onClick={() => setMediaType('audio')}>
+              Audio
+            </StyledMultiiMediaInputHeadTab>
+            <StyledMultiiMediaInputHeadTab
+              actions={mediaType === 'text'}
+              onClick={() => setMediaType('text')}>
+              Text
+            </StyledMultiiMediaInputHeadTab>
+            <StyledMultiiMediaInputHeadTab
+              actions={mediaType === 'file'}
+              onClick={() => setMediaType('file')}>
+              File
+            </StyledMultiiMediaInputHeadTab>
+            <StyledMultiiMediaInputHeadTab
+              actions={mediaType === 'url'}
+              onClick={() => setMediaType('url')}>
+              URL
+            </StyledMultiiMediaInputHeadTab>
+          </StyledMultiiMediaInputHead>
+          {mediaType !== 'url' ? (
+            <StyledMultiiMediaInputWrapper>
+              <Dragger {...uploadProps} className='upload'>
+                <p>{mediaPlaceholder[mediaType]}</p>
+              </Dragger>
+            </StyledMultiiMediaInputWrapper>
+          ) : (
+            // bottom, type is url show
+            <StyledMultiiMediaInputContainer>
+              <label className='label'>Enter URL</label>
+              <input
+                type='text'
+                className='input'
+                value={mediaUrl}
+                onChange={e => {
+                  setMediaUrl(e.target.value);
+                  setMediaDataFn({
+                    url: e.target.value,
+                    type: 'url',
+                    storage: {},
+                  });
+                }}></input>
+            </StyledMultiiMediaInputContainer>
+          )}
+        </StyledMultiiMediaInput>
+        <StyledMultiiMediaActions>
+          <ButtonCustom color='gray' onClick={() => setStep(0)}>
+            Back
+          </ButtonCustom>
+          <ButtonCustom
+            color='dark'
+            disabled={false}
+            onClick={() => setStep(1)}>
+            Continue
+          </ButtonCustom>
+        </StyledMultiiMediaActions>
+      </Fragment>
+    );
+  };
+
+  const Step2: React.FC = () => {
+    return (
+      <Fragment>
+        <StyledSubtitle>Pricing & fees</StyledSubtitle>
+        <StyledMultiiMediaForm
+          name='pricingAndFees'
+          form={formPricingAndFees}
+          layout='vertical'
+          initialValues={{}}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}>
+          <StyledMultiiMediaFormItem className='input'>
+            <Form.Item
+              label='Resale royalty'
+              name='name'
+              rules={[
+                {
+                  required: true,
+                  message: 'Creator share percentage is required',
+                },
+              ]}>
+              <StyledMultiiMediaFormItemText>
+                A percentage fee that you receive for all secondary sales of
+                this piece.
+              </StyledMultiiMediaFormItemText>
+              <Input placeholder='Enter percentage' className='input-name' />
+            </Form.Item>
+          </StyledMultiiMediaFormItem>
+          <StyledMultiiMediaFormItem className='footer'>
+            <ButtonCustom color='gray' onClick={() => setStep(1)}>
+              Back
+            </ButtonCustom>
+            <ButtonCustom
+              color='dark'
+              disabled={false}
+              onClick={() => alert('success')}
+              type='submit'>
+              Continue
+            </ButtonCustom>
+          </StyledMultiiMediaFormItem>
+        </StyledMultiiMediaForm>
+      </Fragment>
+    );
   };
 
   return (
@@ -394,166 +563,11 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           <StyledContainerGridCol start='0' end='6'>
             <StyledTitle>Create Media</StyledTitle>
             {step === 0 ? (
-              <Fragment>
-                <StyledSubtitle>Upload</StyledSubtitle>
-                <StyledMultiiMediaInput>
-                  <StyledMultiiMediaInputHead>
-                    <StyledMultiiMediaInputHeadTab
-                      actions={mediaType === 'image'}
-                      onClick={() => setMediaType('image')}>
-                      Image
-                    </StyledMultiiMediaInputHeadTab>
-                    <StyledMultiiMediaInputHeadTab
-                      actions={mediaType === 'video'}
-                      onClick={() => setMediaType('video')}>
-                      Video
-                    </StyledMultiiMediaInputHeadTab>
-                    <StyledMultiiMediaInputHeadTab
-                      actions={mediaType === 'audio'}
-                      onClick={() => setMediaType('audio')}>
-                      Audio
-                    </StyledMultiiMediaInputHeadTab>
-                    <StyledMultiiMediaInputHeadTab
-                      actions={mediaType === 'text'}
-                      onClick={() => setMediaType('text')}>
-                      Text
-                    </StyledMultiiMediaInputHeadTab>
-                    <StyledMultiiMediaInputHeadTab
-                      actions={mediaType === 'file'}
-                      onClick={() => setMediaType('file')}>
-                      File
-                    </StyledMultiiMediaInputHeadTab>
-                    <StyledMultiiMediaInputHeadTab
-                      actions={mediaType === 'url'}
-                      onClick={() => setMediaType('url')}>
-                      URL
-                    </StyledMultiiMediaInputHeadTab>
-                  </StyledMultiiMediaInputHead>
-                  {mediaType !== 'url' ? (
-                    <StyledMultiiMediaInputWrapper>
-                      <Dragger {...uploadProps} className='upload'>
-                        <p>{mediaPlaceholder[mediaType]}</p>
-                      </Dragger>
-                    </StyledMultiiMediaInputWrapper>
-                  ) : (
-                    // bottom, type is url show
-                    <StyledMultiiMediaInputContainer>
-                      <label className='label'>Enter URL</label>
-                      <input
-                        type='text'
-                        className='input'
-                        value={mediaUrl}
-                        onChange={e => {
-                          setMediaUrl(e.target.value);
-                          setMediaDataFn({
-                            url: e.target.value,
-                            type: 'url',
-                            storage: {},
-                          });
-                        }}></input>
-                    </StyledMultiiMediaInputContainer>
-                  )}
-                </StyledMultiiMediaInput>
-                <StyledMultiiMediaActions>
-                  <ButtonCustom color='gray' onClick={() => setIsCreate(false)}>
-                    Back
-                  </ButtonCustom>
-                  <ButtonCustom
-                    color='dark'
-                    disabled={false}
-                    onClick={() => setStep(1)}>
-                    Continue
-                  </ButtonCustom>
-                </StyledMultiiMediaActions>
-              </Fragment>
+              <Step0></Step0>
             ) : step === 1 ? (
-              <Fragment>
-                <StyledSubtitle>Add information</StyledSubtitle>
-                <StyledMultiiMediaForm
-                  name='nameAndDescription'
-                  form={formNameAndDescription}
-                  layout='vertical'
-                  initialValues={{}}
-                  onFinish={onFinish}
-                  onFinishFailed={onFinishFailed}>
-                  <StyledMultiiMediaFormItem className='input'>
-                    <Form.Item
-                      label='Name'
-                      name='name'
-                      rules={[{ required: true, message: 'Name is required' }]}>
-                      <Input placeholder='Enter Name' className='input-name' />
-                    </Form.Item>
-
-                    <Form.Item
-                      label='Description'
-                      name='description'
-                      rules={[
-                        { required: true, message: 'Description is required' },
-                      ]}>
-                      <Input.TextArea
-                        placeholder='Enter Description'
-                        className='input-textarea'
-                      />
-                    </Form.Item>
-                  </StyledMultiiMediaFormItem>
-                  <StyledMultiiMediaFormItem className='footer'>
-                    <ButtonCustom color='gray' onClick={() => setStep(0)}>
-                      Back
-                    </ButtonCustom>
-                    <ButtonCustom
-                      color='dark'
-                      disabled={false}
-                      onClick={() => setStep(2)}
-                      type='submit'>
-                      Continue
-                    </ButtonCustom>
-                  </StyledMultiiMediaFormItem>
-                </StyledMultiiMediaForm>
-              </Fragment>
+              <Step1></Step1>
             ) : step === 2 ? (
-              <Fragment>
-                <StyledSubtitle>Pricing & fees</StyledSubtitle>
-                <StyledMultiiMediaForm
-                  name='pricingAndFees'
-                  form={formPricingAndFees}
-                  layout='vertical'
-                  initialValues={{}}
-                  onFinish={onFinish}
-                  onFinishFailed={onFinishFailed}>
-                  <StyledMultiiMediaFormItem className='input'>
-                    <Form.Item
-                      label='Resale royalty'
-                      name='name'
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Creator share percentage is required',
-                        },
-                      ]}>
-                      <StyledMultiiMediaFormItemText>
-                        A percentage fee that you receive for all secondary
-                        sales of this piece.
-                      </StyledMultiiMediaFormItemText>
-                      <Input
-                        placeholder='Enter percentage'
-                        className='input-name'
-                      />
-                    </Form.Item>
-                  </StyledMultiiMediaFormItem>
-                  <StyledMultiiMediaFormItem className='footer'>
-                    <ButtonCustom color='gray' onClick={() => setStep(1)}>
-                      Back
-                    </ButtonCustom>
-                    <ButtonCustom
-                      color='dark'
-                      disabled={false}
-                      onClick={() => alert('success')}
-                      type='submit'>
-                      Continue
-                    </ButtonCustom>
-                  </StyledMultiiMediaFormItem>
-                </StyledMultiiMediaForm>
-              </Fragment>
+              <Step2></Step2>
             ) : (
               ''
             )}
