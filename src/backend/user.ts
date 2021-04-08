@@ -1,16 +1,23 @@
 import { default as BACKEND_CLIENT } from './client';
 import { PaginationResult } from '../types/PaginationResult';
 import { User } from '../types/User.types';
+import { setCookie } from '../utils/cookie';
 
-export async function loginWithPermit(permit: {
+interface SignInPermit {
   signature: string;
   message: string;
-}) {
+  from: string;
+}
+
+export async function loginWithPermit(permit: SignInPermit) {
   const { data } = await BACKEND_CLIENT.post<{ data: string }>(
     '/auth/login',
     permit
   );
-  return data.data;
+  let token = data.data;
+  setCookie('token', token);
+  console.log('token is', token);
+  return token;
 }
 
 export async function checkIsWalletRegistered(wallet: string) {

@@ -4,6 +4,7 @@ import { useWallet } from 'use-wallet';
 import ButtonCustom from '../Button/index';
 import { shortedWalletAccount } from '../../utils/index';
 import { updateUser } from '../../backend/user';
+import { useRouter } from 'next/router';
 
 const { TextArea } = Input;
 import styled from 'styled-components';
@@ -24,6 +25,8 @@ type RequiredMark = boolean | 'optional';
 
 const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
   const [formProfile] = Form.useForm();
+  const router = useRouter();
+
   // 可选
   const [requiredMark, setRequiredMarkType] = useState<RequiredMark>(
     'optional'
@@ -74,6 +77,7 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
         if (res.data.code === 200) {
           console.log('reload...');
           setIsProfile(false);
+          router.push(`/${username}`);
         }
       } else {
         // 注册
