@@ -1,5 +1,9 @@
 import { BigNumber } from 'ethers';
 
+/**
+ * Zora 的 Decimal 库
+ * 搭配 Zora 系自定义 `Decimal` 类型使用
+ */
 export default class Decimal {
   static new(value: number) {
     const decimalPlaces = countDecimals(value);
