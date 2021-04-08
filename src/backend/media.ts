@@ -1,23 +1,34 @@
-import { Media } from '../blockchain/contracts/Media';
-import { BACKEND_CLIENT } from '../constant';
+import { Media, MediaMetadata } from '../types/Media.entity';
+import { backendClient } from './client';
 import { PaginationResult } from '../types/PaginationResult';
-
-export async function listMedias({ page = 1, limit = 9 }) {
-  const { data } = await BACKEND_CLIENT.get<PaginationResult<Media>>('/media', {
-    params: { page, limit },
-  });
-  return data;
-}
 
 /**
  * 主要是为了 SSG 预先渲染
  */
-export async function listHotMedia() {
-  const { data } = await BACKEND_CLIENT.get<Media[]>('/media/hot');
+export async function getHotMediaList(): Promise<Array<Media>> {
+  const { data } = await backendClient.get<Array<Media>>('/media/hot');
   return data;
 }
 
-export async function getMedia(id: number) {
-  const { data } = await BACKEND_CLIENT.get<Media>(`/media/${id}`);
+export async function getMediaList(
+  page = 1,
+  limit = 9
+): Promise<PaginationResult<Media>> {
+  const { data } = await backendClient.get<PaginationResult<Media>>('/media', {
+    params: {
+      page,
+      limit,
+    },
+  });
+  return data;
+}
+
+export async function getMediaById(id: string | number): Promise<Media> {
+  const { data } = await backendClient.get<Media>(`/media/${id}`);
+  return data;
+}
+
+export async function getMediaMetadata(url: string): Promise<MediaMetadata> {
+  const { data } = await backendClient.get<MediaMetadata>(url);
   return data;
 }

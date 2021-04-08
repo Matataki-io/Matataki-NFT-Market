@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useWallet } from 'use-wallet';
 import { ethers, utils } from 'ethers';
-import { default as BACKEND_CLIENT } from '../api/index';
+import { default as BACKEND_CLIENT } from '../backend/client';
 import { MessageForLogin } from '../constant';
 import { checkIsWalletRegistered, registerUser } from '../backend/user';
-import { User } from '../types/user.types';
+import { User } from '../types/User.types';
 
 interface SignInPermit {
   signature: string;
