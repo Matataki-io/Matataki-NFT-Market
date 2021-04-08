@@ -1,4 +1,4 @@
-import { BACKEND_CLIENT } from '../constant';
+import { default as BACKEND_CLIENT } from '../api/index';
 import { PaginationResult } from '../types/PaginationResult';
 import { User } from '../types/user.types';
 
