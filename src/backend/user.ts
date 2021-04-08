@@ -49,3 +49,8 @@ export async function listUsers({ page = 1, limit = 9 }) {
   });
   return data;
 }
+
+export async function getUser(username: string) {
+  const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}`);
+  return data;
+}
