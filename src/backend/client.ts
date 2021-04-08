@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const client = axios.create({
+const backendClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
   timeout: 1000 * 60,
   headers: {},
@@ -8,7 +8,7 @@ const client = axios.create({
 });
 
 // Just copy from matataki-fe
-client.interceptors.request.use(
+backendClient.interceptors.request.use(
   config => {
     return config;
   },
@@ -18,7 +18,7 @@ client.interceptors.request.use(
   }
 );
 
-client.interceptors.response.use(
+backendClient.interceptors.response.use(
   response => {
     // if(loadingInstance) loadingInstance.close();
     return response;
@@ -41,4 +41,5 @@ client.interceptors.response.use(
   }
 );
 
-export default client;
+export default backendClient;
+export { backendClient };

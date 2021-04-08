@@ -16,20 +16,18 @@ import {
   getMediaById,
   getMediaList,
   getMediaMetadata,
-  MediaListItem,
-  MediaMetadata,
-} from '../../api/api';
+} from '../../backend/media';
 import {
-  GetStaticPathsContext,
   GetStaticPathsResult,
   GetStaticPropsContext,
   GetStaticPropsResult,
 } from 'next';
 import { getTokenOnScan } from '../../utils/token';
+import { Media, MediaMetadata } from '../../types/Media.entity';
 
 export type MediaPagePost = {
   id: number;
-  backendData: MediaListItem;
+  backendData: Media;
   metadata: MediaMetadata;
 };
 
@@ -96,10 +94,8 @@ const MediaPage: React.FC<MediaPageProps> = ({ post, isError }) => {
     const fetchData = async (): Promise<void> => {
       try {
         // Call an external API endpoint to get posts
-        const { data: backendData } = await getMediaById(id as string);
-        const { data: metadata } = await getMediaMetadata(
-          backendData.metadataURI
-        );
+        const backendData = await getMediaById(id as string);
+        const metadata = await getMediaMetadata(backendData.metadataURI);
         const scanLink = getTokenOnScan(backendData.id);
         const ipfsLink = backendData.tokenURI;
 
@@ -112,14 +108,11 @@ const MediaPage: React.FC<MediaPageProps> = ({ post, isError }) => {
           },
           ownership: {
             creator: {
-              avatar:
-                'https://ipfs.fleek.co/ipfs/bafybeib6gfnnniiapr7haxeo7ao36ffzcvm6xwjvsl4sfzvf2p7yxkwyei',
-              username: 'kikillo',
+              ...backendData.creator!,
               isVerified: true,
             },
             owner: {
-              avatar: '',
-              username: 'mattjrob',
+              ...backendData.owner!,
               isVerified: true,
             },
           },
@@ -182,11 +175,11 @@ export type UrlQueryParams = {
 export async function getStaticPaths(): Promise<
   GetStaticPathsResult<UrlQueryParams>
 > {
-  const { data } = await getMediaList();
+  const data = await getMediaList();
 
   // Get the paths we want to pre-render based on posts
-  const paths = data.map(post => ({
-    params: { id: String(post.id), username: 'jah' },
+  const paths = data.items.map(post => ({
+    params: { id: String(post.id), username: post.creator?.username! },
   }));
 
   // We'll pre-render only these paths at build time.
@@ -200,8 +193,8 @@ export async function getStaticProps(
   const { id } = context.params as UrlQueryParams;
   try {
     // Call an external API endpoint to get posts
-    const { data: backendData } = await getMediaById(id);
-    const { data: metadata } = await getMediaMetadata(backendData.metadataURI);
+    const backendData = await getMediaById(id);
+    const metadata = await getMediaMetadata(backendData.metadataURI);
 
     return {
       props: {

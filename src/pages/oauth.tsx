@@ -2,7 +2,7 @@ import { Text, User } from '@geist-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { MatatakiUserStat } from '../types/user.types';
+import { MatatakiUserStat } from '../types/User.types';
 import {
   fetchUserStat,
   getFullUrlOfFileInCDN,

@@ -1,6 +1,6 @@
-import { default as BACKEND_CLIENT } from '../api/index';
+import { default as BACKEND_CLIENT } from './client';
 import { PaginationResult } from '../types/PaginationResult';
-import { User } from '../types/user.types';
+import { User } from '../types/User.types';
 
 export async function loginWithPermit(permit: {
   signature: string;
