@@ -1,4 +1,4 @@
-import client from './index';
+import client from './client';
 
 // =========== MTK ===========
 // 上传媒体

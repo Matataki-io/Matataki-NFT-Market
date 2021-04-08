@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MatatakiUserStat } from '../types/user.types';
+import { MatatakiUserStat } from '../types/User.types';
 
 const client = axios.create({
   baseURL: process.env.NEXT_PUBLIC_MATATAKI_BACKEND,

@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import ButtonCustom from '../Button';
 import NFT from '../NFT';
 import { firstUpperCase } from '../../utils/index';
-import { storageUploadToIpfsUrl } from '../../api/api';
+import { storageUploadToIpfsUrl } from '../../backend/storage';
 import { Form, Input, Checkbox, Upload, message, Button } from 'antd';
 const { Dragger } = Upload;
 
