@@ -4,6 +4,7 @@ import { getTokenOnScan } from '../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import axios from 'axios';
 import { ParsedUrlQuery } from 'querystring';
+import { getMedia, listHotMedia } from '../../backend/media';
 import { default as BACKEND_CLIENT } from '../../api/index';
 
 type Props = {
@@ -66,7 +67,7 @@ export async function getStaticProps(
   const { id } = context.params as Params;
   try {
     // Call an external API endpoint to get posts
-    const { data: backendData } = await BACKEND_CLIENT.get(`/media/${id}`);
+    const backendData = await getMedia(Number(id));
     const { data: metadata } = await axios.get(backendData.metadataURI);
 
     return {
@@ -84,10 +85,10 @@ export async function getStaticProps(
 }
 
 export async function getStaticPaths() {
-  const { data } = await BACKEND_CLIENT.get('/media');
+  const data = await listHotMedia();
 
   // Get the paths we want to pre-render based on posts
-  const paths = data.map((post: any) => ({
+  const paths = data.map(post => ({
     params: { id: String(post.id) },
   }));
 

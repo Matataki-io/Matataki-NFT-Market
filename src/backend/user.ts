@@ -1,4 +1,5 @@
 import { default as BACKEND_CLIENT } from '../api/index';
+import { PaginationResult } from '../types/PaginationResult';
 import { User } from '../types/user.types';
 
 export async function loginWithPermit(permit: {
@@ -40,4 +41,16 @@ export async function registerUser(
   await BACKEND_CLIENT.post<{ isGood: boolean }>('/user', payload);
   const accessToken = await loginWithPermit(permit);
   return accessToken;
+}
+
+export async function listUsers({ page = 1, limit = 9 }) {
+  const { data } = await BACKEND_CLIENT.get<PaginationResult<User>>('/user', {
+    params: { page, limit },
+  });
+  return data;
+}
+
+export async function getUser(username: string) {
+  const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}`);
+  return data;
 }
