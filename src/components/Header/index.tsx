@@ -1,4 +1,5 @@
-import React, { useState, useMemo, Fragment } from 'react';
+import React, { useState, useMemo, Fragment, useEffect } from 'react';
+import { useMount } from 'ahooks';
 import { Input } from '@geist-ui/react';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -6,18 +7,55 @@ import Logo from '../../assets/images/logo.png';
 import Button from '../Button/index';
 import { useWallet } from 'use-wallet';
 import UserDropdown from '../UserDropdown';
+import { useLogin } from '../../hooks/useLogin';
+import { currentChainId } from '../../constant';
 
 interface HeaderProps {
-  isCreate: Boolean;
+  isCreate: boolean;
   setIsCreate: (value: boolean) => void;
+  setIsProfile: (value: boolean) => void;
 }
 
-const HeaderComponents: React.FC<HeaderProps> = ({ isCreate, setIsCreate }) => {
+const HeaderComponents: React.FC<HeaderProps> = ({
+  isCreate,
+  setIsCreate,
+  setIsProfile,
+}) => {
   const wallet = useWallet();
   const shortedWalletAccount = useMemo(() => {
     if (wallet.status !== 'connected') return 'Not Connected';
     return wallet.account?.slice(0, 6) + '...' + wallet.account?.slice(-4);
   }, [wallet]);
+  const { isRegistered, loginWithSignature } = useLogin();
+  const [networkVersion, setNetworkVersion] = useState<string>('');
+
+  // TODO: 这里可能要改 暂时用来显示 network error
+  useMount(() => {
+    if (process.browser) {
+      let network = (window as any).ethereum.networkVersion;
+      console.log('network', network);
+      if (network) {
+        setNetworkVersion(network);
+      }
+    }
+  });
+
+  // 链接钱包，并且没有注册显示信息框
+  useEffect(() => {
+    if (wallet.status === 'connected') {
+      if (isRegistered) {
+        setIsProfile(false);
+        // loginWithSignature();
+      } else {
+        setIsProfile(true);
+      }
+    }
+  }, [wallet.status, isRegistered, setIsProfile, loginWithSignature]);
+
+  // 链接钱包
+  const connectWallet = () => {
+    wallet.connect('injected');
+  };
 
   return (
     <StyledHeader>
@@ -59,26 +97,25 @@ const HeaderComponents: React.FC<HeaderProps> = ({ isCreate, setIsCreate }) => {
                   <Button className='hover-underline'>Learn</Button>
                 </a>
                 {wallet.status === 'connected' ? (
-                  <>
-                    <UserDropdown>
-                      <StyledHeaderUserdorpdownContainer>
-                        <Button color='gray'>{shortedWalletAccount}</Button>
-                      </StyledHeaderUserdorpdownContainer>
-                    </UserDropdown>
-                    <Button color='dark' onClick={() => wallet.reset()}>
-                      Disconnect
-                    </Button>
-                  </>
+                  <UserDropdown>
+                    <StyledHeaderUserdorpdownContainer>
+                      <Button color='gray'>{shortedWalletAccount}</Button>
+                    </StyledHeaderUserdorpdownContainer>
+                  </UserDropdown>
                 ) : (
-                  <Button
-                    color='dark'
-                    onClick={() => wallet.connect('injected')}>
+                  <Button color='dark' onClick={connectWallet}>
                     Connect Wallet
                   </Button>
                 )}
-                <Button color='dark' onClick={() => setIsCreate(true)}>
-                  Create
-                </Button>
+                {wallet.status === 'connected' && isRegistered ? (
+                  <Button color='dark' onClick={() => setIsCreate(true)}>
+                    Create
+                  </Button>
+                ) : null}
+                {Number(networkVersion) !== Number(currentChainId) &&
+                networkVersion !== '' ? (
+                  <Button color='error'>Wrong Network</Button>
+                ) : null}
               </div>
             </StyledHeaderContainer>
           </Fragment>

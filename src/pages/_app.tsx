@@ -15,7 +15,8 @@ import 'antd/dist/antd.css';
 import Providers from '../providers';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [isCreate, setIsCreate] = useState<Boolean>(false);
+  const [isCreate, setIsCreate] = useState<boolean>(false);
+  const [isProfile, setIsProfile] = useState<boolean>(false);
 
   return (
     <Providers>
@@ -24,8 +25,12 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel='icon' href='/favicon.ico' />
       </NextHead>
       {isCreate ? <Create setIsCreate={setIsCreate}></Create> : ''}
-      <Profile></Profile>
-      <Header isCreate={isCreate} setIsCreate={setIsCreate} />
+      <Profile isProfile={isProfile} setIsProfile={setIsProfile}></Profile>
+      <Header
+        isCreate={isCreate}
+        setIsCreate={setIsCreate}
+        setIsProfile={setIsProfile}
+      />
       <Component {...pageProps} />
       <Footer />
     </Providers>

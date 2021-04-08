@@ -11,6 +11,7 @@ import {
 import styled from 'styled-components';
 import Link from 'next/link';
 import { NFTProps } from '../../next-env';
+import { useMount } from 'ahooks';
 
 import Creators from '../components/Creators';
 import About from '../components/About';
@@ -21,8 +22,8 @@ import InfiniteScroll from 'react-infinite-scroller';
 const Home: React.FC<void> = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
-  const [loading, setLoading] = useState<Boolean>(false);
-  const [hasMore, setHasMore] = useState<Boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   // 作家列表
   const creatorsList = [
@@ -313,10 +314,10 @@ const Home: React.FC<void> = () => {
     setNFTList(list);
   };
 
-  useEffect(() => {
+  useMount(() => {
     console.log('222');
     fetchNFTData();
-  }, []);
+  });
 
   // 处理滚动Load
   const handleInfiniteOnLoad = async () => {

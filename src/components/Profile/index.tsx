@@ -10,36 +10,43 @@ import { UserOutlined } from '@ant-design/icons';
 import { useLogin } from '../../hooks/useLogin';
 
 const { Item } = Form;
-
-type RequiredMark = boolean | 'optional';
-
 // 用户名校验
 const usernamePattern = /^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
 
-const Profile: React.FC<any> = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+interface Props {
+  isProfile: boolean;
+  setIsProfile: (value: boolean) => void;
+}
+type RequiredMark = boolean | 'optional';
+
+const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
   const [formProfile] = Form.useForm();
   const [requiredMark, setRequiredMarkType] = useState<RequiredMark>(
     'optional'
   );
+  const { isRegistered, register } = useLogin();
 
-  const { register } = useLogin();
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
   const handleOk = () => {
-    setIsModalVisible(false);
+    // 如果没有注册禁止关闭窗口
+    if (!isRegistered) return;
+    setIsProfile(false);
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    // 如果没有注册禁止关闭窗口
+    if (!isRegistered) return;
+    setIsProfile(false);
   };
   const onFinish = async (values: any) => {
     console.log('Success:', values);
-    let { nickname, bio, username } = values;
-    // await register({ nickname, bio, username });
-    console.log('nickname', nickname, bio, username);
+    try {
+      let { nickname, bio, username } = values;
+      // TODO 需要判断
+      await register({ nickname, bio, username });
+      setIsProfile(false);
+    } catch (e) {
+      console.error('e', e.toString());
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -49,10 +56,11 @@ const Profile: React.FC<any> = () => {
   return (
     <Modal
       title='Complete your profile'
-      visible={isModalVisible}
+      visible={isProfile}
       onOk={handleOk}
       onCancel={handleCancel}
-      footer={null}>
+      footer={null}
+      closable={isRegistered}>
       <Form
         form={formProfile}
         name='formProfile'
@@ -106,7 +114,7 @@ const Profile: React.FC<any> = () => {
             autoSize={{ minRows: 4, maxRows: 6 }}
           />
         </StyledItem>
-        <StyledItem style={{ textAlign: 'right', marginTop: '20px' }}>
+        <StyledItem style={{ textAlign: 'right', paddingTop: '20px' }}>
           <ButtonCustom color='dark' type='submit'>
             Save
           </ButtonCustom>

@@ -651,7 +651,7 @@ const StyledMultiiMediaInputHead = styled.div`
   justify-content: flex-start;
   align-items: center;
 `;
-const StyledMultiiMediaInputHeadTab = styled.h5<{ actions?: Boolean }>`
+const StyledMultiiMediaInputHeadTab = styled.h5<{ actions?: boolean }>`
   position: relative;
   color: initial;
   margin-right: 20px;

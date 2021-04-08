@@ -4,6 +4,7 @@ import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import styles from './index.module.scss';
 import { ReactSVG } from 'react-svg';
+import { useWallet } from 'use-wallet';
 
 import IconShare from '../../assets/icons/share.svg';
 import IconEmail from '../../assets/icons/email.svg';
@@ -14,59 +15,66 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const menu = () => {
-  return (
-    <Menu>
-      <Menu.Item>
-        <StyledItem>
-          <Avatar size={40} icon={<UserOutlined />} />
-          <StyledItemUser>
-            <div>xiaotian</div>
-            <div>See Profile</div>
-          </StyledItemUser>
-        </StyledItem>
-      </Menu.Item>
-      <Menu.Item>
-        <a
-          target='_blank'
-          rel='noopener noreferrer'
-          href='https://etherscan.io'>
-          <StyledItem>
-            <ReactSVG className='icon' src={IconShare} />
-            View on Etherscan
-          </StyledItem>
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <a
-          target='_blank'
-          rel='noopener noreferrer'
-          href='https://etherscan.io'>
-          <StyledItem>
-            <ReactSVG className='icon' src={IconEmail} />
-            Invite a Creator
-          </StyledItem>
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <a target='_blank' rel='noopener noreferrer' href='https://matataki.io'>
-          <StyledItem>
-            <ReactSVG className='icon' src={IconHelp} />
-            Help & Support
-          </StyledItem>
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <StyledItem>
-          <ReactSVG className='icon' src={IconPlug} />
-          Disconnect Wallet
-        </StyledItem>
-      </Menu.Item>
-    </Menu>
-  );
-};
-
 const UserDropdown: React.FC<Props> = ({ children }) => {
+  const wallet = useWallet();
+
+  const menu = () => {
+    return (
+      <Menu>
+        <Menu.Item>
+          <StyledItem>
+            <Avatar size={40} icon={<UserOutlined />} />
+            <StyledItemUser>
+              <div>xiaotian</div>
+              <div>See Profile</div>
+            </StyledItemUser>
+          </StyledItem>
+        </Menu.Item>
+        <Menu.Item>
+          <a
+            target='_blank'
+            rel='noopener noreferrer'
+            href='https://etherscan.io'>
+            <StyledItem>
+              <ReactSVG className='icon' src={IconShare} />
+              View on Etherscan
+            </StyledItem>
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a
+            target='_blank'
+            rel='noopener noreferrer'
+            href='https://etherscan.io'>
+            <StyledItem>
+              <ReactSVG className='icon' src={IconEmail} />
+              Invite a Creator
+            </StyledItem>
+          </a>
+        </Menu.Item>
+        <Menu.Item>
+          <a
+            target='_blank'
+            rel='noopener noreferrer'
+            href='https://matataki.io'>
+            <StyledItem>
+              <ReactSVG className='icon' src={IconHelp} />
+              Help & Support
+            </StyledItem>
+          </a>
+        </Menu.Item>
+        {wallet.status === 'connected' ? (
+          <Menu.Item>
+            <StyledItem onClick={() => wallet.reset()}>
+              <ReactSVG className='icon' src={IconPlug} />
+              Disconnect Wallet
+            </StyledItem>
+          </Menu.Item>
+        ) : null}
+      </Menu>
+    );
+  };
+
   return (
     <Dropdown
       overlay={menu}
