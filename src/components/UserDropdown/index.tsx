@@ -5,6 +5,9 @@ import styled from 'styled-components';
 import styles from './index.module.scss';
 import { ReactSVG } from 'react-svg';
 import { useWallet } from 'use-wallet';
+import { useRouter } from 'next/router';
+
+import { useLogin } from '../../hooks/useLogin';
 
 import IconShare from '../../assets/icons/share.svg';
 import IconEmail from '../../assets/icons/email.svg';
@@ -17,12 +20,19 @@ interface Props {
 
 const UserDropdown: React.FC<Props> = ({ children }) => {
   const wallet = useWallet();
+  const router = useRouter();
+  const { userDataByWallet } = useLogin();
 
   const menu = () => {
     return (
       <Menu>
         <Menu.Item>
-          <StyledItem>
+          <StyledItem
+            onClick={() => {
+              router.push(
+                `/${userDataByWallet ? userDataByWallet.username : ''}`
+              );
+            }}>
             <Avatar size={40} icon={<UserOutlined />} />
             <StyledItemUser>
               <div>xiaotian</div>

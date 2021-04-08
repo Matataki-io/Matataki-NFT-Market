@@ -18,15 +18,24 @@ export function useLogin() {
   const [error, updateError] = useState<any>(null);
   const [accessToken, updateAccessToken] = useState<string | null>(null);
   const [userDataByWallet, updateUserData] = useState<User | null>(null);
+  const [registeredLoading, setRegisteredLoading] = useState<boolean>(false); // 查询注册 Loading
 
   useEffect(() => {
     async function fetchData() {
       if (!wallet.account) return;
-      const { isUserExist, user } = await checkIsWalletRegistered(
-        wallet.account
-      );
-      if (isUserExist) updateUserData(user);
-      else updateUserData(null);
+      setRegisteredLoading(true);
+      try {
+        const { isUserExist, user } = await checkIsWalletRegistered(
+          wallet.account
+        );
+        if (isUserExist) updateUserData(user);
+        else updateUserData(null);
+      } catch (e) {
+        console.error('e', e);
+        updateUserData(null);
+      } finally {
+        setRegisteredLoading(false);
+      }
     }
     // 有钱包地址就查是不是已经注册过
     fetchData();
@@ -89,5 +98,6 @@ export function useLogin() {
     walletError: wallet.error,
     caughtError: error,
     permit: permit,
+    registeredLoading,
   };
 }

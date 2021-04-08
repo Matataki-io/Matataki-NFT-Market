@@ -26,8 +26,14 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     if (wallet.status !== 'connected') return 'Not Connected';
     return wallet.account?.slice(0, 6) + '...' + wallet.account?.slice(-4);
   }, [wallet]);
-  const { isRegistered, loginWithSignature } = useLogin();
+  const {
+    isRegistered,
+    registeredLoading,
+    userDataByWallet,
+    loginWithSignature,
+  } = useLogin();
   const [networkVersion, setNetworkVersion] = useState<string>('');
+  const [connect, setConnect] = useState<boolean>(false);
 
   // TODO: 这里可能要改 暂时用来显示 network error
   useMount(() => {
@@ -42,19 +48,31 @@ const HeaderComponents: React.FC<HeaderProps> = ({
 
   // 链接钱包，并且没有注册显示信息框
   useEffect(() => {
-    if (wallet.status === 'connected') {
+    if (connect && wallet.status === 'connected') {
+      // 如果正在查询数据停止
+      if (registeredLoading) return;
+      // 查询完是否注册
       if (isRegistered) {
         setIsProfile(false);
-        // loginWithSignature();
+        loginWithSignature();
       } else {
         setIsProfile(true);
       }
+      setConnect(false);
     }
-  }, [wallet.status, isRegistered, setIsProfile, loginWithSignature]);
+  }, [
+    wallet.status,
+    isRegistered,
+    setIsProfile,
+    loginWithSignature,
+    registeredLoading,
+    connect,
+  ]);
 
   // 链接钱包
   const connectWallet = () => {
     wallet.connect('injected');
+    setConnect(true);
   };
 
   return (
@@ -97,11 +115,17 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                   <Button className='hover-underline'>Learn</Button>
                 </a>
                 {wallet.status === 'connected' ? (
-                  <UserDropdown>
-                    <StyledHeaderUserdorpdownContainer>
+                  <>
+                    {isRegistered ? (
+                      <UserDropdown>
+                        <StyledHeaderUserdorpdownContainer>
+                          <Button color='gray'>{`@${userDataByWallet.username}`}</Button>
+                        </StyledHeaderUserdorpdownContainer>
+                      </UserDropdown>
+                    ) : (
                       <Button color='gray'>{shortedWalletAccount}</Button>
-                    </StyledHeaderUserdorpdownContainer>
-                  </UserDropdown>
+                    )}
+                  </>
                 ) : (
                   <Button color='dark' onClick={connectWallet}>
                     Connect Wallet
