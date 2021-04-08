@@ -3,7 +3,11 @@ import { useWallet } from 'use-wallet';
 import { ethers, utils } from 'ethers';
 import { default as BACKEND_CLIENT } from '../backend/client';
 import { MessageForLogin } from '../constant';
-import { checkIsWalletRegistered, registerUser } from '../backend/user';
+import {
+  checkIsWalletRegistered,
+  registerUser,
+  loginWithPermit,
+} from '../backend/user';
 import { User } from '../types/User.types';
 
 interface SignInPermit {
@@ -18,15 +22,24 @@ export function useLogin() {
   const [error, updateError] = useState<any>(null);
   const [accessToken, updateAccessToken] = useState<string | null>(null);
   const [userDataByWallet, updateUserData] = useState<User | null>(null);
+  const [registeredLoading, setRegisteredLoading] = useState<boolean>(false); // 查询注册 Loading
 
   useEffect(() => {
     async function fetchData() {
       if (!wallet.account) return;
-      const { isUserExist, user } = await checkIsWalletRegistered(
-        wallet.account
-      );
-      if (isUserExist) updateUserData(user);
-      else updateUserData(null);
+      setRegisteredLoading(true);
+      try {
+        const { isUserExist, user } = await checkIsWalletRegistered(
+          wallet.account
+        );
+        if (isUserExist) updateUserData(user);
+        else updateUserData(null);
+      } catch (e) {
+        console.error('e', e);
+        updateUserData(null);
+      } finally {
+        setRegisteredLoading(false);
+      }
     }
     // 有钱包地址就查是不是已经注册过
     fetchData();
@@ -67,13 +80,14 @@ export function useLogin() {
   }
 
   async function loginWithSignature() {
-    const permit = await requestToSign();
     try {
-      const { data } = await BACKEND_CLIENT.post<{ data: string }>(
-        '/auth/login',
-        permit
-      );
-      if (data.data) updateAccessToken(data.data);
+      const permit: SignInPermit | undefined = await requestToSign();
+      if (permit) {
+        const data = await loginWithPermit(permit);
+        if (data) updateAccessToken(data);
+      } else {
+        throw new Error('not permit');
+      }
     } catch (error) {
       updateError(error);
     }
@@ -89,5 +103,6 @@ export function useLogin() {
     walletError: wallet.error,
     caughtError: error,
     permit: permit,
+    registeredLoading,
   };
 }

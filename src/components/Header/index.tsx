@@ -1,22 +1,79 @@
-import React, { useState, useMemo, Fragment } from 'react';
+import React, { useState, useMemo, Fragment, useEffect } from 'react';
+import { useMount } from 'ahooks';
 import { Input } from '@geist-ui/react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import Logo from '../../assets/images/logo.png';
 import Button from '../Button/index';
 import { useWallet } from 'use-wallet';
+import UserDropdown from '../UserDropdown';
+import { useLogin } from '../../hooks/useLogin';
+import { currentChainId } from '../../constant';
 
 interface HeaderProps {
-  isCreate: Boolean;
+  isCreate: boolean;
   setIsCreate: (value: boolean) => void;
+  setIsProfile: (value: boolean) => void;
 }
 
-const HeaderComponents: React.FC<HeaderProps> = ({ isCreate, setIsCreate }) => {
+const HeaderComponents: React.FC<HeaderProps> = ({
+  isCreate,
+  setIsCreate,
+  setIsProfile,
+}) => {
   const wallet = useWallet();
   const shortedWalletAccount = useMemo(() => {
     if (wallet.status !== 'connected') return 'Not Connected';
     return wallet.account?.slice(0, 6) + '...' + wallet.account?.slice(-4);
   }, [wallet]);
+  const {
+    isRegistered,
+    registeredLoading,
+    userDataByWallet,
+    loginWithSignature,
+  } = useLogin();
+  const [networkVersion, setNetworkVersion] = useState<string>('');
+  const [connect, setConnect] = useState<boolean>(false);
+
+  // TODO: 这里可能要改 暂时用来显示 network error
+  useMount(() => {
+    if (process.browser) {
+      let network = (window as any).ethereum.networkVersion;
+      console.log('network', network);
+      if (network) {
+        setNetworkVersion(network);
+      }
+    }
+  });
+
+  // 链接钱包，并且没有注册显示信息框
+  useEffect(() => {
+    if (connect && wallet.status === 'connected') {
+      // 如果正在查询数据停止
+      if (registeredLoading) return;
+      // 查询完是否注册
+      if (isRegistered) {
+        setIsProfile(false);
+        loginWithSignature();
+      } else {
+        setIsProfile(true);
+      }
+      setConnect(false);
+    }
+  }, [
+    wallet.status,
+    isRegistered,
+    setIsProfile,
+    loginWithSignature,
+    registeredLoading,
+    connect,
+  ]);
+
+  // 链接钱包
+  const connectWallet = () => {
+    wallet.connect('injected');
+    setConnect(true);
+  };
 
   return (
     <StyledHeader>
@@ -54,26 +111,35 @@ const HeaderComponents: React.FC<HeaderProps> = ({ isCreate, setIsCreate }) => {
             <StyledHeaderContainer>
               <StyledHeaderSearch placeholder='Search NFTs' />
               <div>
-                <a href='https://matataki.io/'>
+                <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
                   <Button className='hover-underline'>Learn</Button>
                 </a>
                 {wallet.status === 'connected' ? (
                   <>
-                    <Button color='gray'>{shortedWalletAccount}</Button>
-                    <Button color='dark' onClick={() => wallet.reset()}>
-                      Disconnect
-                    </Button>
+                    {isRegistered ? (
+                      <UserDropdown>
+                        <StyledHeaderUserdorpdownContainer>
+                          <Button color='gray'>{`@${userDataByWallet?.username}`}</Button>
+                        </StyledHeaderUserdorpdownContainer>
+                      </UserDropdown>
+                    ) : (
+                      <Button color='gray'>{shortedWalletAccount}</Button>
+                    )}
                   </>
                 ) : (
-                  <Button
-                    color='dark'
-                    onClick={() => wallet.connect('injected')}>
+                  <Button color='dark' onClick={connectWallet}>
                     Connect Wallet
                   </Button>
                 )}
-                <Button color='dark' onClick={() => setIsCreate(true)}>
-                  Create
-                </Button>
+                {wallet.status === 'connected' && isRegistered ? (
+                  <Button color='dark' onClick={() => setIsCreate(true)}>
+                    Create
+                  </Button>
+                ) : null}
+                {Number(networkVersion) !== Number(currentChainId) &&
+                networkVersion !== '' ? (
+                  <Button color='error'>Wrong Network</Button>
+                ) : null}
               </div>
             </StyledHeaderContainer>
           </Fragment>
@@ -165,4 +231,7 @@ const StyledHeaderSearch = styled(Input)`
 const StyledHeaderContainer = styled.div`
   display: flex;
   align-items: center;
+`;
+const StyledHeaderUserdorpdownContainer = styled.div`
+  display: inline-block;
 `;

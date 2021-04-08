@@ -1,16 +1,23 @@
 import { default as BACKEND_CLIENT } from './client';
 import { PaginationResult } from '../types/PaginationResult';
 import { User } from '../types/User.types';
+import { setCookie } from '../utils/cookie';
 
-export async function loginWithPermit(permit: {
+interface SignInPermit {
   signature: string;
   message: string;
-}) {
+  from: string;
+}
+
+export async function loginWithPermit(permit: SignInPermit) {
   const { data } = await BACKEND_CLIENT.post<{ data: string }>(
     '/auth/login',
     permit
   );
-  return data.data;
+  let token = data.data;
+  setCookie('token', token);
+  console.log('token is', token);
+  return token;
 }
 
 export async function checkIsWalletRegistered(wallet: string) {
@@ -41,6 +48,25 @@ export async function registerUser(
   await BACKEND_CLIENT.post<{ isGood: boolean }>('/user', payload);
   const accessToken = await loginWithPermit(permit);
   return accessToken;
+}
+/**
+ * 更新用户资料
+ * @param payload 注册的用户资料
+ * @returns 请求结果
+ */
+export async function updateUser(
+  id: number,
+  payload: {
+    nickname: string;
+    bio: string;
+    username: string;
+  }
+) {
+  return await BACKEND_CLIENT({
+    method: 'patch',
+    url: `/user/${id}`,
+    data: payload,
+  });
 }
 
 export async function listUsers({ page = 1, limit = 9 }) {

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getCookie } from '../utils/cookie';
 
 const backendClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
@@ -10,6 +11,12 @@ const backendClient = axios.create({
 // Just copy from matataki-fe
 backendClient.interceptors.request.use(
   config => {
+    let token = getCookie('token');
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
     return config;
   },
   error => {
