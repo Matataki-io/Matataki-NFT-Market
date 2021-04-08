@@ -119,7 +119,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                     {isRegistered ? (
                       <UserDropdown>
                         <StyledHeaderUserdorpdownContainer>
-                          <Button color='gray'>{`@${userDataByWallet.username}`}</Button>
+                          <Button color='gray'>{`@${userDataByWallet?.username}`}</Button>
                         </StyledHeaderUserdorpdownContainer>
                       </UserDropdown>
                     ) : (

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Modal, Button, Form, Input, Checkbox, Avatar } from 'antd';
+import { useWallet } from 'use-wallet';
 import ButtonCustom from '../Button/index';
+import { shortedWalletAccount } from '../../utils/index';
+import { updateUser } from '../../backend/user';
 
 const { TextArea } = Input;
 import styled from 'styled-components';
@@ -21,10 +24,29 @@ type RequiredMark = boolean | 'optional';
 
 const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
   const [formProfile] = Form.useForm();
+  // 可选
   const [requiredMark, setRequiredMarkType] = useState<RequiredMark>(
     'optional'
   );
-  const { isRegistered, register } = useLogin();
+  const wallet = useWallet();
+  const { isRegistered, userDataByWallet, register } = useLogin();
+
+  // 短账号
+  const shortedAccount = useMemo(() => {
+    if (wallet.status !== 'connected') return 'Not Connected';
+    return shortedWalletAccount(wallet.account || '');
+  }, [wallet]);
+
+  // 设置默认值
+  useEffect(() => {
+    if (isRegistered) {
+      formProfile.setFieldsValue({
+        username: userDataByWallet?.username,
+        nickname: userDataByWallet?.nickname,
+        bio: userDataByWallet?.bio,
+      });
+    }
+  }, [isRegistered, userDataByWallet, formProfile]);
 
   const handleOk = () => {
     // 如果没有注册禁止关闭窗口
@@ -41,8 +63,23 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
     console.log('Success:', values);
     try {
       let { nickname, bio, username } = values;
-      // TODO 需要判断
-      await register({ nickname, bio, username });
+      if (isRegistered) {
+        // 更新
+        const res = await updateUser(Number(userDataByWallet?.id), {
+          nickname,
+          bio,
+          username,
+        });
+        console.log('res', res);
+        if (res.data.code === 200) {
+          console.log('reload...');
+          setIsProfile(false);
+        }
+      } else {
+        // 注册
+        // TODO 需要判断
+        await register({ nickname, bio, username });
+      }
       setIsProfile(false);
     } catch (e) {
       console.error('e', e.toString());
@@ -74,7 +111,7 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
         <StyledUser>
           <Avatar size={40} icon={<UserOutlined />} />
           <StyledItemUser>
-            <div>0x3484040A...14ecCcA6</div>
+            <div>{shortedAccount}</div>
             <div>Change profile image</div>
           </StyledItemUser>
         </StyledUser>

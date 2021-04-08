@@ -42,6 +42,25 @@ export async function registerUser(
   const accessToken = await loginWithPermit(permit);
   return accessToken;
 }
+/**
+ * 更新用户资料
+ * @param payload 注册的用户资料
+ * @returns 请求结果
+ */
+export async function updateUser(
+  id: number,
+  payload: {
+    nickname: string;
+    bio: string;
+    username: string;
+  }
+) {
+  return await BACKEND_CLIENT({
+    method: 'patch',
+    url: `/user/${id}`,
+    data: payload,
+  });
+}
 
 export async function listUsers({ page = 1, limit = 9 }) {
   const { data } = await BACKEND_CLIENT.get<PaginationResult<User>>('/user', {

@@ -16,7 +16,13 @@ import { NFTProps } from '../../../next-env';
 import { default as MediaCard } from '../../components/NFT';
 import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 
-const UserInfoPage: React.FC = () => {
+import { useLogin } from '../../hooks/useLogin';
+
+interface Props {
+  setIsProfile: (value: boolean) => void;
+}
+
+const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const router = useRouter();
   const { username } = router.query;
   const [userInfo, setUserInfo] = useState<UserInfoState>({
@@ -29,8 +35,10 @@ const UserInfoPage: React.FC = () => {
   const appUserInfo = useAppSelector(state => state.userInfo);
   const [nftListData, setNFTListData] = useState<Array<NFTProps>>([]);
 
+  const { isRegistered, userDataByWallet } = useLogin();
+
   useEffect(() => {
-    if (appUserInfo.username === username) {
+    if (userDataByWallet && userDataByWallet.username === username) {
       setUserInfo(appUserInfo);
       setIsMyself(true);
       setNFTListData([]);
@@ -107,7 +115,7 @@ const UserInfoPage: React.FC = () => {
       setIsVerifiedUser(true);
       setNFTListData(exampleNFTListData);
     }
-  }, [appUserInfo, username]);
+  }, [appUserInfo, username, isRegistered, userDataByWallet]);
 
   return (
     <Page>
@@ -123,7 +131,11 @@ const UserInfoPage: React.FC = () => {
               <AccountBio>{userInfo.introduction}</AccountBio>
             )}
             {userInfo.website && <AccountWebsite href={userInfo.website} />}
-            {isMyself && <EditProfileButton />}
+            {isMyself && (
+              <StyledEditButton onClick={() => setIsProfile(true)}>
+                Edit profile
+              </StyledEditButton>
+            )}
           </StyledInfo>
         </StyledInfoBox>
         {nftListData.length ? (
@@ -176,6 +188,29 @@ const StyledMediaCardContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0px, 1fr));
   gap: 50px 30px;
+`;
+// from EditProfileButton Copy
+const StyledEditButton = styled.button`
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 14px 20px;
+  margin: 0px 5px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  appearance: none;
+  color: rgb(0, 0, 0);
+  background-color: rgb(230, 230, 230);
+  border: 1px solid transparent;
+  &:hover {
+    background-color: rgb(230, 230, 230);
+    border-color: rgb(0, 0, 0);
+  }
 `;
 
 export default UserInfoPage;

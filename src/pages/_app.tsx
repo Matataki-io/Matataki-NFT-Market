@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { AppProps /*, AppContext */ } from 'next/app';
 import NextHead from 'next/head';
 import { light, dark } from '../themes';
@@ -18,6 +18,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [isCreate, setIsCreate] = useState<boolean>(false);
   const [isProfile, setIsProfile] = useState<boolean>(false);
 
+  useEffect(() => {
+    console.log('pageProps', pageProps);
+  });
+
   return (
     <Providers>
       <NextHead>
@@ -31,7 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         setIsCreate={setIsCreate}
         setIsProfile={setIsProfile}
       />
-      <Component {...pageProps} />
+      <Component {...pageProps} setIsProfile={setIsProfile} />
       <Footer />
     </Providers>
   );
