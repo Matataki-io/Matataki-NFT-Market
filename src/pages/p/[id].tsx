@@ -4,7 +4,7 @@ import { getTokenOnScan } from '../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import axios from 'axios';
 import { ParsedUrlQuery } from 'querystring';
-import { BACKEND_CLIENT } from '../../constant';
+import { default as BACKEND_CLIENT } from '../../api/index';
 
 type Props = {
   post?: {
