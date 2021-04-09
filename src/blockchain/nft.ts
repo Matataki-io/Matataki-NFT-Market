@@ -55,18 +55,31 @@ export async function mintMediaToken(
     metadataURI,
     metadataHash
   );
+  const mediaData = {
+    tokenURI: tokenURI,
+    metadataURI: metadataURI,
+    contentHash: Uint8Array.from(Buffer.from(contentHash, 'hex')),
+    metadataHash: Uint8Array.from(Buffer.from(metadataHash, 'hex')),
+  };
 
-  return media.mint(
-    {
-      tokenURI: tokenURI,
-      metadataURI: metadataURI,
-      contentHash: Uint8Array.from(Buffer.from(contentHash, 'hex')),
-      metadataHash: Uint8Array.from(Buffer.from(metadataHash, 'hex')),
-    },
-    {
-      prevOwner: Decimal.new(0),
-      creator: Decimal.new(creatorShare),
-      owner: Decimal.new(100 - creatorShare),
-    }
-  );
+  const bidShare = {
+    prevOwner: Decimal.new(0),
+    creator: Decimal.new(creatorShare),
+    owner: Decimal.new(100 - creatorShare),
+  };
+
+  // just print log
+  await media.estimateGas.mint(mediaData, bidShare).catch(error => {
+    console.debug(
+      'Gas estimate failed, trying eth_call to extract error',
+      error
+    );
+
+    return media.callStatic.mint(mediaData, bidShare).catch(error => {
+      console.debug('callStatic error: ', error);
+      console.debug('callStatic error.reason: ', error.reason);
+    });
+  });
+
+  return media.mint(mediaData, bidShare);
 }
