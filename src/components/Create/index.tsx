@@ -24,7 +24,7 @@ const { Dragger } = Upload;
 import { mintMediaToken } from '../../blockchain/nft';
 
 import { UploadProps } from 'antd/lib/upload/interface';
-
+import { useLogin } from '../../hooks/useLogin';
 import { NFTProps } from '../../../next-env';
 import {
   NFTTempImage,
@@ -34,6 +34,9 @@ import {
   NFTTempFile,
   NFTTempUrl,
 } from './temp';
+
+// 非负整数
+const creatorShare = /^\d+$/;
 
 interface mediaDataState extends NFTProps {
   storage?: any;
@@ -56,6 +59,7 @@ type mediaTypeProps = 'image' | 'video' | 'audio' | 'text' | 'file' | 'url';
 const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const wallet = useWallet();
   const { signer, isSignerReady } = useSigner();
+  const { userDataByWallet } = useLogin();
 
   const [step, setStep] = useState<number>(0); // 步骤
   const [mediaType, setMediaType] = useState<mediaTypeProps>('image'); // 当前上传媒体类型
@@ -63,6 +67,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const [formNameAndDescription] = Form.useForm();
   const [formPricingAndFees] = Form.useForm();
   const [mediaData, setMediaData] = useState<mediaDataState>({}); // media 数据
+  const [nameAndDescription, setNameAndDescription] = useState<{
+    name: string;
+    description: string;
+  }>({ name: '', description: '' }); // 备份 formNameAndDescription 数据
   // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
 
   // 媒体类型 placeholder
@@ -109,8 +117,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     multiple: true,
     action: storageUploadToIpfsUrl,
     data: {
-      name: formNameAndDescription.getFieldsValue().name,
-      description: formNameAndDescription.getFieldsValue().description,
+      name: nameAndDescription?.name,
+      description: nameAndDescription?.description,
     },
     method: 'PUT',
     maxCount: 1,
@@ -122,17 +130,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       }
       if (status === 'done') {
         message.success(`${info.file.name} file uploaded successfully.`);
-        if (mediaType === 'image') {
-          let url = info.file.response.data.MediaData.tokenURI;
-          let storage = info.file.response.data;
-          setMediaDataFn({
-            url,
-            type: mediaType,
-            storage: storage,
-          });
-        } else {
-          message.info('暂时只支持Image.');
-        }
+
+        let url = info.file.response.data.MediaData.tokenURI;
+        let storage = info.file.response.data;
+        setMediaDataFn({
+          url,
+          type: mediaType,
+          storage: storage,
+        });
       } else if (status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
       }
@@ -190,24 +195,19 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         type: 'video',
         fields: {
           low: {
-            stringValue:
-              'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/low.mp4',
+            stringValue: url,
           },
           stream: {
-            stringValue:
-              'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY.m3u8',
+            stringValue: url,
           },
           medium: {
-            stringValue:
-              'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/medium.mp4',
+            stringValue: url,
           },
           high: {
-            stringValue:
-              'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/high.mp4',
+            stringValue: url,
           },
           thumbnail: {
-            stringValue:
-              'https://image.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/thumbnail.png',
+            stringValue: url,
           },
         },
       });
@@ -216,15 +216,11 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       mediaData = Object.assign(data, {
         type: 'audio',
         content: {
-          low:
-            'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-          medium:
-            'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-          high:
-            'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-          thumbnail:
-            'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-          stream: '',
+          low: url,
+          medium: url,
+          high: url,
+          thumbnail: url,
+          stream: url,
         },
       });
     } else if (type === 'text') {
@@ -232,15 +228,11 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       mediaData = Object.assign(data, {
         type: 'text',
         content: {
-          low:
-            'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-          medium:
-            'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-          high:
-            'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-          thumbnail:
-            'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-          stream: '',
+          low: url,
+          medium: url,
+          high: url,
+          thumbnail: url,
+          stream: url,
         },
       });
     } else if (type === 'file') {
@@ -248,15 +240,11 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       mediaData = Object.assign(data, {
         type: 'text',
         content: {
-          thumbnail:
-            'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-          low:
-            'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-          medium:
-            'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-          high:
-            'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-          stream: '',
+          thumbnail: url,
+          low: url,
+          medium: url,
+          high: url,
+          stream: url,
         },
       });
     } else if (type === 'url') {
@@ -268,23 +256,32 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           low: mediaUrl,
           medium: mediaUrl,
           high: mediaUrl,
-          stream: '',
+          stream: mediaUrl,
         },
       });
     } else {
       console.warn('type is undefined', type);
       return;
     }
+
+    mediaData.username = userDataByWallet?.username;
+    mediaData.avatar_url = userDataByWallet?.avatar;
+    mediaData.title = nameAndDescription.name;
+    mediaData.time = Date.now();
+
     // 返回的所有数据存入 storage
     mediaData['storage'] = storage;
     setMediaData(mediaData);
+
+    console.log('mediaData', mediaData);
   };
 
   // 信息填写完成
   const onFinishInfo = (values: any) => {
     console.log('Success:', values);
-    // let formalue = formNameAndDescription.getFieldsValue();
+    let formalue = formNameAndDescription.getFieldsValue();
     // console.log('formValue', formValue);
+    setNameAndDescription(formalue);
     setStep(1);
   };
   // 信息填写失败
@@ -327,6 +324,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       return;
     }
     wallet = signer;
+    console.log('signer', signer);
 
     try {
       const res = await mintMediaToken(
@@ -339,6 +337,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       );
       console.log('res', res);
       message.success('mint success...');
+
+      setIsCreate(false);
     } catch (e) {
       console.log('e', e);
     }
@@ -421,11 +421,11 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               onClick={() => setMediaType('file')}>
               File
             </StyledMultiiMediaInputHeadTab>
-            <StyledMultiiMediaInputHeadTab
+            {/* <StyledMultiiMediaInputHeadTab
               actions={mediaType === 'url'}
               onClick={() => setMediaType('url')}>
               URL
-            </StyledMultiiMediaInputHeadTab>
+            </StyledMultiiMediaInputHeadTab> */}
           </StyledMultiiMediaInputHead>
           {mediaType !== 'url' ? (
             <StyledMultiiMediaInputWrapper>
@@ -491,12 +491,16 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                     message: 'Creator share percentage is required',
                   },
                   {
-                    // 好像不work
                     type: 'number',
                     required: true,
                     min: 0,
                     max: 100,
                     message: 'Creator share range is [0, 100]',
+                  },
+                  {
+                    required: true,
+                    pattern: creatorShare,
+                    message: 'Non-negative integer',
                   },
                 ]}>
                 <InputNumber
