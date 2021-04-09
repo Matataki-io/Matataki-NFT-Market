@@ -1,5 +1,3 @@
-import { Media } from '../blockchain/contracts/Media';
-
 export type MatatakiUserStat = {
   id: number;
   username: string;
@@ -37,7 +35,6 @@ export interface User {
   avatar: string;
   nickname: string;
   bio: string;
-  // returns the ids of media
   createdMedia: number[];
   ownedMedia: number[];
 }

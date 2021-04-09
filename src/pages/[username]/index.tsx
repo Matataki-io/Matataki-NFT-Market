@@ -8,7 +8,6 @@ import {
   AccountUsername,
   AccountBio,
   AccountWebsite,
-  EditProfileButton,
 } from '../../components/UserInformation';
 import { UserInfoState } from '../../store/userInfoSlice';
 import { useAppSelector } from '../../hooks/redux';
@@ -17,6 +16,9 @@ import { default as MediaCard } from '../../components/NFT';
 import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 
 import { useLogin } from '../../hooks/useLogin';
+import { getUser } from '../../backend/user';
+import { getMediaById, getMediaMetadata } from '../../backend/media';
+import { User } from '../../types/User.types';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -38,84 +40,76 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const { isRegistered, userDataByWallet } = useLogin();
 
   useEffect(() => {
-    if (userDataByWallet && userDataByWallet.username === username) {
-      setUserInfo(appUserInfo);
-      setIsMyself(true);
-      setNFTListData([]);
-    } else {
-      const exampleUserInfo: UserInfoState = {
-        avatar:
-          'https://ipfs.fleek.co/ipfs/bafybeihj36tzvur2ozmunei5k32mumaonibgsnhorhus3mjsg2xki7k3pu',
-        introduction:
-          'Visual Artist + Filmmaker. I use my influences of Sci-Fi, Graphic Novels, Anime, and Hip Hop to create pieces that transports you into my abstract universe.',
-        nickname: 'Jah.',
-        username: 'jah',
-        website: 'https://www.byjah.art/',
-      };
-      const exampleNFTListData: Array<NFTProps> = [
-        {
-          id: 2020,
-          type: 'image',
-          content: {
-            low:
-              'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-            medium:
-              'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-            high:
-              'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-            thumbnail:
-              'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-            stream: '',
-          },
-          avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-          username: '@subtle-bubble',
-          title: 'Scream Alone',
-          time: Date.now(),
-        },
-        {
-          id: 2024,
-          type: 'image',
-          content: {
-            low:
-              'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
-            medium:
-              'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
-            high:
-              'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
-            thumbnail:
-              'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
-            stream: '',
-          },
-          avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-          username: '@subtle-bubble',
-          title: 'Scream Alone',
-          time: Date.now(),
-        },
-        {
-          id: 2025,
-          type: 'image',
-          content: {
-            low:
-              'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-            medium:
-              'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-            high:
-              'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-            thumbnail:
-              'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-            stream: '',
-          },
-          avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-          username: '@subtle-bubble',
-          title: 'Scream Alone',
-          time: Date.now(),
-        },
-      ];
-      setUserInfo(exampleUserInfo);
-      setIsVerifiedUser(true);
-      setNFTListData(exampleNFTListData);
-    }
-  }, [appUserInfo, username, isRegistered, userDataByWallet]);
+    const fetchUserInfoData = async () => {
+      if (typeof username !== 'string') return;
+      const userInfo = await getUser(username as string);
+      if (userDataByWallet && userDataByWallet.username === username) {
+        setUserInfo(appUserInfo);
+        setIsMyself(true);
+      } else {
+        setUserInfo({
+          ...userInfo,
+          introduction: userInfo.bio,
+        });
+      }
+      setIsVerifiedUser(false);
+      return userInfo;
+    };
+
+    const fetchNFTListData = async (userInfo: User) => {
+      const uniNftId = new Set<number>();
+      if (userInfo.createdMedia) {
+        userInfo.createdMedia.map(item => uniNftId.add(item));
+      }
+      if (userInfo.ownedMedia) {
+        userInfo.ownedMedia.map(item => uniNftId.add(item));
+      }
+      const getUserMediaList = Array.from(uniNftId).map(async id => {
+        const media = await getMediaById(id);
+        return media;
+      });
+      const userMediaList = await Promise.all(getUserMediaList);
+      const getUserNftList: Promise<NFTProps>[] = userMediaList.map(
+        async media => {
+          const metadata = await getMediaMetadata(media.metadataURI);
+          return {
+            id: media.id,
+            type: metadata.mimeType.split('/')[0],
+            avatar_url: media.creator?.avatar || userInfo.avatar,
+            username: media.creator?.username || userInfo.username,
+            title: metadata.name,
+            time: Date.now(), // TODO: Need to change real time
+            fields: {
+              low: { stringValue: media.tokenURI },
+              stream: { stringValue: media.tokenURI },
+              medium: { stringValue: media.tokenURI },
+              high: { stringValue: media.tokenURI },
+              thumbnail: { stringValue: media.tokenURI },
+            },
+            content: {
+              low: media.tokenURI,
+              stream: media.tokenURI,
+              medium: media.tokenURI,
+              high: media.tokenURI,
+              thumbnail: media.tokenURI,
+            },
+          };
+        }
+      );
+      const userNftList = await Promise.all(getUserNftList);
+      setNFTListData(userNftList || []);
+    };
+
+    const fetchAll = async () => {
+      const userInfo = await fetchUserInfoData();
+      console.log(userInfo);
+      if (userInfo) {
+        await fetchNFTListData(userInfo);
+      }
+    };
+
+    fetchAll();
+  }, [appUserInfo, userDataByWallet, username]);
 
   return (
     <Page>
