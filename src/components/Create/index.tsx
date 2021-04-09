@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
 import { Signer } from 'ethers';
+import { PostMedia } from '../../backend/media.ts';
 
 import ButtonCustom from '../Button';
 import NFT from '../NFT';
@@ -327,7 +328,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     console.log('signer', signer);
 
     try {
-      const res = await mintMediaToken(
+      const res: any = await mintMediaToken(
         tokenURI,
         metadataURI,
         contentHash,
@@ -338,9 +339,19 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       console.log('res', res);
       message.success('mint success...');
 
-      setIsCreate(false);
+      if (res && res.hash) {
+        const resMedia = await PostMedia({
+          txHash: res.hash,
+        });
+        console.log('resMedia', resMedia);
+
+        setIsCreate(false);
+      } else {
+        throw new Error('not hash');
+      }
     } catch (e) {
       console.log('e', e);
+      message.error(e);
     }
   };
   // price填写失败

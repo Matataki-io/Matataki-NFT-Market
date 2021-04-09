@@ -76,23 +76,25 @@ export async function mintMediaToken(
       'Gas estimate failed, trying eth_call to extract error',
       error
     );
-    media.callStatic.mint(mediaData, bidShare).catch(callError => {
-      // if ()
-      console.debug('Mint Call threw error', callError);
-      let errorMessage: string;
-      switch (callError.reason) {
-        case 'Media: a token has already been created with this content hash':
-          errorMessage =
-            'This transaction will not succeed because a token has already been created with this content hash';
-          break;
-        case 'Media: specified uri must be non-empty':
-          errorMessage =
-            'This transaction will not succeed because Media URI is empty';
-          break;
-        default:
-          errorMessage = `The transaction cannot succeed due to error: ${callError.reason}. This is probably an issue with one of the tokens you are swapping.`;
-      }
-      return new Error(errorMessage);
+    return new Promise((resolve, reject) => {
+      media.callStatic.mint(mediaData, bidShare).catch(callError => {
+        // if ()
+        console.debug('Mint Call threw error', callError);
+        let errorMessage: string;
+        switch (callError.reason) {
+          case 'Media: a token has already been created with this content hash':
+            errorMessage =
+              'This transaction will not succeed because a token has already been created with this content hash';
+            break;
+          case 'Media: specified uri must be non-empty':
+            errorMessage =
+              'This transaction will not succeed because Media URI is empty';
+            break;
+          default:
+            errorMessage = `The transaction cannot succeed due to error: ${callError.reason}. This is probably an issue with one of the tokens you are swapping.`;
+        }
+        reject(errorMessage);
+      });
     });
   }
 }
