@@ -6,7 +6,7 @@ import { setCookie } from '../utils/cookie';
 interface SignInPermit {
   signature: string;
   message: string;
-  from: string;
+  from?: string;
 }
 
 export async function loginWithPermit(permit: SignInPermit) {
