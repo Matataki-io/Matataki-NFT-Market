@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
 import { Signer } from 'ethers';
-import { PostMedia } from '../../backend/media.ts';
+import { PostMedia } from '../../backend/media';
 
 import ButtonCustom from '../Button';
 import NFT from '../NFT';

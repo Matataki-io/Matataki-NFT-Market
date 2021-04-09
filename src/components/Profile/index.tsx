@@ -107,7 +107,7 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
         name='formProfile'
         layout='vertical'
         initialValues={{ requiredMarkValue: requiredMark }}
-        width={470}
+        // width={470}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         requiredMark={requiredMark}
