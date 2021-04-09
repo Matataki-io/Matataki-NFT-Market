@@ -33,3 +33,9 @@ export async function getMediaMetadata(url: string): Promise<MediaMetadata> {
   const { data } = await axios.get<MediaMetadata>(url);
   return data;
 }
+// 提交 media
+export async function PostMedia({ txHash }: { txHash: string }): Promise<any> {
+  return await backendClient.post('/media', {
+    txHash,
+  });
+}
