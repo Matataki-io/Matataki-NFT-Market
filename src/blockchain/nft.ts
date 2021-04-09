@@ -1,5 +1,5 @@
 import { MediaFactory } from './contracts/MediaFactory';
-import Decimal from '../utils/Decimal';
+import { Decimal } from '../utils/Decimal';
 import { Signer } from 'ethers';
 import { currentContracts } from '../constant/contracts';
 
