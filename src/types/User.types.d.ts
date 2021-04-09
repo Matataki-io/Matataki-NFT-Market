@@ -37,6 +37,7 @@ export interface User {
   avatar: string;
   nickname: string;
   bio: string;
-  createdMedia: Media[];
-  ownedMedia: Media[];
+  // returns the ids of media
+  createdMedia: number[];
+  ownedMedia: number[];
 }
