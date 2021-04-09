@@ -328,7 +328,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     console.log('signer', signer);
 
     try {
-      const res = await mintMediaToken(
+      const res: any = await mintMediaToken(
         tokenURI,
         metadataURI,
         contentHash,
@@ -344,11 +344,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           txHash: res.hash,
         });
         console.log('resMedia', resMedia);
-      }
 
-      setIsCreate(false);
+        setIsCreate(false);
+      } else {
+        throw new Error('not hash');
+      }
     } catch (e) {
       console.log('e', e);
+      message.error(e);
     }
   };
   // price填写失败
