@@ -1,13 +1,43 @@
 import React, { useState, Fragment, useMemo } from 'react';
 import styled, { css } from 'styled-components';
+import { useWallet } from 'use-wallet';
+import { useSigner } from '../../hooks/useSigner';
+import { Signer } from 'ethers';
+
 import ButtonCustom from '../Button';
 import NFT from '../NFT';
 import { firstUpperCase } from '../../utils/index';
 import { storageUploadToIpfsUrl } from '../../backend/storage';
-import { Form, Input, Checkbox, Upload, message, Button } from 'antd';
+import {
+  Form,
+  Input,
+  InputNumber,
+  Checkbox,
+  Upload,
+  message,
+  Button,
+  Spin,
+  Tooltip,
+} from 'antd';
 const { Dragger } = Upload;
 
+import { mintMediaToken } from '../../blockchain/nft';
+
 import { UploadProps } from 'antd/lib/upload/interface';
+
+import { NFTProps } from '../../../next-env';
+import {
+  NFTTempImage,
+  NFTTempVideo,
+  NFTTempAudio,
+  NFTTempText,
+  NFTTempFile,
+  NFTTempUrl,
+} from './temp';
+
+interface mediaDataState extends NFTProps {
+  storage?: any;
+}
 
 interface mediaTypeState {
   [key: string]: string;
@@ -18,19 +48,22 @@ interface mediaTypeState {
   file: string;
   url: string;
 }
-
 interface Props {
   setIsCreate: (value: boolean) => void;
 }
 type mediaTypeProps = 'image' | 'video' | 'audio' | 'text' | 'file' | 'url';
 
 const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
+  const wallet = useWallet();
+  const { signer, isSignerReady } = useSigner();
+
   const [step, setStep] = useState<number>(0); // 步骤
   const [mediaType, setMediaType] = useState<mediaTypeProps>('image'); // 当前上传媒体类型
   const [mediaUrl, setMediaUrl] = useState<string>(''); // 媒体类型为Url的Value
   const [formNameAndDescription] = Form.useForm();
   const [formPricingAndFees] = Form.useForm();
-  const [mediaData, setMediaData] = useState<object>({});
+  const [mediaData, setMediaData] = useState<mediaDataState>({}); // media 数据
+  // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
 
   // 媒体类型 placeholder
   const mediaPlaceholder: mediaTypeState = {
@@ -69,11 +102,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     return list[mediaType] || 2;
   }, [mediaType]);
 
-  // const actionFn = async (file: File): Promise<string> => {
-  //   await console.log(file, storageUploadToIpfsUrl);
-  //   return storageUploadToIpfsUrl;
-  // };
-
   // 媒体上传 props
   const uploadProps: UploadProps = {
     accept: mediaAccept,
@@ -94,22 +122,16 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       }
       if (status === 'done') {
         message.success(`${info.file.name} file uploaded successfully.`);
-        // Get this url from response in real world.
-        // getBase64(info.file.originFileObj, (imageUrl: any) => {
-        //   setMediaDataFn(imageUrl, mediaType);
-        // });
         if (mediaType === 'image') {
+          let url = info.file.response.data.MediaData.tokenURI;
+          let storage = info.file.response.data;
           setMediaDataFn({
-            url: info.file.response.data.MediaData.tokenURI,
+            url,
             type: mediaType,
-            storage: info.file.response.data,
+            storage: storage,
           });
         } else {
-          setMediaDataFn({
-            url: '',
-            type: mediaType,
-            storage: {},
-          });
+          message.info('暂时只支持Image.');
         }
       } else if (status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
@@ -117,6 +139,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     },
     beforeUpload(file: File): boolean {
       console.log('file', file);
+      message.info('正在上传...');
+
       let mediaAcceptList = mediaAccept.split(',');
       const mediaAcceptResult = mediaAcceptList.find(
         i => i.trim() === file.type
@@ -136,131 +160,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     },
   };
 
-  // NFT 模版数据
-  const NFTTempImage = {
-    id: 0,
-    type: '', // type is image video audio text file url
-    content: {
-      low: '',
-      medium: '',
-      high: '',
-      thumbnail: '',
-      stream: '',
-    },
-    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-    username: '@subtle-bubble',
-    title: 'Scream Alone',
-    time: Date.now(),
-  };
-  const NFTTempVideo = {
-    id: 2504,
-    type: 'video',
-    fields: {
-      low: {
-        stringValue:
-          'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/low.mp4',
-      },
-      stream: {
-        stringValue:
-          'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY.m3u8',
-      },
-      medium: {
-        stringValue:
-          'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/medium.mp4',
-      },
-      high: {
-        stringValue:
-          'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/high.mp4',
-      },
-      thumbnail: {
-        stringValue:
-          'https://image.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/thumbnail.png',
-      },
-    },
-    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-    username: '@subtle-bubble',
-    title: 'Scream Alone',
-    time: Date.now(),
-  };
-  const NFTTempAudio = {
-    id: 2505,
-    type: 'audio',
-    content: {
-      low:
-        'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-      medium:
-        'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-      high:
-        'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-      thumbnail:
-        'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-      stream: '',
-    },
-    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-    username: '@subtle-bubble',
-    title: 'Scream Alone',
-    time: Date.now(),
-  };
-  const NFTTempText = {
-    id: 2506,
-    type: 'text',
-    content: {
-      low:
-        'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-      medium:
-        'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-      high:
-        'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-      thumbnail:
-        'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-      stream: '',
-    },
-    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-    username: '@subtle-bubble',
-    title: 'Scream Alone',
-    time: Date.now(),
-  };
-  const NFTTempFile = {
-    id: 2505,
-    type: 'file',
-    content: {
-      thumbnail:
-        'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-      low:
-        'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-      medium:
-        'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-      high:
-        'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-      stream: '',
-    },
-    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-    username: '@subtle-bubble',
-    title: 'Scream Alone',
-    time: Date.now(),
-  };
-  const NFTTempUrl = {
-    id: 2508,
-    type: 'url',
-    content: {
-      thumbnail: 'https://matataki.io',
-      low: 'https://matataki.io',
-      medium: 'https://matataki.io',
-      high: 'https://matataki.io',
-      stream: '',
-    },
-    avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-    username: '@subtle-bubble',
-    title: 'Scream Alone',
-    time: Date.now(),
-  };
-
-  function getBase64(img: any, callback: any) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-  }
-
+  // 设置 media 数据
   const setMediaDataFn = ({
     url,
     type,
@@ -375,20 +275,76 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       console.warn('type is undefined', type);
       return;
     }
+    // 返回的所有数据存入 storage
     mediaData['storage'] = storage;
     setMediaData(mediaData);
   };
 
+  // 信息填写完成
   const onFinishInfo = (values: any) => {
     console.log('Success:', values);
-
     // let formalue = formNameAndDescription.getFieldsValue();
     // console.log('formValue', formValue);
-
     setStep(1);
   };
-
+  // 信息填写失败
   const onFinishFailedInfo = (errorInfo: any) => {
+    console.log('Failed:', errorInfo);
+  };
+  // 媒体上传 continue
+  const onFinishUpload = () => {
+    if (mediaData['storage']) {
+      setStep(2);
+    } else {
+      message.warning('请上传资源');
+    }
+  };
+  // price填写完成
+  const onFinishPrice = async (values: any) => {
+    console.log('Success:', values);
+
+    let {
+      tokenURI,
+      metadataURI,
+      contentHash,
+      metadataHash,
+    } = mediaData.storage['MediaData'];
+    let creatorShare = Number(formPricingAndFees.getFieldsValue().price);
+    console.log(
+      'info',
+      tokenURI,
+      metadataURI,
+      contentHash,
+      metadataHash,
+      creatorShare
+    );
+
+    // 获取 Signer
+    let wallet: Signer;
+
+    if (!isSignerReady(signer)) {
+      message.error('No Signer detected');
+      return;
+    }
+    wallet = signer;
+
+    try {
+      const res = await mintMediaToken(
+        tokenURI,
+        metadataURI,
+        contentHash,
+        metadataHash,
+        creatorShare,
+        wallet
+      );
+      console.log('res', res);
+      message.success('mint success...');
+    } catch (e) {
+      console.log('e', e);
+    }
+  };
+  // price填写失败
+  const onFinishFailedPrice = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
 
@@ -500,10 +456,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           <ButtonCustom color='gray' onClick={() => setStep(0)}>
             Back
           </ButtonCustom>
-          <ButtonCustom
-            color='dark'
-            disabled={false}
-            onClick={() => setStep(1)}>
+          <ButtonCustom color='dark' disabled={false} onClick={onFinishUpload}>
             Continue
           </ButtonCustom>
         </StyledMultiiMediaActions>
@@ -520,34 +473,47 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           form={formPricingAndFees}
           layout='vertical'
           initialValues={{}}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}>
+          onFinish={onFinishPrice}
+          onFinishFailed={onFinishFailedPrice}>
           <StyledMultiiMediaFormItem className='input'>
-            <Form.Item
-              label='Resale royalty'
-              name='name'
-              rules={[
-                {
-                  required: true,
-                  message: 'Creator share percentage is required',
-                },
-              ]}>
-              <StyledMultiiMediaFormItemText>
-                A percentage fee that you receive for all secondary sales of
-                this piece.
-              </StyledMultiiMediaFormItemText>
-              <Input placeholder='Enter percentage' className='input-name' />
+            <Form.Item label='Resale royalty' required>
+              <Tooltip title='Resale royalty'>
+                <StyledMultiiMediaFormItemText>
+                  A percentage fee that you receive for all secondary sales of
+                  this piece.
+                </StyledMultiiMediaFormItemText>
+              </Tooltip>
+              <Form.Item
+                name='price'
+                rules={[
+                  {
+                    required: true,
+                    message: 'Creator share percentage is required',
+                  },
+                  {
+                    // 好像不work
+                    type: 'number',
+                    required: true,
+                    min: 0,
+                    max: 100,
+                    message: 'Creator share range is [0, 100]',
+                  },
+                ]}>
+                <InputNumber
+                  placeholder='Enter percentage'
+                  className='input-name-number'
+                  type='number'
+                  min={0}
+                  max={100}
+                />
+              </Form.Item>
             </Form.Item>
           </StyledMultiiMediaFormItem>
           <StyledMultiiMediaFormItem className='footer'>
             <ButtonCustom color='gray' onClick={() => setStep(1)}>
               Back
             </ButtonCustom>
-            <ButtonCustom
-              color='dark'
-              disabled={false}
-              onClick={() => alert('success')}
-              type='submit'>
+            <ButtonCustom color='dark' disabled={false} type='submit'>
               Continue
             </ButtonCustom>
           </StyledMultiiMediaFormItem>
@@ -584,6 +550,20 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   );
 };
 
+const StyledSpinContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const StyledUploadWrapper = styled.div`
+  width: 100%;
+  position: relative;
+`;
 const StyledWrapper = styled.div`
   margin: 0px;
   padding: 130px 0px;
@@ -654,6 +634,7 @@ const StyledMultiiMediaInput = styled.div`
   width: 100%;
   border: 2px solid rgba(0, 0, 0, 0.1);
   padding: 20px 0px 0px;
+  position: relative;
 `;
 const StyledMultiiMediaInputHead = styled.div`
   color: #000;
@@ -709,6 +690,7 @@ const StyledMultiiMediaInputWrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  position: relative;
   p {
     text-align: center;
     white-space: pre-wrap;
@@ -798,6 +780,20 @@ const StyledMultiiMediaFormItem = styled.div`
   .input-name {
     box-sizing: border-box;
     padding: 15px;
+    width: 100%;
+    min-height: 50px;
+    font-size: 15px;
+    line-height: 14px;
+    font-weight: 400;
+    transition: all 0.1s ease-in 0s;
+    color: rgb(0, 0, 0);
+    border: 1px solid transparent;
+    background: rgba(0, 0, 0, 0.05);
+    outline: none;
+  }
+  .input-name-number {
+    box-sizing: border-box;
+    padding: 10px;
     width: 100%;
     min-height: 50px;
     font-size: 15px;
