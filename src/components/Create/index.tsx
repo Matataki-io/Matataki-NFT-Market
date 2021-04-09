@@ -70,7 +70,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const [nameAndDescription, setNameAndDescription] = useState<{
     name: string;
     description: string;
-  }>({}); // 备份 formNameAndDescription 数据
+  }>({ name: '', description: '' }); // 备份 formNameAndDescription 数据
   // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
 
   // 媒体类型 placeholder
