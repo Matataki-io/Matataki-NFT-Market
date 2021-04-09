@@ -13,7 +13,7 @@ export function useSigner(addressOrIndex?: string | number) {
   function isSignerReady(
     signer: ethers.providers.JsonRpcSigner | null
   ): signer is ethers.providers.JsonRpcSigner {
-    return wallet.status === 'connected';
+    return Boolean(signer);
   }
 
   return { signer, isSignerReady };
