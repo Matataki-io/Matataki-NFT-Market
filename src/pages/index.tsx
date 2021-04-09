@@ -1,12 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  ButtonDropdown,
-  Divider,
-  Grid,
-  Text,
-  Tooltip,
-} from '@geist-ui/react';
 // import Banner from '../components/Banner';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -18,12 +10,28 @@ import About from '../components/About';
 import NFT from '../components/NFT';
 
 import InfiniteScroll from 'react-infinite-scroller';
+import { PaginationResult } from '../types/PaginationResult';
+import { Media, MediaMetadata } from '../types/Media.entity';
+import { getMediaList, getMediaMetadata } from '../backend/media';
+
+type PaginationMeta = PaginationResult['meta'];
+
+type MediaWithMetadata = Media & {
+  metadata: MediaMetadata;
+};
 
 const Home: React.FC<void> = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
+    totalItems: 0,
+    itemCount: 0,
+    itemsPerPage: 0,
+    totalPages: 0,
+    currentPage: 0,
+  });
 
   // 作家列表
   const creatorsList = [
@@ -74,244 +82,48 @@ const Home: React.FC<void> = () => {
     },
   ];
 
-  const NFTListData: Array<NFTProps> = [
-    {
-      id: 2020,
-      type: 'image', // type is image video audio text file url
-      content: {
-        low: 'https://placeimg.com/700/340/arch',
-        medium: 'https://placeimg.com/700/340/arch',
-        high: 'https://placeimg.com/700/340/arch',
-        thumbnail: 'https://placeimg.com/700/340/arch',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 2024,
-      type: 'image',
-      content: {
-        low:
-          'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
-        medium:
-          'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
-        high:
-          'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
-        thumbnail:
-          'https://ipfs.fleek.co/ipfs/bafybeifwauzh4mtqunlj2mnj3fusfod2kdq7rjf4y6epai7faahsc6gl6a',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 2475,
-      type: 'image',
-      content: {
-        low:
-          'https://ipfs.fleek.co/ipfs/bafybeiedsxxcvdtx7nker4xrhgaex5encj6p5u3qlfzkloduusnodt76pu',
-        medium:
-          'https://ipfs.fleek.co/ipfs/bafybeiedsxxcvdtx7nker4xrhgaex5encj6p5u3qlfzkloduusnodt76pu',
-        high:
-          'https://ipfs.fleek.co/ipfs/bafybeiedsxxcvdtx7nker4xrhgaex5encj6p5u3qlfzkloduusnodt76pu',
-        thumbnail:
-          'https://ipfs.fleek.co/ipfs/bafybeiedsxxcvdtx7nker4xrhgaex5encj6p5u3qlfzkloduusnodt76pu',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 2085,
-      type: 'image',
-      content: {
-        low:
-          'https://ipfs.fleek.co/ipfs/bafybeigknh3nyru3rl5tqslctz52ymfulo3pzsz73ydojlkkpqxjb2shoe',
-        medium:
-          'https://ipfs.fleek.co/ipfs/bafybeigknh3nyru3rl5tqslctz52ymfulo3pzsz73ydojlkkpqxjb2shoe',
-        high:
-          'https://ipfs.fleek.co/ipfs/bafybeigknh3nyru3rl5tqslctz52ymfulo3pzsz73ydojlkkpqxjb2shoe',
-        thumbnail:
-          'https://ipfs.fleek.co/ipfs/bafybeigknh3nyru3rl5tqslctz52ymfulo3pzsz73ydojlkkpqxjb2shoe',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 2034,
-      type: 'image',
-      content: {
-        low:
-          'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-        medium:
-          'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-        high:
-          'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-        thumbnail:
-          'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 2504,
-      type: 'video',
-      fields: {
-        low: {
-          stringValue:
-            'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/low.mp4',
-        },
-        stream: {
-          stringValue:
-            'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY.m3u8',
-        },
-        medium: {
-          stringValue:
-            'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/medium.mp4',
-        },
-        high: {
-          stringValue:
-            'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/high.mp4',
-        },
-        thumbnail: {
-          stringValue:
-            'https://image.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/thumbnail.png',
-        },
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 2505,
-      type: 'audio',
-      content: {
-        low:
-          'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-        medium:
-          'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-        high:
-          'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-        thumbnail:
-          'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 2506,
-      type: 'text',
-      content: {
-        low:
-          'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-        medium:
-          'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-        high:
-          'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-        thumbnail:
-          'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 2505,
-      type: 'file',
-      content: {
-        thumbnail:
-          'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-        low:
-          'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-        medium:
-          'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-        high:
-          'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 2508,
-      type: 'url',
-      content: {
-        thumbnail: 'https://matataki.io',
-        low: 'https://matataki.io',
-        medium: 'https://matataki.io',
-        high: 'https://matataki.io',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 1065,
-      type: 'image',
-      content: {
-        low:
-          'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-        medium:
-          'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-        high:
-          'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-        thumbnail:
-          'https://ipfs.fleek.co/ipfs/bafybeiahiogjgcijj2vqvvt6w2lhmxwxmhv5ignexrus76w62foc4uqzw4',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-    {
-      id: 5265,
-      type: 'image',
-      content: {
-        low:
-          'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-        medium:
-          'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-        high:
-          'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-        thumbnail:
-          'https://ipfs.fleek.co/ipfs/bafybeied6bdcpljxzhhlph6hb4pjunsmhfaxh5siiqxgonpbkkwhyjqoli',
-        stream: '',
-      },
-      avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-      username: '@subtle-bubble',
-      title: 'Scream Alone',
-      time: Date.now(),
-    },
-  ];
-
   // 获取NFT数据
-  const fetchNFTData = () => {
-    const list = NFTList.concat(NFTListData);
-    setNFTList(list);
+  const fetchNFTData = async () => {
+    const mediaList = await getMediaList(++paginationMeta.currentPage);
+    setPaginationMeta(mediaList.meta);
+    if (mediaList.items) {
+      const getMediaWithMetaList = mediaList.items.map(async item => {
+        const metadata = await getMediaMetadata(item.metadataURI);
+        return {
+          ...item,
+          metadata,
+        };
+      });
+      const mediaWithMetaList: MediaWithMetadata[] = await Promise.all(
+        getMediaWithMetaList
+      );
+      const realNftList: NFTProps[] = mediaWithMetaList.map(media => {
+        return {
+          id: media.id,
+          type: media.metadata.mimeType.split('/')[0],
+          avatar_url: media.creator?.avatar,
+          username: media.creator?.username,
+          title: media.metadata.name,
+          time: Date.now(), // TODO: Need to change real time
+          fields: {
+            low: { stringValue: media.tokenURI },
+            stream: { stringValue: media.tokenURI },
+            medium: { stringValue: media.tokenURI },
+            high: { stringValue: media.tokenURI },
+            thumbnail: { stringValue: media.tokenURI },
+          },
+          content: {
+            low: media.tokenURI,
+            stream: media.tokenURI,
+            medium: media.tokenURI,
+            high: media.tokenURI,
+            thumbnail: media.tokenURI,
+          },
+        };
+      });
+
+      setNFTList(NFTList.concat(realNftList));
+    }
   };
 
   useMount(() => {
@@ -323,7 +135,8 @@ const Home: React.FC<void> = () => {
   const handleInfiniteOnLoad = async () => {
     setLoading(true);
     console.log('1111');
-    if (NFTList.length > 60) {
+    if (paginationMeta.currentPage >= paginationMeta.totalPages) {
+      console.log('FULL PAGE!');
       setLoading(false);
       setHasMore(false);
       return;
