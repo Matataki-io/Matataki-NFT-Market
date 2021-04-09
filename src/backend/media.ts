@@ -1,6 +1,7 @@
 import { Media, MediaMetadata } from '../types/Media.entity';
 import { backendClient } from './client';
 import { PaginationResult } from '../types/PaginationResult';
+import axios from 'axios';
 
 /**
  * 主要是为了 SSG 预先渲染
@@ -29,6 +30,6 @@ export async function getMediaById(id: string | number): Promise<Media> {
 }
 
 export async function getMediaMetadata(url: string): Promise<MediaMetadata> {
-  const { data } = await backendClient.get<MediaMetadata>(url);
+  const { data } = await axios.get<MediaMetadata>(url);
   return data;
 }
