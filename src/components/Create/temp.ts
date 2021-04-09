@@ -2,7 +2,7 @@
 
 export const NFTTempImage = {
   id: 0,
-  type: '', // type is image video audio text file url
+  type: 'image', // type is image video audio text file url
   content: {
     low: '',
     medium: '',
@@ -10,110 +10,93 @@ export const NFTTempImage = {
     thumbnail: '',
     stream: '',
   },
-  avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-  username: '@subtle-bubble',
-  title: 'Scream Alone',
-  time: Date.now(),
+  avatar_url: '',
+  username: '',
+  title: '',
+  time: '',
 };
 export const NFTTempVideo = {
   id: 0,
   type: 'video',
   fields: {
     low: {
-      stringValue:
-        'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/low.mp4',
+      stringValue: '',
     },
     stream: {
-      stringValue:
-        'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY.m3u8',
+      stringValue: '',
     },
     medium: {
-      stringValue:
-        'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/medium.mp4',
+      stringValue: '',
     },
     high: {
-      stringValue:
-        'https://stream.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/high.mp4',
+      stringValue: '',
     },
     thumbnail: {
-      stringValue:
-        'https://image.mux.com/sX001r6PlJeeGp5nhfr9FxDSrRfABMShhg2FWxDEWuKY/thumbnail.png',
+      stringValue: '',
     },
   },
-  avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-  username: '@subtle-bubble',
-  title: 'Scream Alone',
-  time: Date.now(),
+  avatar_url: '',
+  username: '',
+  title: '',
+  time: '',
 };
 export const NFTTempAudio = {
   id: 0,
   type: 'audio',
   content: {
-    low:
-      'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-    medium:
-      'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-    high:
-      'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
-    thumbnail:
-      'https://ipfs.io/ipfs/bafybeih6ob427hktbl6xfzunyz4tjop4cwmhzhgp4zp5dd3jwa2fyfn264',
+    low: '',
+    medium: '',
+    high: '',
+    thumbnail: '',
     stream: '',
   },
-  avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-  username: '@subtle-bubble',
-  title: 'Scream Alone',
-  time: Date.now(),
+  avatar_url: '',
+  username: '',
+  title: '',
+  time: '',
 };
 export const NFTTempText = {
   id: 0,
   type: 'text',
   content: {
-    low:
-      'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-    medium:
-      'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-    high:
-      'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
-    thumbnail:
-      'https://ipfs.fleek.co/ipfs/bafybeie2woanvrkua3zgzw7qifrbd46ksr45skjsny35bc542yik6cuizi',
+    low: '',
+    medium: '',
+    high: '',
+    thumbnail: '',
     stream: '',
   },
-  avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-  username: '@subtle-bubble',
-  title: 'Scream Alone',
-  time: Date.now(),
+  avatar_url: '',
+  username: '',
+  title: '',
+  time: '',
 };
 export const NFTTempFile = {
   id: 0,
   type: 'file',
   content: {
-    thumbnail:
-      'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-    low:
-      'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-    medium:
-      'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
-    high:
-      'https://ipfs.fleek.co/ipfs/bafybeibjhlwso6swp5gomkg75brvqpcmaai65wjskqpkvac2qolc6mw7hy',
+    thumbnail: '',
+    low: '',
+    medium: '',
+    high: '',
     stream: '',
   },
-  avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-  username: '@subtle-bubble',
-  title: 'Scream Alone',
-  time: Date.now(),
+  avatar_url: '',
+  username: '',
+  title: '',
+  time: '',
 };
 export const NFTTempUrl = {
   id: 0,
   type: 'url',
   content: {
-    thumbnail: 'https://matataki.io',
-    low: 'https://matataki.io',
-    medium: 'https://matataki.io',
-    high: 'https://matataki.io',
+    thumbnail: '',
+    low: '',
+    medium: '',
+    high: '',
     stream: '',
   },
-  avatar_url: 'https://react.geist-ui.dev/images/avatar.png',
-  username: '@subtle-bubble',
-  title: 'Scream Alone',
-  time: Date.now(),
+  avatar_url: '',
+  username: '',
+  title: '',
+  time: '',
 };

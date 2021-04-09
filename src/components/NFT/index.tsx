@@ -18,8 +18,8 @@ const NFTComponents: React.FC<NFTProps> = ({
     <StyledNFTWrapper>
       <StyledNFTHead>
         <div className='user'>
-          {avatar_url ? (
-            <Avatar className='user-avatar' src={avatar_url} />
+          {content || fields ? (
+            <Avatar className='user-avatar' src={avatar_url || ''} />
           ) : (
             ''
           )}
@@ -75,7 +75,7 @@ const NFTComponents: React.FC<NFTProps> = ({
             <span className='subtitle'>{username ? 'Collected by' : ''}</span>
             <div className='owner'>
               <span className='owner-name'>{username}</span>
-              {avatar_url ? (
+              {content || fields ? (
                 <Avatar className='custom-avatar' size={16} src={avatar_url} />
               ) : (
                 ''
