@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Avatar, Button } from '@geist-ui/react';
+import { Button } from '@geist-ui/react';
 import { NFTProps } from '../../../next-env';
 import moment from 'moment';
+import { Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
 const NFTComponents: React.FC<NFTProps> = ({
   id,
@@ -19,7 +21,11 @@ const NFTComponents: React.FC<NFTProps> = ({
       <StyledNFTHead>
         <div className='user'>
           {content || fields ? (
-            <Avatar className='user-avatar' src={avatar_url || ''} />
+            <Avatar
+              className='user-avatar'
+              icon={<UserOutlined />}
+              src={avatar_url || ''}
+            />
           ) : (
             ''
           )}
@@ -37,7 +43,7 @@ const NFTComponents: React.FC<NFTProps> = ({
             src={fields?.low.stringValue}
             loop
             playsInline
-            autoPlay
+            // autoPlay
             poster={fields?.thumbnail.stringValue}
             className='media-video'></video>
         ) : type === 'audio' ? (
@@ -76,7 +82,12 @@ const NFTComponents: React.FC<NFTProps> = ({
             <div className='owner'>
               <span className='owner-name'>{username}</span>
               {content || fields ? (
-                <Avatar className='custom-avatar' size={16} src={avatar_url} />
+                <Avatar
+                  className='custom-avatar'
+                  icon={<UserOutlined />}
+                  size={16}
+                  src={avatar_url || ''}
+                />
               ) : (
                 ''
               )}
@@ -111,7 +122,7 @@ const StyledNFTHead = styled.div`
     justify-content: space-between;
     align-items: center;
     .user-avatar {
-      display: flex;
+      flex: 0 0 32px;
     }
   }
   .username {
@@ -224,9 +235,7 @@ const StyledNFTFooterUser = styled.div`
     font-weight: 400;
   }
   .custom-avatar {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+    flex: 0 0 16px;
   }
 `;
 
