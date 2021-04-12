@@ -3,6 +3,7 @@ import { MaxUint256 } from '@ethersproject/constants';
 import { useCallback, useEffect, useState } from 'react';
 import { useWallet } from 'use-wallet';
 import { BaseErc20 } from '../blockchain/contracts/BaseErc20';
+import { ZERO_ADDRESS } from '../constant';
 
 export function useBalance(token: BaseErc20) {
   const { account } = useWallet();
@@ -13,12 +14,13 @@ export function useBalance(token: BaseErc20) {
     const result = await token.balanceOf(account as string);
     setBalance(result);
     setUpdateTime(new Date());
-  }, [account]);
+  }, [token, account]);
   /**
    * use Dan's example
    * https://github.com/facebook/react/issues/14326#issuecomment-441680293
    */
   useEffect(() => {
+    if (token.address === ZERO_ADDRESS) return;
     if (account && token) {
       fetchBalance();
     }
@@ -28,5 +30,5 @@ export function useBalance(token: BaseErc20) {
 
   const isEnough = (x: BigNumberish) => balance.gte(x);
 
-  return { allowance: balance, isEnough, lastUpdated };
+  return { balance, isEnough, lastUpdated };
 }
