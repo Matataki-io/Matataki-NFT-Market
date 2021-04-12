@@ -46,12 +46,20 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             </Text>
             <Text>Description: {post.metadata.description}</Text>
             <Text>File type: {post.metadata.mimeType}</Text>
-            <Link color href={getTokenOnScan(post.id)} target='_blank'>
-              Verify on BSCScan ↗️
-            </Link>
-            <Link color href={post.backendData.tokenURI} target='_blank'>
-              Verify on IPFS ↗️
-            </Link>
+            <div className='proof'>
+              <Text h4>Proof of Authenticity</Text>
+              <Link href={getTokenOnScan(post.id)} target='_blank'>
+                <Button size='small'>Verify on BSCScan</Button>
+              </Link>
+              <Link href={post.backendData.tokenURI} target='_blank'>
+                <Button size='small'>Verify on IPFS</Button>
+              </Link>
+            </div>
+            <div className='price-and-bid'>
+              <Text>Current Price</Text>
+              <Text h3>1 ETH</Text>
+              <Button type='secondary'>Place Bid</Button>
+            </div>
           </div>
         </Grid>
       </Grid.Container>
