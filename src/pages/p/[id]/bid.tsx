@@ -140,7 +140,7 @@ export default function Bid() {
                 </Select.Option>
               ))}
             </Select>
-            <Text>Balance: {utils.formatUnits(balance, 18)}</Text>
+            {currency && <Text>Balance: {utils.formatUnits(balance, 18)}</Text>}
             <InputNumber<string>
               placeholder='0.00'
               value={amount}
