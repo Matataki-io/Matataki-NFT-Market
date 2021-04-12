@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '@geist-ui/react';
-import { NFTProps } from '../../../next-env';
 import moment from 'moment';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+
+import AudioRender from '../AudioRender';
+import { NFTProps } from '../../../next-env';
 
 const NFTComponents: React.FC<NFTProps> = ({
   id,
@@ -48,9 +50,10 @@ const NFTComponents: React.FC<NFTProps> = ({
             className='media-video'></video>
         ) : type === 'audio' ? (
           <div className='media-audio'>
-            <a href={content?.medium} target='_blank' rel='noreferrer'>
+            {/* <a href={content?.medium} target='_blank' rel='noreferrer'>
               <Button style={{ margin: '40px 0' }}>Audio Play</Button>
-            </a>
+            </a> */}
+            <AudioRender src={content?.medium}></AudioRender>
           </div>
         ) : type === 'text' ? (
           <div className='media-text'>
@@ -154,7 +157,6 @@ const StyledNFTContent = styled.div`
   flex: 1;
   .media-images,
   .media-video,
-  .media-audio,
   .media-text,
   .media-file,
   .media-url {
@@ -165,6 +167,13 @@ const StyledNFTContent = styled.div`
     height: auto;
     margin: 0px auto;
     object-fit: contain;
+  }
+  .media-audio {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
 const StyledNFTFooter = styled.div`
