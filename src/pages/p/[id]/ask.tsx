@@ -15,12 +15,9 @@ import styled from 'styled-components';
 import { currentSupportedTokens as tokens } from '../../../constant/contracts';
 // import { useMediaData } from '../../../hooks/useMediaData';
 import { useMedia } from '../../../hooks/useMedia';
-import { useERC20 } from '../../../hooks/useERC20';
-import { constructBid } from '../../../utils/zdkUtils';
+import { constructAsk } from '../../../utils/zdkUtils';
 import { useWallet } from 'use-wallet';
 import { utils } from 'ethers';
-import { useBalance } from '../../../hooks/useBalance';
-import { useMediaToken } from '../../../hooks/useMediaToken';
 
 const BiddingBox = styled.div`
   padding: 4rem 0.5rem;
@@ -56,7 +53,7 @@ const FullWidth: CSSProperties = {
   width: '100%',
 };
 
-export default function Bid() {
+export default function AskPage() {
   const router = useRouter();
   const wallet = useWallet();
   const { id } = router.query;
@@ -64,49 +61,22 @@ export default function Bid() {
   const handler = (val: string | string[]) => {
     setCurrency(val as string);
   };
-  const { profile, isMeTheOwner } = useMediaToken(Number(id));
   const [currency, setCurrency] = useState<string>('');
   const [amount, setAmount] = useState('0');
-  const [sellOnShare, setSellOnShare] = useState(0);
-  const tokenContrct = useERC20(currency);
-  const { balance } = useBalance(tokenContrct);
 
-  async function setBid() {
+  async function setAsk() {
     if (!wallet.account) throw new Error('Wallet have to be connected');
-    const tx = await mediaContract.setBid(
+    const tx = await mediaContract.setAsk(
       id as string,
-      constructBid(
-        currency,
-        amount,
-        wallet.account,
-        wallet.account,
-        sellOnShare
-      )
+      constructAsk(currency, amount)
     );
     const receipt = await tx.wait();
-    alert(`出价成功，TxHash: ${receipt.transactionHash}`);
+    alert(`问价成功，TxHash: ${receipt.transactionHash}`);
   }
 
   if (!id) {
     return (
       <div className='loading'>Fetching Param `ID` now... Please wait</div>
-    );
-  }
-  if (isMeTheOwner) {
-    return (
-      <div className='notice'>
-        <Text h3>Sorry, but...</Text>
-        <Text>
-          We detected that you are the owner. Which in this case that you cannot
-          set a bid on your token.
-        </Text>
-        <ActionsBox>
-          <Button icon={<ArrowLeft />} onClick={() => router.back()}>
-            Go Back
-          </Button>
-          <Button type='secondary'>Set Ask instead</Button>
-        </ActionsBox>
-      </div>
     );
   }
   return (
@@ -122,14 +92,7 @@ export default function Bid() {
         </Grid>
         <Grid xs={24} md={12}>
           <BiddingBox>
-            <CreatorEquity>
-              <Text style={{ color: '#888888' }}>CREATOR EQUITY</Text>
-              <Text h3>
-                {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
-              </Text>
-            </CreatorEquity>
-
-            <Text h4>Your bid</Text>
+            <Text h4>Your ask</Text>
             <Select
               placeholder='Bidding Currency'
               onChange={handler}
@@ -140,7 +103,6 @@ export default function Bid() {
                 </Select.Option>
               ))}
             </Select>
-            {currency && <Text>Balance: {utils.formatUnits(balance, 18)}</Text>}
             <InputNumber<string>
               placeholder='0.00'
               value={amount}
@@ -151,42 +113,19 @@ export default function Bid() {
               stringMode
               min='0'
             />
-            <Text h4>Resale Fee</Text>
-            <Text>
-              If you re-sell this piece, the person you&apos;re buying it from
-              now will earn this percentage as a reward for selling it to you.
-            </Text>
-            <InputNumber
-              defaultValue={0}
-              style={FullWidth}
-              onChange={setSellOnShare}
-              min={0}
-              precision={0}
-              max={99}
-            />
             <ActionsBox>
               <Button
                 icon={<ArrowLeft />}
                 onClick={() => router.back()}
                 size='large'
                 auto></Button>
-              {wallet.status === 'connected' ? (
-                <Button
-                  type='secondary'
-                  size='large'
-                  style={FullWidth}
-                  onClick={() => setBid()}>
-                  Make your bid
-                </Button>
-              ) : (
-                <Button
-                  type='secondary'
-                  size='large'
-                  style={FullWidth}
-                  onClick={() => wallet.connect('injected')}>
-                  Connect Wallet
-                </Button>
-              )}
+              <Button
+                type='secondary'
+                size='large'
+                style={FullWidth}
+                onClick={() => setAsk()}>
+                Make your Ask
+              </Button>
             </ActionsBox>
           </BiddingBox>
         </Grid>

@@ -13,4 +13,16 @@ export const CONTRACTS: {
   },
 };
 
+export const TOKENS: {
+  [chainId in ChainId]?: {
+    [contractName: string]: string;
+  };
+} = {
+  [ChainId.BSC_TESTNET]: {
+    USDT: '0x337610d27c682e347c9cd60bd4b3b107c9d34ddd',
+    DAI: '0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867',
+  },
+};
+
 export const currentContracts = CONTRACTS[currentChainId];
+export const currentSupportedTokens = TOKENS[currentChainId];
