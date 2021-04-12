@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button, Grid, Image, Link, Text } from '@geist-ui/react';
-import { getTokenOnScan } from '../../utils/token';
+import { getTokenOnScan } from '../../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import axios from 'axios';
 import { ParsedUrlQuery } from 'querystring';
-import { getMediaById, getHotMediaList } from '../../backend/media';
+import { getMediaById, getHotMediaList } from '../../../backend/media';
 
 type Props = {
   post?: {
