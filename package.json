@@ -34,7 +34,8 @@
     "react-svg": "^12.1.0",
     "styled-components": "^5.2.3",
     "swr": "^0.5.5",
-    "use-wallet": "^0.8.1"
+    "use-wallet": "^0.8.1",
+    "wavesurfer.js": "^4.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.13.14",
