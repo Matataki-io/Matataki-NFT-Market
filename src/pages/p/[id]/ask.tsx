@@ -53,7 +53,7 @@ const FullWidth: CSSProperties = {
   width: '100%',
 };
 
-export default function Bid() {
+export default function AskPage() {
   const router = useRouter();
   const wallet = useWallet();
   const { id } = router.query;
