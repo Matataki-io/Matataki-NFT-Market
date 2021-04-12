@@ -4,16 +4,17 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWallet } from 'use-wallet';
 import { BaseErc20 } from '../blockchain/contracts/BaseErc20';
 import { ZERO_ADDRESS } from '../constant';
+import { useLastUpdated } from './useLastUpdated';
 
 export function useBalance(token: BaseErc20) {
   const { account } = useWallet();
   const [balance, setBalance] = useState(BigNumber.from(0));
-  const [lastUpdated, setUpdateTime] = useState(new Date());
+  const { lastUpdated, updated } = useLastUpdated();
 
   const fetchBalance = useCallback(async () => {
     const result = await token.balanceOf(account as string);
     setBalance(result);
-    setUpdateTime(new Date());
+    updated();
   }, [token, account]);
   /**
    * use Dan's example

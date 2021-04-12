@@ -3,16 +3,17 @@ import { MaxUint256 } from '@ethersproject/constants';
 import { useCallback, useEffect, useState } from 'react';
 import { useWallet } from 'use-wallet';
 import { BaseErc20 } from '../blockchain/contracts/BaseErc20';
+import { useLastUpdated } from './useLastUpdated';
 
 export function useAllowance(token: BaseErc20, spender: string) {
   const { account } = useWallet();
   const [allowance, setAllowance] = useState(BigNumber.from(0));
-  const [lastUpdated, setUpdateTime] = useState(new Date());
+  const { lastUpdated, updated } = useLastUpdated();
 
   const fetchAllowance = useCallback(async () => {
     const result = await token.allowance(account as string, spender);
     setAllowance(result);
-    setUpdateTime(new Date());
+    updated();
   }, [account, spender]);
   /**
    * use Dan's example
