@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { axiosFetcher } from '../utils/swr.util';
 
-export function useMediaNFT(tokenId: number) {
+export function useMediaData(tokenId: number) {
   const { data: backendData, error: backendError } = useSWR(
     `${process.env.NEXT_PUBLIC_BACKEND_API}/media/${tokenId}`,
     axiosFetcher
