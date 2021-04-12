@@ -37,6 +37,11 @@ export function useMediaToken(id: BigNumberish) {
     }
   }, [id]);
 
+  const isMeTheOwner = useMemo(() => profile.owner === account, [
+    profile,
+    account,
+  ]);
+
   const isOwnerOrApproved = useMemo(() => {
     return (
       isAllApprove ||
@@ -45,5 +50,5 @@ export function useMediaToken(id: BigNumberish) {
     );
   }, [isAllApprove, profile, account]);
 
-  return { isOwnerOrApproved, profile };
+  return { isOwnerOrApproved, isMeTheOwner, profile };
 }

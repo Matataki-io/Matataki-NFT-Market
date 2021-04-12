@@ -20,6 +20,7 @@ import { constructBid } from '../../../utils/zdkUtils';
 import { useWallet } from 'use-wallet';
 import { utils } from 'ethers';
 import { useBalance } from '../../../hooks/useBalance';
+import { useMediaToken } from '../../../hooks/useMediaToken';
 
 const BiddingBox = styled.div`
   padding: 4rem 0.5rem;
@@ -63,6 +64,7 @@ export default function Bid() {
   const handler = (val: string | string[]) => {
     setCurrency(val as string);
   };
+  const { profile, isMeTheOwner } = useMediaToken(Number(id));
   const [currency, setCurrency] = useState<string>('');
   const [amount, setAmount] = useState('0');
   const [sellOnShare, setSellOnShare] = useState(0);
@@ -88,6 +90,23 @@ export default function Bid() {
   if (!id) {
     return (
       <div className='loading'>Fetching Param `ID` now... Please wait</div>
+    );
+  }
+  if (isMeTheOwner) {
+    return (
+      <div className='notice'>
+        <Text h3>Sorry, but...</Text>
+        <Text>
+          We detected that you are the owner. Which in this case that you cannot
+          set a bid on your token.
+        </Text>
+        <ActionsBox>
+          <Button icon={<ArrowLeft />} onClick={() => router.back()}>
+            Go Back
+          </Button>
+          <Button type='secondary'>Set Ask instead</Button>
+        </ActionsBox>
+      </div>
     );
   }
   return (
