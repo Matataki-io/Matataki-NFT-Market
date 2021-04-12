@@ -168,13 +168,23 @@ export default function Bid() {
                 onClick={() => router.back()}
                 size='large'
                 auto></Button>
-              <Button
-                type='secondary'
-                size='large'
-                style={FullWidth}
-                onClick={() => setBid()}>
-                Make your bid
-              </Button>
+              {wallet.status === 'connected' ? (
+                <Button
+                  type='secondary'
+                  size='large'
+                  style={FullWidth}
+                  onClick={() => setBid()}>
+                  Make your bid
+                </Button>
+              ) : (
+                <Button
+                  type='secondary'
+                  size='large'
+                  style={FullWidth}
+                  onClick={() => wallet.connect('injected')}>
+                  Connect Wallet
+                </Button>
+              )}
             </ActionsBox>
           </BiddingBox>
         </Grid>
