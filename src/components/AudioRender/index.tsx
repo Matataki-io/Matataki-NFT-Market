@@ -54,18 +54,20 @@ const AudioRender: React.FC<any> = ({ src }) => {
   };
 
   return (
-    <Spin spinning={loading}>
-      <StyledWaveform ref={e => setWaveform(e)}></StyledWaveform>
-      {!loading ? (
-        <StyledWaveformBtn onClick={() => toggle()}>
-          {status ? <CaretRightOutlined /> : <PauseOutlined />}
-        </StyledWaveformBtn>
-      ) : null}
-    </Spin>
+    <StyledWrapper>
+      <Spin spinning={loading}>
+        <StyledWaveform ref={e => setWaveform(e)}></StyledWaveform>
+        {!loading ? (
+          <StyledWaveformBtn onClick={() => toggle()}>
+            {status ? <CaretRightOutlined /> : <PauseOutlined />}
+          </StyledWaveformBtn>
+        ) : null}
+      </Spin>
+    </StyledWrapper>
   );
 };
 
-const StyledWrapper = styled(Spin)`
+const StyledWrapper = styled.div`
   padding: 40px 0;
   width: 100%;
 `;
