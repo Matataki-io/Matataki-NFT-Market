@@ -165,7 +165,7 @@ const Home: React.FC<void> = () => {
           }>
           <StyledNfts>
             {NFTList.map((i, idx) => (
-              <Link href={`/${i.id}`} key={idx}>
+              <Link href={`/p/${i.id}`} key={idx}>
                 <a>
                   <NFT {...i}></NFT>
                 </a>
