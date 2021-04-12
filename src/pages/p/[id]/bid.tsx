@@ -124,7 +124,9 @@ export default function Bid() {
           <BiddingBox>
             <CreatorEquity>
               <Text style={{ color: '#888888' }}>CREATOR EQUITY</Text>
-              <Text h3>10%</Text>
+              <Text h3>
+                {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
+              </Text>
             </CreatorEquity>
 
             <Text h4>Your bid</Text>
