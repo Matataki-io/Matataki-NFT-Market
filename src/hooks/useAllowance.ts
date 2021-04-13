@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish, Contract } from 'ethers';
 import { MaxUint256 } from '@ethersproject/constants';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWallet } from 'use-wallet';
 import { BaseErc20 } from '../blockchain/contracts/BaseErc20';
 import { useLastUpdated } from './useLastUpdated';
@@ -28,7 +28,9 @@ export function useAllowance(token: BaseErc20, spender: string) {
     return () => clearInterval(refreshInterval);
   }, [account, spender, fetchAllowance, token]);
 
-  const isEnough = (x: BigNumberish) => allowance.gte(x);
+  const isEnough = useCallback((x: BigNumberish) => allowance.gte(x), [
+    allowance,
+  ]);
 
   const approve = useCallback(
     async (value: BigNumber = MaxUint256) => {
