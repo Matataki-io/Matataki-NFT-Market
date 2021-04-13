@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useMount } from 'ahooks';
+import { useUnmount } from 'ahooks';
 import { Spin, message } from 'antd';
 import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
@@ -46,6 +46,11 @@ const AudioRender: React.FC<Props> = ({ src, mode }) => {
       });
     }
   }, [waveform, mode, src]);
+
+  // 销毁
+  useUnmount(() => {
+    wavesurferApi.destroy();
+  });
 
   // 播放切换
   const toggle = () => {
