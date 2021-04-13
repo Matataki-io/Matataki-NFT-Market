@@ -147,13 +147,13 @@ const Home: React.FC<void> = () => {
 
   return (
     <StyledWrapper>
-      <StyledModule className='nfts'>
-        <StyledModuleHead>
+      <StyledModule>
+        {/* <StyledModuleHead>
           <StyledTitle>
             Upcoming NFTs<span>New</span>
           </StyledTitle>
           <span className='more'>VIEW MORE</span>
-        </StyledModuleHead>
+        </StyledModuleHead> */}
         <InfiniteScroll
           pageStart={0}
           loadMore={handleInfiniteOnLoad}
@@ -175,7 +175,7 @@ const Home: React.FC<void> = () => {
         </InfiniteScroll>
       </StyledModule>
 
-      <StyledModule className='creators'>
+      {/* <StyledModule className='creators'>
         <StyledModuleHead>
           <StyledTitle>
             Top NFT Creators<span>Hot</span>
@@ -207,7 +207,7 @@ const Home: React.FC<void> = () => {
             </div>
           ))}
         </StyledAbout>
-      </StyledModule>
+      </StyledModule> */}
     </StyledWrapper>
   );
 };
@@ -217,8 +217,7 @@ const StyledWrapper = styled.div`
   /* padding: 0 20px 200px; */
   box-sizing: border-box;
 
-  /* padding: 30px; */
-  padding: 30px 30px 200px;
+  padding: 0 30px 200px;
   margin: 0px auto;
   width: 100%;
   max-width: calc(1460px);
@@ -256,7 +255,7 @@ const StyledModule = styled.h3`
   }
 
   &.nfts {
-    margin-top: 46px;
+    /* margin-top: 46px; */
   }
   &.creators {
     margin-top: 100px;
@@ -324,9 +323,21 @@ const StyledCreators = styled.div`
 const StyledNfts = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0px, 1fr));
-  gap: 50px 30px;
-  margin-top: 48px;
+  justify-content: center;
+  grid-template-columns: repeat(4, minmax(0px, 330px));
+  gap: 30px 20px;
+  margin: 48px auto 0;
+  @media screen and (max-width: 1366px) {
+    grid-template-columns: repeat(3, minmax(0px, 330px));
+  }
+  @media screen and (max-width: 1140px) {
+    grid-template-columns: repeat(2, minmax(0px, 330px));
+  }
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 export default Home;

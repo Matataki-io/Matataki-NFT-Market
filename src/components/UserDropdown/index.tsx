@@ -1,11 +1,13 @@
 import React from 'react';
-import { Menu, Dropdown, Avatar } from 'antd';
+import { Menu, Dropdown, Avatar, message } from 'antd';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import styles from './index.module.scss';
 import { ReactSVG } from 'react-svg';
 import { useWallet } from 'use-wallet';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { useLogin } from '../../hooks/useLogin';
 
@@ -27,24 +29,23 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
     return (
       <Menu>
         <Menu.Item>
-          <StyledItem
-            onClick={() => {
-              router.push(
-                `/${userDataByWallet ? userDataByWallet.username : ''}`
-              );
-            }}>
-            <Avatar size={40} icon={<UserOutlined />} />
-            <StyledItemUser>
-              <div>xiaotian</div>
-              <div>See Profile</div>
-            </StyledItemUser>
-          </StyledItem>
+          <Link href={`/${userDataByWallet!.username}`}>
+            <a>
+              <StyledItem>
+                <Avatar size={40} icon={<UserOutlined />} />
+                <StyledItemUser>
+                  <div>{userDataByWallet!.username}</div>
+                  <div>See Profile</div>
+                </StyledItemUser>
+              </StyledItem>
+            </a>
+          </Link>
         </Menu.Item>
         <Menu.Item>
           <a
             target='_blank'
             rel='noopener noreferrer'
-            href='https://etherscan.io'>
+            href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${wallet.account}`}>
             <StyledItem>
               <ReactSVG className='icon' src={IconShare} />
               View on Etherscan
@@ -52,15 +53,14 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
           </a>
         </Menu.Item>
         <Menu.Item>
-          <a
-            target='_blank'
-            rel='noopener noreferrer'
-            href='https://etherscan.io'>
+          <CopyToClipboard
+            text={`Invite a Creator：${window.location.href}`}
+            onCopy={() => message.info('复制成功，立即分享！')}>
             <StyledItem>
               <ReactSVG className='icon' src={IconEmail} />
               Invite a Creator
             </StyledItem>
-          </a>
+          </CopyToClipboard>
         </Menu.Item>
         <Menu.Item>
           <a

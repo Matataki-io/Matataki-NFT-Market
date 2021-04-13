@@ -1,8 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Avatar, Button } from '@geist-ui/react';
-import { NFTProps } from '../../../next-env';
+import { Button } from '@geist-ui/react';
 import moment from 'moment';
+import { Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+
+import AudioRender from '../AudioRender';
+import { NFTProps } from '../../../next-env';
 
 const NFTComponents: React.FC<NFTProps> = ({
   id,
@@ -19,7 +23,11 @@ const NFTComponents: React.FC<NFTProps> = ({
       <StyledNFTHead>
         <div className='user'>
           {content || fields ? (
-            <Avatar className='user-avatar' src={avatar_url || ''} />
+            <Avatar
+              className='user-avatar'
+              icon={<UserOutlined />}
+              src={avatar_url || ''}
+            />
           ) : (
             ''
           )}
@@ -31,20 +39,23 @@ const NFTComponents: React.FC<NFTProps> = ({
       </StyledNFTHead>
       <StyledNFTContent>
         {type === 'image' ? (
-          <img src={content?.medium} alt='Content' className='media-images' />
+          <div className='media-images'>
+            <img src={content?.medium} alt='Content' />
+          </div>
         ) : type === 'video' ? (
           <video
             src={fields?.low.stringValue}
             loop
             playsInline
-            autoPlay
+            // autoPlay
             poster={fields?.thumbnail.stringValue}
             className='media-video'></video>
         ) : type === 'audio' ? (
           <div className='media-audio'>
-            <a href={content?.medium} target='_blank' rel='noreferrer'>
+            {/* <a href={content?.medium} target='_blank' rel='noreferrer'>
               <Button style={{ margin: '40px 0' }}>Audio Play</Button>
-            </a>
+            </a> */}
+            <AudioRender src={content!.medium} mode='simple'></AudioRender>
           </div>
         ) : type === 'text' ? (
           <div className='media-text'>
@@ -76,7 +87,12 @@ const NFTComponents: React.FC<NFTProps> = ({
             <div className='owner'>
               <span className='owner-name'>{username}</span>
               {content || fields ? (
-                <Avatar className='custom-avatar' size={16} src={avatar_url} />
+                <Avatar
+                  className='custom-avatar'
+                  icon={<UserOutlined />}
+                  size={16}
+                  src={avatar_url || ''}
+                />
               ) : (
                 ''
               )}
@@ -111,7 +127,7 @@ const StyledNFTHead = styled.div`
     justify-content: space-between;
     align-items: center;
     .user-avatar {
-      display: flex;
+      flex: 0 0 32px;
     }
   }
   .username {
@@ -141,9 +157,7 @@ const StyledNFTContent = styled.div`
   justify-content: space-between;
   align-items: center;
   flex: 1;
-  .media-images,
   .media-video,
-  .media-audio,
   .media-text,
   .media-file,
   .media-url {
@@ -154,6 +168,30 @@ const StyledNFTContent = styled.div`
     height: auto;
     margin: 0px auto;
     object-fit: contain;
+  }
+  .media-images {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      margin: 0px auto;
+      object-fit: contain;
+    }
+  }
+  .media-audio {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
 const StyledNFTFooter = styled.div`
@@ -224,9 +262,7 @@ const StyledNFTFooterUser = styled.div`
     font-weight: 400;
   }
   .custom-avatar {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+    flex: 0 0 16px;
   }
 `;
 
