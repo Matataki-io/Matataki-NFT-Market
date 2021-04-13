@@ -9,6 +9,7 @@ import { ZERO_ADDRESS } from '../constant';
 export function useAllowance(token: BaseErc20, spender: string) {
   const { account } = useWallet();
   const [allowance, setAllowance] = useState(BigNumber.from(0));
+  const [isUnlocking, setUnlockStat] = useState(false);
   const { lastUpdated, updated } = useLastUpdated();
 
   const fetchAllowance = useCallback(async () => {
@@ -34,13 +35,22 @@ export function useAllowance(token: BaseErc20, spender: string) {
 
   const approve = useCallback(
     async (value: BigNumber = MaxUint256) => {
-      const txResp = await token.approve(spender, value);
-      await txResp.wait();
-      //   setAllowance(value);
+      setUnlockStat(true);
+      try {
+        const txResp = await token.approve(spender, value);
+        await txResp.wait();
+        await fetchAllowance();
+        //   setAllowance(value);
+        setUnlockStat(false);
+      } catch (error) {
+        console.error('Error happened when trying to unlock');
+        //   setAllowance(value);
+        setUnlockStat(false);
+      }
       return true;
     },
     [token, spender]
   );
 
-  return { allowance, isEnough, approve, lastUpdated };
+  return { allowance, isEnough, approve, lastUpdated, isUnlocking };
 }

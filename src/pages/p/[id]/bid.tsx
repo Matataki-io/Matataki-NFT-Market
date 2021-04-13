@@ -21,6 +21,7 @@ import { useWallet } from 'use-wallet';
 import { utils } from 'ethers';
 import { useBalance } from '../../../hooks/useBalance';
 import { useMediaToken } from '../../../hooks/useMediaToken';
+import { useAllowance } from '../../../hooks/useAllowance';
 
 const BiddingBox = styled.div`
   padding: 4rem 0.5rem;
@@ -70,6 +71,10 @@ export default function Bid() {
   const [sellOnShare, setSellOnShare] = useState(0);
   const tokenContrct = useERC20(currency);
   const { balance } = useBalance(tokenContrct);
+  const { isEnough, approve, isUnlocking } = useAllowance(
+    tokenContrct,
+    mediaContract.address
+  );
 
   async function setBid() {
     if (!wallet.account) throw new Error('Wallet have to be connected');
@@ -171,13 +176,24 @@ export default function Bid() {
                 size='large'
                 auto></Button>
               {wallet.status === 'connected' ? (
-                <Button
-                  type='secondary'
-                  size='large'
-                  style={FullWidth}
-                  onClick={() => setBid()}>
-                  Make your bid
-                </Button>
+                isEnough(amount) ? (
+                  <Button
+                    type='secondary'
+                    size='large'
+                    style={FullWidth}
+                    onClick={() => setBid()}>
+                    Make your bid
+                  </Button>
+                ) : (
+                  <Button
+                    type='secondary'
+                    size='large'
+                    loading={isUnlocking}
+                    style={FullWidth}
+                    onClick={() => approve()}>
+                    Unlock
+                  </Button>
+                )
               ) : (
                 <Button
                   type='secondary'
