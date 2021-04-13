@@ -1,11 +1,13 @@
 import React from 'react';
-import { Button, Grid, Image, Link, Text } from '@geist-ui/react';
+import { Button, Grid, Image, Link, Text, User } from '@geist-ui/react';
 import { getTokenOnScan } from '../../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import axios from 'axios';
 import { ParsedUrlQuery } from 'querystring';
 import { getMediaById, getHotMediaList } from '../../../backend/media';
 import { useMediaToken } from '../../../hooks/useMediaToken';
+import { utils } from 'ethers';
+import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 
 type Props = {
   post?: {
@@ -47,6 +49,20 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             <Text h1 style={{ fontWeight: 400 }}>
               #{post.id} {post.metadata.name}
             </Text>
+            <Text>
+              Creator:{' '}
+              <User
+                src={post.backendData.creator.avatar}
+                name={post.backendData.creator.nickname}
+              />
+            </Text>
+            <Text>
+              Owner:{' '}
+              <User
+                src={post.backendData.owner.avatar}
+                name={post.backendData.owner.nickname}
+              />
+            </Text>
             <Text>Description: {post.metadata.description}</Text>
             <Text>File type: {post.metadata.mimeType}</Text>
             <div className='proof'>
@@ -59,8 +75,18 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
               </Link>
             </div>
             <div className='price-and-bid'>
-              <Text>Current Price</Text>
-              <Text h3>1 ETH</Text>
+              {profile.currentAsk.amount.gt(0) && (
+                <>
+                  <Text>Current Price</Text>
+                  <Text h3>
+                    {utils.formatUnits(
+                      profile.currentAsk.amount,
+                      getDecimalOf(profile.currentAsk.currency)
+                    )}{' '}
+                    {getSymbolOf(profile.currentAsk.currency)}
+                  </Text>
+                </>
+              )}
               <Button>See Bids</Button>
               {!isMeTheOwner ? (
                 <Link href={`/p/${post.id}/bid`}>

@@ -20,6 +20,7 @@ import { useWallet } from 'use-wallet';
 import { utils } from 'ethers';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import Link from 'next/link';
+import { getDecimalOf } from '../../../utils/tokens';
 
 const BiddingBox = styled.div`
   padding: 4rem 0.5rem;
@@ -130,8 +131,14 @@ export default function AskPage() {
               value={amount}
               onChange={setAmount}
               style={FullWidth}
-              formatter={value => utils.formatUnits(value as string, 18)}
-              parser={value => utils.parseUnits(value as string, 18).toString()}
+              formatter={value =>
+                utils.formatUnits(value as string, getDecimalOf(currency))
+              }
+              parser={value =>
+                utils
+                  .parseUnits(value as string, getDecimalOf(currency))
+                  .toString()
+              }
               stringMode
               min='0'
             />

@@ -18,6 +18,10 @@ export function useMediaToken(id: BigNumberish) {
       prevOwner: Decimal.new(0),
       owner: Decimal.new(0),
     },
+    currentAsk: {
+      currency: '',
+      amount: BigNumber.from(0),
+    },
   });
   const [isAllApprove, setAllApprove] = useState(false);
 
@@ -26,15 +30,21 @@ export function useMediaToken(id: BigNumberish) {
     const approvedOperator = await mediaContract.getApproved(id);
     const creator = await mediaContract.tokenCreators(id);
     const bidsShares = await marketContract.bidSharesForToken(id);
+    const currentAsk = await marketContract.currentAskForToken(id);
     setProfile({
       owner,
       creator,
       approvedOperator,
       bidsShares,
+      currentAsk,
     });
     if (account) {
       const isApproveForAll = await mediaContract.isApprovedForAll(
         owner,
+        account
+      );
+      const bidForTokenBidder = await marketContract.bidForTokenBidder(
+        id,
         account
       );
       setAllApprove(isApproveForAll);
