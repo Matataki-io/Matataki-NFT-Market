@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWallet } from 'use-wallet';
 import { BaseErc20 } from '../blockchain/contracts/BaseErc20';
 import { useLastUpdated } from './useLastUpdated';
+import { ZERO_ADDRESS } from '../constant';
 
 export function useAllowance(token: BaseErc20, spender: string) {
   const { account } = useWallet();
@@ -14,13 +15,13 @@ export function useAllowance(token: BaseErc20, spender: string) {
     const result = await token.allowance(account as string, spender);
     setAllowance(result);
     updated();
-  }, [account, spender]);
+  }, [account, token, spender]);
   /**
    * use Dan's example
    * https://github.com/facebook/react/issues/14326#issuecomment-441680293
    */
   useEffect(() => {
-    if (account && spender && token) {
+    if (account && spender !== ZERO_ADDRESS && token.address !== ZERO_ADDRESS) {
       fetchAllowance();
     }
     let refreshInterval = setInterval(fetchAllowance, 1000 * 10);
