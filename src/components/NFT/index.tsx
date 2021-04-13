@@ -4,7 +4,7 @@ import { Button } from '@geist-ui/react';
 import moment from 'moment';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-
+import Link from 'next/link';
 import AudioRender from '../AudioRender';
 import { NFTProps } from '../../../next-env';
 
@@ -21,18 +21,20 @@ const NFTComponents: React.FC<NFTProps> = ({
   return (
     <StyledNFTWrapper>
       <StyledNFTHead>
-        <div className='user'>
-          {content || fields ? (
-            <Avatar
-              className='user-avatar'
-              icon={<UserOutlined />}
-              src={avatar_url || ''}
-            />
-          ) : (
-            ''
-          )}
-          <span className='username'>{username}</span>
-        </div>
+        <Link href={`/${username!}`}>
+          <a target='_blank' className='user'>
+            {content || fields ? (
+              <Avatar
+                className='user-avatar'
+                icon={<UserOutlined />}
+                src={avatar_url || ''}
+              />
+            ) : (
+              ''
+            )}
+            <span className='username'>{username}</span>
+          </a>
+        </Link>
         <span className='time'>
           {time && moment(time).format('YYYY-MM-DD HH:mm:ss')}
         </span>
@@ -84,19 +86,21 @@ const NFTComponents: React.FC<NFTProps> = ({
         <StyledNFTFooterUser>
           <div className='user'>
             <span className='subtitle'>{username ? 'Collected by' : ''}</span>
-            <div className='owner'>
-              <span className='owner-name'>{username}</span>
-              {content || fields ? (
-                <Avatar
-                  className='custom-avatar'
-                  icon={<UserOutlined />}
-                  size={16}
-                  src={avatar_url || ''}
-                />
-              ) : (
-                ''
-              )}
-            </div>
+            <Link href={`/${username}`}>
+              <a target='_blank' className='owner'>
+                <span className='owner-name'>{username}</span>
+                {content || fields ? (
+                  <Avatar
+                    className='custom-avatar'
+                    icon={<UserOutlined />}
+                    size={16}
+                    src={avatar_url || ''}
+                  />
+                ) : (
+                  ''
+                )}
+              </a>
+            </Link>
           </div>
           <div className='id'>{id ? `#${id}` : ''}</div>
         </StyledNFTFooterUser>
@@ -221,6 +225,13 @@ const StyledNFTFooterUser = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  .subtitle {
+    font-size: 15px;
+    margin: 0px 5px 0px 0px;
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 30px;
+    font-weight: 400;
+  }
   .user {
     font-weight: 500;
     width: auto;
@@ -235,13 +246,6 @@ const StyledNFTFooterUser = styled.div`
     justify-content: flex-start;
     align-items: center;
   }
-  .subtitle {
-    font-size: 15px;
-    margin: 0px 5px 0px 0px;
-    color: rgba(0, 0, 0, 0.5);
-    line-height: 30px;
-    font-weight: 400;
-  }
   .owner {
     width: auto;
     flex: 0 1 auto;
@@ -255,6 +259,7 @@ const StyledNFTFooterUser = styled.div`
       line-height: 30px;
       white-space: nowrap;
       margin: 0px 5px 0px 0px;
+      color: #000;
     }
   }
   .id {
