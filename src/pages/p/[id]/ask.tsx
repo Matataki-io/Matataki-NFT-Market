@@ -119,13 +119,23 @@ export default function AskPage() {
                 onClick={() => router.back()}
                 size='large'
                 auto></Button>
-              <Button
-                type='secondary'
-                size='large'
-                style={FullWidth}
-                onClick={() => setAsk()}>
-                Make your Ask
-              </Button>
+              {wallet.status === 'connected' ? (
+                <Button
+                  type='secondary'
+                  size='large'
+                  style={FullWidth}
+                  onClick={() => setAsk()}>
+                  Make your Ask
+                </Button>
+              ) : (
+                <Button
+                  type='secondary'
+                  size='large'
+                  style={FullWidth}
+                  onClick={() => wallet.connect('injected')}>
+                  Connect Wallet
+                </Button>
+              )}
             </ActionsBox>
           </BiddingBox>
         </Grid>
