@@ -39,7 +39,9 @@ const NFTComponents: React.FC<NFTProps> = ({
       </StyledNFTHead>
       <StyledNFTContent>
         {type === 'image' ? (
-          <img src={content?.medium} alt='Content' className='media-images' />
+          <div className='media-images'>
+            <img src={content?.medium} alt='Content' />
+          </div>
         ) : type === 'video' ? (
           <video
             src={fields?.low.stringValue}
@@ -53,7 +55,7 @@ const NFTComponents: React.FC<NFTProps> = ({
             {/* <a href={content?.medium} target='_blank' rel='noreferrer'>
               <Button style={{ margin: '40px 0' }}>Audio Play</Button>
             </a> */}
-            <AudioRender src={content?.medium}></AudioRender>
+            <AudioRender src={content!.medium} mode='simple'></AudioRender>
           </div>
         ) : type === 'text' ? (
           <div className='media-text'>
@@ -155,7 +157,6 @@ const StyledNFTContent = styled.div`
   justify-content: space-between;
   align-items: center;
   flex: 1;
-  .media-images,
   .media-video,
   .media-text,
   .media-file,
@@ -167,6 +168,23 @@ const StyledNFTContent = styled.div`
     height: auto;
     margin: 0px auto;
     object-fit: contain;
+  }
+  .media-images {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      margin: 0px auto;
+      object-fit: contain;
+    }
   }
   .media-audio {
     width: 100%;

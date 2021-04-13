@@ -9,7 +9,12 @@ if (process.browser) {
   WaveSurfer = require('wavesurfer.js');
 }
 
-const AudioRender: React.FC<any> = ({ src }) => {
+interface Props {
+  src: string;
+  mode: 'simple' | 'all';
+}
+
+const AudioRender: React.FC<Props> = ({ src, mode }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [waveform, setWaveform] = useState<React.ReactNode>(null);
   const [wavesurferApi, setWavesurferApi] = useState<any>(null);
@@ -18,12 +23,11 @@ const AudioRender: React.FC<any> = ({ src }) => {
   useEffect(() => {
     setLoading(true);
     if (process.browser && WaveSurfer && waveform && src) {
-      console.log('window', src, waveform);
       var wavesurfer = WaveSurfer.create({
         container: waveform,
         waveColor: '#b2b2b2',
         progressColor: '#000',
-        interact: true,
+        interact: mode === 'all',
         height: 80,
         barWidth: 2,
         barGap: 3,
@@ -41,7 +45,7 @@ const AudioRender: React.FC<any> = ({ src }) => {
         message.error(`加载失败${e}`);
       });
     }
-  }, [waveform, src]);
+  }, [waveform, mode, src]);
 
   // 播放切换
   const toggle = () => {
