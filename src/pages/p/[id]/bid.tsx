@@ -23,6 +23,7 @@ import { useBalance } from '../../../hooks/useBalance';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import { useAllowance } from '../../../hooks/useAllowance';
 import { useMarket } from '../../../hooks/useMarket';
+import Link from 'next/link';
 
 const BiddingBox = styled.div`
   padding: 4rem 0.5rem;
@@ -120,7 +121,9 @@ export default function Bid() {
           <Button icon={<ArrowLeft />} onClick={() => router.back()}>
             Go Back
           </Button>
-          <Button type='secondary'>Set Ask instead</Button>
+          <Link href={`/p/${id}/ask`}>
+            <Button type='secondary'>Set Ask instead</Button>
+          </Link>
         </ActionsBox>
       </div>
     );
