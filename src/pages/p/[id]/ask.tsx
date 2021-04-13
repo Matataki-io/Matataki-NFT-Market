@@ -18,6 +18,8 @@ import { useMedia } from '../../../hooks/useMedia';
 import { constructAsk } from '../../../utils/zdkUtils';
 import { useWallet } from 'use-wallet';
 import { utils } from 'ethers';
+import { useMediaToken } from '../../../hooks/useMediaToken';
+import Link from 'next/link';
 
 const BiddingBox = styled.div`
   padding: 4rem 0.5rem;
@@ -57,6 +59,7 @@ export default function AskPage() {
   const router = useRouter();
   const wallet = useWallet();
   const { id } = router.query;
+  const { isMeTheOwner } = useMediaToken(Number(id));
   const mediaContract = useMedia();
   const handler = (val: string | string[]) => {
     setCurrency(val as string);
@@ -77,6 +80,25 @@ export default function AskPage() {
   if (!id) {
     return (
       <div className='loading'>Fetching Param `ID` now... Please wait</div>
+    );
+  }
+  if (!isMeTheOwner && wallet.status === 'connected') {
+    return (
+      <div className='notice'>
+        <Text h3>Sorry, but...</Text>
+        <Text>
+          We detected that you are not the owner. Which in this case that you
+          cannot set a ask on this token.
+        </Text>
+        <ActionsBox>
+          <Button icon={<ArrowLeft />} onClick={() => router.back()}>
+            Go Back
+          </Button>
+          <Link href={`/p/${id}/bid`}>
+            <Button type='secondary'>Set Bid instead</Button>
+          </Link>
+        </ActionsBox>
+      </div>
     );
   }
   return (
@@ -119,13 +141,23 @@ export default function AskPage() {
                 onClick={() => router.back()}
                 size='large'
                 auto></Button>
-              <Button
-                type='secondary'
-                size='large'
-                style={FullWidth}
-                onClick={() => setAsk()}>
-                Make your Ask
-              </Button>
+              {wallet.status === 'connected' ? (
+                <Button
+                  type='secondary'
+                  size='large'
+                  style={FullWidth}
+                  onClick={() => setAsk()}>
+                  Make your Ask
+                </Button>
+              ) : (
+                <Button
+                  type='secondary'
+                  size='large'
+                  style={FullWidth}
+                  onClick={() => wallet.connect('injected')}>
+                  Connect Wallet
+                </Button>
+              )}
             </ActionsBox>
           </BiddingBox>
         </Grid>
