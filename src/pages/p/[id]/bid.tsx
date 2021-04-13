@@ -22,6 +22,7 @@ import { utils } from 'ethers';
 import { useBalance } from '../../../hooks/useBalance';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import { useAllowance } from '../../../hooks/useAllowance';
+import { useMarket } from '../../../hooks/useMarket';
 
 const BiddingBox = styled.div`
   padding: 4rem 0.5rem;
@@ -62,6 +63,7 @@ export default function Bid() {
   const wallet = useWallet();
   const { id } = router.query;
   const mediaContract = useMedia();
+  const marketContract = useMarket();
   const handler = (val: string | string[]) => {
     setCurrency(val as string);
   };
@@ -71,25 +73,34 @@ export default function Bid() {
   const [sellOnShare, setSellOnShare] = useState(0);
   const tokenContrct = useERC20(currency);
   const { balance } = useBalance(tokenContrct);
+  // `transferFrom` happened at Market, so just approve Market
   const { isEnough, approve, isUnlocking } = useAllowance(
     tokenContrct,
-    mediaContract.address
+    marketContract.address
   );
 
   async function setBid() {
     if (!wallet.account) throw new Error('Wallet have to be connected');
-    const tx = await mediaContract.setBid(
-      id as string,
-      constructBid(
-        currency,
-        amount,
-        wallet.account,
-        wallet.account,
-        sellOnShare
-      )
+    const bidData = constructBid(
+      currency,
+      amount,
+      wallet.account,
+      wallet.account,
+      sellOnShare
     );
-    const receipt = await tx.wait();
-    alert(`出价成功，TxHash: ${receipt.transactionHash}`);
+    console.info('bidData', bidData);
+    try {
+      const tx = await mediaContract.setBid(id as string, bidData);
+      const receipt = await tx.wait();
+      alert(`出价成功，TxHash: ${receipt.transactionHash}`);
+    } catch (error) {
+      mediaContract.callStatic
+        .setBid(id as string, bidData)
+        .catch(callError => {
+          console.error('callError', callError);
+          console.error('reason', callError.reason);
+        });
+    }
   }
 
   if (!id) {
