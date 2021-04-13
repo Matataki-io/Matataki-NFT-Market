@@ -39,10 +39,10 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
   return (
     <div className='post-page'>
       <Grid.Container gap={2} justify='center'>
-        <Grid xs={12}>
+        <Grid xs={24} md={12}>
           <Image src={post.backendData.tokenURI} />
         </Grid>
-        <Grid xs={6}>
+        <Grid xs={24} md={12}>
           <div className='nft-info'>
             <Text h1 style={{ fontWeight: 400 }}>
               #{post.id} {post.metadata.name}
@@ -61,7 +61,7 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             <div className='price-and-bid'>
               <Text>Current Price</Text>
               <Text h3>1 ETH</Text>
-              <Button type='secondary'>See Bids</Button>
+              <Button>See Bids</Button>
               {!isMeTheOwner ? (
                 <Link href={`/p/${post.id}/bid`}>
                   <Button type='secondary'>Place Bid</Button>
