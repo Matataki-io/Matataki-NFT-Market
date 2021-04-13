@@ -5,6 +5,7 @@ import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import axios from 'axios';
 import { ParsedUrlQuery } from 'querystring';
 import { getMediaById, getHotMediaList } from '../../../backend/media';
+import { useMediaToken } from '../../../hooks/useMediaToken';
 
 type Props = {
   post?: {
@@ -24,6 +25,8 @@ interface Params extends ParsedUrlQuery {
 }
 
 const PostPage: NextPage<Props> = ({ post, isError }) => {
+  const { profile, isMeTheOwner } = useMediaToken(Number(post?.id));
+
   if (!post && !isError) return <div>Loading</div>;
   if (!post)
     return (
@@ -58,7 +61,16 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             <div className='price-and-bid'>
               <Text>Current Price</Text>
               <Text h3>1 ETH</Text>
-              <Button type='secondary'>Place Bid</Button>
+              <Button type='secondary'>See Bids</Button>
+              {!isMeTheOwner ? (
+                <Link href={`/p/${post.id}/bid`}>
+                  <Button type='secondary'>Place Bid</Button>
+                </Link>
+              ) : (
+                <Link href={`/p/${post.id}/ask`}>
+                  <Button type='secondary'>Add Price</Button>
+                </Link>
+              )}
             </div>
           </div>
         </Grid>
