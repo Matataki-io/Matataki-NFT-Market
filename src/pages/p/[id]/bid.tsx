@@ -24,6 +24,7 @@ import { useMediaToken } from '../../../hooks/useMediaToken';
 import { useAllowance } from '../../../hooks/useAllowance';
 import { useMarket } from '../../../hooks/useMarket';
 import Link from 'next/link';
+import { getDecimalOf } from '../../../utils/tokens';
 
 const BiddingBox = styled.div`
   padding: 4rem 0.5rem;
@@ -144,7 +145,11 @@ export default function Bid() {
             <CreatorEquity>
               <Text style={{ color: '#888888' }}>CREATOR EQUITY</Text>
               <Text h3>
-                {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
+                {utils.formatUnits(
+                  profile.bidsShares.creator.value,
+                  getDecimalOf(currency)
+                )}
+                %
               </Text>
             </CreatorEquity>
 
@@ -159,14 +164,24 @@ export default function Bid() {
                 </Select.Option>
               ))}
             </Select>
-            {currency && <Text>Balance: {utils.formatUnits(balance, 18)}</Text>}
+            {currency && (
+              <Text>
+                Balance: {utils.formatUnits(balance, getDecimalOf(currency))}
+              </Text>
+            )}
             <InputNumber<string>
               placeholder='0.00'
               value={amount}
               onChange={setAmount}
               style={FullWidth}
-              formatter={value => utils.formatUnits(value as string, 18)}
-              parser={value => utils.parseUnits(value as string, 18).toString()}
+              formatter={value =>
+                utils.formatUnits(value as string, getDecimalOf(currency))
+              }
+              parser={value =>
+                utils
+                  .parseUnits(value as string, getDecimalOf(currency))
+                  .toString()
+              }
               stringMode
               min='0'
             />

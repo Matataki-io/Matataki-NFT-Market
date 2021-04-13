@@ -6,6 +6,8 @@ import axios from 'axios';
 import { ParsedUrlQuery } from 'querystring';
 import { getMediaById, getHotMediaList } from '../../../backend/media';
 import { useMediaToken } from '../../../hooks/useMediaToken';
+import { utils } from 'ethers';
+import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 
 type Props = {
   post?: {
@@ -59,8 +61,18 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
               </Link>
             </div>
             <div className='price-and-bid'>
-              <Text>Current Price</Text>
-              <Text h3>1 ETH</Text>
+              {profile.currentAsk.amount.gt(0) && (
+                <>
+                  <Text>Current Price</Text>
+                  <Text h3>
+                    {utils.formatUnits(
+                      profile.currentAsk.amount,
+                      getDecimalOf(profile.currentAsk.currency)
+                    )}{' '}
+                    {getSymbolOf(profile.currentAsk.currency)}
+                  </Text>
+                </>
+              )}
               <Button>See Bids</Button>
               {!isMeTheOwner ? (
                 <Link href={`/p/${post.id}/bid`}>
