@@ -6,6 +6,7 @@ export interface UserInfoState {
   username: string;
   website?: string;
   introduction?: string;
+  bio?: string;
 }
 
 const initialState: UserInfoState = {
