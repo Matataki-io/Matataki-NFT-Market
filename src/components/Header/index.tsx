@@ -9,6 +9,7 @@ import { useWallet } from 'use-wallet';
 import UserDropdown from '../UserDropdown';
 import { useLogin } from '../../hooks/useLogin';
 import { currentChainId } from '../../constant';
+import { getCookie } from '../../utils/cookie';
 
 interface HeaderProps {
   isCreate: boolean;
@@ -43,6 +44,15 @@ const HeaderComponents: React.FC<HeaderProps> = ({
       if (network) {
         setNetworkVersion(network);
       }
+    }
+  });
+
+  useMount(() => {
+    console.log('status', wallet.status);
+
+    // 如果登录过了
+    if (wallet && getCookie('token')) {
+      wallet.connect('injected'); // 自动链接 不用签名
     }
   });
 
