@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar } from '@geist-ui/react';
+import { Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+import { isEmpty } from 'lodash';
 import Page from '../../components/Page';
 import {
   AccountName,
@@ -37,23 +39,25 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const appUserInfo = useAppSelector(state => state.userInfo);
   const [nftListData, setNFTListData] = useState<Array<NFTProps>>([]);
 
-  const { isRegistered, userDataByWallet } = useLogin();
+  const { userDataByWallet } = useLogin();
 
   useEffect(() => {
     const fetchUserInfoData = async () => {
       if (typeof username !== 'string') return;
-      const userInfo = await getUser(username as string);
-      if (userDataByWallet && userDataByWallet.username === username) {
-        setUserInfo(appUserInfo);
-        setIsMyself(true);
-      } else {
-        setUserInfo({
-          ...userInfo,
-          introduction: userInfo.bio,
-        });
+      try {
+        const userInfo = await getUser(username as string);
+        console.log('userInfo', userInfo);
+        if (userDataByWallet && userDataByWallet.username === username) {
+          setIsMyself(true);
+        }
+        setUserInfo(userInfo);
+        setIsVerifiedUser(false);
+        return userInfo;
+      } catch (e) {
+        console.log('e', e);
+        setIsVerifiedUser(false);
+        return;
       }
-      setIsVerifiedUser(false);
-      return userInfo;
     };
 
     const fetchNFTListData = async (userInfo: User) => {
@@ -102,9 +106,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
     const fetchAll = async () => {
       const userInfo = await fetchUserInfoData();
-      console.log(userInfo);
-      if (userInfo) {
-        await fetchNFTListData(userInfo);
+      if (!isEmpty(userInfo)) {
+        await fetchNFTListData(userInfo!);
       }
     };
 
@@ -114,16 +117,14 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   return (
     <Page>
       <StyledWrapper>
-        <StyledAvatar src={userInfo.avatar} size={120} />
+        <StyledAvatar icon={<UserOutlined />} src={''} size={120} />
         <StyledInfoBox>
           <StyledInfo>
             <AccountName>{userInfo.nickname}</AccountName>
             <AccountUsername isVerified={isVerifiedUser}>
               {userInfo.username}
             </AccountUsername>
-            {userInfo.introduction && (
-              <AccountBio>{userInfo.introduction}</AccountBio>
-            )}
+            {userInfo.bio && <AccountBio>{userInfo.bio}</AccountBio>}
             {userInfo.website && <AccountWebsite href={userInfo.website} />}
             {isMyself && (
               <StyledEditButton onClick={() => setIsProfile(true)}>
@@ -139,9 +140,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             ))}
           </StyledMediaCardContainer>
         ) : (
-          <ProfileFeedPlaceholder
-            isLoggedIn={appUserInfo.username === username}
-          />
+          <ProfileFeedPlaceholder isLoggedIn={isMyself} />
         )}
       </StyledWrapper>
     </Page>
