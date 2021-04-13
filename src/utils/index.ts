@@ -6,5 +6,5 @@ export const firstUpperCase = ([first, ...other]: any) => {
 // 短钱包账号
 export const shortedWalletAccount = (account: string) => {
   if (!account) return;
-  return account?.slice(0, 6) + '...' + account?.slice(-4);
+  return account.slice(0, 6) + '...' + account.slice(-4);
 };

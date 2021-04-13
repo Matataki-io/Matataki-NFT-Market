@@ -43,7 +43,8 @@ export function useLogin() {
     }
     // 有钱包地址就查是不是已经注册过
     fetchData();
-  }, [wallet.account]);
+    console.log('wallet.account', wallet.account);
+  }, [wallet]);
 
   const isRegistered = useMemo(() => Boolean(userDataByWallet), [
     userDataByWallet,
