@@ -53,7 +53,7 @@ const NFTComponents: React.FC<NFTProps> = ({
             {/* <a href={content?.medium} target='_blank' rel='noreferrer'>
               <Button style={{ margin: '40px 0' }}>Audio Play</Button>
             </a> */}
-            <AudioRender src={content?.medium}></AudioRender>
+            <AudioRender src={content?.medium} mode='simple'></AudioRender>
           </div>
         ) : type === 'text' ? (
           <div className='media-text'>

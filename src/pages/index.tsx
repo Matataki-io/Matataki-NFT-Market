@@ -147,13 +147,13 @@ const Home: React.FC<void> = () => {
 
   return (
     <StyledWrapper>
-      <StyledModule className='nfts'>
-        <StyledModuleHead>
+      <StyledModule>
+        {/* <StyledModuleHead>
           <StyledTitle>
             Upcoming NFTs<span>New</span>
           </StyledTitle>
           <span className='more'>VIEW MORE</span>
-        </StyledModuleHead>
+        </StyledModuleHead> */}
         <InfiniteScroll
           pageStart={0}
           loadMore={handleInfiniteOnLoad}
@@ -217,8 +217,7 @@ const StyledWrapper = styled.div`
   /* padding: 0 20px 200px; */
   box-sizing: border-box;
 
-  /* padding: 30px; */
-  padding: 30px 30px 200px;
+  padding: 0 30px 200px;
   margin: 0px auto;
   width: 100%;
   max-width: calc(1460px);
@@ -256,7 +255,7 @@ const StyledModule = styled.h3`
   }
 
   &.nfts {
-    margin-top: 46px;
+    /* margin-top: 46px; */
   }
   &.creators {
     margin-top: 100px;
