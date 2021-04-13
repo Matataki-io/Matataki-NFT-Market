@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Grid, Image, Link, Text } from '@geist-ui/react';
+import { Button, Grid, Image, Link, Text, User } from '@geist-ui/react';
 import { getTokenOnScan } from '../../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import axios from 'axios';
@@ -48,6 +48,20 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
           <div className='nft-info'>
             <Text h1 style={{ fontWeight: 400 }}>
               #{post.id} {post.metadata.name}
+            </Text>
+            <Text>
+              Creator:{' '}
+              <User
+                src={post.backendData.creator.avatar}
+                name={post.backendData.creator.nickname}
+              />
+            </Text>
+            <Text>
+              Owner:{' '}
+              <User
+                src={post.backendData.owner.avatar}
+                name={post.backendData.owner.nickname}
+              />
             </Text>
             <Text>Description: {post.metadata.description}</Text>
             <Text>File type: {post.metadata.mimeType}</Text>
