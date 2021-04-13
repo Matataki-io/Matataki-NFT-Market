@@ -27,7 +27,7 @@ const NFTComponents: React.FC<NFTProps> = ({
               <Avatar
                 className='user-avatar'
                 icon={<UserOutlined />}
-                src={avatar_url || ''}
+                src={''}
               />
             ) : (
               ''
@@ -94,7 +94,7 @@ const NFTComponents: React.FC<NFTProps> = ({
                     className='custom-avatar'
                     icon={<UserOutlined />}
                     size={16}
-                    src={avatar_url || ''}
+                    src={''}
                   />
                 ) : (
                   ''
