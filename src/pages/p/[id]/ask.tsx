@@ -82,7 +82,7 @@ export default function AskPage() {
       <div className='loading'>Fetching Param `ID` now... Please wait</div>
     );
   }
-  if (!isMeTheOwner) {
+  if (!isMeTheOwner && wallet.status === 'connected') {
     return (
       <div className='notice'>
         <Text h3>Sorry, but...</Text>
