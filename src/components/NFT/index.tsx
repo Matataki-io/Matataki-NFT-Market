@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Button } from '@geist-ui/react';
 import moment from 'moment';
@@ -18,6 +18,10 @@ const NFTComponents: React.FC<NFTProps> = ({
   title,
   time,
 }) => {
+  useEffect(() => {
+    console.log('avatar_url', avatar_url);
+  });
+
   return (
     <StyledNFTWrapper>
       <StyledNFTHead>
