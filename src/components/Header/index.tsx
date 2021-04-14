@@ -49,10 +49,17 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   });
 
   useMount(() => {
-    // 如果登录过了
-    if (wallet && getCookie('token') && wallet.status !== 'connected') {
+    console.log('useMount', wallet);
+    if (process.browser) {
+      (window as any).wallet = wallet;
       console.log('status', wallet.status);
-      wallet.connect('injected'); // 自动链接 不用签名
+      // 如果登录过了
+      if (wallet && getCookie('token') && wallet.status !== 'connected') {
+        setTimeout(() => {
+          // TODO：需要修改
+          wallet.connect('injected'); // 自动链接 不用签名
+        }, 300);
+      }
     }
   });
 
