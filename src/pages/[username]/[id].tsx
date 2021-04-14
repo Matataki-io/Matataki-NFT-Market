@@ -66,11 +66,13 @@ const initRealPostInfo: RealPostInfo = {
     creator: {
       avatar: '',
       username: '',
+      nickname: '',
       isVerified: false,
     },
     owner: {
       avatar: '',
       username: '',
+      nickname: '',
       isVerified: false,
     },
   },
