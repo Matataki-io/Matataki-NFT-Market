@@ -1,6 +1,8 @@
 import { Button, Table, Text } from '@geist-ui/react';
 import { utils } from 'ethers';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
 import { useWallet } from 'use-wallet';
@@ -33,22 +35,21 @@ export default function Bids() {
     return <div className='loading'>Loading ID from Router</div>;
   }
 
-  if (wallet.status !== 'connected') {
-    return (
-      <Button onClick={() => wallet.connect('injected')}>Connect Wallet</Button>
-    );
-  }
-
   if (data) {
     const renderedData = data?.map(log => {
-      const date = new Date(log.at.timestamp * 1000).toLocaleString();
+      dayjs.extend(relativeTime);
+      const date = dayjs(log.at.timestamp * 1000).fromNow();
       const price = `${utils.formatUnits(log.amount, 18)} ${getSymbolOf(
         log.currency
       )}`;
       const acceptBidBtn = () => {
-        return (
+        return wallet.status === 'connected' ? (
           <Button type='error' auto size='mini' onClick={() => acceptBid(log)}>
             接受
+          </Button>
+        ) : (
+          <Button onClick={() => wallet.connect('injected')}>
+            Connect Wallet
           </Button>
         );
       };
