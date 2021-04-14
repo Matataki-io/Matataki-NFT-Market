@@ -2,6 +2,8 @@ import { Button, Table, Text } from '@geist-ui/react';
 import { utils } from 'ethers';
 import { useRouter } from 'next/router';
 import React, { useCallback, useMemo } from 'react';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import useSWR from 'swr';
 import { useWallet } from 'use-wallet';
 import { backendSWRFetcher, getBidsOfToken } from '../../../backend/media';
@@ -28,7 +30,9 @@ export default function Logs() {
 
   if (data) {
     const renderedData = data?.map(log => {
-      const date = new Date(log.at.timestamp * 1000).toLocaleString();
+      dayjs.extend(relativeTime);
+      const date = dayjs(log.at.timestamp * 1000).fromNow();
+      //   const date = new Date(log.at.timestamp * 1000).toLocaleString();
       if (isBackendAsk(log)) {
         const symbol = getSymbolOf(log.currency);
         const decimal = getDecimalOf(log.currency);
