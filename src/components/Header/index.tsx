@@ -48,13 +48,13 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     }
   });
 
-  useMount(() => {
+  useEffect(() => {
     // 如果登录过了
     if (wallet && getCookie('token') && wallet.status !== 'connected') {
       console.log('status', wallet.status);
       wallet.connect('injected'); // 自动链接 不用签名
     }
-  });
+  }, [wallet]);
 
   // 链接钱包，并且没有注册显示信息框
   useEffect(() => {
