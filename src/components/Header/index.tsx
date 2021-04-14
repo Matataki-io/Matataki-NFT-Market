@@ -51,7 +51,6 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   useEffect(() => {
     // 如果登录过了
     if (wallet && getCookie('token') && wallet.status !== 'connected') {
-      console.log('status', wallet.status);
       wallet.connect('injected'); // 自动链接 不用签名
     }
   }, [wallet]);
