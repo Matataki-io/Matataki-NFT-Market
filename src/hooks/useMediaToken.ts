@@ -26,8 +26,17 @@ export function useMediaToken(id: BigNumberish) {
   const [isAllApprove, setAllApprove] = useState(false);
 
   const getDetailOf = useCallback(async () => {
+    console.info('gdo', id);
+    if (Number(id) === NaN) {
+      return;
+    }
+    console.info('getDetailOf');
     const owner = await mediaContract.ownerOf(id);
+    console.info('owner');
+
     const approvedOperator = await mediaContract.getApproved(id);
+    console.info('approvedOperator');
+
     const creator = await mediaContract.tokenCreators(id);
     const bidsShares = await marketContract.bidSharesForToken(id);
     const currentAsk = await marketContract.currentAskForToken(id);
@@ -49,13 +58,15 @@ export function useMediaToken(id: BigNumberish) {
       );
       setAllApprove(isApproveForAll);
     }
-  }, [mediaContract, id]);
+  }, [mediaContract, account, id]);
 
   useEffect(() => {
     if (id) {
       getDetailOf();
     }
-  }, [id]);
+    let refreshInterval = setInterval(getDetailOf, 1000 * 10);
+    return () => clearInterval(refreshInterval);
+  }, [id, getDetailOf]);
 
   const isMeTheOwner = useMemo(() => profile.owner === account, [
     profile,
