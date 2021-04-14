@@ -20,6 +20,26 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     console.log('pageProps', pageProps);
+
+    if (process.browser) {
+      const ethereum = (window as any).ethereum;
+      ethereum.on('accountsChanged', (accounts: any) => {
+        // Handle the new accounts, or lack thereof.
+        // "accounts" will always be an array, but it can be empty.
+        console.log('accounts', accounts);
+
+        (window as any).location.reload();
+      });
+
+      ethereum.on('chainChanged', (chainId: number) => {
+        // Handle the new chain.
+        // Correctly handling chain changes can be complicated.
+        // We recommend reloading the page unless you have good reason not to.
+        console.log('chainId', chainId);
+
+        (window as any).location.reload();
+      });
+    }
   });
 
   return (
