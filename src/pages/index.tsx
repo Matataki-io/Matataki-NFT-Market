@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-// import Banner from '../components/Banner';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { NFTProps } from '../../next-env';
 import { useMount } from 'ahooks';
-
-import Creators from '../components/Creators';
-import About from '../components/About';
-import NFT from '../components/NFT';
-
+import { Spin, message } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
+
+// import Banner from '../components/Banner';
+// import Creators from '../components/Creators';
+// import About from '../components/About';
+import NFT from '../components/NFT';
+import { NFTProps } from '../../next-env';
+
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
 import { getMediaList, getMediaMetadata } from '../backend/media';
@@ -20,11 +21,61 @@ type MediaWithMetadata = Media & {
   metadata: MediaMetadata;
 };
 
+// 作家列表
+// const creatorsList = [
+//   {
+//     bc: 'https://placeimg.com/540/184/nature?t=1617247698083',
+//     avatar: 'https://placeimg.com/200/200/people',
+//     username: '@Skull Pedestal',
+//   },
+//   {
+//     bc: 'https://placeimg.com/540/184/nature',
+//     avatar: 'https://placeimg.com/200/200/people?t=1617247587231',
+//     username: '@Skull Pedestal',
+//   },
+//   {
+//     bc: 'https://placeimg.com/540/184/nature?t=1617247711431',
+//     avatar: 'https://placeimg.com/200/200/people?t=1617247595366',
+//     username: '@Skull Pedestal',
+//   },
+//   {
+//     bc: 'https://placeimg.com/540/184/nature?t=1617247718870',
+//     avatar: 'https://placeimg.com/200/200/people?t=1617247602577',
+//     username: '@Skull Pedestal',
+//   },
+// ];
+
+// 关于更多 NFT
+// const AboutNFTList = [
+//   {
+//     img: 'https://placeimg.com/700/340/arch',
+//     text: 'How to collect your favorite NFTs at NFT Market?',
+//     link: 'https://matataki.io',
+//   },
+//   {
+//     img: 'https://placeimg.com/700/340/arch?t=1617248569810',
+//     text:
+//       'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
+//     link: 'https://matataki.io',
+//   },
+//   {
+//     img: 'https://placeimg.com/700/340/arch?t=1617248576772',
+//     text: 'NFTs, explained: what they are,why are some worth millions?',
+//     link: 'https://matataki.io',
+//   },
+//   {
+//     img: 'https://placeimg.com/700/340/arch?t=1617248585076',
+//     text: 'How to make, buy and sell NFTs',
+//     link: 'https://matataki.io',
+//   },
+// ];
+
 const Home: React.FC<void> = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [page, setPage] = useState<number>(1);
   const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
     totalItems: 0,
     itemCount: 0,
@@ -33,115 +84,69 @@ const Home: React.FC<void> = () => {
     currentPage: 0,
   });
 
-  // 作家列表
-  const creatorsList = [
-    {
-      bc: 'https://placeimg.com/540/184/nature?t=1617247698083',
-      avatar: 'https://placeimg.com/200/200/people',
-      username: '@Skull Pedestal',
-    },
-    {
-      bc: 'https://placeimg.com/540/184/nature',
-      avatar: 'https://placeimg.com/200/200/people?t=1617247587231',
-      username: '@Skull Pedestal',
-    },
-    {
-      bc: 'https://placeimg.com/540/184/nature?t=1617247711431',
-      avatar: 'https://placeimg.com/200/200/people?t=1617247595366',
-      username: '@Skull Pedestal',
-    },
-    {
-      bc: 'https://placeimg.com/540/184/nature?t=1617247718870',
-      avatar: 'https://placeimg.com/200/200/people?t=1617247602577',
-      username: '@Skull Pedestal',
-    },
-  ];
-
-  // 关于更多 NFT
-  const AboutNFTList = [
-    {
-      img: 'https://placeimg.com/700/340/arch',
-      text: 'How to collect your favorite NFTs at NFT Market?',
-      link: 'https://matataki.io',
-    },
-    {
-      img: 'https://placeimg.com/700/340/arch?t=1617248569810',
-      text:
-        'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
-      link: 'https://matataki.io',
-    },
-    {
-      img: 'https://placeimg.com/700/340/arch?t=1617248576772',
-      text: 'NFTs, explained: what they are,why are some worth millions?',
-      link: 'https://matataki.io',
-    },
-    {
-      img: 'https://placeimg.com/700/340/arch?t=1617248585076',
-      text: 'How to make, buy and sell NFTs',
-      link: 'https://matataki.io',
-    },
-  ];
-
   // 获取NFT数据
-  const fetchNFTData = async () => {
-    const mediaList = await getMediaList(++paginationMeta.currentPage);
-    setPaginationMeta(mediaList.meta);
-    if (mediaList.items) {
-      const getMediaWithMetaList = mediaList.items.map(async item => {
-        const metadata = await getMediaMetadata(item.metadataURI);
-        return {
-          ...item,
-          metadata,
-        };
-      });
-      const mediaWithMetaList: MediaWithMetadata[] = await Promise.all(
-        getMediaWithMetaList
-      );
-      const realNftList: NFTProps[] = mediaWithMetaList.map(media => {
-        return {
-          id: media.id,
-          type: media.metadata.mimeType.split('/')[0],
-          avatar_url: media.creator?.avatar,
-          username: media.creator?.username,
-          title: media.metadata.name,
-          time: Date.now(), // TODO: Need to change real time
-          fields: {
-            low: { stringValue: media.tokenURI },
-            stream: { stringValue: media.tokenURI },
-            medium: { stringValue: media.tokenURI },
-            high: { stringValue: media.tokenURI },
-            thumbnail: { stringValue: media.tokenURI },
-          },
-          content: {
-            low: media.tokenURI,
-            stream: media.tokenURI,
-            medium: media.tokenURI,
-            high: media.tokenURI,
-            thumbnail: media.tokenURI,
-          },
-        };
-      });
+  const fetchNFTData1 = async () => {
+    try {
+      const mediaList = await getMediaList(page, 12);
+      console.log('mediaList', mediaList);
+      if (mediaList.items.length) {
+        const getMediaWithMetaList = mediaList.items.map(async item => {
+          const metadata = await getMediaMetadata(item.metadataURI);
+          return {
+            ...item,
+            metadata,
+          };
+        });
+        const mediaWithMetaList: MediaWithMetadata[] = await Promise.all(
+          getMediaWithMetaList
+        );
+        const realNftList: NFTProps[] = mediaWithMetaList.map(media => {
+          return {
+            id: media.id,
+            type: media.metadata.mimeType.split('/')[0],
+            avatar_url: media.creator?.avatar,
+            username: media.creator?.username,
+            title: media.metadata.name,
+            time: Date.now(), // TODO: Need to change real time
+            fields: {
+              low: { stringValue: media.tokenURI },
+              stream: { stringValue: media.tokenURI },
+              medium: { stringValue: media.tokenURI },
+              high: { stringValue: media.tokenURI },
+              thumbnail: { stringValue: media.tokenURI },
+            },
+            content: {
+              low: media.tokenURI,
+              stream: media.tokenURI,
+              medium: media.tokenURI,
+              high: media.tokenURI,
+              thumbnail: media.tokenURI,
+            },
+          };
+        });
 
-      setNFTList(NFTList.concat(realNftList));
+        setNFTList(NFTList.concat(realNftList));
+        setPaginationMeta(mediaList.meta);
+      }
+      let _page = page;
+      setPage(++_page);
+    } catch (e) {
+      message.error(`数据获取失败${e.toString()}`);
     }
   };
 
-  useMount(() => {
-    console.log('222');
-    fetchNFTData();
-  });
+  useMount(() => {});
 
   // 处理滚动Load
   const handleInfiniteOnLoad = async () => {
     setLoading(true);
-    console.log('1111');
-    if (paginationMeta.currentPage >= paginationMeta.totalPages) {
-      console.log('FULL PAGE!');
+    // 第一页不判断
+    if (page !== 1 && paginationMeta.currentPage >= paginationMeta.totalPages) {
       setLoading(false);
       setHasMore(false);
       return;
     }
-    await fetchNFTData();
+    await fetchNFTData1();
     setLoading(false);
   };
 
@@ -157,12 +162,7 @@ const Home: React.FC<void> = () => {
         <InfiniteScroll
           pageStart={0}
           loadMore={handleInfiniteOnLoad}
-          hasMore={!loading && hasMore}
-          loader={
-            <div className='loader' key={0}>
-              Loading ...
-            </div>
-          }>
+          hasMore={!loading && hasMore}>
           <StyledNfts>
             {NFTList.map((i, idx) => (
               <Link href={`/p/${i.id}`} key={idx}>
@@ -171,6 +171,11 @@ const Home: React.FC<void> = () => {
                 </a>
               </Link>
             ))}
+            {loading && hasMore && (
+              <div className='loading-container'>
+                <Spin />
+              </div>
+            )}
           </StyledNfts>
         </InfiniteScroll>
       </StyledModule>
@@ -337,6 +342,11 @@ const StyledNfts = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  .loading-container {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
   }
 `;
 

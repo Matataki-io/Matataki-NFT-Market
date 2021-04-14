@@ -412,7 +412,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               onClick={() => setMediaType('image')}>
               Image
             </StyledMultiiMediaInputHeadTab>
-            <StyledMultiiMediaInputHeadTab
+            {/* <StyledMultiiMediaInputHeadTab
               actions={mediaType === 'video'}
               onClick={() => setMediaType('video')}>
               Video
@@ -431,7 +431,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               actions={mediaType === 'file'}
               onClick={() => setMediaType('file')}>
               File
-            </StyledMultiiMediaInputHeadTab>
+            </StyledMultiiMediaInputHeadTab> */}
             {/* <StyledMultiiMediaInputHeadTab
               actions={mediaType === 'url'}
               onClick={() => setMediaType('url')}>
@@ -555,7 +555,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           </StyledContainerGridCol>
           <StyledContainerGridCol start='7' end='12'>
             <StyledSubtitle>Preview</StyledSubtitle>
-            <div style={{ width: '100%', minHeight: '133%' }}>
+            <div style={{ width: '100%', minHeight: '113%' }}>
               <NFT {...mediaData}></NFT>
             </div>
           </StyledContainerGridCol>
