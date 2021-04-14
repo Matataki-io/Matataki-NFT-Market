@@ -1,4 +1,10 @@
-import React, { useState, useMemo, Fragment, useEffect } from 'react';
+import React, {
+  useState,
+  useMemo,
+  Fragment,
+  useEffect,
+  useCallback,
+} from 'react';
 import { useMount } from 'ahooks';
 import { Input } from '@geist-ui/react';
 import Link from 'next/link';
@@ -79,10 +85,10 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   ]);
 
   // 链接钱包
-  const connectWallet = () => {
-    wallet.connect('injected');
+  const connectWallet = useCallback(async () => {
+    await wallet.connect('injected');
     setConnect(true);
-  };
+  }, [wallet]);
 
   return (
     <StyledHeader>
