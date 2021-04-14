@@ -9,6 +9,8 @@ import { useWallet } from 'use-wallet';
 import UserDropdown from '../UserDropdown';
 import { useLogin } from '../../hooks/useLogin';
 import { currentChainId } from '../../constant';
+import { getCookie } from '../../utils/cookie';
+import { shortedWalletAccount } from '../../utils/index';
 
 interface HeaderProps {
   isCreate: boolean;
@@ -22,9 +24,9 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   setIsProfile,
 }) => {
   const wallet = useWallet();
-  const shortedWalletAccount = useMemo(() => {
+  const shortedccount = useMemo(() => {
     if (wallet.status !== 'connected') return 'Not Connected';
-    return wallet.account?.slice(0, 6) + '...' + wallet.account?.slice(-4);
+    return wallet.account ? shortedWalletAccount(wallet.account) : '';
   }, [wallet]);
   const {
     isRegistered,
@@ -43,6 +45,14 @@ const HeaderComponents: React.FC<HeaderProps> = ({
       if (network) {
         setNetworkVersion(network);
       }
+    }
+  });
+
+  useMount(() => {
+    // 如果登录过了
+    if (wallet && getCookie('token') && wallet.status !== 'connected') {
+      console.log('status', wallet.status);
+      wallet.connect('injected'); // 自动链接 不用签名
     }
   });
 
@@ -87,7 +97,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               <a href='https://matataki.io/'>
                 <Button className='hover-underline'>Learn</Button>
               </a>
-              <Button color='gray'>{shortedWalletAccount}</Button>
+              <Button color='gray'>{shortedccount}</Button>
             </div>
           </Fragment>
         ) : (
@@ -123,7 +133,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                         </StyledHeaderUserdorpdownContainer>
                       </UserDropdown>
                     ) : (
-                      <Button color='gray'>{shortedWalletAccount}</Button>
+                      <Button color='gray'>{shortedccount}</Button>
                     )}
                   </>
                 ) : (

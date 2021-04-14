@@ -29,12 +29,12 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
     return (
       <Menu>
         <Menu.Item>
-          <Link href={`/${userDataByWallet!.username}`}>
+          <Link href={`/${userDataByWallet?.username}`}>
             <a>
               <StyledItem>
                 <Avatar size={40} icon={<UserOutlined />} />
                 <StyledItemUser>
-                  <div>{userDataByWallet!.username}</div>
+                  <div>{userDataByWallet?.username}</div>
                   <div>See Profile</div>
                 </StyledItemUser>
               </StyledItem>
