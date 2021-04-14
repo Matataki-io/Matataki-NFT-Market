@@ -13,9 +13,11 @@ export function useAllowance(token: BaseErc20, spender: string) {
   const { lastUpdated, updated } = useLastUpdated();
 
   const fetchAllowance = useCallback(async () => {
-    const result = await token.allowance(account as string, spender);
-    setAllowance(result);
-    updated();
+    if (account && spender !== ZERO_ADDRESS && token.address !== ZERO_ADDRESS) {
+      const result = await token.allowance(account as string, spender);
+      setAllowance(result);
+      updated();
+    }
   }, [account, token, spender]);
   /**
    * use Dan's example

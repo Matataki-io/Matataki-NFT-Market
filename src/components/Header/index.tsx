@@ -48,20 +48,12 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     }
   });
 
-  useMount(() => {
-    console.log('useMount', wallet);
-    if (process.browser) {
-      (window as any).wallet = wallet;
-      console.log('status', wallet.status);
-      // 如果登录过了
-      if (wallet && getCookie('token') && wallet.status !== 'connected') {
-        setTimeout(() => {
-          // TODO：需要修改
-          wallet.connect('injected'); // 自动链接 不用签名
-        }, 300);
-      }
+  useEffect(() => {
+    // 如果登录过了
+    if (wallet && getCookie('token') && wallet.status !== 'connected') {
+      wallet.connect('injected'); // 自动链接 不用签名
     }
-  });
+  }, [wallet]);
 
   // 链接钱包，并且没有注册显示信息框
   useEffect(() => {
