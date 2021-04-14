@@ -8,6 +8,7 @@ import { getMediaById, getHotMediaList } from '../../../backend/media';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import { utils } from 'ethers';
 import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
+import NFTPreview from '../../../components/NFTPreview/index';
 
 type Props = {
   post?: {
@@ -41,8 +42,14 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
   return (
     <div className='post-page'>
       <Grid.Container gap={2} justify='center'>
-        <Grid xs={24} md={12}>
-          <Image src={post.backendData.tokenURI} />
+        <Grid xs={24} md={12} style={{ padding: 50 }}>
+          <NFTPreview
+            src={post.backendData.tokenURI}
+            type={
+              post?.metadata.mimeType
+                ? post.metadata.mimeType.split('/')[0]
+                : ''
+            }></NFTPreview>
         </Grid>
         <Grid xs={24} md={12}>
           <div className='nft-info'>
