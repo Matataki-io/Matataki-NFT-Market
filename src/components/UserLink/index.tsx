@@ -1,13 +1,15 @@
-import { Avatar } from '@geist-ui/react';
+import { Avatar } from 'antd';
 import React, { MouseEvent } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { IconVerified } from '../Icons';
+import { UserOutlined } from '@ant-design/icons';
 
 export interface UserLinkProps {
   label: string;
   avatar: string;
   username: string;
+  nickname: string;
   isVerified?: boolean;
 }
 
@@ -15,10 +17,12 @@ const UserLink: React.FC<UserLinkProps> = ({
   label,
   avatar,
   username,
+  nickname,
   isVerified = false,
 }) => {
   const router = useRouter();
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    console.log('avatar', avatar);
     e.preventDefault();
     router.push(`/${username}`);
   };
@@ -27,8 +31,8 @@ const UserLink: React.FC<UserLinkProps> = ({
     <CreatorContainer onClick={handleClick}>
       <HeadLabel>{label}</HeadLabel>
       <UserInfo>
-        <AccountAvatar src={avatar} size={30} />
-        <UserName>@{username}</UserName>
+        <AccountAvatar icon={<UserOutlined />} size={30} />
+        <UserName>@{nickname || username}</UserName>
         {isVerified && (
           <VerifiedIcon>
             <IconVerified />
@@ -77,9 +81,6 @@ const UserInfo = styled.div`
 
 const AccountAvatar = styled(Avatar)`
   margin: 0px 10px 0px 0px !important;
-  box-shadow: rgb(0 0 0 / 10%) 0px 0px 0px 1px inset !important;
-  border: none !important;
-  background-color: #000000 !important;
 `;
 
 const VerifiedIcon = styled.div`
