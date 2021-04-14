@@ -19,8 +19,8 @@ a {
 
 #__next {
   overflow-x: unset !important;
+  height: 100%;
 }
-
 
 @keyframes rotate {
   0% {

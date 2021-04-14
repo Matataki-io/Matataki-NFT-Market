@@ -1,4 +1,4 @@
-import React, { useState, CSSProperties } from 'react';
+import React, { useState, CSSProperties, useEffect } from 'react';
 import {
   Button,
   ButtonDropdown,
@@ -10,6 +10,7 @@ import {
 import ArrowLeft from '@geist-ui/react-icons/arrowLeft';
 import { useRouter } from 'next/router';
 import { InputNumber } from 'antd';
+import { isEmpty } from 'lodash';
 import { ArtView } from '../../../components/Bid/ArtView';
 import styled from 'styled-components';
 import { currentSupportedTokens as tokens } from '../../../constant/contracts';
@@ -21,40 +22,8 @@ import { utils } from 'ethers';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import Link from 'next/link';
 import { getDecimalOf } from '../../../utils/tokens';
-
-const BiddingBox = styled.div`
-  padding: 4rem 0.5rem;
-  width: 470px;
-  margin: auto;
-`;
-
-const CreatorEquity = styled.div`
-  box-sizing: border-box;
-  margin: 0;
-  min-width: 0;
-  padding: 10px;
-  width: 100%;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  border-radius: 4px;
-  border: 2px solid #f2f2f2;
-  background-color: #f2f2f2;
-  margin-bottom: 30px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-`;
-
-const ActionsBox = styled.div`
-  display: flex;
-  margin: 2rem 0;
-`;
-
-const FullWidth: CSSProperties = {
-  width: '100%',
-};
+import NFTPreview from '../../../components/NFTPreview/index';
+import { getMediaById, getMediaMetadata } from '../../../backend/media';
 
 export default function AskPage() {
   const router = useRouter();
@@ -67,6 +36,14 @@ export default function AskPage() {
   };
   const [currency, setCurrency] = useState<string>('');
   const [amount, setAmount] = useState('0');
+  const [mediaData, setMediaData] = useState<{ [key: string]: any }>({
+    media: {
+      tokenURI: '',
+    },
+    metadata: {
+      mimeType: '',
+    },
+  });
 
   async function setAsk() {
     if (!wallet.account) throw new Error('Wallet have to be connected');
@@ -77,6 +54,28 @@ export default function AskPage() {
     const receipt = await tx.wait();
     alert(`问价成功，TxHash: ${receipt.transactionHash}`);
   }
+
+  // get media
+  const getMediaByIdFn = async (id: string) => {
+    try {
+      const mediaRes = await getMediaById(id);
+      let metadataRes;
+      if (!isEmpty(mediaRes)) {
+        metadataRes = await getMediaMetadata(mediaRes.metadataURI);
+      }
+      console.log('mediaRes', mediaRes);
+      setMediaData({
+        media: mediaRes,
+        metadata: metadataRes,
+      });
+    } catch (e) {
+      console.log('e', e);
+    }
+  };
+
+  useEffect(() => {
+    id && getMediaByIdFn(String(id));
+  }, [id]);
 
   if (!id) {
     return (
@@ -105,13 +104,14 @@ export default function AskPage() {
   return (
     <div className='bid-on-media'>
       <Grid.Container gap={2} justify='center'>
-        <Grid xs={0} md={12} style={{ background: '#f2f2f2' }}>
-          <Button
-            icon={<ArrowLeft />}
-            onClick={() => router.back()}
-            auto
-            size='large'></Button>
-          <ArtView mediaId={Number(id)} />
+        <Grid xs={0} md={12} style={{ background: '#f2f2f2', padding: 50 }}>
+          <NFTPreview
+            src={mediaData?.media.tokenURI}
+            type={
+              mediaData?.metadata.mimeType
+                ? mediaData.metadata.mimeType.split('/')[0]
+                : ''
+            }></NFTPreview>
         </Grid>
         <Grid xs={24} md={12}>
           <BiddingBox>
@@ -172,3 +172,36 @@ export default function AskPage() {
     </div>
   );
 }
+const BiddingBox = styled.div`
+  padding: 4rem 0.5rem;
+  width: 470px;
+  margin: auto;
+`;
+
+const CreatorEquity = styled.div`
+  box-sizing: border-box;
+  margin: 0;
+  min-width: 0;
+  padding: 10px;
+  width: 100%;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  border-radius: 4px;
+  border: 2px solid #f2f2f2;
+  background-color: #f2f2f2;
+  margin-bottom: 30px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+`;
+
+const ActionsBox = styled.div`
+  display: flex;
+  margin: 2rem 0;
+`;
+
+const FullWidth: CSSProperties = {
+  width: '100%',
+};

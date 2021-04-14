@@ -54,7 +54,7 @@ const NFTComponents: React.FC<NFTProps> = ({
             loop
             playsInline
             // autoPlay
-            poster={fields?.thumbnail.stringValue}
+            // poster={fields?.thumbnail.stringValue}
             className='media-video'></video>
         ) : type === 'audio' ? (
           <div className='media-audio'>
