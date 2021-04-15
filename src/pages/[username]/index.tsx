@@ -179,8 +179,21 @@ const StyledInfo = styled.div`
 const StyledMediaCardContainer = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0px, 1fr));
-  gap: 50px 30px;
+  justify-content: center;
+  gap: 30px 20px;
+  margin: 48px auto 0;
+  grid-template-columns: repeat(4, minmax(0px, 330px));
+  @media screen and (max-width: 1366px) {
+    grid-template-columns: repeat(3, minmax(0px, 330px));
+  }
+  @media screen and (max-width: 1140px) {
+    grid-template-columns: repeat(2, minmax(0px, 330px));
+  }
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 // from EditProfileButton Copy
 const StyledEditButton = styled.button`
