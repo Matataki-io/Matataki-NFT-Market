@@ -49,5 +49,5 @@ export function useMulticall() {
     [Multicall]
   );
 
-  return { Multicall, aggerate: aggerateQuery };
+  return { Multicall, aggerateQuery };
 }
