@@ -1,14 +1,17 @@
 import { BigNumber, BigNumberish } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWallet } from 'use-wallet';
+import { DecimalValue } from '../types/ContractTypes';
 import { Decimal } from '../utils/Decimal';
 import { useMarket } from './useMarket';
 import { useMedia } from './useMedia';
+import { useMulticall } from './useMulticall';
 
 export function useMediaToken(id: BigNumberish) {
   const { account } = useWallet();
   const mediaContract = useMedia();
   const marketContract = useMarket();
+  const { aggerateQuery } = useMulticall();
   const [profile, setProfile] = useState({
     owner: '',
     creator: '',
@@ -26,39 +29,85 @@ export function useMediaToken(id: BigNumberish) {
   const [isAllApprove, setAllApprove] = useState(false);
 
   const getDetailOf = useCallback(async () => {
-    console.info('gdo', id);
     if (Number(id) === NaN) {
       return;
     }
-    console.info('getDetailOf');
-    const owner = await mediaContract.ownerOf(id);
-    console.info('owner');
-
-    const approvedOperator = await mediaContract.getApproved(id);
-    console.info('approvedOperator');
-
-    const creator = await mediaContract.tokenCreators(id);
-    const bidsShares = await marketContract.bidSharesForToken(id);
-    const currentAsk = await marketContract.currentAskForToken(id);
+    const { returns } = await aggerateQuery([
+      {
+        target: mediaContract.address,
+        iface: mediaContract.interface,
+        funcFrag: mediaContract.interface.getFunction('ownerOf'),
+        data: [id],
+      },
+      {
+        target: mediaContract.address,
+        iface: mediaContract.interface,
+        funcFrag: mediaContract.interface.getFunction('getApproved'),
+        data: [id],
+      },
+      {
+        target: mediaContract.address,
+        iface: mediaContract.interface,
+        funcFrag: mediaContract.interface.getFunction('tokenCreators'),
+        data: [id],
+      },
+      {
+        target: marketContract.address,
+        iface: marketContract.interface,
+        funcFrag: marketContract.interface.getFunction('bidSharesForToken'),
+        data: [id],
+      },
+      {
+        target: marketContract.address,
+        iface: marketContract.interface,
+        funcFrag: marketContract.interface.getFunction('currentAskForToken'),
+        data: [id],
+      },
+    ]);
+    console.info('re', returns);
+    const [
+      owner,
+      approvedOperator,
+      creator,
+      [bidsShares],
+      [currentAsk],
+    ] = (returns as unknown) as [
+      string,
+      string,
+      string,
+      {
+        creator: DecimalValue;
+        owner: DecimalValue;
+        prevOwner: DecimalValue;
+      }[],
+      {
+        amount: BigNumber;
+        currency: string;
+      }[]
+    ];
     setProfile({
       owner,
       creator,
       approvedOperator,
-      bidsShares,
-      currentAsk,
+      bidsShares: {
+        creator: bidsShares.creator,
+        prevOwner: bidsShares.prevOwner,
+        owner: bidsShares.owner,
+      },
+      currentAsk: { amount: currentAsk.amount, currency: currentAsk.currency },
     });
-    if (account) {
-      const isApproveForAll = await mediaContract.isApprovedForAll(
-        owner,
-        account
-      );
-      const bidForTokenBidder = await marketContract.bidForTokenBidder(
-        id,
-        account
-      );
-      setAllApprove(isApproveForAll);
-    }
-  }, [mediaContract, account, id]);
+    // if (account) {
+    //   const isApproveForAll = await mediaContract.isApprovedForAll(
+    //     owner,
+    //     account
+    //   );
+    //   const bidForTokenBidder = await marketContract.bidForTokenBidder(
+    //     id,
+    //     account
+    //   );
+    //   setAllApprove(isApproveForAll);
+    // }
+  }, [mediaContract, account, id, aggerateQuery]);
 
   useEffect(() => {
     if (id) {
