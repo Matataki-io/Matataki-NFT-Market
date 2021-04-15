@@ -12,9 +12,11 @@ export function useMediaData(post: {
   };
 }) {
   const { data: backendData, error: backendError } = useSWR(
-    `/media/${post.id}`,
+    post ? `/media/${post.id}` : null,
     backendSWRFetcher,
-    { initialData: post.backendData }
+    {
+      initialData: post.backendData,
+    }
   );
   const { data: metadata, error: metadataError } = useSWR(
     backendData ? backendData.metadataURI : null,
