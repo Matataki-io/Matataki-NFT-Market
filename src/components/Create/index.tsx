@@ -19,6 +19,7 @@ import {
   Button,
   Spin,
   Tooltip,
+  Popconfirm,
 } from 'antd';
 const { Dragger } = Upload;
 
@@ -35,6 +36,7 @@ import {
   NFTTempFile,
   NFTTempUrl,
 } from './temp';
+import { isEmpty, stubFalse } from 'lodash';
 
 // 非负整数
 const creatorShare = /^\d+$/;
@@ -359,6 +361,30 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     console.log('Failed:', errorInfo);
   };
 
+  // upload media back pop confirm
+  // upload media visible
+  const [visiblePop, setVisiblePop] = useState(false);
+  // upload media back pop confirm
+  function popconfirmFn() {
+    setVisiblePop(false);
+    setMediaData({});
+    setStep(0);
+  }
+  // 是否显示 pop confirm
+  const handleVisibleChangeUploadMedia = (visible: boolean) => {
+    console.log(',visible', visible);
+    if (!visible) {
+      return;
+    }
+    // Determining condition before show the popconfirm.
+    console.log('!isEmpty(mediaData)', !isEmpty(mediaData));
+    if (isEmpty(mediaData)) {
+      popconfirmFn(); // next step
+    } else {
+      setVisiblePop(visible); // show the popconfirm
+    }
+  };
+
   const Step0: React.FC = () => {
     return (
       <Fragment>
@@ -464,9 +490,24 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           )}
         </StyledMultiiMediaInput>
         <StyledMultiiMediaActions>
-          <ButtonCustom color='gray' onClick={() => setStep(0)}>
-            Back
-          </ButtonCustom>
+          <Popconfirm
+            placement='top'
+            title={() => (
+              <span>
+                This will delete the resources you have uploaded.<br></br>
+                Are you sure you want to return to the previous step?
+              </span>
+            )}
+            onConfirm={popconfirmFn}
+            onCancel={() => {
+              setVisiblePop(false);
+            }}
+            visible={visiblePop}
+            onVisibleChange={handleVisibleChangeUploadMedia}
+            okText='Yes'
+            cancelText='No'>
+            <ButtonCustom color='gray'>Back</ButtonCustom>
+          </Popconfirm>
           <ButtonCustom color='dark' disabled={false} onClick={onFinishUpload}>
             Continue
           </ButtonCustom>
