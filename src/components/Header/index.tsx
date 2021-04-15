@@ -64,12 +64,17 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     }
   }, [caughtError]);
 
-  // useEffect(() => {
-  //   // 如果登录过了
-  //   if (wallet && (window as any).ethereum && getCookie('token') && wallet.status !== 'connected') {
-  //     wallet.connect('injected'); // 自动链接 不用签名
-  //   }
-  // }, [wallet]);
+  useEffect(() => {
+    // 如果登录过了
+    if (
+      wallet &&
+      (window as any).ethereum &&
+      getCookie('token') &&
+      wallet.status !== 'connected'
+    ) {
+      wallet.connect('injected'); // 自动链接 不用签名
+    }
+  }, [wallet]);
   // 链接钱包
   const connectWallet = useCallback(async () => {
     await wallet.connect('injected');
@@ -78,7 +83,8 @@ const HeaderComponents: React.FC<HeaderProps> = ({
 
   useMount(() => {
     // 当 MetaMask 已经链接时，window.ethereum.selectedAddress 不是 null
-    if ((window as any).ethereum.selectedAddress) connectWallet();
+    // if ((window as any).ethereum.selectedAddress) connectWallet();
+    // 新开页面有点问题 我先还原
   });
 
   // 链接钱包，并且没有注册显示信息框

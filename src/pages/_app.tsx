@@ -31,7 +31,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         console.log('accounts', accounts);
 
         removeCookie('token');
-        removeCookie('last-account');
         (window as any).location.reload();
       });
 
