@@ -17,6 +17,8 @@ import { useLogin } from '../../hooks/useLogin';
 import { currentChainId } from '../../constant';
 import { getCookie } from '../../utils/cookie';
 import { shortedWalletAccount } from '../../utils/index';
+import { message } from 'antd';
+import { isEmpty } from 'lodash';
 
 interface HeaderProps {
   isCreate: boolean;
@@ -39,6 +41,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     registeredLoading,
     userDataByWallet,
     loginWithSignature,
+    caughtError,
   } = useLogin();
   const [networkVersion, setNetworkVersion] = useState<string>('');
   const [connect, setConnect] = useState<boolean>(false);
@@ -55,8 +58,15 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   });
 
   useEffect(() => {
+    if (!isEmpty(caughtError)) {
+      message.error(`caughtError ${caughtError}`);
+      console.error('caughtError', caughtError);
+    }
+  }, [caughtError]);
+
+  useEffect(() => {
     // 如果登录过了
-    if (wallet && getCookie('token') && wallet.status !== 'connected') {
+    if (wallet && wallet.status !== 'connected' && getCookie('token')) {
       wallet.connect('injected'); // 自动链接 不用签名
     }
   }, [wallet]);

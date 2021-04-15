@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Modal, Button, Form, Input, Checkbox, Avatar } from 'antd';
+import { Modal, Button, Form, Input, Checkbox, Avatar, message } from 'antd';
 import { useWallet } from 'use-wallet';
 import ButtonCustom from '../Button/index';
 import { shortedWalletAccount } from '../../utils/index';
@@ -75,18 +75,19 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
         });
         console.log('res', res);
         if (res.data.code === 200) {
-          console.log('reload...');
           setIsProfile(false);
           router.push(`/${username}`);
+        } else {
+          message.error('更新失败');
         }
       } else {
         // 注册
-        // TODO 需要判断
         await register({ nickname, bio, username });
       }
       setIsProfile(false);
     } catch (e) {
       console.error('e', e.toString());
+      message.error(`更新失败${e.toString()}`);
     }
   };
 
