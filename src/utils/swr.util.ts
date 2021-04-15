@@ -1,4 +1,4 @@
-import client from '../backend/client';
+import axios from 'axios';
 
 export const axiosFetcher = (url: string) =>
-  client.get(url).then(res => res.data);
+  axios.get(url).then(res => res.data);

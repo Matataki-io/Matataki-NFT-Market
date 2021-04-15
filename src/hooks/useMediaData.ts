@@ -1,14 +1,27 @@
 import useSWR from 'swr';
+import { backendSWRFetcher } from '../backend/media';
 import { axiosFetcher } from '../utils/swr.util';
 
-export function useMediaData(tokenId: number) {
+export function useMediaData(post?: {
+  id: number;
+  backendData: any;
+  metadata: {
+    description: string;
+    name: string;
+    mimeType: string;
+  };
+}) {
   const { data: backendData, error: backendError } = useSWR(
-    `${process.env.NEXT_PUBLIC_BACKEND_API}/media/${tokenId}`,
-    axiosFetcher
+    post ? `/media/${post.id}` : null,
+    backendSWRFetcher,
+    {
+      initialData: post?.backendData,
+    }
   );
   const { data: metadata, error: metadataError } = useSWR(
-    backendData ? backendData.metadataURI : null,
-    axiosFetcher
+    post && backendData ? backendData.metadataURI : null,
+    axiosFetcher,
+    { initialData: post?.metadata }
   );
   return {
     backendData,
