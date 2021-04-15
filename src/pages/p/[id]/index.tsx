@@ -110,7 +110,10 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             </StyledShareAndPrice>
 
             <Container>
-              <TradeButton colorType='default'>Buy now</TradeButton>
+              {/* <TradeButton colorType='default'>Buy now</TradeButton> */}
+              <Link href={`/p/${post.id}/bids`}>
+                <TradeButton colorType='default'>See bids</TradeButton>
+              </Link>
               {!isMeTheOwner ? (
                 <Link href={`/p/${post.id}/bid`}>
                   <TradeButton colorType='secondary'>Place a bid</TradeButton>

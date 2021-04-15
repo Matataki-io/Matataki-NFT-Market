@@ -25,7 +25,7 @@ import { useMediaToken } from '../../../hooks/useMediaToken';
 import { useAllowance } from '../../../hooks/useAllowance';
 import { useMarket } from '../../../hooks/useMarket';
 import Link from 'next/link';
-import { getDecimalOf } from '../../../utils/tokens';
+import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 import NFTPreview from '../../../components/NFTPreview/index';
 import { getMediaById, getMediaMetadata } from '../../../backend/media';
 
@@ -141,16 +141,25 @@ export default function Bid() {
         </Grid>
         <Grid xs={24} md={12}>
           <BiddingBox>
-            <CreatorEquity>
+            <GreyCard>
               <Text style={{ color: '#888888' }}>CREATOR EQUITY</Text>
               <Text h3>
-                {utils.formatUnits(
-                  profile.bidsShares.creator.value,
-                  getDecimalOf(currency)
-                )}
-                %
+                {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
               </Text>
-            </CreatorEquity>
+            </GreyCard>
+
+            {profile.currentAsk.currency === '' && (
+              <GreyCard>
+                <Text style={{ color: '#888888' }}>CURRENT ASK</Text>
+                <Text h3>
+                  {utils.formatUnits(
+                    profile.currentAsk.amount,
+                    getDecimalOf(profile.currentAsk.currency)
+                  )}
+                  {' ' + getSymbolOf(profile.currentAsk.currency)}
+                </Text>
+              </GreyCard>
+            )}
 
             <Text h4>Your bid</Text>
             <Select
@@ -245,7 +254,7 @@ const BiddingBox = styled.div`
   margin: auto;
 `;
 
-const CreatorEquity = styled.div`
+const GreyCard = styled.div`
   box-sizing: border-box;
   margin: 0;
   min-width: 0;
