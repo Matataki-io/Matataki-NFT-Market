@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { backendSWRFetcher } from '../backend/media';
 import { axiosFetcher } from '../utils/swr.util';
 
-export function useMediaData(post: {
+export function useMediaData(post?: {
   id: number;
   backendData: any;
   metadata: {
@@ -12,14 +12,16 @@ export function useMediaData(post: {
   };
 }) {
   const { data: backendData, error: backendError } = useSWR(
-    `/media/${post.id}`,
+    post ? `/media/${post.id}` : null,
     backendSWRFetcher,
-    { initialData: post.backendData }
+    {
+      initialData: post?.backendData,
+    }
   );
   const { data: metadata, error: metadataError } = useSWR(
-    backendData ? backendData.metadataURI : null,
+    post && backendData ? backendData.metadataURI : null,
     axiosFetcher,
-    { initialData: post.metadata }
+    { initialData: post?.metadata }
   );
   return {
     backendData,

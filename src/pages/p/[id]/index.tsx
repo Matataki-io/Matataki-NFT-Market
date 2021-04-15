@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import { Button, Grid, Image, Link, Text, User } from '@geist-ui/react';
@@ -28,6 +28,7 @@ import { useMediaData } from '../../../hooks/useMediaData';
 import NFTTimeline from '../../../components/NFTTimeline/index';
 import { Ask } from '../../../types/Ask';
 import { MediaLog } from '../../../types/MediaLog';
+import { axiosFetcher } from '../../../utils/swr.util';
 
 type Props = {
   post?: {
@@ -48,8 +49,9 @@ interface Params extends ParsedUrlQuery {
 
 const PostPage: NextPage<Props> = ({ post, isError }) => {
   const router = useRouter();
+
   const { id } = router.query;
-  const { backendData, metadata } = useMediaData(post!);
+  const { backendData, metadata } = useMediaData(post);
 
   const { profile, isMeTheOwner } = useMediaToken(Number(post?.id));
   const scanLink = getTokenOnScan(Number(id));
@@ -60,6 +62,9 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
     backendSWRFetcher
   );
 
+  if (router.isFallback) {
+    return <h1>Loading...</h1>;
+  }
   if (!post && !isError) return <div>Loading</div>;
   if (!post)
     return (
@@ -144,7 +149,6 @@ export async function getStaticProps(
     // Call an external API endpoint to get posts
     const backendData = await getMediaById(Number(id));
     const metadata = await getMediaMetadata(backendData.metadataURI);
-
     return {
       props: {
         post: {
