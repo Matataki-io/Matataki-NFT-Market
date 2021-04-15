@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
-import { useBoolean, useMount } from 'ahooks';
+import { useMount } from 'ahooks';
 import { Input } from '@geist-ui/react';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -57,7 +57,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   useEffect(() => {
     // 如果登录过了
     if (wallet && getCookie('token') && wallet.status !== 'connected') {
-      connectWallet(); // 自动链接 不用签名
+      wallet.connect('injected'); // 自动链接 不用签名
     }
   }, [wallet]);
 
@@ -69,7 +69,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
       // 查询完是否注册
       if (isRegistered) {
         setIsProfile(false);
-        if (!getCookie('token')) loginWithSignature();
+        loginWithSignature();
       } else {
         setIsProfile(true);
       }
@@ -84,20 +84,11 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     connect,
   ]);
 
-  const [isConnecting, { toggle, setTrue }] = useBoolean(false);
-
   // 链接钱包
   const connectWallet = useCallback(async () => {
-    try {
-      if (isConnecting) return;
-      // on
-      setTrue();
-      await wallet.connect('injected');
-      setConnect(true);
-    } catch (error) {
-      toggle();
-    }
-  }, [wallet, isConnecting]);
+    await wallet.connect('injected');
+    setConnect(true);
+  }, [wallet]);
 
   return (
     <StyledHeader>
