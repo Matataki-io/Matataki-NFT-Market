@@ -9,14 +9,13 @@ interface SignInPermit {
   from?: string;
 }
 
-export async function loginWithPermit(permit: SignInPermit, account: string) {
+export async function loginWithPermit(permit: SignInPermit) {
   const { data } = await BACKEND_CLIENT.post<{ data: string }>(
     '/auth/login',
     permit
   );
   let token = data.data;
   setCookie('token', token, 1);
-  setCookie('last-account', account, 1);
   return token;
 }
 
@@ -36,8 +35,7 @@ export async function checkIsWalletRegistered(wallet: string) {
  */
 export async function registerUser(
   profile: { nickname: string; bio: string; username: string },
-  permit: { signature: string; message: string },
-  account: string
+  permit: { signature: string; message: string }
 ) {
   const payload = {
     nickname: profile.nickname,
@@ -47,7 +45,7 @@ export async function registerUser(
     signingMessage: permit.message,
   };
   await BACKEND_CLIENT.post<{ isGood: boolean }>('/user', payload);
-  const accessToken = await loginWithPermit(permit, account);
+  const accessToken = await loginWithPermit(permit);
   return accessToken;
 }
 /**
