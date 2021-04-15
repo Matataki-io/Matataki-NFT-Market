@@ -7,6 +7,7 @@ import React, { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
 import { useWallet } from 'use-wallet';
 import styled from 'styled-components';
+import { Spin } from 'antd';
 
 import { backendSWRFetcher, getBidsOfToken } from '../../../backend/media';
 import { useMedia } from '../../../hooks/useMedia';
@@ -71,11 +72,25 @@ export default function Bids() {
       </StyledWrapper>
     );
   }
-  return <div className='loading'>Loading Bids</div>;
+  return (
+    <StyledWrapperLoading>
+      <Spin tip='Loading Bids...'></Spin>
+    </StyledWrapperLoading>
+  );
 }
 
 const StyledWrapper = styled.div`
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 0 100px;
+`;
+
+const StyledWrapperLoading = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 0 100px;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
