@@ -101,10 +101,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   // 媒体上传 size
   const mediaSize = useMemo(() => {
     let list: { [key: string]: number } = {
-      image: 10,
-      video: 20,
-      audio: 20,
-      file: 20,
+      image: 50,
+      video: 100,
+      audio: 100,
+      file: 100,
       url: 0,
     };
 
