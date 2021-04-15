@@ -6,10 +6,13 @@ import { getTokenOnScan } from '../../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import styled from 'styled-components';
+import useSWR from 'swr';
+
 import {
   getMediaById,
   getHotMediaList,
   getMediaMetadata,
+  backendSWRFetcher,
 } from '../../../backend/media';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import { utils } from 'ethers';
@@ -21,6 +24,9 @@ import MediaMarketInfo from '../../../components/MediaMarketInfo';
 import MediaOwnershipInfo from '../../../components/MediaOwnershipInfo';
 import ProofOfAuthenticity from '../../../components/ProofOfAuthenticity';
 import { IconRespondArrow } from '../../../components/Icons';
+import NFTTimeline from '../../../components/NFTTimeline/index';
+import { Ask } from '../../../types/Ask';
+import { MediaLog } from '../../../types/MediaLog';
 
 type Props = {
   post?: {
@@ -46,6 +52,11 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
   const { profile, isMeTheOwner } = useMediaToken(Number(post?.id));
   const scanLink = getTokenOnScan(Number(id));
   const ipfsLink = post?.backendData.tokenURI;
+
+  const { data: timeline, error } = useSWR<Array<Ask | MediaLog>>(
+    `/media/${id}/logs`,
+    backendSWRFetcher
+  );
 
   if (!post && !isError) return <div>Loading</div>;
   if (!post)
@@ -114,6 +125,9 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             <StyledAuthor>{post.metadata.description}</StyledAuthor>
             <MediaOwnershipInfo info={post.backendData} />
             <ProofOfAuthenticity scanLink={scanLink} ipfsLink={ipfsLink} />
+            <NFTTimeline
+              timeline={timeline || []}
+              creator={post.backendData.creator?.username}></NFTTimeline>
           </StyledContentRight>
         </StyledContentWrapper>
       </StyledWrapper>
