@@ -1,5 +1,5 @@
 import React from 'react';
-import { GeistProvider, CssBaseline } from '@geist-ui/react';
+import { GeistProvider } from '@geist-ui/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { UseWalletProvider } from 'use-wallet';
 import store from '../store';
@@ -16,10 +16,7 @@ const Providers: React.FC = ({ children }) => (
           rpcUrl: process.env.NEXT_PUBLIC_USE_WALLET_WC_RPC as string,
         },
       }}>
-      <GeistProvider themes={[light, dark]}>
-        <CssBaseline />
-        {children}
-      </GeistProvider>
+      <GeistProvider themes={[light, dark]}>{children}</GeistProvider>
     </UseWalletProvider>
   </ReduxProvider>
 );
