@@ -6,6 +6,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import React, { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
 import { useWallet } from 'use-wallet';
+import styled from 'styled-components';
+
 import { backendSWRFetcher, getBidsOfToken } from '../../../backend/media';
 import { useMedia } from '../../../hooks/useMedia';
 import { BidLog } from '../../../types/Bid';
@@ -56,10 +58,9 @@ export default function Bids() {
       return { ...log, date, price, acceptBidBtn };
     });
     return (
-      <div className='bids'>
-        {JSON.stringify(data)}
+      <StyledWrapper>
         <Text h1>买家出价记录</Text>
-        {wallet.account}
+        <p>Current Account: {wallet.account}</p>
         <Table data={renderedData}>
           <Table.Column prop='bidder' label='买家' />
           <Table.Column prop='price' label='价格' />
@@ -67,8 +68,14 @@ export default function Bids() {
           <Table.Column prop='date' label='日期' />
           <Table.Column prop='acceptBidBtn' label='操作' />
         </Table>
-      </div>
+      </StyledWrapper>
     );
   }
   return <div className='loading'>Loading Bids</div>;
 }
+
+const StyledWrapper = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 0 100px;
+`;
