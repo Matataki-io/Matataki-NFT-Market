@@ -24,6 +24,7 @@ import MediaMarketInfo from '../../../components/MediaMarketInfo';
 import MediaOwnershipInfo from '../../../components/MediaOwnershipInfo';
 import ProofOfAuthenticity from '../../../components/ProofOfAuthenticity';
 import { IconRespondArrow } from '../../../components/Icons';
+import { useMediaData } from '../../../hooks/useMediaData';
 import NFTTimeline from '../../../components/NFTTimeline/index';
 import { Ask } from '../../../types/Ask';
 import { MediaLog } from '../../../types/MediaLog';
@@ -48,6 +49,7 @@ interface Params extends ParsedUrlQuery {
 const PostPage: NextPage<Props> = ({ post, isError }) => {
   const router = useRouter();
   const { id } = router.query;
+  const { backendData, metadata } = useMediaData(post!);
 
   const { profile, isMeTheOwner } = useMediaToken(Number(post?.id));
   const scanLink = getTokenOnScan(Number(id));
@@ -74,16 +76,14 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
           <StyledContentLeft>
             <StyledMarketContainer>
               <NFTPreview
-                src={post.backendData.tokenURI}
+                src={backendData.tokenURI}
                 type={
-                  post?.metadata.mimeType
-                    ? post.metadata.mimeType.split('/')[0]
-                    : ''
+                  metadata.mimeType ? metadata.mimeType.split('/')[0] : ''
                 }></NFTPreview>
             </StyledMarketContainer>
           </StyledContentLeft>
           <StyledContentRight>
-            <StyledMediaTitle>{post.metadata.name}</StyledMediaTitle>
+            <StyledMediaTitle>{metadata.name}</StyledMediaTitle>
 
             <StyledShareAndPrice>
               <ContainerShare className='mr'>
@@ -120,10 +120,10 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
               </SocialButton>
             </Container>
             <StyledAuthor>
-              {post.metadata.name} by {post.backendData.creator?.username}
+              {metadata.name} by {backendData.creator?.username}
             </StyledAuthor>
-            <StyledAuthor>{post.metadata.description}</StyledAuthor>
-            <MediaOwnershipInfo info={post.backendData} />
+            <StyledAuthor>{metadata.description}</StyledAuthor>
+            <MediaOwnershipInfo info={backendData} />
             <ProofOfAuthenticity scanLink={scanLink} ipfsLink={ipfsLink} />
             <NFTTimeline
               timeline={timeline || []}
