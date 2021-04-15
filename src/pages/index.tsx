@@ -218,6 +218,8 @@ const Home: React.FC<void> = () => {
 };
 
 const StyledWrapper = styled.div`
+  flex: 1;
+
   /* max-width: 1480px; */
   /* padding: 0 20px 200px; */
   box-sizing: border-box;
@@ -225,7 +227,6 @@ const StyledWrapper = styled.div`
   padding: 0 30px 200px;
   margin: 0px auto;
   width: 100%;
-  max-width: calc(1460px);
 
   @media screen and (max-width: 768px) {
     padding-left: 10px;

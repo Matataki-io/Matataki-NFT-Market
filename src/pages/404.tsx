@@ -14,8 +14,9 @@ export default function Custom404() {
 
 const StyledWrapper = styled.div`
   width: 900px;
-  min-height: 500px;
+  min-height: 300px;
   margin: 0 auto;
-  padding: 100px 0 200px;
+  padding: 100px 0 0;
   text-align: center;
+  flex: 1;
 `;
