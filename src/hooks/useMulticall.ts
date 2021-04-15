@@ -1,5 +1,6 @@
-import { ethers } from 'ethers';
-import { useMemo } from 'react';
+import { FunctionFragment } from '@ethersproject/abi';
+import { BytesLike, ethers, utils } from 'ethers';
+import { useCallback, useMemo } from 'react';
 import { Multicall__factory } from '../blockchain/contracts/MulticallFactory';
 import { currentMulticallAddress } from '../constant/contracts';
 import { currentProvider } from '../constant/providers';
@@ -7,7 +8,7 @@ import { useSigner } from './useSigner';
 
 export function useMulticall() {
   const { signer, isSignerReady } = useSigner();
-  const multicall = useMemo(() => {
+  const Multicall = useMemo(() => {
     const readonlyProvider = currentProvider as ethers.providers.Provider;
     if (isSignerReady(signer)) {
       return Multicall__factory.connect(currentMulticallAddress, signer);
@@ -19,5 +20,34 @@ export function useMulticall() {
     }
   }, [signer]);
 
-  return multicall;
+  const aggerateQuery = useCallback(
+    async (
+      _calls: Array<{
+        target: string;
+        iface: utils.Interface;
+        funcFrag: FunctionFragment;
+        data: any[];
+      }>
+    ) => {
+      const calls: Array<{ target: string; callData: BytesLike }> = _calls.map(
+        c => {
+          return {
+            target: c.target,
+            callData: c.iface.encodeFunctionData(c.funcFrag, c.data),
+          };
+        }
+      );
+      const { returnData, blockNumber } = await Multicall.callStatic.aggregate(
+        calls
+      );
+      const returns = returnData.map((result, idx) => {
+        const _ = _calls[idx];
+        return _.iface.decodeFunctionResult(_.funcFrag, result);
+      });
+      return { returns, blockNumber };
+    },
+    [Multicall]
+  );
+
+  return { Multicall, aggerate: aggerateQuery };
 }
