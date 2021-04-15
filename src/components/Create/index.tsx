@@ -19,6 +19,7 @@ import {
   Button,
   Spin,
   Tooltip,
+  Popconfirm,
 } from 'antd';
 const { Dragger } = Upload;
 
@@ -35,6 +36,7 @@ import {
   NFTTempFile,
   NFTTempUrl,
 } from './temp';
+import { isEmpty } from 'lodash';
 
 // 非负整数
 const creatorShare = /^\d+$/;
@@ -68,6 +70,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const [formNameAndDescription] = Form.useForm();
   const [formPricingAndFees] = Form.useForm();
   const [mediaData, setMediaData] = useState<mediaDataState>({}); // media 数据
+  const [mediaLoading, setMediaLoading] = useState<boolean>(true); // media loading
+  const [mediaSubmitLoading, setMediaSubmitLoading] = useState<boolean>(false); // media submit
   const [nameAndDescription, setNameAndDescription] = useState<{
     name: string;
     description: string;
@@ -101,10 +105,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   // 媒体上传 size
   const mediaSize = useMemo(() => {
     let list: { [key: string]: number } = {
-      image: 4,
-      video: 10,
-      audio: 10,
-      file: 10,
+      image: 50,
+      video: 100,
+      audio: 100,
+      file: 100,
       url: 0,
     };
 
@@ -134,6 +138,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
         let url = info.file.response.data.MediaData.tokenURI;
         let storage = info.file.response.data;
+        setMediaLoading(false);
         setMediaDataFn({
           url,
           type: mediaType,
@@ -145,7 +150,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     },
     beforeUpload(file: File): boolean {
       console.log('file', file);
-      message.info('正在上传...');
+      message.info('Uploading...');
 
       let mediaAcceptList = mediaAccept.split(',');
       const mediaAcceptResult = mediaAcceptList.find(
@@ -328,6 +333,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     console.log('signer', signer);
 
     try {
+      setMediaSubmitLoading(true);
       const res: any = await mintMediaToken(
         tokenURI,
         metadataURI,
@@ -336,6 +342,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         creatorShare,
         wallet
       );
+      setMediaSubmitLoading(false);
       console.log('res', res);
       message.success('mint success...');
 
@@ -357,6 +364,30 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   // price填写失败
   const onFinishFailedPrice = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
+  };
+
+  // upload media back pop confirm
+  // upload media visible
+  const [visiblePop, setVisiblePop] = useState(false);
+  // upload media back pop confirm
+  function popconfirmFn() {
+    setVisiblePop(false);
+    setMediaData({});
+    setStep(0);
+  }
+  // 是否显示 pop confirm
+  const handleVisibleChangeUploadMedia = (visible: boolean) => {
+    console.log(',visible', visible);
+    if (!visible) {
+      return;
+    }
+    // Determining condition before show the popconfirm.
+    console.log('!isEmpty(mediaData)', !isEmpty(mediaData));
+    if (isEmpty(mediaData)) {
+      popconfirmFn(); // next step
+    } else {
+      setVisiblePop(visible); // show the popconfirm
+    }
   };
 
   const Step0: React.FC = () => {
@@ -464,10 +495,33 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           )}
         </StyledMultiiMediaInput>
         <StyledMultiiMediaActions>
-          <ButtonCustom color='gray' onClick={() => setStep(0)}>
-            Back
-          </ButtonCustom>
-          <ButtonCustom color='dark' disabled={false} onClick={onFinishUpload}>
+          <Popconfirm
+            placement='top'
+            title={() => (
+              <span>
+                This will delete the resources you have uploaded.<br></br>
+                Are you sure you want to return to the previous step?
+              </span>
+            )}
+            onConfirm={popconfirmFn}
+            onCancel={() => {
+              setVisiblePop(false);
+            }}
+            visible={visiblePop}
+            onVisibleChange={handleVisibleChangeUploadMedia}
+            okText='Yes'
+            cancelText='No'>
+            <ButtonCustom color='gray'>Back</ButtonCustom>
+          </Popconfirm>
+          {/* 使用后无法正常上传 还不知道为什么
+          可能因为这个 后面再研究吧 ... https://github.com/ant-design/ant-design/issues/2423
+          <Spin spinning={mediaLoading}></Spin> */}
+          <ButtonCustom
+            color='dark'
+            disabled={mediaLoading}
+            onClick={() => {
+              onFinishUpload();
+            }}>
             Continue
           </ButtonCustom>
         </StyledMultiiMediaActions>

@@ -8,6 +8,8 @@ import Header from '../components/Header';
 import Create from '../components/Create';
 import Profile from '../components/Profile';
 
+import { removeCookie } from '../utils/cookie';
+
 import '../styles/globals.css';
 import 'inter-ui/inter.css';
 import 'antd/dist/antd.css';
@@ -28,6 +30,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         // "accounts" will always be an array, but it can be empty.
         console.log('accounts', accounts);
 
+        removeCookie('token');
+        removeCookie('last-account');
         (window as any).location.reload();
       });
 

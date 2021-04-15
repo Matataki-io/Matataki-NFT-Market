@@ -20,6 +20,8 @@ a {
 #__next {
   overflow-x: unset !important;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes rotate {

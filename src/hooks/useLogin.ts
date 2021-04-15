@@ -76,15 +76,24 @@ export function useLogin() {
 
   async function register(profile: any) {
     const permit = await requestToSign();
-    const token = await registerUser(profile, permit!);
-    updateAccessToken(token);
+    let account = wallet.account;
+    if (account) {
+      const token = await registerUser(profile, permit!, account);
+      updateAccessToken(token);
+    } else {
+      throw new Error('not account');
+    }
   }
 
   async function loginWithSignature() {
     try {
       const permit: SignInPermit | undefined = await requestToSign();
+      let account = wallet.account;
+      if (!account) {
+        throw new Error('not account');
+      }
       if (permit) {
-        const data = await loginWithPermit(permit);
+        const data = await loginWithPermit(permit, account);
         if (data) updateAccessToken(data);
       } else {
         throw new Error('not permit');
