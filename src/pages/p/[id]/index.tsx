@@ -73,7 +73,26 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
           </StyledContentLeft>
           <StyledContentRight>
             <StyledMediaTitle>{post.metadata.name}</StyledMediaTitle>
-            <MediaMarketInfo value={20} />
+
+            <StyledShareAndPrice>
+              <ContainerShare className='mr'>
+                <SmallLabel>Creator Share</SmallLabel>
+                <LargeValue>{20}%</LargeValue>
+              </ContainerShare>
+              {profile.currentAsk.amount.gt(0) && (
+                <ContainerShare>
+                  <SmallLabel>Current Price</SmallLabel>
+                  <LargeValue>
+                    {utils.formatUnits(
+                      profile.currentAsk.amount,
+                      getDecimalOf(profile.currentAsk.currency)
+                    )}{' '}
+                    {getSymbolOf(profile.currentAsk.currency)}
+                  </LargeValue>
+                </ContainerShare>
+              )}
+            </StyledShareAndPrice>
+
             <Container>
               <TradeButton colorType='default'>Buy now</TradeButton>
               {!isMeTheOwner ? (
@@ -95,19 +114,6 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             <StyledAuthor>{post.metadata.description}</StyledAuthor>
             <MediaOwnershipInfo info={post.backendData} />
             <ProofOfAuthenticity scanLink={scanLink} ipfsLink={ipfsLink} />
-
-            {profile.currentAsk.amount.gt(0) && (
-              <>
-                <Text>Current Price</Text>
-                <Text h3>
-                  {utils.formatUnits(
-                    profile.currentAsk.amount,
-                    getDecimalOf(profile.currentAsk.currency)
-                  )}{' '}
-                  {getSymbolOf(profile.currentAsk.currency)}
-                </Text>
-              </>
-            )}
           </StyledContentRight>
         </StyledContentWrapper>
       </StyledWrapper>
@@ -310,6 +316,38 @@ const SocialButton = styled.button`
   &:hover {
     background: rgb(64, 64, 64);
   }
+`;
+
+// share
+const StyledShareAndPrice = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+`;
+const ContainerShare = styled.div`
+  /* width: 100%; */
+  margin-bottom: 10px;
+  &.mr {
+    margin-right: 40px;
+  }
+`;
+
+const SmallLabel = styled.label`
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  line-height: 20px;
+  margin-bottom: 5px;
+  display: block;
+`;
+
+const LargeValue = styled.h2`
+  font-weight: 500;
+  font-size: 30px;
+  margin-bottom: 30px;
+  margin-top: 0;
 `;
 
 export default PostPage;
