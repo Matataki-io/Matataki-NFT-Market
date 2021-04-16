@@ -118,7 +118,8 @@ export function useMediaToken(id: BigNumberish) {
   }, [id, getDetailOf]);
 
   const isMeTheOwner = useMemo(
-    () => utils.getAddress(profile.owner) === utils.getAddress(account!),
+    () =>
+      account && utils.getAddress(profile.owner) === utils.getAddress(account),
     [profile, account]
   );
 
