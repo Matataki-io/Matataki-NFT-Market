@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish, utils } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWallet } from 'use-wallet';
 import { DecimalValue } from '../types/ContractTypes';
@@ -117,10 +117,10 @@ export function useMediaToken(id: BigNumberish) {
     return () => clearInterval(refreshInterval);
   }, [id, getDetailOf]);
 
-  const isMeTheOwner = useMemo(() => profile.owner === account, [
-    profile,
-    account,
-  ]);
+  const isMeTheOwner = useMemo(
+    () => utils.getAddress(profile.owner) === utils.getAddress(account!),
+    [profile, account]
+  );
 
   const isOwnerOrApproved = useMemo(() => {
     return (
