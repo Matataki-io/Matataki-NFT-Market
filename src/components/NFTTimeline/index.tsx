@@ -27,27 +27,28 @@ const NFTTimeline: React.FC<Props> = ({ timeline, creator }) => {
   };
 
   const timeDescription = (log: any) => {
-    if (isBackendAsk(log)) {
-      const symbol = getSymbolOf(log.currency);
-      const decimal = getDecimalOf(log.currency);
-      let description = '';
-      if (log.type === 'AskCreated')
-        description = `主人 定价为 ${utils.formatUnits(
-          log.amount,
-          decimal
-        )} ${symbol}`;
-      if (log.type === 'AskRemoved')
-        description = `主人删除了 ${utils.formatUnits(
-          log.amount,
-          decimal
-        )} ${symbol} 的定价`;
-      return `${log?.type} ${description}`;
+    console.log('c', shortedWalletAccount);
+    let type = log.type || log.status;
+    const symbol = getSymbolOf(log.currency);
+    const decimal = getDecimalOf(log.currency);
+    if (type === 'AskCreated') {
+      return (
+        <p className='logs'>
+          Bid {utils.formatUnits(log.amount, decimal)} {symbol}
+        </p>
+      );
+    } else if (type === 'BidFinalized') {
+      return (
+        <p className='logs'>
+          <a
+            href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${log.bidder}`}>
+            {shortedWalletAccount(log.bidder)}
+          </a>{' '}
+          buy with {utils.formatUnits(log.amount, decimal)} {symbol}
+        </p>
+      );
     } else {
-      const actionName = log.type === 'Approval' ? '授权' : '转让';
-      const description = `${shortedWalletAccount(
-        log.bidder
-      )} ${actionName} 给 ${shortedWalletAccount(log.recipient)}`;
-      return `${log?.type || log?.status} ${description}`;
+      return 'Other';
     }
   };
 
@@ -76,7 +77,7 @@ const NFTTimeline: React.FC<Props> = ({ timeline, creator }) => {
               </Timeline.Item>
             ) : (
               <Timeline.Item key={idx}>
-                <p>{timeDescription(i)}</p>
+                {timeDescription(i)}
                 <time>{timelineDate(i.at.timestamp)}</time>
               </Timeline.Item>
             )}
@@ -102,6 +103,14 @@ const StyledWrapper = styled.div`
     color: rgb(0, 0, 0);
     display: inline-block;
     cursor: pointer;
+  }
+  .logs {
+    a {
+      font-weight: 500;
+      color: rgb(0, 0, 0);
+      display: inline-block;
+      cursor: pointer;
+    }
   }
 `;
 const StyledHead = styled.div`
