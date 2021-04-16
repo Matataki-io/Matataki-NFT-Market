@@ -21,6 +21,7 @@ import { updateUser } from '../../backend/user';
 import { useLogin } from '../../hooks/useLogin';
 import styles from './index.module.scss';
 import { storageUploadFile } from '../../backend/storage';
+import { isEmpty } from 'lodash';
 
 const { TextArea } = Input;
 const { Item } = Form;
@@ -32,6 +33,13 @@ interface Props {
   setIsProfile: (value: boolean) => void;
 }
 type RequiredMark = boolean | 'optional';
+
+interface UserProps {
+  nickname?: string;
+  bio?: string;
+  username?: string;
+  avatar?: string;
+}
 
 const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
   const [formProfile] = Form.useForm();
@@ -80,12 +88,37 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
       let { nickname, bio, username } = values;
       if (isRegistered) {
         // 更新
-        const res = await updateUser(Number(userDataByWallet?.id), {
-          nickname,
-          bio,
-          username,
-          avatar: avatarUrl!,
-        });
+        // diff
+        const diffData = (newData: any, oldData: any) => {
+          let data: any = {};
+          for (const key in newData) {
+            if (Object.prototype.hasOwnProperty.call(newData, key)) {
+              if (newData[key] !== oldData[key]) {
+                data[key] = newData[key];
+              }
+            }
+          }
+          return data;
+        };
+        let profile: UserProps = diffData(
+          {
+            username,
+            nickname,
+            bio,
+            avatar: avatarUrl!,
+          } as UserProps,
+          {
+            username: userDataByWallet?.username,
+            nickname: userDataByWallet?.nickname,
+            bio: userDataByWallet?.bio,
+            avatar: userDataByWallet?.avatar,
+          } as UserProps
+        );
+        if (isEmpty(profile)) {
+          message.info('没有修改');
+          return;
+        }
+        const res = await updateUser(Number(userDataByWallet?.id), profile);
         console.log('res', res);
         if (res.data.code === 200) {
           setIsProfile(false);

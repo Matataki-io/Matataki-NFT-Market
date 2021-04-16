@@ -57,10 +57,10 @@ export async function registerUser(
 export async function updateUser(
   id: number,
   payload: {
-    nickname: string;
-    bio: string;
-    username: string;
-    avatar: string;
+    nickname?: string;
+    bio?: string;
+    username?: string;
+    avatar?: string;
   }
 ) {
   return await BACKEND_CLIENT({
