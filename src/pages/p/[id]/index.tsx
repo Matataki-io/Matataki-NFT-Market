@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 
 import { Button, Grid, Image, Link, Text, User } from '@geist-ui/react';
+import { message } from 'antd';
 import { getTokenOnScan } from '../../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import styled from 'styled-components';
 import useSWR from 'swr';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import {
   getMediaById,
@@ -63,6 +65,14 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
     `/media/${id}/logs`,
     backendSWRFetcher
   );
+
+  const copyText = useMemo(() => {
+    if (process.browser) {
+      return `${metadata.name}：${window ? window.location.href : ''}`;
+    } else {
+      return metadata.name;
+    }
+  }, [metadata]);
 
   if (router.isFallback) {
     return <h1>Loading...</h1>;
@@ -127,9 +137,13 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
                   <TradeButton colorType='secondary'>Add Price</TradeButton>
                 </Link>
               )}
-              <SocialButton>
-                <IconRespondArrow />
-              </SocialButton>
+              <CopyToClipboard
+                text={`${copyText}`}
+                onCopy={() => message.info('复制成功，立即分享！')}>
+                <SocialButton>
+                  <IconRespondArrow />
+                </SocialButton>
+              </CopyToClipboard>
             </Container>
             <StyledAuthor>
               {metadata.name} by {backendData.creator?.username}

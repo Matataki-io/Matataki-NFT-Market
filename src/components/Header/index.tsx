@@ -144,7 +144,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
 								</StyledHeaderNav> */}
             </StyledHeaderLeft>
             <StyledHeaderContainer>
-              <StyledHeaderSearch placeholder='Search NFTs' disabled />
+              {/* <StyledHeaderSearch placeholder='Search NFTs' disabled /> */}
               <div>
                 <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
                   <Button className='hover-underline'>Learn</Button>
