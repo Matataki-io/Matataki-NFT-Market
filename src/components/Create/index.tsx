@@ -69,7 +69,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const [mediaUrl, setMediaUrl] = useState<string>(''); // 媒体类型为Url的Value
   const [formNameAndDescription] = Form.useForm();
   const [formPricingAndFees] = Form.useForm();
-  const [mediaData, setMediaData] = useState<mediaDataState>({}); // media 数据
+  const [mediaData, setMediaData] = useState<mediaDataState>({} as any); // media 数据
   const [mediaLoading, setMediaLoading] = useState<boolean>(true); // media loading
   const [mediaSubmitLoading, setMediaSubmitLoading] = useState<boolean>(false); // media submit
   const [nameAndDescription, setNameAndDescription] = useState<{
@@ -377,7 +377,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   // upload media back pop confirm
   function popconfirmFn() {
     setVisiblePop(false);
-    setMediaData({});
+    setMediaData({} as any);
     setStep(0);
   }
   // 是否显示 pop confirm
