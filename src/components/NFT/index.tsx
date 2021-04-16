@@ -13,35 +13,25 @@ const NFTComponents: React.FC<NFTProps> = ({
   type,
   fields,
   content,
-  avatar_url,
-  username,
   title,
-  time,
+  owner,
+  creator,
 }) => {
-  useEffect(() => {
-    console.log('avatar_url', avatar_url);
-  });
-
   return (
     <StyledNFTWrapper>
       <StyledNFTHead>
-        <Link href={`/${username!}`}>
+        <Link href={`/${creator?.username!}`}>
           <a target='_blank' className='user'>
             {content || fields ? (
               <Avatar
                 className='user-avatar'
                 icon={<UserOutlined />}
-                src={''}
+                src={creator?.avatar}
               />
-            ) : (
-              ''
-            )}
-            <span className='username'>{username}</span>
+            ) : null}
+            <span className='username'>{creator?.username}</span>
           </a>
         </Link>
-        <span className='time'>
-          {time && moment(time).format('YYYY-MM-DD HH:mm:ss')}
-        </span>
       </StyledNFTHead>
       <StyledNFTContent>
         {type === 'image' ? (
@@ -89,16 +79,18 @@ const NFTComponents: React.FC<NFTProps> = ({
         <h5>{title}</h5>
         <StyledNFTFooterUser>
           <div className='user'>
-            <span className='subtitle'>{username ? 'Collected by' : ''}</span>
-            <Link href={`/${username}`}>
+            <span className='subtitle'>
+              {owner?.username ? 'Collected by' : ''}
+            </span>
+            <Link href={`/${owner?.username}`}>
               <a target='_blank' className='owner'>
-                <span className='owner-name'>{username}</span>
+                <span className='owner-name'>{owner?.username}</span>
                 {content || fields ? (
                   <Avatar
                     className='custom-avatar'
                     icon={<UserOutlined />}
                     size={16}
-                    src={''}
+                    src={owner?.avatar}
                   />
                 ) : (
                   ''

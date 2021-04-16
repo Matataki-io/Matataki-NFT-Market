@@ -48,7 +48,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
 
   // TODO: 这里可能要改 暂时用来显示 network error
   useMount(() => {
-    if (process.browser) {
+    if (process.browser && (window as any).ethereum) {
       let network = (window as any).ethereum.networkVersion;
       console.log('network', network);
       if (network) {

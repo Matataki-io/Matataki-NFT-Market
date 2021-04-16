@@ -32,7 +32,11 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
           <Link href={`/${userDataByWallet?.username}`}>
             <a>
               <StyledItem>
-                <Avatar size={40} icon={<UserOutlined />} />
+                <Avatar
+                  size={40}
+                  icon={<UserOutlined />}
+                  src={userDataByWallet?.avatar}
+                />
                 <StyledItemUser>
                   <div>{userDataByWallet?.username}</div>
                   <div>See Profile</div>

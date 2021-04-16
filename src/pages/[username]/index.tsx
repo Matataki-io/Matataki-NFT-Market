@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 import { isEmpty } from 'lodash';
 import Page from '../../components/Page';
 import {
@@ -79,10 +80,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           return {
             id: media.id,
             type: metadata.mimeType.split('/')[0],
-            avatar_url: media.creator?.avatar || userInfo.avatar,
-            username: media.creator?.username || userInfo.username,
             title: metadata.name,
-            time: Date.now(), // TODO: Need to change real time
             fields: {
               low: { stringValue: media.tokenURI },
               stream: { stringValue: media.tokenURI },
@@ -97,6 +95,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
               high: media.tokenURI,
               thumbnail: media.tokenURI,
             },
+            owner: media.owner,
+            creator: media.creator,
           };
         }
       );
@@ -117,7 +117,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   return (
     <Page>
       <StyledWrapper>
-        <StyledAvatar icon={<UserOutlined />} src={''} size={120} />
+        <StyledAvatar
+          icon={<UserOutlined />}
+          src={userInfo.avatar}
+          size={120}
+        />
         <StyledInfoBox>
           <StyledInfo>
             <AccountName>{userInfo.nickname}</AccountName>
@@ -136,7 +140,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         {nftListData.length ? (
           <StyledMediaCardContainer>
             {nftListData.map((item, index) => (
-              <MediaCard {...item} key={`media-card-${index}`} />
+              <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+                <a target='_blank'>
+                  <MediaCard {...item} />
+                </a>
+              </Link>
             ))}
           </StyledMediaCardContainer>
         ) : (

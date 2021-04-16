@@ -69,7 +69,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const [mediaUrl, setMediaUrl] = useState<string>(''); // 媒体类型为Url的Value
   const [formNameAndDescription] = Form.useForm();
   const [formPricingAndFees] = Form.useForm();
-  const [mediaData, setMediaData] = useState<mediaDataState>({}); // media 数据
+  const [mediaData, setMediaData] = useState<mediaDataState>({} as any); // media 数据
   const [mediaLoading, setMediaLoading] = useState<boolean>(true); // media loading
   const [mediaSubmitLoading, setMediaSubmitLoading] = useState<boolean>(false); // media submit
   const [nameAndDescription, setNameAndDescription] = useState<{
@@ -119,7 +119,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const uploadProps: UploadProps = {
     accept: mediaAccept,
     name: 'file',
-    multiple: true,
     action: storageUploadToIpfsUrl,
     data: {
       name: nameAndDescription?.name,
@@ -182,7 +181,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     storage: any;
   }) => {
     console.log('setMediaDataFn url', url);
-    let mediaData: { [key: string]: any } = Object.create(null);
+    let mediaData = Object.create(null);
     if (type === 'image') {
       let data = Object.assign({}, NFTTempImage);
       mediaData = Object.assign(data, {
@@ -270,10 +269,16 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       return;
     }
 
-    mediaData.username = userDataByWallet?.username;
-    mediaData.avatar_url = userDataByWallet?.avatar;
     mediaData.title = nameAndDescription.name;
-    mediaData.time = Date.now();
+
+    mediaData.owner = {
+      username: userDataByWallet?.username,
+      avatar: userDataByWallet?.avatar,
+    };
+    mediaData.creator = {
+      username: userDataByWallet?.username,
+      avatar: userDataByWallet?.avatar,
+    };
 
     // 返回的所有数据存入 storage
     mediaData['storage'] = storage;
@@ -372,7 +377,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   // upload media back pop confirm
   function popconfirmFn() {
     setVisiblePop(false);
-    setMediaData({});
+    setMediaData({} as any);
     setStep(0);
   }
   // 是否显示 pop confirm

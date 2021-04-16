@@ -26,8 +26,7 @@ export interface NFTProps {
   type?: string;
   fields?: NFTFiedlsProps;
   content?: NFTContentProps;
-  avatar_url?: string;
-  username?: string;
   title?: string;
-  time?: string | number;
+  owner: any;
+  creator: any;
 }

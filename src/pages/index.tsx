@@ -104,10 +104,7 @@ const Home: React.FC<void> = () => {
           return {
             id: media.id,
             type: media.metadata.mimeType.split('/')[0],
-            avatar_url: media.creator?.avatar,
-            username: media.creator?.username,
             title: media.metadata.name,
-            time: Date.now(), // TODO: Need to change real time
             fields: {
               low: { stringValue: media.tokenURI },
               stream: { stringValue: media.tokenURI },
@@ -122,6 +119,8 @@ const Home: React.FC<void> = () => {
               high: media.tokenURI,
               thumbnail: media.tokenURI,
             },
+            owner: media.owner,
+            creator: media.creator,
           };
         });
 
@@ -165,6 +164,8 @@ const Home: React.FC<void> = () => {
           hasMore={!loading && hasMore}>
           <StyledNfts>
             {NFTList.map((i, idx) => (
+              // 这里有报错
+              // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
               <Link href={`/p/${i.id}`} key={idx}>
                 <a target='_blank'>
                   <NFT {...i}></NFT>

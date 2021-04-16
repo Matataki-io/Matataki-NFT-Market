@@ -1,18 +1,29 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Modal, Button, Form, Input, Checkbox, Avatar, message } from 'antd';
+import {
+  Modal,
+  Button,
+  Form,
+  Input,
+  Checkbox,
+  Avatar,
+  message,
+  Upload,
+} from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+import { UploadProps } from 'antd/lib/upload/interface';
 import { useWallet } from 'use-wallet';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
+
 import ButtonCustom from '../Button/index';
 import { shortedWalletAccount } from '../../utils/index';
 import { updateUser } from '../../backend/user';
-import { useRouter } from 'next/router';
+import { useLogin } from '../../hooks/useLogin';
+import styles from './index.module.scss';
+import { storageUploadFile } from '../../backend/storage';
+import { isEmpty } from 'lodash';
 
 const { TextArea } = Input;
-import styled from 'styled-components';
-import styles from './index.module.scss';
-
-import { UserOutlined } from '@ant-design/icons';
-import { useLogin } from '../../hooks/useLogin';
-
 const { Item } = Form;
 // 用户名校验
 const usernamePattern = /^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
@@ -23,9 +34,17 @@ interface Props {
 }
 type RequiredMark = boolean | 'optional';
 
+interface UserProps {
+  nickname?: string;
+  bio?: string;
+  username?: string;
+  avatar?: string;
+}
+
 const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
   const [formProfile] = Form.useForm();
   const router = useRouter();
+  const [avatarUrl, setAvatarUrl] = useState<string>();
 
   // 可选
   const [requiredMark, setRequiredMarkType] = useState<RequiredMark>(
@@ -48,6 +67,7 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
         nickname: userDataByWallet?.nickname,
         bio: userDataByWallet?.bio,
       });
+      setAvatarUrl(userDataByWallet?.avatar || '');
     }
   }, [isRegistered, userDataByWallet, formProfile]);
 
@@ -68,11 +88,37 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
       let { nickname, bio, username } = values;
       if (isRegistered) {
         // 更新
-        const res = await updateUser(Number(userDataByWallet?.id), {
-          nickname,
-          bio,
-          username,
-        });
+        // diff
+        const diffData = (newData: any, oldData: any) => {
+          let data: any = {};
+          for (const key in newData) {
+            if (Object.prototype.hasOwnProperty.call(newData, key)) {
+              if (newData[key] !== oldData[key]) {
+                data[key] = newData[key];
+              }
+            }
+          }
+          return data;
+        };
+        let profile: UserProps = diffData(
+          {
+            username,
+            nickname,
+            bio,
+            avatar: avatarUrl!,
+          } as UserProps,
+          {
+            username: userDataByWallet?.username,
+            nickname: userDataByWallet?.nickname,
+            bio: userDataByWallet?.bio,
+            avatar: userDataByWallet?.avatar,
+          } as UserProps
+        );
+        if (isEmpty(profile)) {
+          message.info('没有修改');
+          return;
+        }
+        const res = await updateUser(Number(userDataByWallet?.id), profile);
         console.log('res', res);
         if (res.data.code === 200) {
           setIsProfile(false);
@@ -82,7 +128,7 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
         }
       } else {
         // 注册
-        await register({ nickname, bio, username });
+        await register({ nickname, bio, username, avatar: avatarUrl! });
       }
       setIsProfile(false);
     } catch (e) {
@@ -93,6 +139,40 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
+  };
+
+  const props: UploadProps = {
+    accept: 'image/jpeg, image/png',
+    name: 'file',
+    action: storageUploadFile,
+    method: 'PUT',
+    maxCount: 1,
+    onChange(info: any) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+        let url = info.file.response.data.url;
+        setAvatarUrl(url);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    beforeUpload(file: File) {
+      message.info('Uploading...');
+
+      const isJpgOrPng =
+        file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!');
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        message.error('Image must smaller than 2MB!');
+      }
+      return isJpgOrPng && isLt2M;
+    },
   };
 
   return (
@@ -114,10 +194,12 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
         requiredMark={requiredMark}
         className={styles.form}>
         <StyledUser>
-          <Avatar size={40} icon={<UserOutlined />} />
+          <Avatar size={40} icon={<UserOutlined />} src={avatarUrl} />
           <StyledItemUser>
             <div>{shortedAccount}</div>
-            <div>Change profile image</div>
+            <Upload {...props} className='upload'>
+              <div>Change profile image</div>
+            </Upload>
           </StyledItemUser>
         </StyledUser>
         <StyledItem
@@ -186,6 +268,11 @@ const StyledItemUser = styled.div`
     &:hover {
       color: rgb(0, 0, 0);
       text-decoration: underline;
+    }
+  }
+  .upload {
+    .ant-upload-list {
+      display: none;
     }
   }
 `;
