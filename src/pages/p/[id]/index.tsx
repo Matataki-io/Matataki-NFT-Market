@@ -68,9 +68,9 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
 
   const copyText = useMemo(() => {
     if (process.browser) {
-      return `${metadata.name}：${window ? window.location.href : ''}`;
+      return `${metadata?.name}：${window ? window.location.href : ''}`;
     } else {
-      return metadata.name;
+      return metadata?.name;
     }
   }, [metadata]);
 
@@ -100,7 +100,7 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             </StyledMarketContainer>
           </StyledContentLeft>
           <StyledContentRight>
-            <StyledMediaTitle>{metadata.name}</StyledMediaTitle>
+            <StyledMediaTitle>{metadata?.name}</StyledMediaTitle>
 
             <StyledShareAndPrice>
               <ContainerShare className='mr'>
@@ -146,7 +146,7 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
               </CopyToClipboard>
             </Container>
             <StyledAuthor>
-              {metadata.name} by {backendData.creator?.username}
+              {metadata?.name} by {backendData.creator?.username}
             </StyledAuthor>
             <StyledAuthor>{metadata.description}</StyledAuthor>
             <MediaOwnershipInfo info={backendData} />
