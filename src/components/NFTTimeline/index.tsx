@@ -14,48 +14,6 @@ import { MediaLog } from '../../types/MediaLog';
 import { ZERO_ADDRESS } from '../../constant';
 import { shortedWalletAccount } from '../../utils/index';
 
-// const timeline = [
-//   {
-//     id: 6,
-//     type: 'AskCreated',
-//     amount: '120000000000000000',
-//     currency: '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd',
-//     at: {
-//       blockNumber: 7988905,
-//       timestamp: 1618456887,
-//       txHash:
-//         '0x124a53ce4ea90c37ede4054cca0918fd6110ae652194e3e4fd6bd64672935f9f',
-//     },
-//     mediaId: 22,
-//   },
-//   {
-//     id: 5,
-//     type: 'AskRemoved',
-//     amount: '100000000000000000',
-//     currency: '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd',
-//     at: {
-//       blockNumber: 7988863,
-//       timestamp: 1618456761,
-//       txHash:
-//         '0xd0bacdb7af9c39895ffaa7ebe509535df87b28ee66010df651fdd4bf872e0648',
-//     },
-//     mediaId: 22,
-//   },
-//   {
-//     id: 4,
-//     type: 'AskCreated',
-//     amount: '100000000000000000',
-//     currency: '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd',
-//     at: {
-//       blockNumber: 7988811,
-//       timestamp: 1618456605,
-//       txHash:
-//         '0xeec51a3f6745c809f131be09fde16ea2b23d1d1afbce3371f62b15cb24ea2df4',
-//     },
-//     mediaId: 22,
-//   },
-// ];
-
 interface Props {
   timeline: Array<Ask | MediaLog | BidLog>;
   creator: string;
