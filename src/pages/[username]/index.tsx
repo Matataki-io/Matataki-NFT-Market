@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 import { isEmpty } from 'lodash';
 import Page from '../../components/Page';
 import {
@@ -139,7 +140,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         {nftListData.length ? (
           <StyledMediaCardContainer>
             {nftListData.map((item, index) => (
-              <MediaCard {...item} key={`media-card-${index}`} />
+              <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+                <a target='_blank'>
+                  <MediaCard {...item} />
+                </a>
+              </Link>
             ))}
           </StyledMediaCardContainer>
         ) : (

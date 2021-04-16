@@ -9,7 +9,10 @@ import Link from 'next/link';
 import { isBackendAsk } from '../../utils/TypeGuards';
 import { getDecimalOf, getSymbolOf } from '../../utils/tokens';
 import { Ask } from '../../types/Ask';
+import { BidLog } from '../../types/Bid';
 import { MediaLog } from '../../types/MediaLog';
+import { ZERO_ADDRESS } from '../../constant';
+import { shortedWalletAccount } from '../../utils/index';
 
 // const timeline = [
 //   {
@@ -54,7 +57,7 @@ import { MediaLog } from '../../types/MediaLog';
 // ];
 
 interface Props {
-  timeline: Array<Ask | MediaLog>;
+  timeline: Array<Ask | MediaLog | BidLog>;
   creator: string;
 }
 
@@ -80,11 +83,13 @@ const NFTTimeline: React.FC<Props> = ({ timeline, creator }) => {
           log.amount,
           decimal
         )} ${symbol} 的定价`;
-      return description;
+      return `${log?.type} ${description}`;
     } else {
       const actionName = log.type === 'Approval' ? '授权' : '转让';
-      const description = `${log.from} ${actionName}该 Token 给 ${log.to}`;
-      return description;
+      const description = `${shortedWalletAccount(
+        log.bidder
+      )} ${actionName} 给 ${shortedWalletAccount(log.recipient)}`;
+      return `${log?.type || log?.status} ${description}`;
     }
   };
 
@@ -95,22 +100,30 @@ const NFTTimeline: React.FC<Props> = ({ timeline, creator }) => {
       </StyledHead>
       <Timeline>
         {timeline.map((i: any, idx: number) => (
-          <Timeline.Item key={idx}>
-            <p>{i.type}</p>
-            <p>{timeDescription(i)}</p>
-            <time>{timelineDate(i.at.timestamp)}</time>
-          </Timeline.Item>
+          <>
+            {idx === timeline.length - 1 &&
+            i.type === 'Transfer' &&
+            i.from === ZERO_ADDRESS ? (
+              // mint logs
+              <Timeline.Item>
+                <p>
+                  <Link href={`/${creator}`}>
+                    <a target='_blank' className='username'>
+                      @{creator}
+                    </a>
+                  </Link>{' '}
+                  minted this media
+                </p>
+                <time>{timelineDate(i.at.timestamp)}</time>
+              </Timeline.Item>
+            ) : (
+              <Timeline.Item key={idx}>
+                <p>{timeDescription(i)}</p>
+                <time>{timelineDate(i.at.timestamp)}</time>
+              </Timeline.Item>
+            )}
+          </>
         ))}
-        <Timeline.Item>
-          <p>
-            <Link href={`/${creator}`}>
-              <a target='_blank' className='username'>
-                @{creator}
-              </a>
-            </Link>{' '}
-            minted this media
-          </p>
-        </Timeline.Item>
       </Timeline>
     </StyledWrapper>
   );
