@@ -34,13 +34,14 @@ export async function checkIsWalletRegistered(wallet: string) {
  * @returns 用户访问令牌
  */
 export async function registerUser(
-  profile: { nickname: string; bio: string; username: string },
+  profile: { nickname: string; bio: string; username: string; avatar: string },
   permit: { signature: string; message: string }
 ) {
   const payload = {
     nickname: profile.nickname,
     bio: profile.bio,
     username: profile.username,
+    avatar: profile.avatar,
     signature: permit.signature,
     signingMessage: permit.message,
   };
@@ -59,6 +60,7 @@ export async function updateUser(
     nickname: string;
     bio: string;
     username: string;
+    avatar: string;
   }
 ) {
   return await BACKEND_CLIENT({

@@ -7,3 +7,4 @@ export function storageUploadToIpfs() {
 }
 // 上传媒体 提供组件 action 使用
 export const storageUploadToIpfsUrl = `${process.env.NEXT_PUBLIC_BACKEND_API}/storage/uploadToIpfs`;
+export const storageUploadFile = `${process.env.NEXT_PUBLIC_BACKEND_API}/storage/uploadFile`;

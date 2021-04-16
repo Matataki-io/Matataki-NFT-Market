@@ -119,7 +119,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const uploadProps: UploadProps = {
     accept: mediaAccept,
     name: 'file',
-    multiple: true,
     action: storageUploadToIpfsUrl,
     data: {
       name: nameAndDescription?.name,
