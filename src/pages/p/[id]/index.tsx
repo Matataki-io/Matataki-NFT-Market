@@ -55,6 +55,7 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
   const { backendData, metadata } = useMediaData(post);
 
   const { profile, isMeTheOwner } = useMediaToken(Number(post?.id));
+
   const scanLink = getTokenOnScan(Number(id));
   const ipfsLink = post?.backendData.tokenURI;
 
@@ -94,7 +95,9 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             <StyledShareAndPrice>
               <ContainerShare className='mr'>
                 <SmallLabel>Creator Share</SmallLabel>
-                <LargeValue>{20}%</LargeValue>
+                <LargeValue>
+                  {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
+                </LargeValue>
               </ContainerShare>
               {profile.currentAsk.amount.gt(0) && (
                 <ContainerShare>
