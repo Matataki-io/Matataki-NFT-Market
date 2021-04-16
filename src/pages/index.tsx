@@ -104,10 +104,7 @@ const Home: React.FC<void> = () => {
           return {
             id: media.id,
             type: media.metadata.mimeType.split('/')[0],
-            avatar_url: media.creator?.avatar,
-            username: media.creator?.username,
             title: media.metadata.name,
-            time: Date.now(), // TODO: Need to change real time
             fields: {
               low: { stringValue: media.tokenURI },
               stream: { stringValue: media.tokenURI },
@@ -122,6 +119,8 @@ const Home: React.FC<void> = () => {
               high: media.tokenURI,
               thumbnail: media.tokenURI,
             },
+            owner: media.owner,
+            creator: media.creator,
           };
         });
 

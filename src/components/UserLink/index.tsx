@@ -22,7 +22,6 @@ const UserLink: React.FC<UserLinkProps> = ({
 }) => {
   const router = useRouter();
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    console.log('avatar', avatar);
     e.preventDefault();
     router.push(`/${username}`);
   };
@@ -31,7 +30,7 @@ const UserLink: React.FC<UserLinkProps> = ({
     <CreatorContainer onClick={handleClick}>
       <HeadLabel>{label}</HeadLabel>
       <UserInfo>
-        <AccountAvatar icon={<UserOutlined />} size={30} />
+        <AccountAvatar icon={<UserOutlined />} size={30} src={avatar} />
         <UserName>@{nickname || username}</UserName>
         {isVerified && (
           <VerifiedIcon>

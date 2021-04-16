@@ -10,10 +10,7 @@ export const NFTTempImage = {
     thumbnail: '',
     stream: '',
   },
-  avatar_url: '',
-  username: '',
   title: '',
-  time: '',
 };
 export const NFTTempVideo = {
   id: 0,
@@ -35,10 +32,7 @@ export const NFTTempVideo = {
       stringValue: '',
     },
   },
-  avatar_url: '',
-  username: '',
   title: '',
-  time: '',
 };
 export const NFTTempAudio = {
   id: 0,
@@ -50,10 +44,7 @@ export const NFTTempAudio = {
     thumbnail: '',
     stream: '',
   },
-  avatar_url: '',
-  username: '',
   title: '',
-  time: '',
 };
 export const NFTTempText = {
   id: 0,
@@ -65,10 +56,7 @@ export const NFTTempText = {
     thumbnail: '',
     stream: '',
   },
-  avatar_url: '',
-  username: '',
   title: '',
-  time: '',
 };
 export const NFTTempFile = {
   id: 0,
@@ -80,10 +68,7 @@ export const NFTTempFile = {
     high: '',
     stream: '',
   },
-  avatar_url: '',
-  username: '',
   title: '',
-  time: '',
 };
 export const NFTTempUrl = {
   id: 0,
@@ -95,8 +80,5 @@ export const NFTTempUrl = {
     high: '',
     stream: '',
   },
-  avatar_url: '',
-  username: '',
   title: '',
-  time: '',
 };

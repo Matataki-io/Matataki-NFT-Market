@@ -79,10 +79,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           return {
             id: media.id,
             type: metadata.mimeType.split('/')[0],
-            avatar_url: media.creator?.avatar || userInfo.avatar,
-            username: media.creator?.username || userInfo.username,
             title: metadata.name,
-            time: Date.now(), // TODO: Need to change real time
             fields: {
               low: { stringValue: media.tokenURI },
               stream: { stringValue: media.tokenURI },
@@ -97,6 +94,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
               high: media.tokenURI,
               thumbnail: media.tokenURI,
             },
+            owner: media.owner,
+            creator: media.creator,
           };
         }
       );
@@ -117,7 +116,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   return (
     <Page>
       <StyledWrapper>
-        <StyledAvatar icon={<UserOutlined />} src={''} size={120} />
+        <StyledAvatar
+          icon={<UserOutlined />}
+          src={userInfo.avatar}
+          size={120}
+        />
         <StyledInfoBox>
           <StyledInfo>
             <AccountName>{userInfo.nickname}</AccountName>

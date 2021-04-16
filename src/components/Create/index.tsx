@@ -181,7 +181,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     storage: any;
   }) => {
     console.log('setMediaDataFn url', url);
-    let mediaData: { [key: string]: any } = Object.create(null);
+    let mediaData = Object.create(null);
     if (type === 'image') {
       let data = Object.assign({}, NFTTempImage);
       mediaData = Object.assign(data, {
@@ -269,10 +269,16 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       return;
     }
 
-    mediaData.username = userDataByWallet?.username;
-    mediaData.avatar_url = userDataByWallet?.avatar;
     mediaData.title = nameAndDescription.name;
-    mediaData.time = Date.now();
+
+    mediaData.owner = {
+      username: userDataByWallet?.username,
+      avatar: userDataByWallet?.avatar,
+    };
+    mediaData.creator = {
+      username: userDataByWallet?.username,
+      avatar: userDataByWallet?.avatar,
+    };
 
     // 返回的所有数据存入 storage
     mediaData['storage'] = storage;
