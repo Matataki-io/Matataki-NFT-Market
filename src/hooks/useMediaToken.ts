@@ -66,15 +66,15 @@ export function useMediaToken(id: BigNumberish) {
     ]);
     console.info('re', returns);
     const [
-      owner,
-      approvedOperator,
-      creator,
+      [owner],
+      [approvedOperator],
+      [creator],
       [bidsShares],
       [currentAsk],
     ] = (returns as unknown) as [
-      string,
-      string,
-      string,
+      [string],
+      [string],
+      [string],
       {
         creator: DecimalValue;
         owner: DecimalValue;
@@ -119,7 +119,9 @@ export function useMediaToken(id: BigNumberish) {
 
   const isMeTheOwner = useMemo(
     () =>
-      account && utils.getAddress(profile.owner) === utils.getAddress(account),
+      account &&
+      profile.owner &&
+      utils.getAddress(profile.owner) === utils.getAddress(account),
     [profile, account]
   );
 
