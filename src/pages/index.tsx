@@ -164,6 +164,8 @@ const Home: React.FC<void> = () => {
           hasMore={!loading && hasMore}>
           <StyledNfts>
             {NFTList.map((i, idx) => (
+              // 这里有报错
+              // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
               <Link href={`/p/${i.id}`} key={idx}>
                 <a target='_blank'>
                   <NFT {...i}></NFT>
