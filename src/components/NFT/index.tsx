@@ -28,9 +28,7 @@ const NFTComponents: React.FC<NFTProps> = ({
                 icon={<UserOutlined />}
                 src={creator?.avatar}
               />
-            ) : (
-              ''
-            )}
+            ) : null}
             <span className='username'>{creator?.username}</span>
           </a>
         </Link>

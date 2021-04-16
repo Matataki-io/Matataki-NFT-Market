@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     console.log('pageProps', pageProps);
 
-    if (process.browser) {
+    if (process.browser && (window as any).ethereum) {
       const ethereum = (window as any).ethereum;
       ethereum.on('accountsChanged', (accounts: any) => {
         // Handle the new accounts, or lack thereof.
