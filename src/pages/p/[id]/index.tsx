@@ -235,7 +235,6 @@ const StyledContentRight = styled.div`
 
 const StyledMarketContainer = styled.div`
   width: 100%;
-  height: 470px;
   position: sticky;
   top: 125px;
   left: 0px;
