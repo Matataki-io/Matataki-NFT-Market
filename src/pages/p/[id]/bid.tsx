@@ -119,9 +119,9 @@ export default function Bid() {
           set a bid on your token.
         </Text>
         <ActionsBox>
-          <StyledBidsBack icon={<ArrowLeft />} onClick={() => router.back()}>
+          <StyledBackBtn icon={<ArrowLeft />} onClick={() => router.back()}>
             Go Back
-          </StyledBidsBack>
+          </StyledBackBtn>
           <Link href={`/p/${id}/ask`}>
             <Button type='secondary'>Set Ask instead</Button>
           </Link>
@@ -130,135 +130,141 @@ export default function Bid() {
     );
   }
   return (
-    <div className='bid-on-media'>
-      <Grid.Container gap={2} justify='center'>
-        <Grid xs={24} md={12} style={{ background: '#f2f2f2', padding: 50 }}>
-          <NFTPreview
-            src={mediaData?.media.tokenURI}
-            type={
-              mediaData?.metadata.mimeType
-                ? mediaData.metadata.mimeType.split('/')[0]
-                : ''
-            }></NFTPreview>
-        </Grid>
-        <Grid xs={24} md={12}>
-          <BiddingBox>
+    <StyledWrapper justify='center'>
+      <Grid
+        xs={24}
+        md={12}
+        style={{ background: '#f2f2f2', padding: 50 }}
+        justify='center'
+        alignItems='center'>
+        <NFTPreview
+          src={mediaData?.media.tokenURI}
+          type={
+            mediaData?.metadata.mimeType
+              ? mediaData.metadata.mimeType.split('/')[0]
+              : ''
+          }></NFTPreview>
+      </Grid>
+      <Grid xs={24} md={12}>
+        <BiddingBox>
+          <GreyCard>
+            <p className='title'>CREATOR EQUITY</p>
+            <p className='value'>
+              {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
+            </p>
+          </GreyCard>
+
+          {profile.currentAsk.currency === '' && (
             <GreyCard>
-              <p className='title'>CREATOR EQUITY</p>
+              <p className='title'>CURRENT ASK</p>
               <p className='value'>
-                {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
+                {utils.formatUnits(
+                  profile.currentAsk.amount,
+                  getDecimalOf(profile.currentAsk.currency)
+                )}
+                {' ' + getSymbolOf(profile.currentAsk.currency)}
               </p>
             </GreyCard>
+          )}
 
-            {profile.currentAsk.currency === '' && (
-              <GreyCard>
-                <p className='title'>CURRENT ASK</p>
-                <p className='value'>
-                  {utils.formatUnits(
-                    profile.currentAsk.amount,
-                    getDecimalOf(profile.currentAsk.currency)
-                  )}
-                  {' ' + getSymbolOf(profile.currentAsk.currency)}
-                </p>
-              </GreyCard>
-            )}
-
-            <StyledBidsItem>
-              <Text h3>Your bid</Text>
-              <StyledBidsInput>
-                <Select
-                  placeholder='Bidding Currency'
-                  onChange={handler}
-                  width='100%'
-                  className='select-token'>
-                  {Object.keys(tokens!).map(symbol => (
-                    <Select.Option value={tokens![symbol]} key={symbol}>
-                      {symbol}
-                    </Select.Option>
-                  ))}
-                </Select>
-                <InputNumber<string>
-                  placeholder='0.00'
-                  className='input-token'
-                  value={amount}
-                  onChange={setAmount}
-                  style={FullWidth}
-                  formatter={value =>
-                    utils.formatUnits(value as string, getDecimalOf(currency))
-                  }
-                  parser={value =>
-                    utils
-                      .parseUnits(value as string, getDecimalOf(currency))
-                      .toString()
-                  }
-                  stringMode
-                  min='0'
-                />
-              </StyledBidsInput>
-              {currency && (
-                <p className='balance'>
-                  Balance: {utils.formatUnits(balance, getDecimalOf(currency))}
-                </p>
-              )}
-            </StyledBidsItem>
-
-            <StyledBidsItem>
-              <Text h3>Resale Fee</Text>
-              <Text>
-                If you re-sell this piece, the person you&apos;re buying it from
-                now will earn this percentage as a reward for selling it to you.
-              </Text>
-              <InputNumber
-                defaultValue={0}
+          <StyledBidsItem>
+            <Text h3>Your bid</Text>
+            <StyledBidsInput>
+              <Select
+                placeholder='Bidding Currency'
+                onChange={handler}
+                width='100%'
+                className='select-token'>
+                {Object.keys(tokens!).map(symbol => (
+                  <Select.Option value={tokens![symbol]} key={symbol}>
+                    {symbol}
+                  </Select.Option>
+                ))}
+              </Select>
+              <InputNumber<string>
+                placeholder='0.00'
+                className='input-token'
+                value={amount}
+                onChange={setAmount}
                 style={FullWidth}
-                onChange={setSellOnShare}
-                min={0}
-                precision={0}
-                max={99}
+                formatter={value =>
+                  utils.formatUnits(value as string, getDecimalOf(currency))
+                }
+                parser={value =>
+                  utils
+                    .parseUnits(value as string, getDecimalOf(currency))
+                    .toString()
+                }
+                stringMode
+                min='0'
               />
-            </StyledBidsItem>
+            </StyledBidsInput>
+            {currency && (
+              <p className='balance'>
+                Balance: {utils.formatUnits(balance, getDecimalOf(currency))}
+              </p>
+            )}
+          </StyledBidsItem>
 
-            <ActionsBox>
-              <StyledBidsBack
-                icon={<ArrowLeft />}
-                onClick={() => router.back()}
-                size='large'
-                auto></StyledBidsBack>
-              {wallet.status === 'connected' ? (
-                isEnough(amount) ? (
-                  <Button
-                    type='secondary'
-                    size='large'
-                    style={FullWidth}
-                    onClick={() => setBid()}>
-                    Make your bid
-                  </Button>
-                ) : (
-                  <Button
-                    type='secondary'
-                    size='large'
-                    loading={isUnlocking}
-                    style={FullWidth}
-                    onClick={() => approve()}>
-                    Unlock
-                  </Button>
-                )
-              ) : (
+          <StyledBidsItem>
+            <Text h3>Resale Fee</Text>
+            <Text>
+              If you re-sell this piece, the person you&apos;re buying it from
+              now will earn this percentage as a reward for selling it to you.
+            </Text>
+            <InputNumber
+              defaultValue={0}
+              style={FullWidth}
+              onChange={setSellOnShare}
+              min={0}
+              precision={0}
+              max={99}
+            />
+          </StyledBidsItem>
+
+          <ActionsBox>
+            <StyledBackBtn
+              icon={<ArrowLeft />}
+              onClick={() => router.back()}
+              size='large'
+              auto></StyledBackBtn>
+            {wallet.status === 'connected' ? (
+              isEnough(amount) ? (
                 <Button
                   type='secondary'
                   size='large'
                   style={FullWidth}
-                  onClick={() => wallet.connect('injected')}>
-                  Connect Wallet
+                  onClick={() => setBid()}>
+                  Make your bid
                 </Button>
-              )}
-            </ActionsBox>
-          </BiddingBox>
-        </Grid>
-      </Grid.Container>
-    </div>
+              ) : (
+                <Button
+                  type='secondary'
+                  size='large'
+                  loading={isUnlocking}
+                  style={FullWidth}
+                  onClick={() => approve()}>
+                  Unlock
+                </Button>
+              )
+            ) : (
+              <Button
+                type='secondary'
+                size='large'
+                style={FullWidth}
+                onClick={() => wallet.connect('injected')}>
+                Connect Wallet
+              </Button>
+            )}
+          </ActionsBox>
+        </BiddingBox>
+      </Grid>
+    </StyledWrapper>
   );
 }
+const StyledWrapper = styled(Grid.Container)`
+  flex: 1;
+`;
 
 const StyledPermissions = styled.div`
   flex: 1;
@@ -270,7 +276,6 @@ const StyledPermissions = styled.div`
 `;
 
 const BiddingBox = styled.div`
-  padding: 4rem 0.5rem;
   max-width: 470px;
   margin: auto;
 `;
@@ -330,6 +335,6 @@ const StyledBidsInput = styled.div`
   }
 `;
 
-const StyledBidsBack = styled(Button)`
+const StyledBackBtn = styled(Button)`
   margin-right: 10px;
 `;
