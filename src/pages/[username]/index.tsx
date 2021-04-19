@@ -175,7 +175,10 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
                 ))}
               </StyledMediaCardContainer>
             ) : (
-              <ProfileFeedPlaceholder isLoggedIn={isMyself} />
+              <ProfileFeedPlaceholder
+                setIsProfile={setIsProfile}
+                isLoggedIn={isMyself}
+              />
             )}
           </>
         ) : switchFeedOrBids === 'bids' ? (

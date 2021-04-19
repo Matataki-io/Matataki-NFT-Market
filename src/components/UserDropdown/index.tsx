@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
+import { removeCookie } from '../../utils/cookie';
 import { useLogin } from '../../hooks/useLogin';
 
 import IconShare from '../../assets/icons/share.svg';
@@ -24,6 +25,11 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
   const wallet = useWallet();
   const router = useRouter();
   const { userDataByWallet } = useLogin();
+
+  const disconnect = () => {
+    removeCookie('token');
+    wallet.reset();
+  };
 
   const menu = () => {
     return (
@@ -79,7 +85,7 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
         </Menu.Item>
         {wallet.status === 'connected' ? (
           <Menu.Item>
-            <StyledItem onClick={() => wallet.reset()}>
+            <StyledItem onClick={() => disconnect()}>
               <ReactSVG className='icon' src={IconPlug} />
               Disconnect Wallet
             </StyledItem>

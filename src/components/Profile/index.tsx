@@ -214,7 +214,7 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
             {
               required: true,
               pattern: usernamePattern,
-              message: `Only numbers, characters a-z '-' and the length is 5-20 are acceptable.`,
+              message: `Only numbers, characters a-z(lower case) '-' and the length is 5-20 are acceptable.`,
             },
           ]}>
           <StyledItemInput
