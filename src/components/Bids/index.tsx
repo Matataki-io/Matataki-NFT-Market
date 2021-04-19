@@ -33,14 +33,15 @@ const BidsCard: React.FC<BidLog> = ({
       </div>
       <StyledInfo>
         <div className='title'>
-          {media?.title} #{media?.id} <b>·</b>{' '}
-          <a
+          {media?.title} #{media?.id}
+          {/* <b>·</b>{' '} */}
+          {/* <a
             className='user'
             target='_balnk'
             rel='noopener noreferrer'
             href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${bidder}`}>
             {shortedWalletAccount(bidder)}
-          </a>
+          </a> */}
         </div>
         <div className='price'>{price(amount, currency)}</div>
         <time className='time'>{date(at?.timestamp)}</time>
