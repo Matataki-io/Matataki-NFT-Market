@@ -9,7 +9,7 @@ import {
 } from '@geist-ui/react';
 import ArrowLeft from '@geist-ui/react-icons/arrowLeft';
 import { useRouter } from 'next/router';
-import { InputNumber } from 'antd';
+import { InputNumber, Spin } from 'antd';
 import { isEmpty } from 'lodash';
 import { ArtView } from '../../../components/Bid/ArtView';
 import styled from 'styled-components';
@@ -79,47 +79,55 @@ export default function AskPage() {
 
   if (!id) {
     return (
-      <div className='loading'>Fetching Param `ID` now... Please wait</div>
+      <StyledPermissions>
+        <Spin tip='Fetching Param `ID` now... Please wait'></Spin>
+      </StyledPermissions>
     );
   }
   if (!isMeTheOwner && wallet.status === 'connected') {
     return (
-      <div className='notice'>
+      <StyledPermissions>
         <Text h3>Sorry, but...</Text>
         <Text>
           We detected that you are not the owner. Which in this case that you
           cannot set a ask on this token.
         </Text>
         <ActionsBox>
-          <Button icon={<ArrowLeft />} onClick={() => router.back()}>
+          <StyledBackBtn icon={<ArrowLeft />} onClick={() => router.back()}>
             Go Back
-          </Button>
+          </StyledBackBtn>
           <Link href={`/p/${id}/bid`}>
             <Button type='secondary'>Set Bid instead</Button>
           </Link>
         </ActionsBox>
-      </div>
+      </StyledPermissions>
     );
   }
   return (
-    <div className='bid-on-media'>
-      <Grid.Container gap={2} justify='center'>
-        <Grid xs={0} md={12} style={{ background: '#f2f2f2', padding: 50 }}>
-          <NFTPreview
-            src={mediaData?.media.tokenURI}
-            type={
-              mediaData?.metadata.mimeType
-                ? mediaData.metadata.mimeType.split('/')[0]
-                : ''
-            }></NFTPreview>
-        </Grid>
-        <Grid xs={24} md={12}>
-          <BiddingBox>
-            <Text h4>Your ask</Text>
+    <StyledWrapper justify='center'>
+      <Grid
+        xs={24}
+        md={12}
+        style={{ background: '#f2f2f2', padding: 50 }}
+        justify='center'
+        alignItems='center'>
+        <NFTPreview
+          src={mediaData?.media.tokenURI}
+          type={
+            mediaData?.metadata.mimeType
+              ? mediaData.metadata.mimeType.split('/')[0]
+              : ''
+          }></NFTPreview>
+      </Grid>
+      <Grid xs={24} md={12}>
+        <BiddingBox>
+          <Text h3>Your ask</Text>
+          <StyledBidsInput>
             <Select
               placeholder='Bidding Currency'
               onChange={handler}
-              width='100%'>
+              width='100%'
+              className='select-token'>
               {Object.keys(tokens!).map(symbol => (
                 <Select.Option value={tokens![symbol]} key={symbol}>
                   {symbol}
@@ -128,6 +136,7 @@ export default function AskPage() {
             </Select>
             <InputNumber<string>
               placeholder='0.00'
+              className='input-token'
               value={amount}
               onChange={setAmount}
               style={FullWidth}
@@ -142,66 +151,75 @@ export default function AskPage() {
               stringMode
               min='0'
             />
-            <ActionsBox>
+          </StyledBidsInput>
+
+          <ActionsBox>
+            <StyledBackBtn
+              icon={<ArrowLeft />}
+              onClick={() => router.back()}
+              size='large'
+              auto></StyledBackBtn>
+            {wallet.status === 'connected' ? (
               <Button
-                icon={<ArrowLeft />}
-                onClick={() => router.back()}
+                type='secondary'
                 size='large'
-                auto></Button>
-              {wallet.status === 'connected' ? (
-                <Button
-                  type='secondary'
-                  size='large'
-                  style={FullWidth}
-                  onClick={() => setAsk()}>
-                  Make your Ask
-                </Button>
-              ) : (
-                <Button
-                  type='secondary'
-                  size='large'
-                  style={FullWidth}
-                  onClick={() => wallet.connect('injected')}>
-                  Connect Wallet
-                </Button>
-              )}
-            </ActionsBox>
-          </BiddingBox>
-        </Grid>
-      </Grid.Container>
-    </div>
+                style={FullWidth}
+                onClick={() => setAsk()}>
+                Make your Ask
+              </Button>
+            ) : (
+              <Button
+                type='secondary'
+                size='large'
+                style={FullWidth}
+                onClick={() => wallet.connect('injected')}>
+                Connect Wallet
+              </Button>
+            )}
+          </ActionsBox>
+        </BiddingBox>
+      </Grid>
+    </StyledWrapper>
   );
 }
-const BiddingBox = styled.div`
-  padding: 4rem 0.5rem;
-  width: 470px;
-  margin: auto;
+
+const StyledPermissions = styled.div`
+  flex: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 100px 0 0;
 `;
 
-const CreatorEquity = styled.div`
-  box-sizing: border-box;
-  margin: 0;
-  min-width: 0;
-  padding: 10px;
-  width: 100%;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  border-radius: 4px;
-  border: 2px solid #f2f2f2;
-  background-color: #f2f2f2;
-  margin-bottom: 30px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
+const BiddingBox = styled.div`
+  max-width: 470px;
+  margin: auto;
 `;
 
 const ActionsBox = styled.div`
   display: flex;
-  margin: 2rem 0;
+  margin: 20px 0;
 `;
 
 const FullWidth: CSSProperties = {
   width: '100%',
 };
+
+const StyledBackBtn = styled(Button)`
+  margin-right: 10px;
+`;
+
+const StyledWrapper = styled(Grid.Container)`
+  flex: 1;
+`;
+
+const StyledBidsInput = styled.div`
+  display: flex;
+  .select-token {
+    margin-right: 5px;
+  }
+  .input-token {
+    margin-left: 5px;
+  }
+`;

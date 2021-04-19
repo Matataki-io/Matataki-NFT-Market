@@ -22,6 +22,7 @@ import { useLogin } from '../../hooks/useLogin';
 import { getUser } from '../../backend/user';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
+import BidsCard from '../../components/Bids';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -39,6 +40,9 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const [isMyself, setIsMyself] = useState(false);
   const appUserInfo = useAppSelector(state => state.userInfo);
   const [nftListData, setNFTListData] = useState<Array<NFTProps>>([]);
+  const [switchFeedOrBids, setSwitchFeedOrBids] = useState<'feed' | 'bids'>(
+    'bids'
+  );
 
   const { userDataByWallet } = useLogin();
 
@@ -114,6 +118,24 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     fetchAll();
   }, [appUserInfo, userDataByWallet, username]);
 
+  // switch feed or bids
+  const SwitchFeedOrBids = () => {
+    return (
+      <StyledSwitchWrapper>
+        <StyledSwitchButton
+          active={switchFeedOrBids === 'feed'}
+          onClick={() => setSwitchFeedOrBids('feed')}>
+          Feed
+        </StyledSwitchButton>
+        <StyledSwitchButton
+          active={switchFeedOrBids === 'bids'}
+          onClick={() => setSwitchFeedOrBids('bids')}>
+          Bids
+        </StyledSwitchButton>
+      </StyledSwitchWrapper>
+    );
+  };
+
   return (
     <Page>
       <StyledWrapper>
@@ -131,25 +153,41 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             {userInfo.bio && <AccountBio>{userInfo.bio}</AccountBio>}
             {userInfo.website && <AccountWebsite href={userInfo.website} />}
             {isMyself && (
-              <StyledEditButton onClick={() => setIsProfile(true)}>
-                Edit profile
-              </StyledEditButton>
+              <>
+                <StyledEditButton onClick={() => setIsProfile(true)}>
+                  Edit profile
+                </StyledEditButton>
+                <SwitchFeedOrBids></SwitchFeedOrBids>
+              </>
             )}
           </StyledInfo>
         </StyledInfoBox>
-        {nftListData.length ? (
-          <StyledMediaCardContainer>
-            {nftListData.map((item, index) => (
-              <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
-                <a target='_blank'>
-                  <MediaCard {...item} />
-                </a>
-              </Link>
+        {switchFeedOrBids === 'feed' ? (
+          <>
+            {nftListData.length ? (
+              <StyledMediaCardContainer>
+                {nftListData.map((item, index) => (
+                  <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+                    <a target='_blank'>
+                      <MediaCard {...item} />
+                    </a>
+                  </Link>
+                ))}
+              </StyledMediaCardContainer>
+            ) : (
+              <ProfileFeedPlaceholder
+                setIsProfile={setIsProfile}
+                isLoggedIn={isMyself}
+              />
+            )}
+          </>
+        ) : switchFeedOrBids === 'bids' ? (
+          <StyledBidsContainer>
+            {[1, 2, 3, 4, 5].map((i, idx) => (
+              <BidsCard key={idx}></BidsCard>
             ))}
-          </StyledMediaCardContainer>
-        ) : (
-          <ProfileFeedPlaceholder isLoggedIn={isMyself} />
-        )}
+          </StyledBidsContainer>
+        ) : null}
       </StyledWrapper>
     </Page>
   );
@@ -203,6 +241,12 @@ const StyledMediaCardContainer = styled.div`
     align-items: center;
   }
 `;
+const StyledBidsContainer = styled.div`
+  width: 100%;
+  max-width: 680px;
+  padding: 0 20px;
+  box-sizing: border-box;
+`;
 // from EditProfileButton Copy
 const StyledEditButton = styled.button`
   box-sizing: border-box;
@@ -227,4 +271,17 @@ const StyledEditButton = styled.button`
   }
 `;
 
+const StyledSwitchWrapper = styled.div`
+  margin: 60px auto 0;
+`;
+const StyledSwitchButton = styled.button<{ active: boolean }>`
+  border: 2px solid #000;
+  color: ${({ active }) => (active ? '#fff' : '#000')};
+  outline: none;
+  padding: 10px 14px;
+  font-size: 16px;
+  background: ${({ active }) => (active ? '#000' : '#fff')};
+  cursor: pointer;
+  transition: all 0.2s;
+`;
 export default UserInfoPage;

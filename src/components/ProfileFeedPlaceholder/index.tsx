@@ -3,10 +3,12 @@ import styled from 'styled-components';
 
 export interface ProfileFeedPlaceholderProps {
   isLoggedIn?: boolean;
+  setIsProfile: (value: boolean) => void;
 }
 
 const ProfileFeedPlaceholder: React.FC<ProfileFeedPlaceholderProps> = ({
   isLoggedIn = false,
+  setIsProfile,
 }) => {
   return (
     <StyledPostContainer>
@@ -18,7 +20,11 @@ const ProfileFeedPlaceholder: React.FC<ProfileFeedPlaceholderProps> = ({
                 ? 'Your profile is empty. Create or buy something and it’ll be shown here.'
                 : 'Coming soon.'}
             </ComingSoonCopy>
-            {isLoggedIn && <StyledButton>Create</StyledButton>}
+            {isLoggedIn && (
+              <StyledButton onClick={() => setIsProfile(true)}>
+                Create
+              </StyledButton>
+            )}
           </Flex>
         </MaxWidth>
       </CopyContainer>

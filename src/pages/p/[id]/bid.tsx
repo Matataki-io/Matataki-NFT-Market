@@ -9,7 +9,7 @@ import {
 } from '@geist-ui/react';
 import ArrowLeft from '@geist-ui/react-icons/arrowLeft';
 import { useRouter } from 'next/router';
-import { InputNumber } from 'antd';
+import { InputNumber, Spin } from 'antd';
 import { ArtView } from '../../../components/Bid/ArtView';
 import styled from 'styled-components';
 import { isEmpty } from 'lodash';
@@ -105,95 +105,109 @@ export default function Bid() {
 
   if (!id) {
     return (
-      <div className='loading'>Fetching Param `ID` now... Please wait</div>
+      <StyledPermissions>
+        <Spin tip='Fetching Param `ID` now... Please wait'></Spin>
+      </StyledPermissions>
     );
   }
   if (isMeTheOwner) {
     return (
-      <div className='notice'>
+      <StyledPermissions>
         <Text h3>Sorry, but...</Text>
         <Text>
           We detected that you are the owner. Which in this case that you cannot
           set a bid on your token.
         </Text>
         <ActionsBox>
-          <Button icon={<ArrowLeft />} onClick={() => router.back()}>
+          <StyledBackBtn icon={<ArrowLeft />} onClick={() => router.back()}>
             Go Back
-          </Button>
+          </StyledBackBtn>
           <Link href={`/p/${id}/ask`}>
             <Button type='secondary'>Set Ask instead</Button>
           </Link>
         </ActionsBox>
-      </div>
+      </StyledPermissions>
     );
   }
   return (
-    <div className='bid-on-media'>
-      <Grid.Container gap={2} justify='center'>
-        <Grid xs={0} md={12} style={{ background: '#f2f2f2', padding: 50 }}>
-          <NFTPreview
-            src={mediaData?.media.tokenURI}
-            type={
-              mediaData?.metadata.mimeType
-                ? mediaData.metadata.mimeType.split('/')[0]
-                : ''
-            }></NFTPreview>
-        </Grid>
-        <Grid xs={24} md={12}>
-          <BiddingBox>
+    <StyledWrapper justify='center'>
+      <Grid
+        xs={24}
+        md={12}
+        style={{ background: '#f2f2f2', padding: 50 }}
+        justify='center'
+        alignItems='center'>
+        <NFTPreview
+          src={mediaData?.media.tokenURI}
+          type={
+            mediaData?.metadata.mimeType
+              ? mediaData.metadata.mimeType.split('/')[0]
+              : ''
+          }></NFTPreview>
+      </Grid>
+      <Grid xs={24} md={12}>
+        <BiddingBox>
+          <GreyCard>
+            <p className='title'>CREATOR EQUITY</p>
+            <p className='value'>
+              {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
+            </p>
+          </GreyCard>
+
+          {profile.currentAsk.currency === '' && (
             <GreyCard>
-              <Text style={{ color: '#888888' }}>CREATOR EQUITY</Text>
-              <Text h3>
-                {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
-              </Text>
+              <p className='title'>CURRENT ASK</p>
+              <p className='value'>
+                {utils.formatUnits(
+                  profile.currentAsk.amount,
+                  getDecimalOf(profile.currentAsk.currency)
+                )}
+                {' ' + getSymbolOf(profile.currentAsk.currency)}
+              </p>
             </GreyCard>
+          )}
 
-            {profile.currentAsk.currency === '' && (
-              <GreyCard>
-                <Text style={{ color: '#888888' }}>CURRENT ASK</Text>
-                <Text h3>
-                  {utils.formatUnits(
-                    profile.currentAsk.amount,
-                    getDecimalOf(profile.currentAsk.currency)
-                  )}
-                  {' ' + getSymbolOf(profile.currentAsk.currency)}
-                </Text>
-              </GreyCard>
-            )}
-
-            <Text h4>Your bid</Text>
-            <Select
-              placeholder='Bidding Currency'
-              onChange={handler}
-              width='100%'>
-              {Object.keys(tokens!).map(symbol => (
-                <Select.Option value={tokens![symbol]} key={symbol}>
-                  {symbol}
-                </Select.Option>
-              ))}
-            </Select>
+          <StyledBidsItem>
+            <Text h3>Your bid</Text>
+            <StyledBidsInput>
+              <Select
+                placeholder='Bidding Currency'
+                onChange={handler}
+                width='100%'
+                className='select-token'>
+                {Object.keys(tokens!).map(symbol => (
+                  <Select.Option value={tokens![symbol]} key={symbol}>
+                    {symbol}
+                  </Select.Option>
+                ))}
+              </Select>
+              <InputNumber<string>
+                placeholder='0.00'
+                className='input-token'
+                value={amount}
+                onChange={setAmount}
+                style={FullWidth}
+                formatter={value =>
+                  utils.formatUnits(value as string, getDecimalOf(currency))
+                }
+                parser={value =>
+                  utils
+                    .parseUnits(value as string, getDecimalOf(currency))
+                    .toString()
+                }
+                stringMode
+                min='0'
+              />
+            </StyledBidsInput>
             {currency && (
-              <Text>
+              <p className='balance'>
                 Balance: {utils.formatUnits(balance, getDecimalOf(currency))}
-              </Text>
+              </p>
             )}
-            <InputNumber<string>
-              placeholder='0.00'
-              value={amount}
-              onChange={setAmount}
-              style={FullWidth}
-              formatter={value =>
-                utils.formatUnits(value as string, getDecimalOf(currency))
-              }
-              parser={value =>
-                utils
-                  .parseUnits(value as string, getDecimalOf(currency))
-                  .toString()
-              }
-              stringMode
-              min='0'
-            />
-            <Text h4>Resale Fee</Text>
+          </StyledBidsItem>
+
+          <StyledBidsItem>
+            <Text h3>Resale Fee</Text>
             <Text>
               If you re-sell this piece, the person you&apos;re buying it from
               now will earn this percentage as a reward for selling it to you.
@@ -206,51 +220,63 @@ export default function Bid() {
               precision={0}
               max={99}
             />
-            <ActionsBox>
-              <Button
-                icon={<ArrowLeft />}
-                onClick={() => router.back()}
-                size='large'
-                auto></Button>
-              {wallet.status === 'connected' ? (
-                isEnough(amount) ? (
-                  <Button
-                    type='secondary'
-                    size='large'
-                    style={FullWidth}
-                    onClick={() => setBid()}>
-                    Make your bid
-                  </Button>
-                ) : (
-                  <Button
-                    type='secondary'
-                    size='large'
-                    loading={isUnlocking}
-                    style={FullWidth}
-                    onClick={() => approve()}>
-                    Unlock
-                  </Button>
-                )
-              ) : (
+          </StyledBidsItem>
+
+          <ActionsBox>
+            <StyledBackBtn
+              icon={<ArrowLeft />}
+              onClick={() => router.back()}
+              size='large'
+              auto></StyledBackBtn>
+            {wallet.status === 'connected' ? (
+              isEnough(amount) ? (
                 <Button
                   type='secondary'
                   size='large'
                   style={FullWidth}
-                  onClick={() => wallet.connect('injected')}>
-                  Connect Wallet
+                  onClick={() => setBid()}>
+                  Make your bid
                 </Button>
-              )}
-            </ActionsBox>
-          </BiddingBox>
-        </Grid>
-      </Grid.Container>
-    </div>
+              ) : (
+                <Button
+                  type='secondary'
+                  size='large'
+                  loading={isUnlocking}
+                  style={FullWidth}
+                  onClick={() => approve()}>
+                  Unlock
+                </Button>
+              )
+            ) : (
+              <Button
+                type='secondary'
+                size='large'
+                style={FullWidth}
+                onClick={() => wallet.connect('injected')}>
+                Connect Wallet
+              </Button>
+            )}
+          </ActionsBox>
+        </BiddingBox>
+      </Grid>
+    </StyledWrapper>
   );
 }
+const StyledWrapper = styled(Grid.Container)`
+  flex: 1;
+`;
+
+const StyledPermissions = styled.div`
+  flex: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 100px 0 0;
+`;
 
 const BiddingBox = styled.div`
-  padding: 4rem 0.5rem;
-  width: 470px;
+  max-width: 470px;
   margin: auto;
 `;
 
@@ -258,26 +284,57 @@ const GreyCard = styled.div`
   box-sizing: border-box;
   margin: 0;
   min-width: 0;
-  padding: 10px;
+  padding: 20px 20px;
   width: 100%;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
   flex-direction: column;
   border-radius: 4px;
   border: 2px solid #f2f2f2;
   background-color: #f2f2f2;
-  margin-bottom: 30px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
+  margin-bottom: 10px;
   display: flex;
+  .title {
+    color: rgb(136, 136, 136);
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+  }
+  .value {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0;
+    margin: 10px 0 0 0;
+  }
 `;
 
 const ActionsBox = styled.div`
   display: flex;
-  margin: 2rem 0;
+  margin: 20px 0;
 `;
 
 const FullWidth: CSSProperties = {
   width: '100%',
 };
+
+const StyledBidsItem = styled.div`
+  margin: 20px 0;
+  .balance {
+    font-size: 14px;
+    margin: 6px 0 0 0;
+    padding: 0;
+    color: #333;
+  }
+`;
+
+const StyledBidsInput = styled.div`
+  display: flex;
+  .select-token {
+    margin-right: 5px;
+  }
+  .input-token {
+    margin-left: 5px;
+  }
+`;
+
+const StyledBackBtn = styled(Button)`
+  margin-right: 10px;
+`;

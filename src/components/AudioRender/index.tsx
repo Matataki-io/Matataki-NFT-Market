@@ -49,7 +49,7 @@ const AudioRender: React.FC<Props> = ({ src, mode }) => {
 
   // 销毁
   useUnmount(() => {
-    wavesurferApi.destroy();
+    wavesurferApi && wavesurferApi.destroy();
   });
 
   // 播放切换
