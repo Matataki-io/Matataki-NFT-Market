@@ -16,6 +16,7 @@ export interface Media {
   metadataHash: string;
 
   creationTx: string;
+  title?: string; // user/@username/bids
 }
 
 export type MediaMetadata = {
