@@ -7,8 +7,9 @@ import { utils } from 'ethers';
 
 import ButtonCustom from '../../components/Button';
 import { BidLog } from '../../types/Bid.d';
-import { shortedWalletAccount } from '../../utils/index';
+// import { shortedWalletAccount } from '../../utils/index';
 import { getSymbolOf } from '../../utils/tokens';
+import NFTPreview from '../../components/NFTPreview';
 
 const BidsCard: React.FC<BidLog> = ({
   bidder,
@@ -30,6 +31,8 @@ const BidsCard: React.FC<BidLog> = ({
     <StyledWrapper>
       <div className='nft'>
         <img src={media?.tokenURI} alt={media?.title} />
+        {/* TODO：更多Type需要获取数据来判断 */}
+        <NFTPreview src={media?.tokenURI} type={'img'}></NFTPreview>
       </div>
       <StyledInfo>
         <div className='title'>
