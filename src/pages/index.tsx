@@ -5,9 +5,6 @@ import { useMount } from 'ahooks';
 import { Spin, message } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 
-// import Banner from '../components/Banner';
-// import Creators from '../components/Creators';
-// import About from '../components/About';
 import NFT from '../components/NFT';
 import { NFTProps } from '../../next-env';
 
@@ -20,55 +17,6 @@ type PaginationMeta = PaginationResult['meta'];
 type MediaWithMetadata = Media & {
   metadata: MediaMetadata;
 };
-
-// 作家列表
-// const creatorsList = [
-//   {
-//     bc: 'https://placeimg.com/540/184/nature?t=1617247698083',
-//     avatar: 'https://placeimg.com/200/200/people',
-//     username: '@Skull Pedestal',
-//   },
-//   {
-//     bc: 'https://placeimg.com/540/184/nature',
-//     avatar: 'https://placeimg.com/200/200/people?t=1617247587231',
-//     username: '@Skull Pedestal',
-//   },
-//   {
-//     bc: 'https://placeimg.com/540/184/nature?t=1617247711431',
-//     avatar: 'https://placeimg.com/200/200/people?t=1617247595366',
-//     username: '@Skull Pedestal',
-//   },
-//   {
-//     bc: 'https://placeimg.com/540/184/nature?t=1617247718870',
-//     avatar: 'https://placeimg.com/200/200/people?t=1617247602577',
-//     username: '@Skull Pedestal',
-//   },
-// ];
-
-// 关于更多 NFT
-// const AboutNFTList = [
-//   {
-//     img: 'https://placeimg.com/700/340/arch',
-//     text: 'How to collect your favorite NFTs at NFT Market?',
-//     link: 'https://matataki.io',
-//   },
-//   {
-//     img: 'https://placeimg.com/700/340/arch?t=1617248569810',
-//     text:
-//       'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
-//     link: 'https://matataki.io',
-//   },
-//   {
-//     img: 'https://placeimg.com/700/340/arch?t=1617248576772',
-//     text: 'NFTs, explained: what they are,why are some worth millions?',
-//     link: 'https://matataki.io',
-//   },
-//   {
-//     img: 'https://placeimg.com/700/340/arch?t=1617248585076',
-//     text: 'How to make, buy and sell NFTs',
-//     link: 'https://matataki.io',
-//   },
-// ];
 
 const Home: React.FC<void> = () => {
   // 更多 NFT
@@ -152,12 +100,6 @@ const Home: React.FC<void> = () => {
   return (
     <StyledWrapper>
       <StyledModule>
-        {/* <StyledModuleHead>
-          <StyledTitle>
-            Upcoming NFTs<span>New</span>
-          </StyledTitle>
-          <span className='more'>VIEW MORE</span>
-        </StyledModuleHead> */}
         <InfiniteScroll
           pageStart={0}
           loadMore={handleInfiniteOnLoad}
@@ -180,40 +122,6 @@ const Home: React.FC<void> = () => {
           </StyledNfts>
         </InfiniteScroll>
       </StyledModule>
-
-      {/* <StyledModule className='creators'>
-        <StyledModuleHead>
-          <StyledTitle>
-            Top NFT Creators<span>Hot</span>
-          </StyledTitle>
-          <span className='more'>VIEW MORE</span>
-        </StyledModuleHead>
-        <StyledCreators>
-          {creatorsList.map((i, idx) => (
-            <Creators
-              key={idx}
-              bc={i.bc}
-              avatar={i.avatar}
-              username={i.username}></Creators>
-          ))}
-        </StyledCreators>
-      </StyledModule>
-
-      <StyledModule className='about'>
-        <StyledModuleHead>
-          <StyledTitle>
-            Learn More about NFT Market<span>Fun</span>
-          </StyledTitle>
-          <span className='more'>VIEW MORE</span>
-        </StyledModuleHead>
-        <StyledAbout>
-          {AboutNFTList.map((i, idx) => (
-            <div key={idx} className='box'>
-              <About img={i.img} text={i.text} link={i.link}></About>
-            </div>
-          ))}
-        </StyledAbout>
-      </StyledModule> */}
     </StyledWrapper>
   );
 };

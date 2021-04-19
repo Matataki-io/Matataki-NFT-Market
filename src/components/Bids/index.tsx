@@ -11,13 +11,7 @@ import { BidLog } from '../../types/Bid.d';
 import { getSymbolOf } from '../../utils/tokens';
 import NFTPreview from '../../components/NFTPreview';
 
-const BidsCard: React.FC<BidLog> = ({
-  bidder,
-  amount,
-  currency,
-  media,
-  at,
-}) => {
+const BidsCard: React.FC<BidLog> = ({ amount, currency, media, at }) => {
   const date = (timestamp: number) => {
     dayjs.extend(relativeTime);
     const date = dayjs(timestamp * 1000).fromNow();
@@ -37,6 +31,7 @@ const BidsCard: React.FC<BidLog> = ({
       <StyledInfo>
         <div className='title'>
           {media?.title} #{media?.id}
+          {/* user name ⬇️ */}
           {/* <b>·</b>{' '} */}
           {/* <a
             className='user'
