@@ -19,9 +19,10 @@ import { default as MediaCard } from '../../components/NFT';
 import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 
 import { useLogin } from '../../hooks/useLogin';
-import { getUser } from '../../backend/user';
+import { getUser, getUserBids } from '../../backend/user';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
+import { BidLog } from '../../types/Bid.d';
 import BidsCard from '../../components/Bids';
 
 interface Props {
@@ -41,8 +42,9 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const appUserInfo = useAppSelector(state => state.userInfo);
   const [nftListData, setNFTListData] = useState<Array<NFTProps>>([]);
   const [switchFeedOrBids, setSwitchFeedOrBids] = useState<'feed' | 'bids'>(
-    'bids'
+    'feed'
   );
+  const [bidsList, setBidsList] = useState<Array<BidLog>>([]);
 
   const { userDataByWallet } = useLogin();
 
@@ -118,6 +120,24 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     fetchAll();
   }, [appUserInfo, userDataByWallet, username]);
 
+  useEffect(() => {
+    if (typeof username !== 'string') return;
+
+    const fetch = async () => {
+      try {
+        const data = await getUserBids(username);
+        setBidsList(data);
+        // console.log('data', data);
+      } catch (e) {
+        console.error('e', e.toString());
+      }
+    };
+
+    if (switchFeedOrBids === 'bids') {
+      fetch();
+    }
+  }, [switchFeedOrBids, username]);
+
   // switch feed or bids
   const SwitchFeedOrBids = () => {
     return (
@@ -153,13 +173,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             {userInfo.bio && <AccountBio>{userInfo.bio}</AccountBio>}
             {userInfo.website && <AccountWebsite href={userInfo.website} />}
             {isMyself && (
-              <>
-                <StyledEditButton onClick={() => setIsProfile(true)}>
-                  Edit profile
-                </StyledEditButton>
-                <SwitchFeedOrBids></SwitchFeedOrBids>
-              </>
+              <StyledEditButton onClick={() => setIsProfile(true)}>
+                Edit profile
+              </StyledEditButton>
             )}
+            <SwitchFeedOrBids></SwitchFeedOrBids>
           </StyledInfo>
         </StyledInfoBox>
         {switchFeedOrBids === 'feed' ? (
@@ -183,8 +201,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </>
         ) : switchFeedOrBids === 'bids' ? (
           <StyledBidsContainer>
-            {[1, 2, 3, 4, 5].map((i, idx) => (
-              <BidsCard key={idx}></BidsCard>
+            {bidsList.map((i, idx) => (
+              <BidsCard {...i} key={idx}></BidsCard>
             ))}
           </StyledBidsContainer>
         ) : null}

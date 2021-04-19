@@ -1,6 +1,7 @@
 import { default as BACKEND_CLIENT } from './client';
 import { PaginationResult } from '../types/PaginationResult';
 import { User } from '../types/User.types';
+import { BidLog } from '../types/Bid.d';
 import { setCookie } from '../utils/cookie';
 
 interface SignInPermit {
@@ -79,5 +80,12 @@ export async function listUsers({ page = 1, limit = 9 }) {
 
 export async function getUser(username: string) {
   const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}`);
+  return data;
+}
+
+export async function getUserBids(username: string) {
+  const { data } = await BACKEND_CLIENT.get<Array<BidLog>>(
+    `/user/@${username}/bids`
+  );
   return data;
 }
