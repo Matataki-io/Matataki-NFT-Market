@@ -37,6 +37,7 @@ const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  align-items: stretch;
   .nft {
     width: 100px;
     height: 100px;
@@ -59,7 +60,6 @@ const StyledInfo = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  height: 100px;
   .title {
     font-size: 16px;
     color: #000;
