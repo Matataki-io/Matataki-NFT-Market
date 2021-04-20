@@ -168,11 +168,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     setIsModalVisibleBidsCancel(true);
   };
   // return show cancel modal data
-  const currentBids = useMemo(() => {
+  const currentBids: BidLog = useMemo(() => {
     if (bidsList.length) {
       return bidsList[currentBidsIdx];
     }
-    return {};
+    return {} as any;
   }, [currentBidsIdx, bidsList]);
 
   return (
