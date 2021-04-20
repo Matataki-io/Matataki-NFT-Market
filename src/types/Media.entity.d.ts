@@ -3,9 +3,9 @@ import { User } from './User.types';
 export interface Media {
   id: number;
 
-  owner?: User;
+  owner: User;
 
-  creator?: User;
+  creator: User;
 
   isBurn: boolean;
 
@@ -17,6 +17,7 @@ export interface Media {
 
   creationTx: string;
   title?: string; // user/@username/bids
+  description: string;
 }
 
 export type MediaMetadata = {
