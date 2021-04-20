@@ -113,7 +113,7 @@ const Search = () => {
                               {media.description || 'not...'}
                             </p>
                             <p className='user-info__username'>
-                              By @{media.creator.username}
+                              By @{media.creator?.username}
                             </p>
                           </div>
                           <ArrowRightOutlined className='icon' />
