@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { Input, Tabs, Avatar } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
@@ -47,6 +47,12 @@ const Search = () => {
     }
   });
 
+  useEffect(() => {
+    if (!isShowResult) {
+      setKeyword('');
+    }
+  }, [isShowResult]);
+
   return (
     <StyledWrapper>
       <StyledHeaderSearch
@@ -59,10 +65,6 @@ const Search = () => {
           setIsShowResult(true);
         }}
         value={keyword}
-        onBlur={e => {
-          e.stopPropagation();
-          setKeyword('');
-        }}
         onClick={e => {
           e.stopPropagation();
         }}
