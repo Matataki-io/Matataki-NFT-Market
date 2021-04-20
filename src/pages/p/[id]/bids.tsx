@@ -13,6 +13,7 @@ import { backendSWRFetcher, getBidsOfToken } from '../../../backend/media';
 import { useMedia } from '../../../hooks/useMedia';
 import { BidLog } from '../../../types/Bid';
 import { getSymbolOf } from '../../../utils/tokens';
+import { useMediaToken } from '../../../hooks/useMediaToken';
 
 export default function Bids() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function Bids() {
     backendSWRFetcher
   );
   const media = useMedia();
+  const { isMeTheOwner } = useMediaToken(id as string);
   const acceptBid = useCallback(
     async (bid: BidLog) => {
       if (!id) return;
@@ -46,14 +48,18 @@ export default function Bids() {
         log.currency
       )}`;
       const acceptBidBtn = () => {
-        return wallet.status === 'connected' ? (
+        if (wallet.status !== 'connected')
+          return (
+            <Button onClick={() => wallet.connect('injected')}>
+              Connect Wallet
+            </Button>
+          );
+        return isMeTheOwner ? (
           <Button type='error' auto size='mini' onClick={() => acceptBid(log)}>
             接受
           </Button>
         ) : (
-          <Button onClick={() => wallet.connect('injected')}>
-            Connect Wallet
-          </Button>
+          <></>
         );
       };
       return { ...log, date, price, acceptBidBtn };
