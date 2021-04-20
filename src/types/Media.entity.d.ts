@@ -3,9 +3,9 @@ import { User } from './User.types';
 export interface Media {
   id: number;
 
-  owner: User;
+  owner?: User;
 
-  creator: User;
+  creator?: User;
 
   isBurn: boolean;
 
