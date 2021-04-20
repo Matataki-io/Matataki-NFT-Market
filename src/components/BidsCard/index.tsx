@@ -5,13 +5,25 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { utils } from 'ethers';
 
-import ButtonCustom from '../../components/Button';
-import { BidLog } from '../../types/Bid.d';
+import ButtonCustom from '../Button';
+import { BidLog } from '../../types/Bid';
 // import { shortedWalletAccount } from '../../utils/index';
 import { getSymbolOf } from '../../utils/tokens';
-import NFTPreview from '../../components/NFTPreview';
+import NFTPreview from '../NFTPreview';
 
-const BidsCard: React.FC<BidLog> = ({ amount, currency, media, at }) => {
+interface Props extends BidLog {
+  showBidCancelModal: (val: number) => void;
+  idx: number;
+}
+
+const BidsCard: React.FC<Props> = ({
+  showBidCancelModal,
+  idx,
+  amount,
+  currency,
+  media,
+  at,
+}) => {
   const date = (timestamp: number) => {
     dayjs.extend(relativeTime);
     const date = dayjs(timestamp * 1000).fromNow();
@@ -26,7 +38,7 @@ const BidsCard: React.FC<BidLog> = ({ amount, currency, media, at }) => {
       <div className='nft'>
         <img src={media?.tokenURI} alt={media?.title} />
         {/* TODO：更多Type需要获取数据来判断 */}
-        <NFTPreview src={media?.tokenURI} type={'img'}></NFTPreview>
+        <NFTPreview src={media?.tokenURI} type={'image'}></NFTPreview>
       </div>
       <StyledInfo>
         <div className='title'>
@@ -50,7 +62,7 @@ const BidsCard: React.FC<BidLog> = ({ amount, currency, media, at }) => {
             <ButtonCustom color='gray'>View Media</ButtonCustom>
           </a>
         </Link>
-        <ButtonCustom color='gray' onClick={() => alert('正在开发中...')}>
+        <ButtonCustom color='gray' onClick={() => showBidCancelModal(idx)}>
           Review bid
         </ButtonCustom>
       </div>
