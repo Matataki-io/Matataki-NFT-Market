@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { Avatar } from 'antd';
@@ -23,7 +23,8 @@ import { getUser, getUserBids } from '../../backend/user';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
 import { BidLog } from '../../types/Bid.d';
-import BidsCard from '../../components/Bids';
+import BidsCard from '../../components/BidsCard';
+import BidsCancelModal from '../../components/BidsCancelModal';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -45,8 +46,13 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     'feed'
   );
   const [bidsList, setBidsList] = useState<Array<BidLog>>([]);
-
   const { userDataByWallet } = useLogin();
+  // show bid cancel modal
+  const [isModalVisibleBidsCancel, setIsModalVisibleBidsCancel] = useState(
+    false
+  );
+  // click bid idx
+  const [currentBidsIdx, setCurrentBidsIdx] = useState<number>(0);
 
   useEffect(() => {
     const fetchUserInfoData = async () => {
@@ -119,7 +125,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
     fetchAll();
   }, [appUserInfo, userDataByWallet, username]);
-
+  // get user bids list
   useEffect(() => {
     if (typeof username !== 'string') return;
 
@@ -155,6 +161,19 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
       </StyledSwitchWrapper>
     );
   };
+
+  // show bid cancel modal fn
+  const showBidCancelModal = (idx: number) => {
+    setCurrentBidsIdx(idx);
+    setIsModalVisibleBidsCancel(true);
+  };
+  // return show cancel modal data
+  const currentBids = useMemo(() => {
+    if (bidsList.length) {
+      return bidsList[currentBidsIdx];
+    }
+    return {};
+  }, [currentBidsIdx, bidsList]);
 
   return (
     <Page>
@@ -201,9 +220,21 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </>
         ) : switchFeedOrBids === 'bids' ? (
           <StyledBidsContainer>
-            {bidsList.map((i, idx) => (
-              <BidsCard {...i} key={idx}></BidsCard>
-            ))}
+            <>
+              {bidsList.map((i, idx) => (
+                <BidsCard
+                  showBidCancelModal={showBidCancelModal}
+                  idx={idx}
+                  {...i}
+                  key={idx}></BidsCard>
+              ))}
+              <BidsCancelModal
+                currentBids={currentBids}
+                isModalVisibleBidsCancel={isModalVisibleBidsCancel}
+                setIsModalVisibleBidsCancel={
+                  setIsModalVisibleBidsCancel
+                }></BidsCancelModal>
+            </>
           </StyledBidsContainer>
         ) : null}
       </StyledWrapper>
