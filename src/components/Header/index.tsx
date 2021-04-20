@@ -6,7 +6,6 @@ import React, {
   useCallback,
 } from 'react';
 import { useMount } from 'ahooks';
-import { Input } from '@geist-ui/react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import Logo from '../../assets/images/logo.png';
@@ -19,6 +18,7 @@ import { getCookie } from '../../utils/cookie';
 import { shortedWalletAccount } from '../../utils/index';
 import { message } from 'antd';
 import { isEmpty } from 'lodash';
+import Search from '../Search';
 
 interface HeaderProps {
   isCreate: boolean;
@@ -143,8 +143,9 @@ const HeaderComponents: React.FC<HeaderProps> = ({
 									</Link>
 								</StyledHeaderNav> */}
             </StyledHeaderLeft>
+            <Search></Search>
+
             <StyledHeaderContainer>
-              {/* <StyledHeaderSearch placeholder='Search NFTs' disabled /> */}
               <div>
                 <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
                   <Button className='hover-underline'>Learn</Button>
@@ -260,10 +261,6 @@ const StyledHeaderNav = styled.nav`
   }
 `;
 
-const StyledHeaderSearch = styled(Input)`
-  width: 320px !important;
-  margin-right: 16px;
-`;
 const StyledHeaderContainer = styled.div`
   display: flex;
   align-items: center;
