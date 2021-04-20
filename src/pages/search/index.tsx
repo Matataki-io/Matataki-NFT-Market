@@ -56,7 +56,7 @@ export default function SearchPage() {
                 <Image src={media.tokenURI} width={100} />
                 <h4>{media.title}</h4>
                 <p>{media.description}</p>
-                <p>By @{media.creator.username}</p>
+                <p>By @{media.creator?.username}</p>
               </Card>
             ))}
           </div>
