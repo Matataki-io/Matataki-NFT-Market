@@ -54,6 +54,7 @@ const initRealPostInfo: RealPostInfo = {
       contentHash: '',
       metadataHash: '',
       creationTx: '',
+      description: '',
     },
     metadata: {
       description: '',
