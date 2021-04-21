@@ -34,7 +34,7 @@ const NFTTimeline: React.FC<Props> = ({ timeline, creator }) => {
     if (type === 'AskCreated') {
       return (
         <p className='logs'>
-          Bid {utils.formatUnits(log.amount, decimal)} {symbol}
+          Ask {utils.formatUnits(log.amount, decimal)} {symbol}
         </p>
       );
     } else if (type === 'BidFinalized') {

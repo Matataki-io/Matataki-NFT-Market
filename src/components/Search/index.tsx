@@ -1,16 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
-import { Input, Tabs, Avatar } from 'antd';
+import { Input, Tabs, Avatar, Spin, Typography } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
 import { useDebounce, useMount } from 'ahooks';
 import useSWR from 'swr';
-import {
-  Card,
-  Image,
-  Loading,
-  Text,
-  User as UserComponent,
-} from '@geist-ui/react';
 import Link from 'next/link';
 
 import { backendSWRFetcher } from '../../backend/media';
@@ -20,6 +13,7 @@ import { isEmpty } from 'lodash';
 import NFTPreview from '../NFTPreview';
 
 const { TabPane } = Tabs;
+const { Text } = Typography;
 
 const Search = () => {
   const [keyword, setKeyword] = useState('');
@@ -82,49 +76,61 @@ const Search = () => {
               <StyledPanne tab='Creators' key='1'>
                 {!isEmpty(data) ? (
                   <>
-                    {data.matchedUsers.map((user: User) => (
-                      <Link href={`/${user.username}`} key={user.username}>
-                        <a target='_blank' className='item'>
-                          <Avatar src={user.avatar}></Avatar>
-                          <span className='author'>
-                            {user.nickname}({user.username})
-                          </span>
-                          <ArrowRightOutlined className='icon' />
-                        </a>
-                      </Link>
-                    ))}
+                    {data.matchedUsers.length ? (
+                      data.matchedUsers.map((user: User) => (
+                        <Link href={`/${user.username}`} key={user.username}>
+                          <a target='_blank' className='item'>
+                            <Avatar src={user.avatar}></Avatar>
+                            <span className='author'>
+                              {user.nickname}({user.username})
+                            </span>
+                            <ArrowRightOutlined className='icon' />
+                          </a>
+                        </Link>
+                      ))
+                    ) : (
+                      <StyledSearchNot>
+                        <Text>Not...</Text>
+                      </StyledSearchNot>
+                    )}
                   </>
                 ) : (
-                  <Loading>Searching now...</Loading>
+                  <Spin tip='Searching now...'></Spin>
                 )}
               </StyledPanne>
               <StyledPanne tab='NFTs' key='2'>
                 {!isEmpty(data) ? (
                   <>
-                    {data.matchedMedias.map((media: Media) => (
-                      <Link href={`/p/${media.id}`} key={media.id}>
-                        <a target='_blank' className='item'>
-                          <div className='nft'>
-                            <NFTPreview src={media.tokenURI} type='image' />
-                          </div>
-                          <div className='user-info'>
-                            <h4 className='user-info__title'>
-                              {media.title || 'not...'}
-                            </h4>
-                            <p className='user-info__description'>
-                              {media.description || 'not...'}
-                            </p>
-                            <p className='user-info__username'>
-                              By @{media.creator?.username}
-                            </p>
-                          </div>
-                          <ArrowRightOutlined className='icon' />
-                        </a>
-                      </Link>
-                    ))}
+                    {data.matchedMedias.length ? (
+                      data.matchedMedias.map((media: Media) => (
+                        <Link href={`/p/${media.id}`} key={media.id}>
+                          <a target='_blank' className='item'>
+                            <div className='nft'>
+                              <NFTPreview src={media.tokenURI} type='image' />
+                            </div>
+                            <div className='user-info'>
+                              <h4 className='user-info__title'>
+                                {media.title || 'not...'}
+                              </h4>
+                              <p className='user-info__description'>
+                                {media.description || 'not...'}
+                              </p>
+                              <p className='user-info__username'>
+                                By @{media.creator?.username}
+                              </p>
+                            </div>
+                            <ArrowRightOutlined className='icon' />
+                          </a>
+                        </Link>
+                      ))
+                    ) : (
+                      <StyledSearchNot>
+                        <Text>Not...</Text>
+                      </StyledSearchNot>
+                    )}
                   </>
                 ) : (
-                  <Loading>Searching now...</Loading>
+                  <Spin tip='Searching now...'></Spin>
                 )}
               </StyledPanne>
             </Tabs>
@@ -211,6 +217,9 @@ const StyledPanne = styled(TabPane)`
 `;
 const StyledHeaderSearch = styled(Input)`
   margin-right: 16px;
+`;
+const StyledSearchNot = styled.div`
+  margin: 10px 15px 20px;
 `;
 
 export default Search;
