@@ -349,15 +349,17 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       );
       setMediaSubmitLoading(false);
       console.log('res', res);
-      message.success('mint success...');
 
       if (res && res.hash) {
         const resMedia = await PostMedia({
           txHash: res.hash,
         });
         console.log('resMedia', resMedia);
+        message.success('mint success...');
 
         setIsCreate(false);
+
+        (window as any).location.reload();
       } else {
         throw new Error('not hash');
       }
