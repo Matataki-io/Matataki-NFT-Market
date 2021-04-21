@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar } from 'antd';
+import { Avatar, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
@@ -53,6 +53,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   );
   // click bid idx
   const [currentBidsIdx, setCurrentBidsIdx] = useState<number>(0);
+  const keyMessage = 'fetchUser';
 
   useEffect(() => {
     const fetchUserInfoData = async () => {
@@ -67,7 +68,15 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         setIsVerifiedUser(false);
         return userInfo;
       } catch (e) {
-        console.log('e', e);
+        let err = e.toString();
+        console.log('e', e.toString());
+
+        if (err.includes('status code 404')) {
+          message.destroy(keyMessage);
+          message.error({ content: 'No such user！', key: keyMessage });
+          router.push('/');
+        }
+
         setIsVerifiedUser(false);
         return;
       }
