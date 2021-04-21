@@ -242,6 +242,7 @@ const StyledNfts = styled.div`
   grid-template-columns: repeat(4, minmax(0px, 330px));
   gap: 30px 20px;
   margin: 48px auto 0;
+  min-height: 320px;
   @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 330px));
   }
@@ -257,6 +258,9 @@ const StyledNfts = styled.div`
     margin-top: 20px;
     width: 100%;
     text-align: center;
+  }
+  & > a {
+    height: 456px;
   }
 `;
 
