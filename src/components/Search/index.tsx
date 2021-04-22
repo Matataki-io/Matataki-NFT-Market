@@ -90,7 +90,7 @@ const Search = () => {
                       ))
                     ) : (
                       <StyledSearchNot>
-                        <Text>Not...</Text>
+                        <Text>No Results found</Text>
                       </StyledSearchNot>
                     )}
                   </>
@@ -125,7 +125,7 @@ const Search = () => {
                       ))
                     ) : (
                       <StyledSearchNot>
-                        <Text>Not...</Text>
+                        <Text>No Results found</Text>
                       </StyledSearchNot>
                     )}
                   </>
