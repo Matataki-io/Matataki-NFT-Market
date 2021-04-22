@@ -146,7 +146,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                 <Link href='/market'>
                   <a>Market Place</a>
                 </Link>
-                <Link href='/'>
+                <Link href='/community'>
                   <a>Community</a>
                 </Link>
               </StyledHeaderNav>
