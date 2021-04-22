@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import CommunityCard from '../components/CommunityCard';
+import CommunityCard from '../../components/CommunityCard';
 
 const Community: React.FC = () => {
   return (
@@ -22,7 +22,7 @@ const Community: React.FC = () => {
 const StyledWrapper = styled.div`
   flex: 1;
 
-  max-width: 1480px;
+  max-width: 1114px;
   padding: 48px 20px 256px;
   box-sizing: border-box;
 
