@@ -19,7 +19,7 @@ import { useMedia } from '../../../hooks/useMedia';
 import { useERC20 } from '../../../hooks/useERC20';
 import { constructBid } from '../../../utils/zdkUtils';
 import { useWallet } from 'use-wallet';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useBalance } from '../../../hooks/useBalance';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import { useAllowance } from '../../../hooks/useAllowance';
@@ -253,6 +253,7 @@ export default function BidPage() {
                   type='secondary'
                   size='large'
                   style={FullWidth}
+                  disabled={currency === '' || BigNumber.from(amount).lte(0)}
                   onClick={() => setBid()}>
                   Make your bid
                 </Button>
