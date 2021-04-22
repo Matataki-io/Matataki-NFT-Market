@@ -7,7 +7,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import Creators from '../components/Creators';
 import About from '../components/About';
-import NFT from '../components/NFT';
+import NFT from '../components/NFTSimple';
 import { NFTProps } from '../../next-env';
 import Banner from '../components/Banner';
 import { PaginationResult } from '../types/PaginationResult';

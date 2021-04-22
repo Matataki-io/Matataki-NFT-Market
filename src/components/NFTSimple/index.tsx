@@ -19,20 +19,6 @@ const NFTComponents: React.FC<NFTProps> = ({
 }) => {
   return (
     <StyledNFTWrapper>
-      <StyledNFTHead>
-        <Link href={`/${creator?.username!}`}>
-          <a target='_blank' className='user'>
-            {content || fields ? (
-              <Avatar
-                className='user-avatar'
-                icon={<UserOutlined />}
-                src={creator?.avatar}
-              />
-            ) : null}
-            <span className='username'>{creator?.username}</span>
-          </a>
-        </Link>
-      </StyledNFTHead>
       <StyledNFTContent>
         {type === 'image' ? (
           <div className='media-images'>
@@ -98,7 +84,6 @@ const NFTComponents: React.FC<NFTProps> = ({
               </a>
             </Link>
           </div>
-          <div className='id'>{id ? `#${id}` : ''}</div>
         </StyledNFTFooterUser>
       </StyledNFTFooter>
     </StyledNFTWrapper>
@@ -113,44 +98,12 @@ const StyledNFTWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const StyledNFTHead = styled.div`
-  padding: 20px 15px;
-  height: 70px;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  .user {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    .user-avatar {
-      flex: 0 0 32px;
-    }
-  }
-  .username {
-    font-weight: 500;
-    font-size: 16px;
-    color: #000;
-    margin: 0px 0px 0px 10px;
-  }
-  .time {
-    font-size: 14px;
-    font-weight: 400;
-    opacity: 0.5;
-    margin: 0px;
-    color: #000;
-  }
-`;
+
 const StyledNFTContent = styled.div`
   overflow: hidden;
   z-index: 0;
   position: relative;
   height: 100%;
-  border-left: 2px solid rgba(0, 0, 0, 0.1);
-  border-right: 2px solid rgba(0, 0, 0, 0.1);
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -197,7 +150,6 @@ const StyledNFTContent = styled.div`
 const StyledNFTFooter = styled.div`
   padding: 15px;
   min-height: 100px;
-  border: 2px solid rgba(0, 0, 0, 0.1);
   width: 100%;
   display: flex;
   flex-direction: column;
