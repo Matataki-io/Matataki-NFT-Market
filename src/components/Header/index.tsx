@@ -8,7 +8,7 @@ import React, {
 import { useMount } from 'ahooks';
 import Link from 'next/link';
 import styled from 'styled-components';
-import Logo from '../../assets/images/logo.png';
+// import Logo from '../../assets/images/logo.png';
 import Button from '../Button/index';
 import { useWallet } from 'use-wallet';
 import UserDropdown from '../UserDropdown';
@@ -18,7 +18,7 @@ import { getCookie } from '../../utils/cookie';
 import { shortedWalletAccount } from '../../utils/index';
 import { message } from 'antd';
 import { isEmpty } from 'lodash';
-import Search from '../Search';
+// import Search from '../Search';
 
 interface HeaderProps {
   isCreate: boolean;
@@ -130,20 +130,28 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             <StyledHeaderLeft>
               <Link href='/'>
                 <StyledHeaderLogo>
-                  <img src={Logo} alt='NFT Logo' />
-                  <h1>NFT Market</h1>
+                  <h1>Maven NFT</h1>
                 </StyledHeaderLogo>
               </Link>
-              {/* <StyledHeaderNav>
-									<Link href="/">
-										<a>NFTS</a>
-									</Link>
-									<Link href="/">
-										<a>CREATE NFT</a>
-									</Link>
-								</StyledHeaderNav> */}
+              <StyledHeaderNav>
+                <Link href='/'>
+                  <a>New Release</a>
+                </Link>
+                <Link href='/artist'>
+                  <a>Featured Artists</a>
+                </Link>
+                <Link href='/gallery'>
+                  <a>Gallery List</a>
+                </Link>
+                <Link href='/market'>
+                  <a>Market Place</a>
+                </Link>
+                <Link href='/community'>
+                  <a>Community</a>
+                </Link>
+              </StyledHeaderNav>
             </StyledHeaderLeft>
-            <Search></Search>
+            {/* <Search></Search> */}
 
             <StyledHeaderContainer>
               <div>
@@ -219,10 +227,9 @@ const StyledHeaderWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  /* max-width: 1480px; */
-  padding: 0px 25px;
+  max-width: 1480px;
   min-height: 80px;
-  /* padding: 0 20px; */
+  padding: 0 20px;
   box-sizing: border-box;
   margin: 0 auto;
   @media screen and (max-width: 768px) {
@@ -240,24 +247,24 @@ const StyledHeaderLogo = styled.a`
     height: 36px;
   }
   h1 {
+    padding: 0;
+    margin: 0;
     font-size: 32px;
+    font-family: BigCaslon-Medium, BigCaslon;
     font-weight: 500;
     color: #000000;
-    line-height: 39px;
-    padding: 0;
-    margin: 0 0 0 4px;
-    font-family: BigCaslon-Medium, BigCaslon;
   }
 `;
 const StyledHeaderNav = styled.nav`
-  margin-left: 50px;
+  margin-left: 40px;
   a {
     font-size: 16px;
     font-weight: 500;
     color: #333333;
     line-height: 22px;
     padding: 0;
-    margin: 0 30px;
+    margin: 0 24px;
+    font-family: PingFangSC-Medium, PingFang SC;
   }
 `;
 

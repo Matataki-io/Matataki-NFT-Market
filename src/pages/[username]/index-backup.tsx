@@ -15,14 +15,14 @@ import {
 import { UserInfoState } from '../../store/userInfoSlice';
 import { useAppSelector } from '../../hooks/redux';
 import { NFTProps } from '../../../next-env';
-import NFTSimple from '../../components/NFTSimple';
+import { default as MediaCard } from '../../components/NFT';
 import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 
 import { useLogin } from '../../hooks/useLogin';
 import { getUser, getUserBids } from '../../backend/user';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
-import { BidLog } from '../../types/Bid.d';
+import { BidLog } from '../../types/Bid';
 import BidsCard from '../../components/BidsCard';
 import BidsCancelModal from '../../components/BidsCancelModal';
 
@@ -185,61 +185,81 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   }, [currentBidsIdx, bidsList]);
 
   return (
-    <StyledWrapper>
-      <div>
-        <div>
-          <StyledAvatar
-            icon={<UserOutlined />}
-            src={userInfo.avatar}
-            size={120}
-          />
-          <div>
-            <AccountName>
-              {userInfo.nickname}({userInfo.username})
-            </AccountName>
+    <Page>
+      <StyledWrapper>
+        <StyledAvatar
+          icon={<UserOutlined />}
+          src={userInfo.avatar}
+          size={120}
+        />
+        <StyledInfoBox>
+          <StyledInfo>
+            <AccountName>{userInfo.nickname}</AccountName>
+            <AccountUsername isVerified={isVerifiedUser}>
+              {userInfo.username}
+            </AccountUsername>
             {userInfo.bio && <AccountBio>{userInfo.bio}</AccountBio>}
-          </div>
-        </div>
-        <div>
-          <span>Icon</span>
-          <span>Icon</span>
-          <span>Icon</span>
-        </div>
-      </div>
-      <StyledLine></StyledLine>
-      <StyledMediaCardContainer>
-        {nftListData.map((item, index) => (
-          <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
-            <a target='_blank'>
-              <NFTSimple {...item} />
-            </a>
-          </Link>
-        ))}
-      </StyledMediaCardContainer>
-    </StyledWrapper>
+            {userInfo.website && <AccountWebsite href={userInfo.website} />}
+            {isMyself && (
+              <StyledEditButton onClick={() => setIsProfile(true)}>
+                Edit profile
+              </StyledEditButton>
+            )}
+            <SwitchFeedOrBids></SwitchFeedOrBids>
+          </StyledInfo>
+        </StyledInfoBox>
+        {switchFeedOrBids === 'feed' ? (
+          <>
+            {nftListData.length ? (
+              <StyledMediaCardContainer>
+                {nftListData.map((item, index) => (
+                  <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+                    <a target='_blank'>
+                      <MediaCard {...item} />
+                    </a>
+                  </Link>
+                ))}
+              </StyledMediaCardContainer>
+            ) : (
+              <ProfileFeedPlaceholder
+                setIsProfile={setIsProfile}
+                isLoggedIn={isMyself}
+              />
+            )}
+          </>
+        ) : switchFeedOrBids === 'bids' ? (
+          <StyledBidsContainer>
+            <>
+              {bidsList.map((i, idx) => (
+                <BidsCard
+                  showBidCancelModal={showBidCancelModal}
+                  idx={idx}
+                  {...i}
+                  key={idx}></BidsCard>
+              ))}
+              <BidsCancelModal
+                currentBids={currentBids}
+                isModalVisibleBidsCancel={isModalVisibleBidsCancel}
+                setIsModalVisibleBidsCancel={
+                  setIsModalVisibleBidsCancel
+                }></BidsCancelModal>
+            </>
+          </StyledBidsContainer>
+        ) : null}
+      </StyledWrapper>
+    </Page>
   );
 };
 
 const StyledWrapper = styled.div`
-  flex: 1;
-
-  max-width: 1480px;
-  padding: 0 20px 256px;
-  box-sizing: border-box;
-
-  margin: 0px auto;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 40px;
+`;
 
-  @media screen and (max-width: 768px) {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-`;
-const StyledLine = styled.div`
-  width: 100%;
-  height: 1px;
-  background: #dbdbdb;
-`;
 const StyledAvatar = styled(Avatar)`
   margin-bottom: 50px;
 `;
