@@ -140,10 +140,10 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                 <Link href='/artist'>
                   <a>Featured Artists</a>
                 </Link>
-                <Link href='/'>
+                <Link href='/gallery'>
                   <a>Gallery List</a>
                 </Link>
-                <Link href='/'>
+                <Link href='/market'>
                   <a>Market Place</a>
                 </Link>
                 <Link href='/'>

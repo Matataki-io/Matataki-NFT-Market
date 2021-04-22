@@ -162,7 +162,11 @@ const Home: React.FC<void> = () => {
           <StyledTitle>
             Upcoming NFTs<span>New</span>
           </StyledTitle>
-          <span className='more'>VIEW MORE</span>
+          <Link href='/market'>
+            <a target='_blank' className='more'>
+              VIEW MORE
+            </a>
+          </Link>
         </StyledModuleHead>
         <InfiniteScroll
           pageStart={0}

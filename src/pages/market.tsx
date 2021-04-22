@@ -93,9 +93,9 @@ const Market: React.FC = () => {
   };
   return (
     <StyledWrapper>
-      <div>
-        <h1>Market Place</h1>
-      </div>
+      <StyledHead>
+        <StyledHeadTitle>Market Place</StyledHeadTitle>
+      </StyledHead>
       <div>
         <div>
           <h3>DEPARTMENT</h3>
@@ -158,6 +158,16 @@ const StyledWrapper = styled.div`
   }
 `;
 
+const StyledHead = styled.div``;
+const StyledHeadTitle = styled.h2`
+  font-size: 48px;
+  font-family: BigCaslon-Medium, BigCaslon;
+  font-weight: 500;
+  color: #333333;
+  line-height: 58px;
+  padding: 0;
+  margin: 0;
+`;
 const StyledLine = styled.div`
   width: 100%;
   height: 1px;
