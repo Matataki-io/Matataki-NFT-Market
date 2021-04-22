@@ -6,17 +6,18 @@ import { currentMulticallAddress } from '../constant/contracts';
 import { currentProvider } from '../constant/providers';
 import { useSigner } from './useSigner';
 
+export const staticMulticall = Multicall__factory.connect(
+  currentMulticallAddress,
+  currentProvider as ethers.providers.Provider
+);
+
 export function useMulticall() {
   const { signer, isSignerReady } = useSigner();
   const Multicall = useMemo(() => {
-    const readonlyProvider = currentProvider as ethers.providers.Provider;
     if (isSignerReady(signer)) {
       return Multicall__factory.connect(currentMulticallAddress, signer);
     } else {
-      return Multicall__factory.connect(
-        currentMulticallAddress,
-        readonlyProvider
-      );
+      return staticMulticall;
     }
   }, [signer]);
 
