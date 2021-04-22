@@ -28,8 +28,11 @@ import Link from 'next/link';
 import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 import NFTPreview from '../../../components/NFTPreview/index';
 import { getMediaById, getMediaMetadata } from '../../../backend/media';
+import { Bid } from '../../../types/ContractTypes';
+import { ZERO_ADDRESS } from '../../../constant';
+import { useMyBid } from '../../../hooks/useMyBid';
 
-export default function Bid() {
+export default function BidPage() {
   const router = useRouter();
   const wallet = useWallet();
   const { id } = router.query;
@@ -42,6 +45,7 @@ export default function Bid() {
   const [currency, setCurrency] = useState<string>('');
   const [amount, setAmount] = useState('0');
   const [sellOnShare, setSellOnShare] = useState(0);
+  const { myBid, removeBid } = useMyBid(id as string);
   const tokenContrct = useERC20(currency);
   const { balance } = useBalance(tokenContrct);
   // `transferFrom` happened at Market, so just approve Market
@@ -164,6 +168,21 @@ export default function Bid() {
                 )}
                 {' ' + getSymbolOf(profile.currentAsk.currency)}
               </p>
+            </GreyCard>
+          )}
+
+          {myBid && myBid.currency !== ZERO_ADDRESS && (
+            <GreyCard>
+              <p className='title'>MY CURRENT BID</p>
+              <p className='value'>
+                {utils.formatUnits(myBid.amount, getDecimalOf(myBid.currency))}
+                {' ' + getSymbolOf(myBid.currency)}
+              </p>
+              <p>
+                You will get the refund of the previous bid, if you put on a new
+                bid now.
+              </p>
+              <Button onClick={() => removeBid()}>Remove Current Bid</Button>
             </GreyCard>
           )}
 
