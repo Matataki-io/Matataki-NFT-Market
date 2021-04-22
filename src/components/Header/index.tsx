@@ -137,7 +137,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                 <Link href='/'>
                   <a>New Release</a>
                 </Link>
-                <Link href='/'>
+                <Link href='/artist'>
                   <a>Featured Artists</a>
                 </Link>
                 <Link href='/'>
