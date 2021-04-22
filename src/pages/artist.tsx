@@ -11,6 +11,7 @@ const Artist: React.FC = () => {
       <StyledBanner></StyledBanner>
       <StyledLine></StyledLine>
       <StyledWord>
+        {/* 需要合并组件 */}
         {[...new Array(26)].map((i, idx) => (
           <ul key={idx} className='item'>
             <li>

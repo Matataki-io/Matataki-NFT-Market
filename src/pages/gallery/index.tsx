@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import GalleryCard from '../components/GalleryCard';
+import GalleryCard from '../../components/GalleryCard';
 
 const Gallery: React.FC = () => {
   return (
