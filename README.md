@@ -39,6 +39,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 Vercel 是一个前端托管平台，在全球都有 CDN 节点。只需要在网页上配置好，即可根据你的 GitHub 更新来自动部署。
 
+![image.png](https://i.loli.net/2021/04/22/Ar1QZJyXTYVDaKb.png)
+
+用 GitHub 登陆 Vercel，选择 Repo 所属的账户/组织，选择 `Import`。
+
+![image.png](https://i.loli.net/2021/04/22/pMF3arUzvdE2OuR.png)
+
+看情况选择 Vercel 项目范围为团队还是个人（Vercel 团队是付费功能）
+
+![image.png](https://i.loli.net/2021/04/22/KPs5XxvdHJMRq1f.png)
+
+一般来说，Vercel 都会识别项目的，没有什么额外配置的东西，点击 `Deploy` 即可。
+
+![image.png](https://i.loli.net/2021/04/22/bpKeNOYGLwrxHgW.png)
+
 这篇文档有更多详情 👉 [Next.js deployment documentation（英文）](https://nextjs.org/docs/deployment) .
 
 #### 部署在 Netlify
@@ -46,6 +60,22 @@ Vercel 是一个前端托管平台，在全球都有 CDN 节点。只需要在�
 另外一种相对简单的部署方法，就是使用 [Netlify](https://www.netlify.com/with/nextjs/)
 
 Netlify 是一个前端托管平台，在全球都有 CDN 节点。只需要在网页上配置好，即可根据你的 GitHub 更新来自动部署。
+
+![image.png](https://i.loli.net/2021/04/22/naGrehJuyYRzEvU.png)
+
+用 GitHub 登陆 Netlify，然后选择对应的账户/组织，找到 Repo
+
+![image.png](https://i.loli.net/2021/04/22/1KpzhulIrAkNBtZ.png)
+
+一般来说，Netlify 和 Vercel 一样，会自动识别项目，所以一般没有额外配置的情况，直接点击 Deploy 即可。
+
+![image.png](https://i.loli.net/2021/04/22/Hcw8nBDvS9otiKr.png)
+
+为了加快后续的构建速度，建议安装 `Next.js cache` 插件，为下次的构建提供缓存。
+
+![image.png](https://i.loli.net/2021/04/22/W5AnUOHGz6IRrxY.png)
+
+找到 `Next.js cache` ，点击 `Install`，选择本项目即可。
 
 这篇文档有更多详情 👉 [Next.js 在 Netlify 需要设置的事项（英文）](https://docs.netlify.com/configure-builds/common-configurations/next-js/) .
 
@@ -120,4 +150,8 @@ curl http://localhost:3000
 
 ![image.png](https://i.loli.net/2021/04/22/FkQyp5OCTiNDfdJ.png)
 
+Preset 选 Node.js （前后端都这样），Server domain 就写这个服务绑定的域名（如后端就是 `api.acme.com` )， 记得不要勾选 Redirect subdomains(没必要)。
+
 ![image.png](https://i.loli.net/2021/04/22/nF1wAr6RUTxEvWP.png)
+
+然后选择 Reverse proxy,默认就是 `127.0.0.1:3000`，刚好对应了前端的端口 `3000`。如果是后端，则需要另外修改一个端口。

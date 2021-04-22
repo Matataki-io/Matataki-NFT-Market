@@ -19,7 +19,7 @@ import { useMedia } from '../../../hooks/useMedia';
 import { useERC20 } from '../../../hooks/useERC20';
 import { constructBid } from '../../../utils/zdkUtils';
 import { useWallet } from 'use-wallet';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useBalance } from '../../../hooks/useBalance';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import { useAllowance } from '../../../hooks/useAllowance';
@@ -28,8 +28,11 @@ import Link from 'next/link';
 import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 import NFTPreview from '../../../components/NFTPreview/index';
 import { getMediaById, getMediaMetadata } from '../../../backend/media';
+import { Bid } from '../../../types/ContractTypes';
+import { ZERO_ADDRESS } from '../../../constant';
+import { useMyBid } from '../../../hooks/useMyBid';
 
-export default function Bid() {
+export default function BidPage() {
   const router = useRouter();
   const wallet = useWallet();
   const { id } = router.query;
@@ -42,6 +45,7 @@ export default function Bid() {
   const [currency, setCurrency] = useState<string>('');
   const [amount, setAmount] = useState('0');
   const [sellOnShare, setSellOnShare] = useState(0);
+  const { myBid, removeBid } = useMyBid(id as string);
   const tokenContrct = useERC20(currency);
   const { balance } = useBalance(tokenContrct);
   // `transferFrom` happened at Market, so just approve Market
@@ -167,6 +171,21 @@ export default function Bid() {
             </GreyCard>
           )}
 
+          {myBid && myBid.currency !== ZERO_ADDRESS && (
+            <GreyCard>
+              <p className='title'>MY CURRENT BID</p>
+              <p className='value'>
+                {utils.formatUnits(myBid.amount, getDecimalOf(myBid.currency))}
+                {' ' + getSymbolOf(myBid.currency)}
+              </p>
+              <p>
+                You will get the refund of the previous bid, if you put on a new
+                bid now.
+              </p>
+              <Button onClick={() => removeBid()}>Remove Current Bid</Button>
+            </GreyCard>
+          )}
+
           <StyledBidsItem>
             <Text h3>Your bid</Text>
             <StyledBidsInput>
@@ -234,6 +253,7 @@ export default function Bid() {
                   type='secondary'
                   size='large'
                   style={FullWidth}
+                  disabled={currency === '' || BigNumber.from(amount).lte(0)}
                   onClick={() => setBid()}>
                   Make your bid
                 </Button>
