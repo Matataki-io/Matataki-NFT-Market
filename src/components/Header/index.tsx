@@ -228,7 +228,6 @@ const StyledHeaderWrapper = styled.div`
   align-items: center;
   width: 100%;
   max-width: 1480px;
-  padding: 0px 25px;
   min-height: 80px;
   padding: 0 20px;
   box-sizing: border-box;
