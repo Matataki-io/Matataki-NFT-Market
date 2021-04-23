@@ -1,6 +1,32 @@
 import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import { Carousel } from 'antd';
+
+// 关于更多 NFT
+const AboutNFTList = [
+  {
+    img: 'https://placeimg.com/700/700/arch',
+    text: 'How to collect your favorite NFTs at NFT Market?',
+    link: 'https://matataki.io',
+  },
+  {
+    img: 'https://placeimg.com/400/700/arch',
+    text:
+      'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
+    link: 'https://matataki.io',
+  },
+  {
+    img: 'https://placeimg.com/700/400/arch',
+    text: 'NFTs, explained: what they are,why are some worth millions?',
+    link: 'https://matataki.io',
+  },
+  {
+    img: 'https://placeimg.com/700/400/arch',
+    text: 'How to make, buy and sell NFTs',
+    link: 'https://matataki.io',
+  },
+];
 
 const Artist: React.FC = () => {
   return (
@@ -8,7 +34,32 @@ const Artist: React.FC = () => {
       <StyledHead>
         <StyledHeadTitle>Featured Artists</StyledHeadTitle>
       </StyledHead>
-      <StyledBanner></StyledBanner>
+      <StyledBanner>
+        <Carousel autoplay>
+          <div>
+            <StyledAbout>
+              {AboutNFTList.map((i, idx) => (
+                <Link key={idx} href='/'>
+                  <a className='box'>
+                    <img src={i.img} alt={i.text} />
+                  </a>
+                </Link>
+              ))}
+            </StyledAbout>
+          </div>
+          <div>
+            <StyledAbout>
+              {AboutNFTList.map((i, idx) => (
+                <Link key={idx} href='/'>
+                  <a className='box'>
+                    <img src={i.img} alt={i.text} />
+                  </a>
+                </Link>
+              ))}
+            </StyledAbout>
+          </div>
+        </Carousel>
+      </StyledBanner>
       <StyledLine></StyledLine>
       <StyledWord>
         {/* 需要合并组件 */}
@@ -90,9 +141,8 @@ const StyledHeadTitle = styled.h2`
   margin: 0;
 `;
 const StyledBanner = styled.div`
-  margin: 48px 0 64px;
   height: 576px;
-  background: #000;
+  margin: 48px 0 64px;
 `;
 const StyledLine = styled.div`
   width: 100%;
@@ -133,6 +183,41 @@ const StyledWord = styled.div`
         padding: 0;
         margin: 0;
       }
+    }
+  }
+`;
+
+const StyledAbout = styled.div`
+  display: grid;
+  grid: repeat(2, 1fr) / repeat(13, 1fr);
+  grid-row-gap: 24px;
+  grid-column-gap: 24px;
+  height: 576px;
+  .box {
+    width: 100%;
+    height: 100%;
+    /* background: red; */
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    &:nth-of-type(1) {
+      grid-row: 1 / 3;
+      grid-column: 1 / 6;
+    }
+    &:nth-of-type(2) {
+      grid-row: 1 / 3;
+      grid-column: 6 / 10;
+    }
+    &:nth-of-type(3) {
+      grid-row: 1 / 2;
+      grid-column: 10 / 14;
+    }
+    &:nth-of-type(4) {
+      grid-row: 2 / 3;
+      grid-column: 10 / 14;
     }
   }
 `;

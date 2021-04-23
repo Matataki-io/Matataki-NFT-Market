@@ -5,7 +5,7 @@ import { Avatar, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
-import Page from '../../components/Page';
+import { ReactSVG } from 'react-svg';
 import {
   AccountName,
   AccountUsername,
@@ -25,6 +25,10 @@ import { User } from '../../types/User.types';
 import { BidLog } from '../../types/Bid.d';
 import BidsCard from '../../components/BidsCard';
 import BidsCancelModal from '../../components/BidsCancelModal';
+
+import IconTelegram from '../../assets/icons/telegram.svg';
+import IconTwitter from '../../assets/icons/twitter.svg';
+import IconEmail from '../../assets/icons/email1.svg';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -134,78 +138,25 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
     fetchAll();
   }, [appUserInfo, userDataByWallet, username]);
-  // get user bids list
-  useEffect(() => {
-    if (typeof username !== 'string') return;
-
-    const fetch = async () => {
-      try {
-        const data = await getUserBids(username);
-        setBidsList(data);
-        // console.log('data', data);
-      } catch (e) {
-        console.error('e', e.toString());
-      }
-    };
-
-    if (switchFeedOrBids === 'bids') {
-      fetch();
-    }
-  }, [switchFeedOrBids, username]);
-
-  // switch feed or bids
-  const SwitchFeedOrBids = () => {
-    return (
-      <StyledSwitchWrapper>
-        <StyledSwitchButton
-          active={switchFeedOrBids === 'feed'}
-          onClick={() => setSwitchFeedOrBids('feed')}>
-          Feed
-        </StyledSwitchButton>
-        <StyledSwitchButton
-          active={switchFeedOrBids === 'bids'}
-          onClick={() => setSwitchFeedOrBids('bids')}>
-          Bids
-        </StyledSwitchButton>
-      </StyledSwitchWrapper>
-    );
-  };
-
-  // show bid cancel modal fn
-  const showBidCancelModal = (idx: number) => {
-    setCurrentBidsIdx(idx);
-    setIsModalVisibleBidsCancel(true);
-  };
-  // return show cancel modal data
-  const currentBids: BidLog = useMemo(() => {
-    if (bidsList.length) {
-      return bidsList[currentBidsIdx];
-    }
-    return {} as any;
-  }, [currentBidsIdx, bidsList]);
 
   return (
     <StyledWrapper>
-      <div>
-        <div>
-          <StyledAvatar
-            icon={<UserOutlined />}
-            src={userInfo.avatar}
-            size={120}
-          />
-          <div>
-            <AccountName>
+      <StyledHead>
+        <StyledHeadUser>
+          <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
+          <StyledHeadUserInfo>
+            <h1>
               {userInfo.nickname}({userInfo.username})
-            </AccountName>
-            {userInfo.bio && <AccountBio>{userInfo.bio}</AccountBio>}
-          </div>
-        </div>
-        <div>
-          <span>Icon</span>
-          <span>Icon</span>
-          <span>Icon</span>
-        </div>
-      </div>
+            </h1>
+            <p>{userInfo.bio || 'Not...'}</p>
+          </StyledHeadUserInfo>
+        </StyledHeadUser>
+        <StyledHeadIcon>
+          <ReactSVG className='icon' src={IconTelegram} />
+          <ReactSVG className='icon' src={IconTwitter} />
+          <ReactSVG className='icon' src={IconEmail} />
+        </StyledHeadIcon>
+      </StyledHead>
       <StyledLine></StyledLine>
       <StyledMediaCardContainer>
         {nftListData.map((item, index) => (
@@ -240,24 +191,54 @@ const StyledLine = styled.div`
   height: 1px;
   background: #dbdbdb;
 `;
-const StyledAvatar = styled(Avatar)`
-  margin-bottom: 50px;
-`;
-
-const StyledInfoBox = styled.div`
-  box-sizing: border-box;
-  padding: 30px;
-  margin: 0px auto;
-  width: 100%;
-  max-width: calc(530px);
-`;
-
-const StyledInfo = styled.div`
-  width: 100%;
+const StyledHead = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  align-items: cennter;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 48px 0;
+`;
+const StyledHeadUser = styled.div`
+  display: flex;
   align-items: center;
+  flex-wrap: wrap;
+`;
+const StyledHeadUserInfo = styled.div`
+  margin: 0 0 0 15px;
+  h1 {
+    font-size: 34px;
+    font-family: DINAlternate-Bold, DINAlternate;
+    font-weight: bold;
+    color: #333333;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+  }
+  p {
+    font-size: 16px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #333333;
+    line-height: 1.2;
+    padding: 0;
+    margin: 0;
+  }
+`;
+const StyledHeadIcon = styled.div`
+  display: flex;
+  align-items: center;
+  .icon {
+    width: 32px;
+    height: 32px;
+    margin-left: 32px;
+    &:nth-of-type(1) {
+      margin-left: 0;
+    }
+    svg {
+      font-size: 32px;
+      color: #333333;
+    }
+  }
 `;
 
 const StyledMediaCardContainer = styled.div`
@@ -278,48 +259,5 @@ const StyledMediaCardContainer = styled.div`
     flex-direction: column;
     align-items: center;
   }
-`;
-const StyledBidsContainer = styled.div`
-  width: 100%;
-  max-width: 680px;
-  padding: 0 20px;
-  box-sizing: border-box;
-`;
-// from EditProfileButton Copy
-const StyledEditButton = styled.button`
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 500;
-  padding: 14px 20px;
-  margin: 0px 5px;
-  text-align: center;
-  cursor: pointer;
-  text-decoration: none;
-  white-space: nowrap;
-  appearance: none;
-  color: rgb(0, 0, 0);
-  background-color: rgb(230, 230, 230);
-  border: 1px solid transparent;
-  &:hover {
-    background-color: rgb(230, 230, 230);
-    border-color: rgb(0, 0, 0);
-  }
-`;
-
-const StyledSwitchWrapper = styled.div`
-  margin: 60px auto 0;
-`;
-const StyledSwitchButton = styled.button<{ active: boolean }>`
-  border: 2px solid #000;
-  color: ${({ active }) => (active ? '#fff' : '#000')};
-  outline: none;
-  padding: 10px 14px;
-  font-size: 16px;
-  background: ${({ active }) => (active ? '#000' : '#fff')};
-  cursor: pointer;
-  transition: all 0.2s;
 `;
 export default UserInfoPage;
