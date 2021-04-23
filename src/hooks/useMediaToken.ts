@@ -28,6 +28,10 @@ export function useMediaToken(id: BigNumberish) {
     },
   });
   const [isAllApprove, setAllApprove] = useState(false);
+  const isAskExist = useMemo(
+    () => profile.currentAsk.currency !== ZERO_ADDRESS,
+    [profile]
+  );
 
   const getDetailOf = useCallback(async () => {
     if (Number(id) === NaN) {
@@ -140,5 +144,5 @@ export function useMediaToken(id: BigNumberish) {
     return receipt;
   }, [mediaContract, id]);
 
-  return { isOwnerOrApproved, isMeTheOwner, profile, removeAsk };
+  return { isOwnerOrApproved, isMeTheOwner, profile, removeAsk, isAskExist };
 }

@@ -30,7 +30,9 @@ export default function AskPage() {
   const router = useRouter();
   const wallet = useWallet();
   const { id } = router.query;
-  const { isMeTheOwner, profile, removeAsk } = useMediaToken(Number(id));
+  const { isMeTheOwner, profile, removeAsk, isAskExist } = useMediaToken(
+    Number(id)
+  );
   const mediaContract = useMedia();
   const handler = (val: string | string[]) => {
     setCurrency(val as string);
@@ -124,7 +126,7 @@ export default function AskPage() {
         <BiddingBox>
           <Text h3>Your ask</Text>
 
-          {profile.currentAsk.currency !== ZERO_ADDRESS && (
+          {isAskExist && (
             <GreyCard>
               <p className='title'>CURRENT ASK</p>
               <p className='value'>
