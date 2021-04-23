@@ -158,7 +158,7 @@ export default function BidPage() {
             </p>
           </GreyCard>
 
-          {isAskExist !== ZERO_ADDRESS && (
+          {isAskExist && (
             <GreyCard>
               <p className='title'>CURRENT ASK</p>
               <p className='value'>
