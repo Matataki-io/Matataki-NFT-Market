@@ -21,15 +21,16 @@ import { useWallet } from 'use-wallet';
 import { utils } from 'ethers';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import Link from 'next/link';
-import { getDecimalOf } from '../../../utils/tokens';
+import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 import NFTPreview from '../../../components/NFTPreview/index';
 import { getMediaById, getMediaMetadata } from '../../../backend/media';
+import { ZERO_ADDRESS } from '../../../constant';
 
 export default function AskPage() {
   const router = useRouter();
   const wallet = useWallet();
   const { id } = router.query;
-  const { isMeTheOwner } = useMediaToken(Number(id));
+  const { isMeTheOwner, profile, removeAsk } = useMediaToken(Number(id));
   const mediaContract = useMedia();
   const handler = (val: string | string[]) => {
     setCurrency(val as string);
@@ -122,6 +123,21 @@ export default function AskPage() {
       <Grid xs={24} md={12}>
         <BiddingBox>
           <Text h3>Your ask</Text>
+
+          {profile.currentAsk.currency !== ZERO_ADDRESS && (
+            <GreyCard>
+              <p className='title'>CURRENT ASK</p>
+              <p className='value'>
+                {utils.formatUnits(
+                  profile.currentAsk.amount,
+                  getDecimalOf(profile.currentAsk.currency)
+                )}
+                {' ' + getSymbolOf(profile.currentAsk.currency)}
+              </p>
+              <Button onClick={() => removeAsk()}>Remove Ask</Button>
+            </GreyCard>
+          )}
+
           <StyledBidsInput>
             <Select
               placeholder='Bidding Currency'
@@ -190,6 +206,32 @@ const StyledPermissions = styled.div`
   align-items: center;
   flex-direction: column;
   padding: 100px 0 0;
+`;
+
+const GreyCard = styled.div`
+  box-sizing: border-box;
+  margin: 0;
+  min-width: 0;
+  padding: 20px 20px;
+  width: 100%;
+  flex-direction: column;
+  border-radius: 4px;
+  border: 2px solid #f2f2f2;
+  background-color: #f2f2f2;
+  margin-bottom: 10px;
+  display: flex;
+  .title {
+    color: rgb(136, 136, 136);
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+  }
+  .value {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0;
+    margin: 10px 0 0 0;
+  }
 `;
 
 const BiddingBox = styled.div`

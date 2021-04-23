@@ -158,7 +158,7 @@ export default function BidPage() {
             </p>
           </GreyCard>
 
-          {profile.currentAsk.currency === '' && (
+          {profile.currentAsk.currency !== ZERO_ADDRESS && (
             <GreyCard>
               <p className='title'>CURRENT ASK</p>
               <p className='value'>

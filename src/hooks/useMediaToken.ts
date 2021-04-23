@@ -1,6 +1,7 @@
 import { BigNumber, BigNumberish, utils } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWallet } from 'use-wallet';
+import { ZERO_ADDRESS } from '../constant';
 import { DecimalValue } from '../types/ContractTypes';
 import { Decimal } from '../utils/Decimal';
 import { useMarket } from './useMarket';
@@ -22,7 +23,7 @@ export function useMediaToken(id: BigNumberish) {
       owner: Decimal.new(0),
     },
     currentAsk: {
-      currency: '',
+      currency: ZERO_ADDRESS,
       amount: BigNumber.from(0),
     },
   });
@@ -133,5 +134,11 @@ export function useMediaToken(id: BigNumberish) {
     );
   }, [isAllApprove, profile, account]);
 
-  return { isOwnerOrApproved, isMeTheOwner, profile };
+  const removeAsk = useCallback(async () => {
+    const req = await mediaContract.removeAsk(id);
+    const receipt = await req.wait();
+    return receipt;
+  }, [mediaContract, id]);
+
+  return { isOwnerOrApproved, isMeTheOwner, profile, removeAsk };
 }
