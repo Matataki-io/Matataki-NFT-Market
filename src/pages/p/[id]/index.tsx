@@ -134,7 +134,9 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
                 </Link>
               ) : (
                 <Link href={`/p/${post.id}/ask`}>
-                  <TradeButton colorType='secondary'>Add Price</TradeButton>
+                  <TradeButton colorType='secondary'>
+                    {isAskExist ? 'Edit Price' : 'Add Price'}
+                  </TradeButton>
                 </Link>
               )}
               <CopyToClipboard
