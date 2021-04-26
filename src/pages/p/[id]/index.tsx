@@ -29,9 +29,7 @@ import { IconRespondArrow } from '../../../components/Icons';
 import { useMediaData } from '../../../hooks/useMediaData';
 import NFTTimeline from '../../../components/NFTTimeline/index';
 import { Ask } from '../../../types/Ask';
-import { BidLog } from '../../../types/Bid';
-import { MediaLog } from '../../../types/MediaLog';
-import { axiosFetcher } from '../../../utils/swr.util';
+import { BidLogWithUser, MediaLogWithUser } from '../../../types/TokenLog.dto';
 
 type Props = {
   post?: {
@@ -61,10 +59,9 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
   const scanLink = getTokenOnScan(Number(id));
   const ipfsLink = post?.backendData.tokenURI;
 
-  const { data: timeline, error } = useSWR<Array<Ask | MediaLog | BidLog>>(
-    `/media/${id}/logs`,
-    backendSWRFetcher
-  );
+  const { data: timeline, error } = useSWR<
+    Array<Ask | MediaLogWithUser | BidLogWithUser>
+  >(`/media/${id}/logs`, backendSWRFetcher);
 
   const copyText = useMemo(() => {
     if (process.browser) {

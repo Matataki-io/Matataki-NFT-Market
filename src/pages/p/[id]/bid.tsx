@@ -31,6 +31,7 @@ import { getMediaById, getMediaMetadata } from '../../../backend/media';
 import { Bid } from '../../../types/ContractTypes';
 import { ZERO_ADDRESS } from '../../../constant';
 import { useMyBid } from '../../../hooks/useMyBid';
+import { useBoolean } from 'ahooks';
 
 export default function BidPage() {
   const router = useRouter();
@@ -62,6 +63,7 @@ export default function BidPage() {
     },
   });
 
+  const [isSigning, signingActions] = useBoolean(false);
   async function setBid() {
     if (!wallet.account) throw new Error('Wallet have to be connected');
     const bidData = constructBid(
@@ -73,6 +75,7 @@ export default function BidPage() {
     );
     console.info('bidData', bidData);
     try {
+      signingActions.setTrue();
       const tx = await mediaContract.setBid(id as string, bidData);
       const receipt = await tx.wait();
       alert(`出价成功，TxHash: ${receipt.transactionHash}`);
@@ -82,7 +85,10 @@ export default function BidPage() {
         .catch(callError => {
           console.error('callError', callError);
           console.error('reason', callError.reason);
+          alert('Error happened: ' + callError.reason);
         });
+    } finally {
+      signingActions.setFalse();
     }
   }
   // get media
@@ -254,6 +260,7 @@ export default function BidPage() {
                   size='large'
                   style={FullWidth}
                   disabled={currency === '' || BigNumber.from(amount).lte(0)}
+                  loading={isSigning}
                   onClick={() => setBid()}>
                   Make your bid
                 </Button>

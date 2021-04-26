@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import useSWR from 'swr';
 import { useWallet } from 'use-wallet';
-import { backendSWRFetcher, getBidsOfToken } from '../../../backend/media';
+import { backendSWRFetcher } from '../../../backend/media';
 import { useMedia } from '../../../hooks/useMedia';
 import { Ask } from '../../../types/Ask';
 import { BidLog } from '../../../types/Bid';
