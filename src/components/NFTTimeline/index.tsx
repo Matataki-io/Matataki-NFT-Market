@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 import { isBackendAsk } from '../../utils/TypeGuards';
 import { getDecimalOf, getSymbolOf } from '../../utils/tokens';
-import { Ask, AskActionType } from '../../types/Ask';
+import { Ask, AskActionType } from '../../types/Ask.d';
 import { ZERO_ADDRESS } from '../../constant';
 import { shortedWalletAccount } from '../../utils/index';
 import {
