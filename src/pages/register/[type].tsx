@@ -59,7 +59,7 @@ const Register: React.FC<void> = () => {
       </StyledSubtitle>
 
       <StyledForm
-        name='basic'
+        name='form'
         initialValues={{ remember: true }}
         layout={'vertical'}
         onFinish={onFinish}
