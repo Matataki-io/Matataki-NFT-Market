@@ -8,14 +8,20 @@ import Link from 'next/link';
 
 import { isBackendAsk } from '../../utils/TypeGuards';
 import { getDecimalOf, getSymbolOf } from '../../utils/tokens';
-import { Ask } from '../../types/Ask';
-import { BidLog } from '../../types/Bid';
-import { MediaLog } from '../../types/MediaLog';
+import { Ask, AskActionType } from '../../types/Ask.d';
 import { ZERO_ADDRESS } from '../../constant';
 import { shortedWalletAccount } from '../../utils/index';
+import {
+  BidLogWithUser,
+  MediaLogWithUser,
+  isBidLogWithUser,
+  isMediaLogWithUser,
+} from '../../types/TokenLog.dto';
+import { BidActionType } from '../../types/Bid.d';
+import { MediaActionType } from '../../types/MediaLog.d';
 
 interface Props {
-  timeline: Array<Ask | MediaLog | BidLog>;
+  timeline: Array<Ask | MediaLogWithUser | BidLogWithUser>;
   creator: string;
 }
 
@@ -26,30 +32,69 @@ const NFTTimeline: React.FC<Props> = ({ timeline, creator }) => {
     return dayjs(timestamp * 1000).fromNow();
   };
 
-  const timeDescription = (log: any) => {
+  // let me demo you how to use the typeguard for better code
+  const timeDescription = (log: Ask | MediaLogWithUser | BidLogWithUser) => {
     console.log('c', shortedWalletAccount);
-    let type = log.type || log.status;
+
+    // use if and return
+    if (isMediaLogWithUser(log)) {
+      // here, log is type `MediaLog`
+      if (log.type === MediaActionType.Transfer) {
+        return (
+          <p className='logs'>
+            {log.fromUser?.nickname || shortedWalletAccount(log.from)} Transfer
+            the ownership to{' '}
+            {log.toUser?.nickname || shortedWalletAccount(log.to)}
+          </p>
+        );
+      } else {
+        return (
+          <p className='logs'>
+            {log.fromUser?.nickname || shortedWalletAccount(log.from)} Approve
+            {log.toUser?.nickname || shortedWalletAccount(log.to)} to manage the
+            token.
+          </p>
+        );
+      }
+    }
+    // now, log types narrowed down to Ask | BidLogWithUser, they share the `currency` property
     const symbol = getSymbolOf(log.currency);
     const decimal = getDecimalOf(log.currency);
-    if (type === 'AskCreated') {
-      return (
-        <p className='logs'>
-          Ask {utils.formatUnits(log.amount, decimal)} {symbol}
-        </p>
-      );
-    } else if (type === 'BidFinalized') {
-      return (
-        <p className='logs'>
-          <a
-            href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${log.bidder}`}>
-            {shortedWalletAccount(log.bidder)}
-          </a>{' '}
-          buy with {utils.formatUnits(log.amount, decimal)} {symbol}
-        </p>
-      );
-    } else {
-      return 'Other';
+    if (isBackendAsk(log)) {
+      if (log.type === AskActionType.AskCreated) {
+        return (
+          <p className='logs'>
+            Owner Ask for {utils.formatUnits(log.amount, decimal)} {symbol}
+          </p>
+        );
+      }
     }
+
+    if (isBidLogWithUser(log)) {
+      const symbol = getSymbolOf(log.currency);
+      const decimal = getDecimalOf(log.currency);
+      const bidderDisplayName = log.matchedBidder
+        ? '@' + log.matchedBidder.username
+        : shortedWalletAccount(log.bidder);
+      const thePrice = `${utils.formatUnits(log.amount, decimal)} ${symbol}`;
+      if (log.status === BidActionType.BidFinalized) {
+        return (
+          <p className='logs'>
+            <a
+              href={
+                log.matchedBidder
+                  ? `${process.env.NEXT_PUBLIC_SCAN_PREFIX}/${log.matchedBidder?.username}`
+                  : '#'
+              }>
+              {bidderDisplayName}
+            </a>{' '}
+            buy with {thePrice}
+          </p>
+        );
+      }
+    }
+
+    return 'Other';
   };
 
   return (
@@ -58,11 +103,11 @@ const NFTTimeline: React.FC<Props> = ({ timeline, creator }) => {
         <StyledTitle>Provenance</StyledTitle>
       </StyledHead>
       <Timeline>
-        {timeline.map((i: any, idx: number) => (
+        {timeline.map((i, idx: number) => (
           <>
             {idx === timeline.length - 1 &&
-            i.type === 'Transfer' &&
-            i.from === ZERO_ADDRESS ? (
+            (i as MediaLogWithUser).type === 'Transfer' &&
+            (i as MediaLogWithUser).from === ZERO_ADDRESS ? (
               // mint logs
               <Timeline.Item>
                 <p>

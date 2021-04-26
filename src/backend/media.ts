@@ -47,15 +47,3 @@ export async function PostMedia({ txHash }: { txHash: string }): Promise<any> {
     txHash,
   });
 }
-
-// Use it with `useSWR(id, functionName)`
-export function getLogOfToken(id: string) {
-  return backendClient
-    .get<Array<Ask | MediaLog | BidLog>>(`/media/${id}/logs`)
-    .then(res => res.data);
-}
-export function getBidsOfToken(id: string) {
-  return backendClient
-    .get<Array<BidLog>>(`/media/${id}/bids`)
-    .then(res => res.data);
-}
