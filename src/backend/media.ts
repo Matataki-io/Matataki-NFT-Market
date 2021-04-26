@@ -12,8 +12,10 @@ export const backendSWRFetcher = (url: string) =>
 /**
  * 主要是为了 SSG 预先渲染
  */
-export async function getHotMediaList(): Promise<Array<Media>> {
-  const { data } = await backendClient.get<Array<Media>>('/media/hot');
+export async function getHotMediaList(take = 10): Promise<Array<Media>> {
+  const { data } = await backendClient.get<Array<Media>>('/media/hot', {
+    params: { take },
+  });
   return data;
 }
 
