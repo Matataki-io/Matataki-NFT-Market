@@ -10,3 +10,15 @@ export class MediaLogWithUser extends MediaLog {
   fromUser?: User;
   toUser?: User;
 }
+
+export function isBidLogWithUser(
+  obj: BidLogWithUser | any
+): obj is BidLogWithUser {
+  return Boolean((obj as BidLogWithUser).bidder);
+}
+
+export function isMediaLogWithUser(
+  obj: MediaLogWithUser | any
+): obj is MediaLogWithUser {
+  return Boolean((obj as MediaLogWithUser).to);
+}
