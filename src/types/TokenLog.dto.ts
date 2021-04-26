@@ -1,5 +1,5 @@
-import { BidLog } from './Bid';
-import { MediaLog } from './MediaLog';
+import { BidLog } from './Bid.d';
+import { MediaLog } from './MediaLog.d';
 import { User } from './User.types';
 
 export class BidLogWithUser extends BidLog {
