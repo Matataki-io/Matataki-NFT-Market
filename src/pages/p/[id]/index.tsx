@@ -51,9 +51,9 @@ interface Params extends ParsedUrlQuery {
 }
 
 const PostPage: NextPage<Props> = ({ post, isError }) => {
-  const router = useRouter();
+  const { query, isFallback } = useRouter();
 
-  const { id } = router.query;
+  const { id } = query;
   const { backendData, metadata } = useMediaData(post);
 
   const { profile, isMeTheOwner, isAskExist } = useMediaToken(Number(post?.id));
@@ -74,8 +74,8 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
     }
   }, [metadata]);
 
-  if (router.isFallback) {
-    return <h1>Loading...</h1>;
+  if (isFallback) {
+    return <h1>Loading the latest data...</h1>;
   }
   if (!post && !isError) return <div>Loading</div>;
   if (!post)
@@ -172,6 +172,7 @@ export async function getStaticProps(
     // Call an external API endpoint to get posts
     const backendData = await getMediaById(Number(id));
     const metadata = await getMediaMetadata(backendData.metadataURI);
+
     return {
       props: {
         post: {
@@ -180,6 +181,9 @@ export async function getStaticProps(
           metadata,
         },
       },
+      // Incremental Static ReGeneration Magic!
+      // If you interested, Checkout: https://nextjs.org/docs/basic-features/data-fetching#incremental-static-regeneration
+      revalidate: 60,
     };
   } catch (error) {
     return { props: { isError: true } };
