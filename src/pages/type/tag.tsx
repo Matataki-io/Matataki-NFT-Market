@@ -1,45 +1,45 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, Checkbox } from '@geist-ui/react';
+import { Button, Checkbox } from 'antd';
 
 const Market: React.FC = () => {
   return (
     <StyledWrapper>
-      <h1>
+      <StyledTitle>
         What kind of artworks do you like?<span>(Multiple selections)</span>
-      </h1>
-      <StyledItem>
-        <div>
+      </StyledTitle>
+      <StyledCheckbox>
+        <StyledCheckboxItem>
           <Checkbox>Sculpture</Checkbox>
-        </div>
-        <div>
+        </StyledCheckboxItem>
+        <StyledCheckboxItem>
           <Checkbox>Classic art</Checkbox>
-        </div>
-        <div>
+        </StyledCheckboxItem>
+        <StyledCheckboxItem>
           <Checkbox>Digital art</Checkbox>
-        </div>
-        <div>
+        </StyledCheckboxItem>
+        <StyledCheckboxItem>
           <Checkbox>Comic</Checkbox>
-        </div>
-        <div>
+        </StyledCheckboxItem>
+        <StyledCheckboxItem>
           <Checkbox>Graphic design</Checkbox>
-        </div>
-        <div>
+        </StyledCheckboxItem>
+        <StyledCheckboxItem>
           <Checkbox>Manga</Checkbox>
-        </div>
-        <div>
+        </StyledCheckboxItem>
+        <StyledCheckboxItem>
           <Checkbox>Illustration</Checkbox>
-        </div>
-        <div>
+        </StyledCheckboxItem>
+        <StyledCheckboxItem>
           <Checkbox>User Interface</Checkbox>
-        </div>
-        <div>
+        </StyledCheckboxItem>
+        <StyledCheckboxItem>
           <Checkbox>Installation art</Checkbox>
-        </div>
-      </StyledItem>
-      <div>
-        <Button>NEXT</Button>
-      </div>
+        </StyledCheckboxItem>
+      </StyledCheckbox>
+      <StyledButtonWrapper>
+        <StyledButton className='black'>NEXT</StyledButton>
+      </StyledButtonWrapper>
     </StyledWrapper>
   );
 };
@@ -48,7 +48,7 @@ const StyledWrapper = styled.div`
   flex: 1;
 
   max-width: 1114px;
-  padding: 0 20px 256px;
+  padding: 48px 20px 256px;
   box-sizing: border-box;
 
   margin: 0px auto;
@@ -60,8 +60,57 @@ const StyledWrapper = styled.div`
   }
 `;
 
-const StyledItem = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0px, 1fr));
+const StyledCheckbox = styled.div`
+  margin-top: 60px;
+  display: flex;
+  flex-wrap: wrap;
+`;
+const StyledCheckboxItem = styled.div`
+  margin-right: 66px;
+  margin-bottom: 50px;
+`;
+const StyledTitle = styled.h1`
+  font-size: 48px;
+  font-family: BigCaslon-Medium, BigCaslon;
+  font-weight: 500;
+  color: #333333;
+  line-height: 58px;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  span {
+    color: #b2b2b2;
+  }
+`;
+const StyledButtonWrapper = styled.div`
+  text-align: right;
+  margin-top: 200px;
+`;
+
+const StyledButton = styled(Button)`
+  width: 240px;
+  height: 60px;
+  border: 2px solid #333333;
+  font-size: 16px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #333333;
+  line-height: 22px;
+  margin-bottom: 16px;
+  &.black {
+    background: #333333;
+    color: #ffffff;
+    &:hover {
+      color: #ffffff;
+    }
+  }
+  &:hover {
+    color: #333333;
+    border-color: #333333;
+  }
+  &.ant-btn:hover,
+  &.ant-btn:focus {
+    border-color: #333333;
+  }
 `;
 export default Market;
