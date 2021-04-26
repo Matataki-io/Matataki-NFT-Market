@@ -56,7 +56,7 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
   const { id } = router.query;
   const { backendData, metadata } = useMediaData(post);
 
-  const { profile, isMeTheOwner } = useMediaToken(Number(post?.id));
+  const { profile, isMeTheOwner, isAskExist } = useMediaToken(Number(post?.id));
 
   const scanLink = getTokenOnScan(Number(id));
   const ipfsLink = post?.backendData.tokenURI;
@@ -109,7 +109,7 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
                   {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
                 </LargeValue>
               </ContainerShare>
-              {profile.currentAsk.amount.gt(0) && (
+              {isAskExist && (
                 <ContainerShare>
                   <SmallLabel>Current Price</SmallLabel>
                   <LargeValue>
@@ -134,7 +134,9 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
                 </Link>
               ) : (
                 <Link href={`/p/${post.id}/ask`}>
-                  <TradeButton colorType='secondary'>Add Price</TradeButton>
+                  <TradeButton colorType='secondary'>
+                    {isAskExist ? 'Edit Price' : 'Add Price'}
+                  </TradeButton>
                 </Link>
               )}
               <CopyToClipboard

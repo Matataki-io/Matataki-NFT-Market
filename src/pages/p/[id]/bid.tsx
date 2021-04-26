@@ -41,7 +41,7 @@ export default function BidPage() {
   const handler = (val: string | string[]) => {
     setCurrency(val as string);
   };
-  const { profile, isMeTheOwner } = useMediaToken(Number(id));
+  const { profile, isMeTheOwner, isAskExist } = useMediaToken(Number(id));
   const [currency, setCurrency] = useState<string>('');
   const [amount, setAmount] = useState('0');
   const [sellOnShare, setSellOnShare] = useState(0);
@@ -158,7 +158,7 @@ export default function BidPage() {
             </p>
           </GreyCard>
 
-          {profile.currentAsk.currency === '' && (
+          {isAskExist && (
             <GreyCard>
               <p className='title'>CURRENT ASK</p>
               <p className='value'>
