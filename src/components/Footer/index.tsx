@@ -148,7 +148,7 @@ export default function Footer() {
         </StyledFooterItem>
         <StyledFooterItem className='item-rights'>
           <span className='rights'>
-            © 2021 MetaNetwork All Rights Reserved{' '}
+            © 2021 {process.env.NEXT_PUBLIC_APP_NAME} All Rights Reserved{' '}
           </span>
           <div className='i18n-switch'>
             <Tooltip
