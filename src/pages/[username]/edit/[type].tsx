@@ -1,114 +1,264 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Avatar, Form, Input, Button } from 'antd';
+import { Avatar, Form, Input, Button, message, Upload } from 'antd';
+import { UploadProps } from 'antd/lib/upload/interface';
+import { useRouter } from 'next/router';
+import { useWallet } from 'use-wallet';
+import { UserOutlined } from '@ant-design/icons';
+import { isEmpty } from 'lodash';
 
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
-};
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
-};
+import { updateUser } from '../../../backend/user';
+import { useLogin } from '../../../hooks/useLogin';
+import { storageUploadFile } from '../../../backend/storage';
+import { diffData } from '../../../utils/index';
+
+// 用户名校验
+const usernamePattern = /^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+// 允许的类型
+const registerType = ['collector', 'artist', 'gallery'];
+
+interface UserProps {
+  nickname?: string;
+  bio?: string;
+  username?: string;
+  avatar?: string;
+}
 
 const Register: React.FC<void> = () => {
-  const onFinish = (values: any) => {
+  const [formProfile] = Form.useForm();
+  const wallet = useWallet();
+  const router = useRouter();
+  const { type } = router.query;
+  const [avatarUrl, setAvatarUrl] = useState<string>();
+  const { isRegistered, userDataByWallet, register } = useLogin();
+
+  useEffect(() => {
+    if (!registerType.includes(String(type))) {
+      message.info('其他路由');
+      // router.push('/');
+    }
+  }, [type]);
+
+  // 设置默认值
+  useEffect(() => {
+    if (isRegistered) {
+      formProfile.setFieldsValue({
+        username: userDataByWallet?.username,
+        nickname: userDataByWallet?.nickname,
+        bio: userDataByWallet?.bio,
+      });
+      setAvatarUrl(userDataByWallet?.avatar || '');
+    }
+  }, [isRegistered, userDataByWallet, formProfile]);
+
+  const onFinish = async (values: any) => {
     console.log('Success:', values);
+    let { bio, username } = values;
+    const nickname = '';
+
+    let profile: UserProps = diffData(
+      {
+        username,
+        nickname,
+        bio,
+        avatar: avatarUrl!,
+      } as UserProps,
+      {
+        username: userDataByWallet?.username,
+        nickname: userDataByWallet?.nickname,
+        bio: userDataByWallet?.bio,
+        avatar: userDataByWallet?.avatar,
+      } as UserProps
+    );
+    if (isEmpty(profile)) {
+      message.info('没有修改');
+      return;
+    }
+    const res = await updateUser(Number(userDataByWallet?.id), profile);
+    console.log('res', res);
+    if (res.data.code === 200) {
+      message.success('更新成功');
+      // router.push(`/${username}`);
+    } else {
+      message.error('更新失败');
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+  const props: UploadProps = {
+    accept: 'image/jpeg, image/png',
+    name: 'file',
+    action: storageUploadFile,
+    method: 'PUT',
+    maxCount: 1,
+    onChange(info: any) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+        let url = info.file.response.data.url;
+        setAvatarUrl(url);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    beforeUpload(file: File) {
+      message.info('Uploading...');
+
+      const isJpgOrPng =
+        file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!');
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        message.error('Image must smaller than 2MB!');
+      }
+      return isJpgOrPng && isLt2M;
+    },
+  };
   return (
     <StyledWrapper>
-      <h1>Collector - Edit Profile</h1>
-      <h1>Artist - Edit Profile</h1>
-      <h1>Gallery - Edit Profile</h1>
-      <Avatar></Avatar>
+      <StyledTitle>
+        {type === 'collector'
+          ? 'Collector - Edit Profile'
+          : type === 'artist'
+          ? 'Artist - Edit Profile'
+          : type === 'gallery'
+          ? 'Gallery - Edit Profile'
+          : ''}
+      </StyledTitle>
+      <StyledAvatarItem>
+        <Upload {...props} className='upload'>
+          <Avatar size={125} icon={<UserOutlined />} src={avatarUrl}></Avatar>
+        </Upload>
+      </StyledAvatarItem>
 
-      <Form
-        {...layout}
-        name='basic'
+      <StyledForm
+        form={formProfile}
+        name='formProfile'
+        layout='vertical'
         initialValues={{ remember: true }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}>
-        <div>Info</div>
+        <StyledFormTitle>Info</StyledFormTitle>
+
         <Form.Item
-          label='Username'
+          label=''
           name='username'
-          rules={[{ required: true, message: 'Please input your username!' }]}>
-          <Input />
+          rules={[
+            {
+              required: true,
+              pattern: usernamePattern,
+              message: `Only numbers, characters a-z(lower case) '-' and the length is 5-20 are acceptable.`,
+            },
+          ]}>
+          <Input placeholder='Your username' autoComplete='off' />
         </Form.Item>
         <Form.Item
-          label='bio'
+          label=''
           name='bio'
-          rules={[{ required: true, message: 'Please input your password!' }]}>
-          <Input placeholder='Single sentence to describe yourself' />
+          rules={[{ required: true, message: 'Please input your bio!' }]}>
+          <Input placeholder='Describe yourself by single sentence' />
         </Form.Item>
+        {type === 'artist' || type === 'gallery' ? (
+          <>
+            <Form.Item
+              label=''
+              name=''
+              rules={[{ required: true, message: 'Please input your ..!' }]}>
+              <Input.TextArea
+                disabled
+                rows={6}
+                placeholder='Describe yourself compeletly…'
+              />
+            </Form.Item>
+            <StyledPhotoWrapper>
+              <StyledFormTitle>Personal Photo</StyledFormTitle>
+              <StyledFormPhoto>
+                <img
+                  src='https://ipfs.fleek.co/ipfs/QmZZXE2ZnKWYmCN5vkHJuUKa5HBSrpcKy28XgKES12pHpu'
+                  alt='Personal Photo'
+                />
+              </StyledFormPhoto>
+            </StyledPhotoWrapper>
+          </>
+        ) : null}
+        <StyledFormTitle>Contact</StyledFormTitle>
         <Form.Item
-          label='bio'
-          name='bio'
-          rules={[{ required: true, message: 'Please input your password!' }]}>
-          <Input.TextArea
-            rows={6}
-            placeholder='Describe yourself compeletly…'
-          />
-        </Form.Item>
-        <div>Personal Photo</div>
-        <div>
-          <img src='' alt='' />
-        </div>
-
-        <div>Contact</div>
-        <Form.Item
-          label='Email address'
+          label=''
           name='email'
-          rules={[{ required: true, message: 'Please input your password!' }]}>
-          <Input placeholder='Email address' />
+          rules={[
+            {
+              required: false,
+              type: 'email',
+              message: 'Please input your email address',
+            },
+          ]}>
+          <Input disabled placeholder='Email address' />
         </Form.Item>
         <Form.Item
-          label='Twitter username'
+          label=''
           name='email'
-          rules={[{ required: true, message: 'Please input your password!' }]}>
-          <Input placeholder='Twitter username' />
+          rules={[
+            { required: false, message: 'Please input your twitter username' },
+          ]}>
+          <Input disabled placeholder='Twitter username' />
         </Form.Item>
         <Form.Item
-          label='Facebook username'
+          label=''
           name='email'
-          rules={[{ required: true, message: 'Please input your password!' }]}>
-          <Input placeholder='Facebook username' />
+          rules={[
+            { required: false, message: 'Please input your facebook username' },
+          ]}>
+          <Input disabled placeholder='Facebook username' />
         </Form.Item>
         <Form.Item
-          label='Telegram username'
+          label=''
           name='telegram'
-          rules={[{ required: true, message: 'Please input your password!' }]}>
-          <Input placeholder='Telegram username' />
+          rules={[
+            { required: false, message: 'Please input your telegram username' },
+          ]}>
+          <Input disabled placeholder='Telegram username' />
         </Form.Item>
         <Form.Item
-          label='Medium username'
+          label=''
           name='medium'
-          rules={[{ required: true, message: 'Please input your password!' }]}>
-          <Input placeholder='Medium username' />
+          rules={[
+            { required: false, message: 'Please input your medium username' },
+          ]}>
+          <Input disabled placeholder='Medium username' />
         </Form.Item>
-        <div>Contracted Artists</div>
-        <Form.Item
-          label='Medium username'
-          name='medium'
-          rules={[{ required: true, message: 'Please input your password!' }]}>
-          <Input value='LaVine' />
-        </Form.Item>
-        <Form.Item
-          label='Medium username'
-          name='medium'
-          rules={[{ required: true, message: 'Please input your password!' }]}>
-          <Input value='Artist’s name' />
-        </Form.Item>
-
-        <Form.Item {...tailLayout}>
-          <Button type='primary' htmlType='submit'>
+        {type === 'gallery' ? (
+          <>
+            <StyledFormTitle>Contracted Artists</StyledFormTitle>
+            <Form.Item
+              label=''
+              name='medium'
+              rules={[
+                { required: false, message: 'Please input your password!' },
+              ]}>
+              <Input disabled placeholder='Enter username' />
+            </Form.Item>
+            <Form.Item
+              label=''
+              name='medium'
+              rules={[
+                { required: false, message: 'Please input your password!' },
+              ]}>
+              <Input disabled placeholder='Enter username' />
+            </Form.Item>
+          </>
+        ) : null}
+        <StyledItemWrapper>
+          <StyledButton className='black' htmlType='submit'>
             SAVE
-          </Button>
-        </Form.Item>
-      </Form>
+          </StyledButton>
+        </StyledItemWrapper>
+      </StyledForm>
     </StyledWrapper>
   );
 };
@@ -117,7 +267,7 @@ const StyledWrapper = styled.div`
   flex: 1;
 
   max-width: 520px;
-  padding: 0 20px 256px;
+  padding: 48px 20px 256px;
   box-sizing: border-box;
 
   margin: 0px auto;
@@ -129,4 +279,96 @@ const StyledWrapper = styled.div`
   }
 `;
 
+const StyledTitle = styled.h1`
+  font-size: 48px;
+  font-family: BigCaslon-Medium, BigCaslon;
+  font-weight: 500;
+  color: #333333;
+  line-height: 58px;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+`;
+const StyledFormTitle = styled.h3`
+  font-size: 20px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #333333;
+  line-height: 28px;
+  padding: 0;
+  margin: 0 0 40px 0;
+`;
+
+const StyledAvatarItem = styled.div`
+  text-align: center;
+  margin: 48px 0 0;
+  .upload {
+    cursor: pointer;
+    display: inline-block;
+    .ant-upload-list {
+      display: none;
+    }
+  }
+`;
+
+const StyledForm = styled(Form)`
+  margin-top: 56px;
+  .ant-form-item {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #d9d9d9;
+    .ant-input,
+    .ant-input-affix-wrapper {
+      border: none;
+    }
+    .ant-input:focus,
+    .ant-input-focused,
+    .ant-input-affix-wrapper:focus,
+    .ant-input-affix-wrapper-focused {
+      box-shadow: none;
+    }
+  }
+`;
+const StyledItemWrapper = styled.div`
+  margin-top: 48px;
+`;
+const StyledPhotoWrapper = styled.div`
+  margin-bottom: 60px;
+`;
+
+const StyledButton = styled(Button)`
+  width: 100%;
+  height: 60px;
+  border: 2px solid #333333;
+  font-size: 16px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #333333;
+  line-height: 22px;
+  margin-bottom: 16px;
+  &.black {
+    background: #333333;
+    color: #ffffff;
+    &:hover {
+      color: #ffffff;
+    }
+  }
+  &:hover {
+    color: #333333;
+    border-color: #333333;
+  }
+  &.ant-btn:hover,
+  &.ant-btn:focus {
+    border-color: #333333;
+  }
+`;
+
+const StyledFormPhoto = styled.div`
+  height: 270px;
+  overflow: hidden;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
 export default Register;
