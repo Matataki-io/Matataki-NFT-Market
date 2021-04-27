@@ -6,25 +6,33 @@ import { Carousel } from 'antd';
 // 关于更多 NFT
 const AboutNFTList = [
   {
-    img: 'https://placeimg.com/700/700/arch',
+    img:
+      'https://ipfs.fleek.co/ipfs/QmXi4Nmj5PL81n5hFrdJ3ApnwK5dj9iNA4DBefN3ZbYsGW',
     text: 'How to collect your favorite NFTs at NFT Market?',
     link: 'https://matataki.io',
+    id: 37,
   },
   {
-    img: 'https://placeimg.com/400/700/arch',
+    img:
+      'https://ipfs.fleek.co/ipfs/QmcMxt2kAweZ1PYhxkE5nNmXdREvn5mNXSaPfkHDYZaUbw',
     text:
       'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
     link: 'https://matataki.io',
+    id: 36,
   },
   {
-    img: 'https://placeimg.com/700/400/arch',
+    img:
+      'https://ipfs.fleek.co/ipfs/QmZZXE2ZnKWYmCN5vkHJuUKa5HBSrpcKy28XgKES12pHpu',
     text: 'NFTs, explained: what they are,why are some worth millions?',
     link: 'https://matataki.io',
+    id: 33,
   },
   {
-    img: 'https://placeimg.com/700/400/arch',
+    img:
+      'https://ipfs.fleek.co/ipfs/QmZZXE2ZnKWYmCN5vkHJuUKa5HBSrpcKy28XgKES12pHpu',
     text: 'How to make, buy and sell NFTs',
     link: 'https://matataki.io',
+    id: 33,
   },
 ];
 
@@ -39,8 +47,8 @@ const Artist: React.FC = () => {
           <div>
             <StyledAbout>
               {AboutNFTList.map((i, idx) => (
-                <Link key={idx} href='/'>
-                  <a className='box'>
+                <Link key={idx} href={`/${i.id}`}>
+                  <a className='box' target='_blank'>
                     <img src={i.img} alt={i.text} />
                   </a>
                 </Link>
@@ -50,8 +58,8 @@ const Artist: React.FC = () => {
           <div>
             <StyledAbout>
               {AboutNFTList.map((i, idx) => (
-                <Link key={idx} href='/'>
-                  <a className='box'>
+                <Link key={idx} href={`/${i.id}`}>
+                  <a className='box' target='_blank'>
                     <img src={i.img} alt={i.text} />
                   </a>
                 </Link>
