@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Link from 'next/link';
 
 import CommunityCard from '../../components/CommunityCard';
 
@@ -10,10 +11,13 @@ const Community: React.FC = () => {
         <StyledHeadTitle>Community</StyledHeadTitle>
       </StyledHead>
       <StyledItem>
-        <CommunityCard></CommunityCard>
-        <CommunityCard></CommunityCard>
-        <CommunityCard></CommunityCard>
-        <CommunityCard></CommunityCard>
+        {[...new Array(9)].map((i, idx) => (
+          <Link key={idx} href={`/community/${idx}`}>
+            <a>
+              <CommunityCard></CommunityCard>
+            </a>
+          </Link>
+        ))}
       </StyledItem>
     </StyledWrapper>
   );
@@ -45,7 +49,8 @@ const StyledHeadTitle = styled.h2`
   margin: 0;
 `;
 const StyledItem = styled.div`
-  & > div {
+  & > a {
+    display: block;
     margin: 48px 0;
   }
 `;

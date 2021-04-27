@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, message } from 'antd';
+import { Avatar, message, Button } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
@@ -151,11 +151,18 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             <p>{userInfo.bio || 'Not...'}</p>
           </StyledHeadUserInfo>
         </StyledHeadUser>
-        <StyledHeadIcon>
-          <ReactSVG className='icon' src={IconTelegram} />
-          <ReactSVG className='icon' src={IconTwitter} />
-          <ReactSVG className='icon' src={IconEmail} />
-        </StyledHeadIcon>
+        <div>
+          <StyledHeadIcon>
+            <ReactSVG className='icon' src={IconTelegram} />
+            <ReactSVG className='icon' src={IconTwitter} />
+            <ReactSVG className='icon' src={IconEmail} />
+          </StyledHeadIcon>
+          {isMyself ? (
+            <Button onClick={() => router.push(`/${username}/edit/collector`)}>
+              EDIT PROFILE
+            </Button>
+          ) : null}
+        </div>
       </StyledHead>
       <StyledLine></StyledLine>
       <StyledMediaCardContainer>
