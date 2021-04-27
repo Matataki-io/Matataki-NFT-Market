@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import Link from 'next/link';
 
 import GalleryCard from '../../components/GalleryCard';
 
@@ -11,7 +12,11 @@ const Gallery: React.FC = () => {
       </StyledHead>
       <StyledGallery>
         {[...new Array(12)].map((i, idx) => (
-          <GalleryCard key={idx}></GalleryCard>
+          <Link key={idx} href={`/gallery/${idx}`}>
+            <a>
+              <GalleryCard></GalleryCard>
+            </a>
+          </Link>
         ))}
       </StyledGallery>
     </StyledWrapper>
@@ -67,9 +72,6 @@ const StyledGallery = styled.div`
     margin-top: 20px;
     width: 100%;
     text-align: center;
-  }
-  & > a {
-    height: 456px;
   }
 `;
 
