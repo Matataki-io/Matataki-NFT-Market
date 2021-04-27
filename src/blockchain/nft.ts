@@ -1,7 +1,9 @@
 import { MediaFactory } from './contracts/MediaFactory';
 import { Decimal } from '../utils/Decimal';
-import { Signer } from 'ethers';
+import { providers, Signer, utils } from 'ethers';
 import { currentContracts } from '../constant/contracts';
+import { signMintWithSig } from './permitUtils';
+import { Media } from './contracts/Media';
 
 /**
  * 铸 Media 币
@@ -20,24 +22,13 @@ export async function mintMediaToken(
   creatorShare: number,
   wallet: Signer
 ) {
-  if (!tokenURI) {
-    throw new Error('--tokenURI token URI is required');
-  }
-  if (!metadataURI) {
-    throw new Error('--metadataURI metadata URI is required');
-  }
-  if (!contentHash) {
-    throw new Error('--contentHash content hash is required');
-  }
-  if (!metadataHash) {
-    throw new Error('--metadataHash content hash is required');
-  }
-  if (!creatorShare && creatorShare !== 0) {
-    throw new Error('--creatorShare creator share is required');
-  }
-  if (creatorShare < 0 || creatorShare > 100) {
-    throw new Error('--creatorShare creator share range is [0, 100]');
-  }
+  checkParameters(
+    tokenURI,
+    metadataURI,
+    contentHash,
+    metadataHash,
+    creatorShare
+  );
   const addressBook = currentContracts;
   if (!addressBook) {
     throw new Error('No address book');
@@ -96,5 +87,93 @@ export async function mintMediaToken(
         reject(errorMessage);
       });
     });
+  }
+}
+
+export async function GenerateCreationSignature(
+  media: Media,
+  tokenURI: string,
+  metadataURI: string,
+  contentHash: string,
+  metadataHash: string,
+  to: string,
+  creatorShare: number,
+  wallet: providers.JsonRpcSigner
+) {
+  checkParameters(
+    tokenURI,
+    metadataURI,
+    contentHash,
+    metadataHash,
+    creatorShare
+  );
+  const addressBook = currentContracts;
+  if (!utils.isAddress(to)) {
+    throw new Error('Bad `to`, please contact team ASAP.');
+  }
+  if (!addressBook) {
+    throw new Error('No address book');
+  }
+  if (!addressBook.MEDIA) {
+    throw new Error(`Media contract has not yet been deployed`);
+  }
+
+  console.log(
+    'Minting by signing... ',
+    tokenURI,
+    contentHash,
+    metadataURI,
+    metadataHash
+  );
+
+  const { signer, sig } = await signMintWithSig(wallet, media, media.address, {
+    contentHash: contentHash,
+    metadataHash: metadataHash,
+    creatorShare: Decimal.new(creatorShare).value,
+    to,
+  });
+
+  return {
+    signer,
+    data: {
+      tokenURI: tokenURI,
+      metadataURI: metadataURI,
+      contentHash: '0x' + Buffer.from(contentHash, 'hex').toString('hex'),
+      metadataHash: '0x' + Buffer.from(metadataHash, 'hex').toString('hex'),
+    },
+    bidShareData: {
+      prevOwner: Decimal.new(0),
+      creator: Decimal.new(creatorShare),
+      owner: Decimal.new(100 - creatorShare),
+    },
+    to,
+    sig,
+  };
+}
+
+export function checkParameters(
+  tokenURI: string,
+  metadataURI: string,
+  contentHash: string,
+  metadataHash: string,
+  creatorShare: number
+) {
+  if (!tokenURI) {
+    throw new Error('--tokenURI token URI is required');
+  }
+  if (!metadataURI) {
+    throw new Error('--metadataURI metadata URI is required');
+  }
+  if (!contentHash) {
+    throw new Error('--contentHash content hash is required');
+  }
+  if (!metadataHash) {
+    throw new Error('--metadataHash content hash is required');
+  }
+  if (!creatorShare && creatorShare !== 0) {
+    throw new Error('--creatorShare creator share is required');
+  }
+  if (creatorShare < 0 || creatorShare > 100) {
+    throw new Error('--creatorShare creator share range is [0, 100]');
   }
 }
