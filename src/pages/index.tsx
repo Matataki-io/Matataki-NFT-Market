@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { useMount } from 'ahooks';
 import { Spin, message } from 'antd';
+import { RightOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import Creators from '../components/Creators';
@@ -165,6 +166,7 @@ const Home: React.FC<void> = () => {
           <Link href='/market'>
             <a target='_blank' className='more'>
               VIEW MORE
+              <RightOutlined />
             </a>
           </Link>
         </StyledModuleHead>
@@ -195,7 +197,12 @@ const Home: React.FC<void> = () => {
           <StyledTitle>
             Top NFT Creators<span>Hot</span>
           </StyledTitle>
-          <span className='more'>VIEW MORE</span>
+          <Link href='/market'>
+            <a target='_blank' className='more'>
+              VIEW MORE
+              <RightOutlined />
+            </a>
+          </Link>
         </StyledModuleHead>
         <StyledCreators>
           {creatorsList.map((i, idx) => (
@@ -213,7 +220,12 @@ const Home: React.FC<void> = () => {
           <StyledTitle>
             Learn More about NFT Market<span>Fun</span>
           </StyledTitle>
-          <span className='more'>VIEW MORE</span>
+          <Link href='/market'>
+            <a target='_blank' className='more'>
+              VIEW MORE
+              <RightOutlined />
+            </a>
+          </Link>
         </StyledModuleHead>
         <StyledAbout>
           {AboutNFTList.map((i, idx) => (
