@@ -18,6 +18,8 @@ import { getCookie } from '../../utils/cookie';
 import { shortedWalletAccount } from '../../utils/index';
 import { message } from 'antd';
 import { isEmpty } from 'lodash';
+import { useRouter } from 'next/router';
+
 // import Search from '../Search';
 
 interface HeaderProps {
@@ -32,6 +34,8 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   setIsProfile,
 }) => {
   const wallet = useWallet();
+  const router = useRouter();
+
   const shortedccount = useMemo(() => {
     if (wallet.status !== 'connected') return 'Not Connected';
     return wallet.account ? shortedWalletAccount(wallet.account) : '';
@@ -94,20 +98,19 @@ const HeaderComponents: React.FC<HeaderProps> = ({
       if (registeredLoading) return;
       // 查询完是否注册
       if (isRegistered) {
-        setIsProfile(false);
         if (!getCookie('token')) loginWithSignature();
       } else {
-        setIsProfile(true);
+        router.push('/register/collector');
       }
       setConnect(false);
     }
   }, [
     wallet.status,
     isRegistered,
-    setIsProfile,
     loginWithSignature,
     registeredLoading,
     connect,
+    router,
   ]);
 
   return (

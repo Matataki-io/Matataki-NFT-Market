@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Avatar, Carousel, message } from 'antd';
+import { Avatar, Carousel, message, Button } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { ReactSVG } from 'react-svg';
@@ -57,6 +57,11 @@ const GalleryId: React.FC = () => {
             <p>{userInfo.bio || 'Not...'}</p>
           </StyledHeadUserInfo>
         </StyledHeadUser>
+        <StyledHeadIcon>
+          <ReactSVG className='icon' src={IconTelegram} />
+          <ReactSVG className='icon' src={IconTwitter} />
+          <ReactSVG className='icon' src={IconEmail} />
+        </StyledHeadIcon>
       </StyledHead>
       <StyledLine></StyledLine>
       <StyledItem>
@@ -235,6 +240,22 @@ const StyledHeadUserInfo = styled.div`
     line-height: 1.2;
     padding: 0;
     margin: 0;
+  }
+`;
+const StyledHeadIcon = styled.div`
+  display: flex;
+  align-items: center;
+  .icon {
+    width: 32px;
+    height: 32px;
+    margin-left: 32px;
+    &:nth-of-type(1) {
+      margin-left: 0;
+    }
+    svg {
+      font-size: 32px;
+      color: #333333;
+    }
   }
 `;
 const StyledItemTitle = styled.h3`
