@@ -1,15 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Avatar, Carousel } from 'antd';
+import { Avatar, Carousel, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { ReactSVG } from 'react-svg';
+import { useRouter } from 'next/router';
 
+import { UserInfoState } from '../../store/userInfoSlice';
+import { getUser } from '../../backend/user';
 import IconTelegram from '../../assets/icons/telegram.svg';
 import IconEmail from '../../assets/icons/email1.svg';
 import IconTwitter from '../../assets/icons/twitter.svg';
 
+const keyMessage = 'fetchUser';
+
 const GalleryId: React.FC = () => {
+  const router = useRouter();
+  const { username } = router.query;
+  const [userInfo, setUserInfo] = useState<UserInfoState>({
+    avatar: '',
+    nickname: '',
+    username: '',
+  });
+  useEffect(() => {
+    const fetchUserInfoData = async () => {
+      if (typeof username !== 'string') return;
+      try {
+        const userInfo = await getUser(username as string);
+        console.log('userInfo', userInfo);
+        setUserInfo(userInfo);
+      } catch (e) {
+        let err = e.toString();
+        console.log('e', e.toString());
+
+        if (err.includes('status code 404')) {
+          message.destroy(keyMessage);
+          message.error({ content: 'No such user！', key: keyMessage });
+          router.push('/');
+        }
+      }
+    };
+
+    fetchUserInfoData();
+  }, []);
+
   return (
     <StyledWrapper>
       <StyledHead>
