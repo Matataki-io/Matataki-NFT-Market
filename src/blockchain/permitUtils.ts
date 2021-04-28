@@ -26,12 +26,13 @@ export async function signMintWithSig(
     wallet.getChainId(),
     media.name(),
   ]);
+  console.info('data', data);
   const finalData = {
     ...data,
-    // contentHash: '0x' + data.contentHash,
-    // metadataHash: '0x' + data.metadataHash,
-    contentHash: Uint8Array.from(Buffer.from(data.contentHash, 'hex')),
-    metadataHash: Uint8Array.from(Buffer.from(data.metadataHash, 'hex')),
+    contentHash: '0x' + data.contentHash,
+    metadataHash: '0x' + data.metadataHash,
+    // contentHash: Uint8Array.from(Buffer.from(data.contentHash, 'hex')),
+    // metadataHash: Uint8Array.from(Buffer.from(data.metadataHash, 'hex')),
     nonce,
     deadline,
   };
