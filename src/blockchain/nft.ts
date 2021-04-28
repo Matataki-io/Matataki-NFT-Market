@@ -92,7 +92,6 @@ export async function mintMediaToken(
 }
 
 export async function GenerateCreationSignature(
-  media: Media,
   tokenURI: string,
   metadataURI: string,
   contentHash: string,
@@ -118,6 +117,7 @@ export async function GenerateCreationSignature(
   if (!addressBook.MEDIA) {
     throw new Error(`Media contract has not yet been deployed`);
   }
+  const media = MediaFactory.connect(addressBook.MEDIA, wallet);
 
   console.log(
     'Minting by signing... ',
