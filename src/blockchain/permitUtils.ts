@@ -21,11 +21,11 @@ export async function signMintWithSig(
   nonce: BigNumberish
 ) {
   const deadline = getDeadline(365);
-  const [signerWallet, chainId] = await Promise.all([
+  const [signerWallet, chainId, contractName] = await Promise.all([
     wallet.getAddress(),
     wallet.getChainId(),
+    media.name(),
   ]);
-  const [contractName] = await Promise.all([media.name()]);
   const finalData = {
     ...data,
     // contentHash: '0x' + data.contentHash,
