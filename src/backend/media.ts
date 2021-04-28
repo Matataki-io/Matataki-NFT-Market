@@ -43,7 +43,16 @@ export async function getMediaMetadata(url: string): Promise<MediaMetadata> {
 }
 // 提交 media
 export async function PostMedia({ txHash }: { txHash: string }): Promise<any> {
+  // bad habit to `any` bro
   return await backendClient.post('/media', {
     txHash,
   });
+}
+
+export function getNonceByPublisherId(publisherUid: number) {
+  return backendClient.get(`/media/gasfreeCreate/${publisherUid}/nonce`);
+}
+
+export function sendToPublisherForPreview(publisherUid: number) {
+  return backendClient.post(`/media/gasfreeCreate/${publisherUid}`);
 }
