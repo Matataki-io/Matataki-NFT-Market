@@ -14,9 +14,8 @@ export default function MintPageDevPage() {
   const signMsg = useCallback(async () => {
     if (!isSignerReady(signer)) return;
     const result = await GenerateCreationSignature(
-      mediaContract,
-      'QmReTHhzaPKTRyKre3FqXzzn8uyHGU9Kq4Ycs6fdr1jncq',
-      'QmU5cKtsaQRAyozt7YtTBCd4QZdedUZG9okY9AwXMD9Cnr',
+      'https://ipfs.fleek.co/ipfs/QmReTHhzaPKTRyKre3FqXzzn8uyHGU9Kq4Ycs6fdr1jncq',
+      'https://ipfs.fleek.co/ipfs/QmU5cKtsaQRAyozt7YtTBCd4QZdedUZG9okY9AwXMD9Cnr',
       '4a67e7d91100efbf6664ea6dffb4e8a128f2c5bc4321b3132e93bfc7178e4cd7',
       'd6d1c1cda7156799beea3d2ecb519a1b97d6b7ac73ed657c9add16038d160794',
       '0x7fd97686785Cb93098FA25d0D6c47Cb0513B9A01',
