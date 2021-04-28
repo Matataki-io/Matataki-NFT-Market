@@ -4,6 +4,7 @@ import { providers, Signer, utils } from 'ethers';
 import { currentContracts } from '../constant/contracts';
 import { signMintWithSig } from './permitUtils';
 import { Media } from './contracts/Media';
+import type { MintAndTransferParameters } from '../types/MintAndTransfer';
 
 /**
  * 铸 Media 币
@@ -99,7 +100,7 @@ export async function GenerateCreationSignature(
   to: string,
   creatorShare: number,
   wallet: providers.JsonRpcSigner
-) {
+): Promise<MintAndTransferParameters> {
   checkParameters(
     tokenURI,
     metadataURI,
@@ -125,26 +126,34 @@ export async function GenerateCreationSignature(
     metadataURI,
     metadataHash
   );
-
-  const { signer, sig } = await signMintWithSig(wallet, media, media.address, {
-    contentHash: contentHash,
-    metadataHash: metadataHash,
-    creatorShare: Decimal.new(creatorShare).value,
-    to,
-  });
+  // @todo: get it from the backend
+  const nonce = 0;
+  const { signer, sig } = await signMintWithSig(
+    wallet,
+    media,
+    media.address,
+    {
+      contentHash: contentHash,
+      metadataHash: metadataHash,
+      creatorShare: Decimal.new(creatorShare).value,
+      to,
+    },
+    nonce
+  );
 
   return {
-    signer,
+    creator: signer,
     data: {
       tokenURI: tokenURI,
       metadataURI: metadataURI,
       contentHash: '0x' + Buffer.from(contentHash, 'hex').toString('hex'),
       metadataHash: '0x' + Buffer.from(metadataHash, 'hex').toString('hex'),
     },
-    bidShareData: {
-      prevOwner: Decimal.new(0),
-      creator: Decimal.new(creatorShare),
-      owner: Decimal.new(100 - creatorShare),
+    bidShares: {
+      // I fxxking hate Zora's Decimal lib
+      prevOwner: { value: Decimal.new(0).value.toHexString() },
+      creator: { value: Decimal.new(creatorShare).value.toHexString() },
+      owner: { value: Decimal.new(100 - creatorShare).value.toHexString() },
     },
     to,
     sig,
@@ -177,3 +186,16 @@ export function checkParameters(
     throw new Error('--creatorShare creator share range is [0, 100]');
   }
 }
+
+// export async function sendPermitToMint(
+//   media: Media,
+//   data: MintAndTransferParameters
+// ) {
+//   const res = await media.mintAndTransferWithSig(
+//     data.creator,
+//     data.data,
+//     data.bidShares,
+//     data.to,
+//     data.sig
+//   );
+// }

@@ -17,17 +17,15 @@ export async function signMintWithSig(
   wallet: providers.JsonRpcSigner,
   media: Media,
   verifyingContract: string,
-  data: MintAndTransferWithSig
+  data: MintAndTransferWithSig,
+  nonce: BigNumberish
 ) {
   const deadline = getDeadline(365);
   const [signerWallet, chainId] = await Promise.all([
     wallet.getAddress(),
     wallet.getChainId(),
   ]);
-  const [contractName, nonce] = await Promise.all([
-    media.name(),
-    media.mintWithSigNonces(signerWallet),
-  ]);
+  const [contractName] = await Promise.all([media.name()]);
   const finalData = {
     ...data,
     // contentHash: '0x' + data.contentHash,
