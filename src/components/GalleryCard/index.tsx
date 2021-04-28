@@ -19,6 +19,7 @@ const StyledCover = styled.div`
   width: 100%;
   height: 192px;
   overflow: hidden;
+  border: 1px solid rgb(0 0 0 / 5%);
   img {
     width: 100%;
     height: 100%;

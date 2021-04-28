@@ -218,8 +218,8 @@ const StyledNfts = styled.div`
   display: grid;
   justify-content: center;
   grid-template-columns: repeat(3, minmax(0px, 330px));
-  gap: 30px 20px;
-  margin: 48px auto 0;
+  gap: 40px 24px;
+  margin: 44px auto 0;
   min-height: 320px;
   /* @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 330px));

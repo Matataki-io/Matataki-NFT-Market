@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { ReactSVG } from 'react-svg';
 import { useRouter } from 'next/router';
 
+import ArtworksCarousel from '../../components/ArtworksCarousel';
+
 import { UserInfoState } from '../../store/userInfoSlice';
 import { getUser } from '../../backend/user';
 import IconTelegram from '../../assets/icons/telegram.svg';
@@ -74,44 +76,7 @@ const GalleryId: React.FC = () => {
       <StyledItem>
         <StyledItemTitle>Artworks</StyledItemTitle>
         <StyledArtworks>
-          <Carousel>
-            <StyledArtworksItem>
-              <div>
-                <div className='cover'>
-                  <img
-                    src='https://placeimg.com/1280/720/nature?t=1617247698083'
-                    alt=''
-                  />
-                </div>
-                <p>45a Festa de la Verema d&apos;Alella</p>
-                <p>© Phoebe Geber Attila 2021 </p>
-              </div>
-            </StyledArtworksItem>
-            <StyledArtworksItem>
-              <div>
-                <div className='cover'>
-                  <img
-                    src='https://placeimg.com/300/300/nature?t=1617247698083'
-                    alt=''
-                  />
-                </div>
-                <p>45a Festa de la Verema d&apos;Alella</p>
-                <p>© Phoebe Geber Attila 123123 </p>
-              </div>
-            </StyledArtworksItem>
-            <StyledArtworksItem>
-              <div>
-                <div className='cover'>
-                  <img
-                    src='https://placeimg.com/500/500/nature?t=1617247698083'
-                    alt=''
-                  />
-                </div>
-                <p>45a Festa de la Verema d&apos;Alella</p>
-                <p>© Phoebe Geber Attila 123123 </p>
-              </div>
-            </StyledArtworksItem>
-          </Carousel>
+          <ArtworksCarousel></ArtworksCarousel>
         </StyledArtworks>
       </StyledItem>
 
@@ -265,10 +230,10 @@ const StyledWrapper = styled.div`
 `;
 
 const StyledHead = styled.div`
-  /* display: flex;
+  display: flex;
   align-items: cennter;
   justify-content: space-between;
-  flex-wrap: wrap; */
+  flex-wrap: wrap;
   padding: 48px 0;
 `;
 const StyledHeadUser = styled.div`
@@ -278,6 +243,8 @@ const StyledHeadUser = styled.div`
 `;
 const StyledHeadUserInfo = styled.div`
   margin: 0 0 0 15px;
+  position: relative;
+  top: 10px;
   h1 {
     font-size: 34px;
     font-family: DINAlternate-Bold, DINAlternate;
@@ -295,7 +262,11 @@ const StyledHeadUserInfo = styled.div`
     line-height: 1.2;
     padding: 0;
     margin: 0;
+    margin: 6px 0 0 0;
   }
+`;
+const StyledArtworks = styled.div`
+  margin-top: 64px;
 `;
 const StyledItemTitle = styled.h3`
   font-size: 32px;
@@ -354,32 +325,10 @@ const StyledWord = styled.div`
 
 const StyledVideo = styled.div`
   margin: 64px 0 0;
-  height: 810px;
+  /* height: 810px; */
   .media-video {
     width: 100%;
     height: 100%;
-  }
-`;
-const StyledArtworks = styled.div`
-  margin-top: 64px;
-`;
-const StyledArtworksItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  .cover {
-    width: 100%;
-    max-height: 720px;
-    margin: 0 auto;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    img {
-      height: 100%;
-      object-fit: contain;
-    }
   }
 `;
 

@@ -19,6 +19,20 @@ const NFTComponents: React.FC<NFTProps> = ({
 }) => {
   return (
     <StyledNFTWrapper>
+      <StyledNFTHead>
+        <Link href={`/${creator?.username!}`}>
+          <a target='_blank' className='user'>
+            {content || fields ? (
+              <Avatar
+                className='user-avatar'
+                icon={<UserOutlined />}
+                src={creator?.avatar}
+              />
+            ) : null}
+            <span className='username'>{creator?.username}</span>
+          </a>
+        </Link>
+      </StyledNFTHead>
       <StyledNFTContent>
         {type === 'image' ? (
           <div className='media-images'>
@@ -63,28 +77,6 @@ const NFTComponents: React.FC<NFTProps> = ({
       </StyledNFTContent>
       <StyledNFTFooter>
         <h5>{title}</h5>
-        <StyledNFTFooterUser>
-          <div className='user'>
-            <span className='subtitle'>
-              {owner?.username ? 'Collected by' : ''}
-            </span>
-            <Link href={`/${owner?.username}`}>
-              <a target='_blank' className='owner'>
-                <span className='owner-name'>{owner?.username}</span>
-                {content || fields ? (
-                  <Avatar
-                    className='custom-avatar'
-                    icon={<UserOutlined />}
-                    size={16}
-                    src={owner?.avatar}
-                  />
-                ) : (
-                  ''
-                )}
-              </a>
-            </Link>
-          </div>
-        </StyledNFTFooterUser>
       </StyledNFTFooter>
     </StyledNFTWrapper>
   );
@@ -98,7 +90,35 @@ const StyledNFTWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
+const StyledNFTHead = styled.div`
+  padding: 22px 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .user {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    .user-avatar {
+      flex: 0 0 32px;
+    }
+  }
+  .username {
+    font-weight: 500;
+    font-size: 16px;
+    color: #000;
+    margin: 0px 0px 0px 10px;
+  }
+  .time {
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 0.5;
+    margin: 0px;
+    color: #000;
+  }
+`;
 const StyledNFTContent = styled.div`
   overflow: hidden;
   z-index: 0;
@@ -114,7 +134,6 @@ const StyledNFTContent = styled.div`
   align-items: center;
   /* flex: 1; */
   border: 1px solid rgb(0 0 0 / 5%);
-  box-sizing: border;
   .media-video,
   .media-text,
   .media-file,
@@ -138,10 +157,10 @@ const StyledNFTContent = styled.div`
       display: block;
       max-width: 100%;
       max-height: 100%;
-      width: 100%;
-      height: 100%;
+      width: auto;
+      height: auto;
       margin: 0px auto;
-      object-fit: cover;
+      object-fit: contain;
     }
   }
   .media-audio {
@@ -153,74 +172,49 @@ const StyledNFTContent = styled.div`
   }
 `;
 const StyledNFTFooter = styled.div`
-  padding: 15px;
-  min-height: 100px;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-start;
   h5 {
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 30px;
-    margin-bottom: 10px;
-    margin-top: 0;
+    margin: 24px 0 22px 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
+    font-size: 24px;
+    font-family: BigCaslon-Medium, BigCaslon;
+    font-weight: 500;
+    color: #333333;
+    line-height: 28px;
   }
 `;
-const StyledNFTFooterUser = styled.div`
-  width: 100%;
+const StyledNFTFooterPrice = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   align-items: center;
-  .subtitle {
-    font-size: 15px;
-    margin: 0px 5px 0px 0px;
-    color: rgba(0, 0, 0, 0.5);
-    line-height: 30px;
+  justify-content: start;
+  & > div:nth-child(1) {
+    margin-right: 62px;
+  }
+  width: 100%;
+  .price {
+    font-size: 20px;
+    font-family: DINAlternate-Bold, DINAlternate;
+    font-weight: bold;
+    color: #193cb1;
+    line-height: 24px;
+    padding: 0;
+    margin: 0;
+  }
+  .name {
+    font-size: 12px;
+    font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
-  }
-  .user {
-    font-weight: 500;
-    width: auto;
-    flex: 0 1 auto;
-    margin-bottom: 0px;
-    line-height: 30px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-  }
-  .owner {
-    width: auto;
-    flex: 0 1 auto;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    .owner-name {
-      font-weight: 500;
-      font-size: 15px;
-      line-height: 30px;
-      white-space: nowrap;
-      margin: 0px 5px 0px 0px;
-      color: #000;
-    }
-  }
-  .id {
-    font-size: 16px;
-    font-weight: 400;
-  }
-  .custom-avatar {
-    flex: 0 0 16px;
+    color: #193cb1;
+    line-height: 17px;
+    padding: 0;
+    margin: 4px 0 0 0;
   }
 `;
 
