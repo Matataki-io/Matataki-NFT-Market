@@ -158,13 +158,17 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             <ReactSVG className='icon' src={IconEmail} />
           </StyledHeadIcon>
           {isMyself ? (
-            <Button onClick={() => router.push(`/${username}/edit/collector`)}>
-              EDIT PROFILE
-            </Button>
+            <StyledHeadEdit>
+              <Button
+                onClick={() => router.push(`/${username}/edit/collector`)}>
+                EDIT PROFILE
+              </Button>
+            </StyledHeadEdit>
           ) : null}
         </div>
       </StyledHead>
       <StyledLine></StyledLine>
+      <StyledTitle>Collection</StyledTitle>
       <StyledMediaCardContainer>
         {nftListData.map((item, index) => (
           <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
@@ -198,6 +202,15 @@ const StyledLine = styled.div`
   height: 1px;
   background: #dbdbdb;
 `;
+const StyledTitle = styled.div`
+  font-size: 32px;
+  font-family: BigCaslon-Medium, BigCaslon;
+  font-weight: 500;
+  color: #333333;
+  line-height: 39px;
+  padding: 0;
+  margin: 24px 0 0 0;
+`;
 const StyledHead = styled.div`
   display: flex;
   align-items: cennter;
@@ -212,6 +225,8 @@ const StyledHeadUser = styled.div`
 `;
 const StyledHeadUserInfo = styled.div`
   margin: 0 0 0 15px;
+  position: relative;
+  top: 10px;
   h1 {
     font-size: 34px;
     font-family: DINAlternate-Bold, DINAlternate;
@@ -228,7 +243,7 @@ const StyledHeadUserInfo = styled.div`
     color: #333333;
     line-height: 1.2;
     padding: 0;
-    margin: 0;
+    margin: 6px 0 0 0;
   }
 `;
 const StyledHeadIcon = styled.div`
@@ -247,6 +262,10 @@ const StyledHeadIcon = styled.div`
     }
   }
 `;
+const StyledHeadEdit = styled.div`
+  margin: 10px 0 0 0;
+  text-align: right;
+`;
 
 const StyledMediaCardContainer = styled.div`
   width: 100%;
@@ -254,6 +273,7 @@ const StyledMediaCardContainer = styled.div`
   justify-content: center;
   gap: 30px 20px;
   margin: 48px auto 0;
+  min-height: 320px;
   grid-template-columns: repeat(4, minmax(0px, 330px));
   @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 330px));
