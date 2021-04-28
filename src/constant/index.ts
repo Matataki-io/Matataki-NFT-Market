@@ -57,6 +57,13 @@ export const BACKEND_CLIENT = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
 });
 
+export enum UserRole {
+  Collector = 'COLLECTOR',
+  Artist = 'ARTIST',
+  Gallery = 'GALLERY',
+  SuperAdmin = 'SUPER_ADMIN',
+}
+
 export const MINUTE = 1000 * 60;
 export const AppName = 'VICKREY NFT';
 export const MessageForLogin = `${AppName} uses this cryptographic signature in place of a password, verifying that you are the owner of this Ethereum address`;

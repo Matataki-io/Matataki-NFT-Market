@@ -3,6 +3,7 @@ import { PaginationResult } from '../types/PaginationResult';
 import { User } from '../types/User.types';
 import { BidLog } from '../types/Bid.d';
 import { setCookie } from '../utils/cookie';
+import { GeneralResponse } from '../types/Backend.types';
 
 interface SignInPermit {
   signature: string;
@@ -88,4 +89,11 @@ export async function getUserBids(username: string) {
     `/user/@${username}/bids`
   );
   return data;
+}
+
+export async function getGalleryUsers(): Promise<User[]> {
+  const { data } = await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
+    `/user/gallery`
+  );
+  return data.data;
 }
