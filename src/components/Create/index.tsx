@@ -6,7 +6,7 @@ import { Signer } from 'ethers';
 import { PostMedia } from '../../backend/media';
 
 import ButtonCustom from '../Button';
-import NFT from '../NFT';
+import NFT from '../NFTCreate';
 import { firstUpperCase } from '../../utils/index';
 import { storageUploadToIpfsUrl } from '../../backend/storage';
 import {
@@ -401,7 +401,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     return (
       <Fragment>
         <StyledSubtitle>Add information</StyledSubtitle>
-        <StyledMultiiMediaForm
+        <StyledForm
           name='nameAndDescription'
           form={formNameAndDescription}
           layout='vertical'
@@ -410,20 +410,17 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           onFinishFailed={onFinishFailedInfo}>
           <StyledMultiiMediaFormItem className='input'>
             <Form.Item
-              label='Name'
+              label=''
               name='name'
               rules={[{ required: true, message: 'Name is required' }]}>
-              <Input placeholder='Enter Name' className='input-name' />
+              <Input placeholder='Enter Name' />
             </Form.Item>
 
             <Form.Item
-              label='Description'
+              label=''
               name='description'
               rules={[{ required: true, message: 'Description is required' }]}>
-              <Input.TextArea
-                placeholder='Enter Description'
-                className='input-textarea'
-              />
+              <Input.TextArea placeholder='Enter Description' />
             </Form.Item>
           </StyledMultiiMediaFormItem>
           <StyledMultiiMediaFormItem className='footer'>
@@ -434,7 +431,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               Continue
             </ButtonCustom>
           </StyledMultiiMediaFormItem>
-        </StyledMultiiMediaForm>
+        </StyledForm>
       </Fragment>
     );
   };
@@ -601,9 +598,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   return (
     <StyledWrapper>
       <StyledContainer>
+        <StyledTitle>Create Artworks</StyledTitle>
+
         <StyledContainerGrid>
           <StyledContainerGridCol start='0' end='6'>
-            <StyledTitle>Create Media</StyledTitle>
             {step === 0 ? (
               <Step0></Step0>
             ) : step === 1 ? (
@@ -642,7 +640,7 @@ const StyledUploadWrapper = styled.div`
 `;
 const StyledWrapper = styled.div`
   margin: 0px;
-  padding: 130px 0px;
+  padding: 80px 0 0;
   background: rgb(255, 255, 255);
   z-index: 3;
   position: fixed;
@@ -666,7 +664,7 @@ const StyledHead = styled.div`
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
-  padding: 30px;
+  padding: 48px 0 0 0;
   margin: 0px auto;
   width: 100%;
   max-width: calc(1246px);
@@ -708,15 +706,13 @@ const StyledSubtitle = styled.h4`
 `;
 const StyledMultiiMediaInput = styled.div`
   width: 100%;
-  border: 2px solid rgba(0, 0, 0, 0.1);
   padding: 20px 0px 0px;
   position: relative;
 `;
 const StyledMultiiMediaInputHead = styled.div`
   color: #000;
   width: auto;
-  padding: 0px 20px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  padding: 0;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -760,8 +756,9 @@ const StyledMultiiMediaInputHeadTab = styled.h5<{ actions?: boolean }>`
 const StyledMultiiMediaInputWrapper = styled.div`
   width: auto;
   height: 100px;
-  margin: 20px;
-  background: rgba(0, 0, 0, 0.05);
+  margin: 20px 0;
+  border: 1px solid #dbdbdb;
+  color: #b2b2b2;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -822,10 +819,6 @@ const StyledMultiiMediaInputContainer = styled.div`
 `;
 const StyledMultiiMediaActions = styled.div`
   width: 100%;
-  padding: 20px;
-  border-right: 2px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-  border-left: 2px solid rgba(0, 0, 0, 0.1);
   border-image: initial;
   border-top: none;
   display: flex;
@@ -839,13 +832,11 @@ const StyledMultiiMediaForm = styled(Form)`
 `;
 const StyledMultiiMediaFormItem = styled.div`
   width: 100%;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   &.input {
-    border: 2px solid rgba(0, 0, 0, 0.1);
     label {
       font-size: 17px;
       font-weight: 500;
@@ -853,20 +844,7 @@ const StyledMultiiMediaFormItem = styled.div`
       text-transform: none;
     }
   }
-  .input-name {
-    box-sizing: border-box;
-    padding: 15px;
-    width: 100%;
-    min-height: 50px;
-    font-size: 15px;
-    line-height: 14px;
-    font-weight: 400;
-    transition: all 0.1s ease-in 0s;
-    color: rgb(0, 0, 0);
-    border: 1px solid transparent;
-    background: rgba(0, 0, 0, 0.05);
-    outline: none;
-  }
+
   .input-name-number {
     box-sizing: border-box;
     padding: 10px;
@@ -877,29 +855,12 @@ const StyledMultiiMediaFormItem = styled.div`
     font-weight: 400;
     transition: all 0.1s ease-in 0s;
     color: rgb(0, 0, 0);
-    border: 1px solid transparent;
-    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-bottom: 1px solid #d9d9d9;
     outline: none;
   }
-  .input-textarea {
-    box-sizing: border-box;
-    padding: 15px;
-    width: 100%;
-    font-size: 15px;
-    font-weight: 400;
-    transition: all 0.1s ease-in 0s;
-    color: rgb(0, 0, 0);
-    border: 1px solid transparent;
-    background: rgba(0, 0, 0, 0.05);
-    outline: none;
-    line-height: 20px;
-    min-height: 100px;
-    resize: none;
-  }
+
   &.footer {
-    border-right: 2px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    border-left: 2px solid rgba(0, 0, 0, 0.1);
     border-image: initial;
     border-top: none;
     display: flex;
@@ -918,5 +879,23 @@ const StyledMultiiMediaFormItemText = styled.p`
   color: rgba(0, 0, 0, 0.7);
   margin-bottom: 20px;
   line-height: 1.15;
+`;
+const StyledForm = styled(Form)`
+  width: 100%;
+  margin-top: 20px;
+  .ant-form-item {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #d9d9d9;
+    .ant-input,
+    .ant-input-affix-wrapper {
+      border: none;
+    }
+    .ant-input:focus,
+    .ant-input-focused,
+    .ant-input-affix-wrapper:focus,
+    .ant-input-affix-wrapper-focused {
+      box-shadow: none;
+    }
+  }
 `;
 export default CreateComponents;
