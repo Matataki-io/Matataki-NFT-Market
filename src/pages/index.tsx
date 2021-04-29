@@ -88,8 +88,10 @@ const Home: React.FC<void> = () => {
         for (let i = 0; i < len; i++) {
           data.push(list);
         }
+        setCreatorsList(data);
+      } else {
+        setCreatorsList(data.slice(0, 4));
       }
-      setCreatorsList(data);
     } catch (e) {
       message.error(`数据获取失败${e.toString()}`);
     }
