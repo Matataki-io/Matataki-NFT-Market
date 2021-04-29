@@ -657,8 +657,11 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                   {galleryList.map((i: User, idx: number) => (
                     <Option key={`${idx}-${i.address}`} value={i.address}>
                       <span>
-                        <Avatar icon={<UserOutlined />} src={i.avatar}></Avatar>
-                        {i.nickname || i.username}
+                        <Avatar
+                          size={20}
+                          icon={<UserOutlined />}
+                          src={i.avatar}></Avatar>{' '}
+                        <span>{i.nickname || i.username}</span>
                       </span>
                     </Option>
                   ))}

@@ -22,10 +22,11 @@ const Artist: React.FC = () => {
       if (data.length < 4) {
         let len = 4 - data.length;
         let list: User = Object.assign({}, data[0]);
-        let arr = [];
-        for (let i = 0; i <= len; i++) {
+        let arr = data.slice(0);
+        for (let i = 0; i < len; i++) {
           arr.push(list);
         }
+        console.log('arr', arr);
         setArtistList(arr);
       } else {
         setArtistList(data.slice(0, 4));
@@ -89,7 +90,9 @@ const Artist: React.FC = () => {
               {artistList.map((i, idx) => (
                 <Link key={idx} href={`/${i.username}`}>
                   <a className='box' target='_blank'>
-                    <img src={i.avatar} alt={i.nickname || i.username} />
+                    {i.avatar ? (
+                      <img src={i.avatar} alt={i.nickname || i.username} />
+                    ) : null}
                   </a>
                 </Link>
               ))}
@@ -100,7 +103,9 @@ const Artist: React.FC = () => {
               {artistList.map((i, idx) => (
                 <Link key={idx} href={`/${i.username}`}>
                   <a className='box' target='_blank'>
-                    <img src={i.avatar} alt={i.nickname || i.username} />
+                    {i.avatar ? (
+                      <img src={i.avatar} alt={i.nickname || i.username} />
+                    ) : null}
                   </a>
                 </Link>
               ))}
@@ -216,6 +221,7 @@ const StyledAbout = styled.div`
     height: 100%;
     /* background: red; */
     overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.2);
     img {
       width: 100%;
       height: 100%;

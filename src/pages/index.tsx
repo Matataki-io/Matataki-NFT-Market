@@ -58,6 +58,7 @@ const Home: React.FC<void> = () => {
       const mediaList = await getHotMediaList(6);
       console.log('mediaList', mediaList);
       const list: Array<NFTProps> = mediaList.map(i => ({
+        id: i.id,
         type: 'image',
         content: {
           low: i.tokenURI,
@@ -84,8 +85,8 @@ const Home: React.FC<void> = () => {
       if (data.length < 4) {
         let len = 4 - data.length;
         let list: User = Object.assign({}, data[0]);
-        let arr = [];
-        for (let i = 0; i <= len; i++) {
+        let arr = data.slice(0);
+        for (let i = 0; i < len; i++) {
           arr.push(list);
         }
         setCreatorsList(arr);
