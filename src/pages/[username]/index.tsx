@@ -19,7 +19,11 @@ import NFTSimple from '../../components/NFTSimple';
 import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 
 import { useLogin } from '../../hooks/useLogin';
-import { getUser, getUserBids } from '../../backend/user';
+import {
+  getUser,
+  getUserBids,
+  getGallerySubordinateArtists,
+} from '../../backend/user';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
 import { BidLog } from '../../types/Bid.d';
@@ -60,6 +64,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   // click bid idx
   const [currentBidsIdx, setCurrentBidsIdx] = useState<number>(0);
   const keyMessage = 'fetchUser';
+
+  const [subordinateArtist, setSubordinateArtist] = useState<Array<User>>([]);
 
   useEffect(() => {
     const fetchUserInfoData = async () => {
@@ -140,6 +146,47 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
     fetchAll();
   }, [appUserInfo, userDataByWallet, username]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (typeof username !== 'string') return;
+      const data = await getGallerySubordinateArtists(username);
+      console.log('data', data);
+      setSubordinateArtist(data.subordinateArtists);
+    };
+    if (userInfo?.role === 'GALLERY') {
+      fetch();
+    }
+  }, [userInfo, username]);
+
+  const subordinateArtistWord = useMemo(() => {
+    let list: any = {};
+    for (let i = 10; i < 36; i++) {
+      //   console.log(i.toString(36))
+      list[i.toString(36)] = [];
+    }
+    list['#'] = [];
+
+    subordinateArtist.forEach(i => {
+      let key = i.username.substr(0, 1).toLocaleLowerCase();
+      if (list[key]) {
+        list[key].push(i);
+      } else {
+        list['#'].push(i);
+      }
+    });
+
+    for (const key in list) {
+      if (Object.prototype.hasOwnProperty.call(list, key)) {
+        const element = list[key];
+        if (isEmpty(element)) {
+          delete list[key];
+        }
+      }
+    }
+
+    return list;
+  }, [subordinateArtist]);
 
   const collectionContainner = () => {
     return (
@@ -350,57 +397,21 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
           <StyledWord>
             {/* 需要合并组件 */}
-            {[...new Array(26)].map((i, idx) => (
+            {Object.keys(subordinateArtistWord).map((key, idx) => (
               <ul key={idx} className='item'>
                 <li>
-                  <h3>{(idx + 10).toString(36).toLocaleUpperCase()}</h3>
+                  <h3>{key.toLocaleUpperCase()}</h3>
                 </li>
-                {idx % 2 === 0 ? (
-                  <>
-                    <li>
-                      <Link href='/'>
-                        <a>Alicja Kwade</a>
+                {subordinateArtistWord[key].map(
+                  (i: { username: string; nickname: string }, idx: number) => (
+                    <li key={idx}>
+                      <Link href={`/${i.username}`}>
+                        <a>
+                          {i.username}({i.nickname})
+                        </a>
                       </Link>
                     </li>
-                    <li>
-                      <Link href='/'>
-                        <a>Alicja Kwade</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href='/'>
-                        <a>Alicja Kwade</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href='/'>
-                        <a>Alicja Kwade</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href='/'>
-                        <a>Alicja Kwade</a>
-                      </Link>
-                    </li>
-                  </>
-                ) : (
-                  <>
-                    <li>
-                      <Link href='/'>
-                        <a>Alicja Kwade</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href='/'>
-                        <a>Alicja Kwade</a>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href='/'>
-                        <a>Alicja Kwade</a>
-                      </Link>
-                    </li>
-                  </>
+                  )
                 )}
               </ul>
             ))}

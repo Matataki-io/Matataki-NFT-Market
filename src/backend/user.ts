@@ -1,6 +1,6 @@
 import { default as BACKEND_CLIENT } from './client';
 import { PaginationResult } from '../types/PaginationResult';
-import { User } from '../types/User.types';
+import { User, Gallery } from '../types/User.types';
 import { BidLog } from '../types/Bid.d';
 import { setCookie } from '../utils/cookie';
 import { GeneralResponse } from '../types/Backend.types';
@@ -109,4 +109,13 @@ export async function getGalleryUsers(): Promise<User[]> {
     `/user/gallery`
   );
   return data.data;
+}
+// 画廊 subordinateArtists
+export async function getGallerySubordinateArtists(
+  username: string
+): Promise<Gallery> {
+  const { data } = await BACKEND_CLIENT.get<GeneralResponse<Gallery>>(
+    `/user/@${username}/subordinateArtists`
+  );
+  return data as any;
 }

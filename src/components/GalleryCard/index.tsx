@@ -6,7 +6,7 @@ const GalleryCard: React.FC<User> = ({ username, avatar, nickname, bio }) => {
   return (
     <StyledWrapper>
       <StyledCover>
-        <img src={avatar} alt='' />
+        {avatar ? <img src={avatar} alt='Image' /> : null}
       </StyledCover>
       <StyledTitle>{nickname || username}</StyledTitle>
       <Styleddescription>{bio || 'Not...'}</Styleddescription>
