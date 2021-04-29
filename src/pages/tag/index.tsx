@@ -11,7 +11,7 @@ const TagPage: React.FC = () => {
     });
   }, []);
 
-  const onFinish = async ({ name }) => {
+  const onFinish = async ({ name }: { name: string }) => {
     const { data } = await createTag(name);
     if (data.code === 200) {
       message.success('Create Success');
@@ -19,7 +19,7 @@ const TagPage: React.FC = () => {
     }
   };
 
-  const deleteT = async name => {
+  const deleteT = async (name: string) => {
     const { data } = await deleteTag(name);
     if (data.code === 200) {
       message.success('Delete Success');
