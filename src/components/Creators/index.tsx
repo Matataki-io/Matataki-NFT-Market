@@ -16,11 +16,11 @@ const CreatorsComponents: React.FC<CreatorsProps> = ({
     <StyledCreatorsComponents>
       <div className='cover'>
         <div className='cover-bc'>
-          <img src={bc} alt='About' />
+          {bc ? <img src={bc} alt='About' /> : null}
         </div>
         <div className='avatar-box'>
           <div className='avatar'>
-            <img src={avatar} alt='Avatar' />
+            {avatar ? <img src={avatar} alt='Avatar' /> : null}
           </div>
         </div>
       </div>
@@ -41,6 +41,7 @@ const StyledCreatorsComponents = styled.div`
       height: 100%;
       margin-left: 122px;
       overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.2);
       img {
         width: 100%;
         height: 100%;
