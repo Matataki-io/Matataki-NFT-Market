@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { UserRole } from '../constant';
 
 export interface UserInfoState {
   avatar: string;
@@ -7,6 +8,7 @@ export interface UserInfoState {
   website?: string;
   introduction?: string;
   bio?: string;
+  role?: UserRole | undefined;
 }
 
 const initialState: UserInfoState = {
