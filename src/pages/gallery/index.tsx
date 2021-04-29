@@ -1,20 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
 import GalleryCard from '../../components/GalleryCard';
+import { getGalleryUsers } from '../../backend/user';
+import { User } from '../../types/User.types';
 
 const Gallery: React.FC = () => {
+  const [galleryList, setGalleryList] = useState<Array<any>>([]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const data: Array<User> = await getGalleryUsers();
+      setGalleryList(data);
+    };
+    fetch();
+  }, []);
+
   return (
     <StyledWrapper>
       <StyledHead>
         <StyledHeadTitle>Gallery List</StyledHeadTitle>
       </StyledHead>
       <StyledGallery>
-        {[...new Array(12)].map((i, idx) => (
-          <Link key={idx} href={`/gallery/${idx}`}>
+        {galleryList.map((i: User, idx: number) => (
+          <Link key={`${idx}-${i.address}`} href={`/gallery/${i.id}`}>
             <a>
-              <GalleryCard></GalleryCard>
+              <GalleryCard {...i}></GalleryCard>
             </a>
           </Link>
         ))}

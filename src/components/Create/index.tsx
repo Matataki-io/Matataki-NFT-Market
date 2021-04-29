@@ -34,6 +34,7 @@ import { UploadProps } from 'antd/lib/upload/interface';
 import { useLogin } from '../../hooks/useLogin';
 import { useMedia } from '../../hooks/useMedia';
 import { NFTProps } from '../../../next-env';
+import { User } from '../../types/User.types';
 import {
   NFTTempImage,
   NFTTempVideo,
@@ -87,7 +88,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
   useEffect(() => {
     const fetch = async () => {
-      const data: Array<any> = await getGalleryUsers();
+      const data: Array<User> = await getGalleryUsers();
       setGalleryList(data);
     };
     fetch();
@@ -653,7 +654,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               </Form.Item>
               <Form.Item label='Gallery' name='gallery'>
                 <Select placeholder='Select a gallery'>
-                  {galleryList.map((i, idx) => (
+                  {galleryList.map((i: User, idx: number) => (
                     <Option key={`${idx}-${i.address}`} value={i.address}>
                       <span>
                         <Avatar icon={<UserOutlined />} src={i.avatar}></Avatar>
