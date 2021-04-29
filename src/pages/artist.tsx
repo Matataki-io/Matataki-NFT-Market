@@ -1,55 +1,95 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Carousel } from 'antd';
-
-// 关于更多 NFT
-const AboutNFTList = [
-  {
-    img:
-      'https://ipfs.fleek.co/ipfs/QmXi4Nmj5PL81n5hFrdJ3ApnwK5dj9iNA4DBefN3ZbYsGW',
-    text: 'How to collect your favorite NFTs at NFT Market?',
-    link: 'https://matataki.io',
-    id: 37,
-  },
-  {
-    img:
-      'https://ipfs.fleek.co/ipfs/QmcMxt2kAweZ1PYhxkE5nNmXdREvn5mNXSaPfkHDYZaUbw',
-    text:
-      'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
-    link: 'https://matataki.io',
-    id: 36,
-  },
-  {
-    img:
-      'https://ipfs.fleek.co/ipfs/QmZZXE2ZnKWYmCN5vkHJuUKa5HBSrpcKy28XgKES12pHpu',
-    text: 'NFTs, explained: what they are,why are some worth millions?',
-    link: 'https://matataki.io',
-    id: 33,
-  },
-  {
-    img:
-      'https://ipfs.fleek.co/ipfs/QmZZXE2ZnKWYmCN5vkHJuUKa5HBSrpcKy28XgKES12pHpu',
-    text: 'How to make, buy and sell NFTs',
-    link: 'https://matataki.io',
-    id: 33,
-  },
-];
+import { Carousel, message } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { listUsersArtist } from '../backend/user';
+import { User } from '../types/User.types.d';
+import { isEmpty } from 'lodash';
 
 const Artist: React.FC = () => {
+  const [artistList, setArtistList] = useState<Array<User>>([]);
+  const [artistWordList, setArtistWordList] = useState<Array<User>>([]);
+
+  // 获取用户 艺术家数据
+  const fetchUserArtist = async () => {
+    try {
+      const data: Array<User> = await listUsersArtist();
+      console.log('listUsersArtist', data);
+      setArtistWordList(data);
+
+      // 不足四个
+      if (data.length < 4) {
+        let len = 4 - data.length;
+        let list: User = Object.assign({}, data[0]);
+        let arr = [];
+        for (let i = 0; i <= len; i++) {
+          arr.push(list);
+        }
+        setArtistList(arr);
+      } else {
+        setArtistList(data.slice(0, 4));
+      }
+    } catch (e) {
+      message.error(`数据获取失败${e.toString()}`);
+    }
+  };
+
+  const artistWord = useMemo(() => {
+    let list: any = {};
+    for (let i = 10; i < 36; i++) {
+      //   console.log(i.toString(36))
+      list[i.toString(36)] = [];
+    }
+    list['#'] = [];
+
+    artistWordList.forEach(i => {
+      let key = i.username.substr(0, 1).toLocaleLowerCase();
+      if (list[key]) {
+        list[key].push(i);
+      } else {
+        list['#'].push(i);
+      }
+    });
+
+    for (const key in list) {
+      if (Object.prototype.hasOwnProperty.call(list, key)) {
+        const element = list[key];
+        if (isEmpty(element)) {
+          delete list[key];
+        }
+      }
+    }
+
+    return list;
+  }, [artistWordList]);
+
+  useEffect(() => {
+    fetchUserArtist();
+  }, []);
+
+  const settings = {
+    dots: false,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    infinite: true,
+    arrows: true,
+    nextArrow: <RightOutlined />,
+    prevArrow: <LeftOutlined />,
+  };
   return (
     <StyledWrapper>
       <StyledHead>
         <StyledHeadTitle>Featured Artists</StyledHeadTitle>
       </StyledHead>
       <StyledBanner>
-        <Carousel autoplay>
+        <Carousel {...settings}>
           <div>
             <StyledAbout>
-              {AboutNFTList.map((i, idx) => (
-                <Link key={idx} href={`/${i.id}`}>
+              {artistList.map((i, idx) => (
+                <Link key={idx} href={`/${i.username}`}>
                   <a className='box' target='_blank'>
-                    <img src={i.img} alt={i.text} />
+                    <img src={i.avatar} alt={i.nickname || i.username} />
                   </a>
                 </Link>
               ))}
@@ -57,10 +97,10 @@ const Artist: React.FC = () => {
           </div>
           <div>
             <StyledAbout>
-              {AboutNFTList.map((i, idx) => (
-                <Link key={idx} href={`/${i.id}`}>
+              {artistList.map((i, idx) => (
+                <Link key={idx} href={`/${i.username}`}>
                   <a className='box' target='_blank'>
-                    <img src={i.img} alt={i.text} />
+                    <img src={i.avatar} alt={i.nickname || i.username} />
                   </a>
                 </Link>
               ))}
@@ -70,58 +110,21 @@ const Artist: React.FC = () => {
       </StyledBanner>
       <StyledLine></StyledLine>
       <StyledWord>
-        {/* 需要合并组件 */}
-        {[...new Array(26)].map((i, idx) => (
+        {Object.keys(artistWord).map((key, idx) => (
           <ul key={idx} className='item'>
             <li>
-              <h3>{(idx + 10).toString(36).toLocaleUpperCase()}</h3>
+              <h3>{key.toLocaleUpperCase()}</h3>
             </li>
-            {idx % 2 === 0 ? (
-              <>
-                <li>
-                  <Link href='/'>
-                    <a>Alicja Kwade</a>
+            {artistWord[key].map(
+              (i: { username: string; nickname: string }, idx: number) => (
+                <li key={idx}>
+                  <Link href={`/${i.username}`}>
+                    <a>
+                      {i.username}({i.nickname})
+                    </a>
                   </Link>
                 </li>
-                <li>
-                  <Link href='/'>
-                    <a>Alicja Kwade</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/'>
-                    <a>Alicja Kwade</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/'>
-                    <a>Alicja Kwade</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/'>
-                    <a>Alicja Kwade</a>
-                  </Link>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <Link href='/'>
-                    <a>Alicja Kwade</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/'>
-                    <a>Alicja Kwade</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href='/'>
-                    <a>Alicja Kwade</a>
-                  </Link>
-                </li>
-              </>
+              )
             )}
           </ul>
         ))}
@@ -151,6 +154,13 @@ const StyledHeadTitle = styled.h2`
 const StyledBanner = styled.div`
   height: 576px;
   margin: 48px 0 64px;
+  .ant-carousel .slick-prev,
+  .ant-carousel .slick-next,
+  .ant-carousel .slick-prev:hover,
+  .ant-carousel .slick-next:hover {
+    font-size: inherit;
+    color: currentColor;
+  }
 `;
 const StyledLine = styled.div`
   width: 100%;

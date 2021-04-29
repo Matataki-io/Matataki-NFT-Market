@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useMount } from 'ahooks';
 import { Spin, message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import InfiniteScroll from 'react-infinite-scroller';
 
 import Creators from '../components/Creators';
 import About from '../components/About';
@@ -85,10 +84,11 @@ const Home: React.FC<void> = () => {
       if (data.length < 4) {
         let len = 4 - data.length;
         let list: User = Object.assign({}, data[0]);
-        for (let i = 0; i < len; i++) {
-          data.push(list);
+        let arr = [];
+        for (let i = 0; i <= len; i++) {
+          arr.push(list);
         }
-        setCreatorsList(data);
+        setCreatorsList(arr);
       } else {
         setCreatorsList(data.slice(0, 4));
       }
