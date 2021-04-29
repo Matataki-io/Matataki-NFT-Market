@@ -14,36 +14,14 @@ import Banner from '../components/Banner';
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
 import { getHotMediaList, getMediaMetadata } from '../backend/media';
+import { listUsersArtist } from '../backend/user';
+import { User } from '../types/User.types.d';
 
 type PaginationMeta = PaginationResult['meta'];
 
 type MediaWithMetadata = Media & {
   metadata: MediaMetadata;
 };
-
-// 作家列表
-const creatorsList = [
-  {
-    bc: 'https://placeimg.com/540/184/nature?t=1617247698083',
-    avatar: 'https://placeimg.com/200/200/people',
-    username: '@Skull Pedestal',
-  },
-  {
-    bc: 'https://placeimg.com/540/184/nature',
-    avatar: 'https://placeimg.com/200/200/people?t=1617247587231',
-    username: '@Skull Pedestal',
-  },
-  {
-    bc: 'https://placeimg.com/540/184/nature?t=1617247711431',
-    avatar: 'https://placeimg.com/200/200/people?t=1617247595366',
-    username: '@Skull Pedestal',
-  },
-  {
-    bc: 'https://placeimg.com/540/184/nature?t=1617247718870',
-    avatar: 'https://placeimg.com/200/200/people?t=1617247602577',
-    username: '@Skull Pedestal',
-  },
-];
 
 // 关于更多 NFT
 const AboutNFTList = [
@@ -73,6 +51,7 @@ const AboutNFTList = [
 const Home: React.FC<void> = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
+  const [creatorsList, setCreatorsList] = useState<Array<User>>([]);
 
   // 获取NFT数据
   const fetchNFTData = async () => {
@@ -97,9 +76,28 @@ const Home: React.FC<void> = () => {
       message.error(`数据获取失败${e.toString()}`);
     }
   };
+  // 获取用户 艺术家数据
+  const fetchUserArtist = async () => {
+    try {
+      const data: Array<User> = await listUsersArtist();
+      console.log('listUsersArtist', data);
+      // 不足四个
+      if (data.length < 4) {
+        let len = 4 - data.length;
+        let list: User = Object.assign({}, data[0]);
+        for (let i = 0; i < len; i++) {
+          data.push(list);
+        }
+      }
+      setCreatorsList(data);
+    } catch (e) {
+      message.error(`数据获取失败${e.toString()}`);
+    }
+  };
 
   useEffect(() => {
     fetchNFTData();
+    fetchUserArtist();
   }, []);
 
   useMount(() => {});
@@ -147,9 +145,9 @@ const Home: React.FC<void> = () => {
           {creatorsList.map((i, idx) => (
             <Creators
               key={idx}
-              bc={i.bc}
+              bc={i.avatar}
               avatar={i.avatar}
-              username={i.username}></Creators>
+              username={i.nickname || i.username}></Creators>
           ))}
         </StyledCreators>
       </StyledModule>
