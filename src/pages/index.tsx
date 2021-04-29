@@ -50,23 +50,23 @@ const AboutNFTList = [
   {
     img: 'https://placeimg.com/700/340/arch',
     text: 'How to collect your favorite NFTs at NFT Market?',
-    link: 'https://matataki.io',
+    link: 1,
   },
   {
     img: 'https://placeimg.com/700/340/arch?t=1617248569810',
     text:
       'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
-    link: 'https://matataki.io',
+    link: 1,
   },
   {
     img: 'https://placeimg.com/700/340/arch?t=1617248576772',
     text: 'NFTs, explained: what they are,why are some worth millions?',
-    link: 'https://matataki.io',
+    link: 1,
   },
   {
     img: 'https://placeimg.com/700/340/arch?t=1617248585076',
     text: 'How to make, buy and sell NFTs',
-    link: 'https://matataki.io',
+    link: 1,
   },
 ];
 
@@ -169,7 +169,10 @@ const Home: React.FC<void> = () => {
         <StyledAbout>
           {AboutNFTList.map((i, idx) => (
             <div key={idx} className='box'>
-              <About img={i.img} text={i.text} link={i.link}></About>
+              <About
+                img={i.img}
+                text={i.text}
+                link={`/community/${i.link}`}></About>
             </div>
           ))}
         </StyledAbout>
