@@ -1,10 +1,10 @@
-import React, { useState, Fragment, useMemo } from 'react';
+import React, { useState, Fragment, useMemo, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
 import { Signer } from 'ethers';
 import { PostMedia } from '../../backend/media';
-
+import { getGalleryUsers } from '../../backend/user';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
 import { firstUpperCase } from '../../utils/index';
@@ -20,13 +20,19 @@ import {
   Spin,
   Tooltip,
   Popconfirm,
+  Select,
+  Avatar,
 } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 const { Dragger } = Upload;
-
-import { mintMediaToken } from '../../blockchain/nft';
-
+const { Option } = Select;
+import {
+  mintMediaToken,
+  GenerateCreationSignature,
+} from '../../blockchain/nft';
 import { UploadProps } from 'antd/lib/upload/interface';
 import { useLogin } from '../../hooks/useLogin';
+import { useMedia } from '../../hooks/useMedia';
 import { NFTProps } from '../../../next-env';
 import {
   NFTTempImage,
@@ -63,7 +69,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const wallet = useWallet();
   const { signer, isSignerReady } = useSigner();
   const { userDataByWallet } = useLogin();
-
   const [step, setStep] = useState<number>(0); // 步骤
   const [mediaType, setMediaType] = useState<mediaTypeProps>('image'); // 当前上传媒体类型
   const [mediaUrl, setMediaUrl] = useState<string>(''); // 媒体类型为Url的Value
@@ -77,6 +82,16 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     description: string;
   }>({ name: '', description: '' }); // 备份 formNameAndDescription 数据
   // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
+  const [galleryList, setGalleryList] = useState<Array<any>>([]);
+  const mediaContract = useMedia();
+
+  useEffect(() => {
+    const fetch = async () => {
+      const data: Array<any> = await getGalleryUsers();
+      setGalleryList(data);
+    };
+    fetch();
+  }, []);
 
   // 媒体类型 placeholder
   const mediaPlaceholder: mediaTypeState = {
@@ -307,10 +322,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.warning('请上传资源');
     }
   };
-  // price填写完成
-  const onFinishPrice = async (values: any) => {
-    console.log('Success:', values);
-
+  // 自己mint
+  const mintToken = async () => {
     let {
       tokenURI,
       metadataURI,
@@ -366,6 +379,64 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     } catch (e) {
       console.log('e', e);
       message.error(e);
+    }
+  };
+  // mint到画廊
+  const mintTokenToGallery = async () => {
+    if (!isSignerReady(signer)) return;
+
+    let {
+      tokenURI,
+      metadataURI,
+      contentHash,
+      metadataHash,
+    } = mediaData.storage['MediaData'];
+    let { price: creatorShare, gallery } = formPricingAndFees.getFieldsValue();
+    console.log(
+      'info',
+      tokenURI,
+      metadataURI,
+      contentHash,
+      metadataHash,
+      creatorShare,
+      gallery
+    );
+
+    const res = await GenerateCreationSignature(
+      tokenURI,
+      metadataURI,
+      contentHash,
+      metadataHash,
+      gallery,
+      Number(creatorShare),
+      signer
+    );
+    console.log('res', res);
+    if (!res) {
+      message.error('not res');
+      return;
+    }
+    const resp = await mediaContract.mintAndTransferWithSig(
+      wallet.account as string,
+      res?.data,
+      res?.bidShares,
+      res?.to,
+      res?.sig
+    );
+    const receipt = await resp.wait();
+    console.info('re', receipt);
+    alert('txHash' + receipt.transactionHash);
+
+    setIsCreate(false);
+  };
+
+  // price填写完成
+  const onFinishPrice = async (values: any) => {
+    console.log('Success:', values);
+    if (isEmpty(values.gallery)) {
+      mintToken();
+    } else {
+      mintTokenToGallery();
     }
   };
   // price填写失败
@@ -580,6 +651,18 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                   max={100}
                 />
               </Form.Item>
+              <Form.Item label='Gallery' name='gallery'>
+                <Select placeholder='Select a gallery'>
+                  {galleryList.map((i, idx) => (
+                    <Option key={`${idx}-${i.address}`} value={i.address}>
+                      <span>
+                        <Avatar icon={<UserOutlined />} src={i.avatar}></Avatar>
+                        {i.nickname || i.username}
+                      </span>
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </Form.Item>
           </StyledMultiiMediaFormItem>
           <StyledMultiiMediaFormItem className='footer'>
@@ -640,7 +723,7 @@ const StyledUploadWrapper = styled.div`
 `;
 const StyledWrapper = styled.div`
   margin: 0px;
-  padding: 80px 0 0;
+  padding: 80px 20px 0;
   background: rgb(255, 255, 255);
   z-index: 3;
   position: fixed;
