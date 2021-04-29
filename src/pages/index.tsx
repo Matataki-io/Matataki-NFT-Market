@@ -13,7 +13,7 @@ import { NFTProps } from '../../next-env';
 import Banner from '../components/Banner';
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
-import { getMediaList, getMediaMetadata } from '../backend/media';
+import { getHotMediaList, getMediaMetadata } from '../backend/media';
 
 type PaginationMeta = PaginationResult['meta'];
 
@@ -73,87 +73,36 @@ const AboutNFTList = [
 const Home: React.FC<void> = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [page, setPage] = useState<number>(1);
-  const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
-    totalItems: 0,
-    itemCount: 0,
-    itemsPerPage: 0,
-    totalPages: 0,
-    currentPage: 0,
-  });
 
   // 获取NFT数据
   const fetchNFTData = async () => {
     try {
-      const mediaList = await getMediaList(page, 12);
+      const mediaList = await getHotMediaList(6);
       console.log('mediaList', mediaList);
-      if (mediaList.items.length) {
-        const getMediaWithMetaList = mediaList.items.map(async item => {
-          const metadata = await getMediaMetadata(item.metadataURI);
-          return {
-            ...item,
-            metadata,
-          };
-        });
-        const mediaWithMetaList: MediaWithMetadata[] = await Promise.all(
-          getMediaWithMetaList
-        );
-        const realNftList: NFTProps[] = mediaWithMetaList.map(media => {
-          return {
-            id: media.id,
-            type: media.metadata.mimeType.split('/')[0],
-            title: media.metadata.name,
-            fields: {
-              low: { stringValue: media.tokenURI },
-              stream: { stringValue: media.tokenURI },
-              medium: { stringValue: media.tokenURI },
-              high: { stringValue: media.tokenURI },
-              thumbnail: { stringValue: media.tokenURI },
-            },
-            content: {
-              low: media.tokenURI,
-              stream: media.tokenURI,
-              medium: media.tokenURI,
-              high: media.tokenURI,
-              thumbnail: media.tokenURI,
-            },
-            owner: media.owner,
-            creator: media.creator,
-          };
-        });
-
-        setNFTList(NFTList.concat(realNftList));
-        setPaginationMeta(mediaList.meta);
-      }
-      let _page = page;
-      setPage(++_page);
+      const list: Array<NFTProps> = mediaList.map(i => ({
+        type: 'image',
+        content: {
+          low: i.tokenURI,
+          stream: i.tokenURI,
+          medium: i.tokenURI,
+          high: i.tokenURI,
+          thumbnail: i.tokenURI,
+        },
+        title: i.title,
+        owner: i.owner,
+        creator: i.creator,
+      }));
+      setNFTList(list);
     } catch (e) {
       message.error(`数据获取失败${e.toString()}`);
     }
   };
 
-  useMount(() => {});
+  useEffect(() => {
+    fetchNFTData();
+  }, []);
 
-  // 处理滚动Load
-  const handleInfiniteOnLoad = async () => {
-    setLoading(true);
-    // 第一页不判断
-    // if (page !== 1 && paginationMeta.currentPage >= paginationMeta.totalPages) {
-    //   setLoading(false);
-    //   setHasMore(false);
-    //   return;
-    // }
-    if (page > 1) {
-      // 只需要一页
-      setLoading(false);
-      setHasMore(false);
-      return;
-    }
-    await fetchNFTData();
-    setLoading(false);
-  };
+  useMount(() => {});
 
   return (
     <StyledWrapper>
@@ -161,7 +110,7 @@ const Home: React.FC<void> = () => {
       <StyledModule className='nfts'>
         <StyledModuleHead>
           <StyledTitle>
-            Upcoming NFTs<span>New</span>
+            Hot NFTs<span>New</span>
           </StyledTitle>
           <Link href='/market'>
             <a target='_blank' className='more'>
@@ -170,27 +119,17 @@ const Home: React.FC<void> = () => {
             </a>
           </Link>
         </StyledModuleHead>
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={handleInfiniteOnLoad}
-          hasMore={!loading && hasMore}>
-          <StyledNfts>
-            {NFTList.map((i, idx) => (
-              // 这里有报错
-              // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
-              <Link href={`/p/${i.id}`} key={idx}>
-                <a target='_blank'>
-                  <NFT {...i}></NFT>
-                </a>
-              </Link>
-            ))}
-            {loading && hasMore && (
-              <div className='loading-container'>
-                <Spin />
-              </div>
-            )}
-          </StyledNfts>
-        </InfiniteScroll>
+        <StyledNfts>
+          {NFTList.map((i, idx) => (
+            // 这里有报错
+            // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
+            <Link href={`/p/${i.id}`} key={idx}>
+              <a target='_blank'>
+                <NFT {...i}></NFT>
+              </a>
+            </Link>
+          ))}
+        </StyledNfts>
       </StyledModule>
       <StyledModule className='creators'>
         <StyledModuleHead>
