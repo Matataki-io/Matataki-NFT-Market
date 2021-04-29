@@ -14,7 +14,7 @@ export type RelatedMedia = {
 };
 
 export type Tag = {
-  id: string;
+  id: number;
   name: string;
-  relatedMedias: RelatedMedia[];
+  relatedMedias?: RelatedMedia[] | undefined;
 };
