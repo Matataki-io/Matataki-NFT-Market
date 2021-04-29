@@ -28,16 +28,17 @@ const Register: React.FC<void> = () => {
   const [formProfile] = Form.useForm();
   const wallet = useWallet();
   const router = useRouter();
-  const { type } = router.query;
+  const { username } = router.query;
   const [avatarUrl, setAvatarUrl] = useState<string>();
   const { isRegistered, userDataByWallet, register } = useLogin();
 
   useEffect(() => {
-    if (!registerType.includes(String(type))) {
-      message.info('其他路由');
+    if (!isRegistered) {
+      // router.push('/');
+    } else if (userDataByWallet?.username !== username) {
       // router.push('/');
     }
-  }, [type]);
+  }, [userDataByWallet, isRegistered, username]);
 
   // 设置默认值
   useEffect(() => {
@@ -123,11 +124,12 @@ const Register: React.FC<void> = () => {
   return (
     <StyledWrapper>
       <StyledTitle>
-        {type === 'collector'
+        {userDataByWallet?.role === 'COLLECTOR' ||
+        userDataByWallet?.role === 'SUPER_ADMIN'
           ? 'Collector - Edit Profile'
-          : type === 'artist'
+          : userDataByWallet?.role === 'ARTIST'
           ? 'Artist - Edit Profile'
-          : type === 'gallery'
+          : userDataByWallet?.role === 'GALLERY'
           ? 'Gallery - Edit Profile'
           : ''}
       </StyledTitle>
@@ -164,7 +166,8 @@ const Register: React.FC<void> = () => {
           rules={[{ required: true, message: 'Please input your bio!' }]}>
           <Input placeholder='Describe yourself by single sentence' />
         </Form.Item>
-        {type === 'artist' || type === 'gallery' ? (
+        {userDataByWallet?.role === 'ARTIST' ||
+        userDataByWallet?.role === 'GALLERY' ? (
           <>
             <Form.Item
               label=''
@@ -232,7 +235,7 @@ const Register: React.FC<void> = () => {
           ]}>
           <Input disabled placeholder='Medium username' />
         </Form.Item>
-        {type === 'gallery' ? (
+        {userDataByWallet?.role === 'GALLERY' ? (
           <>
             <StyledFormTitle>Contracted Artists</StyledFormTitle>
             <Form.Item
