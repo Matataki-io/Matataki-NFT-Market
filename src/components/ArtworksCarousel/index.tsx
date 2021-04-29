@@ -1,10 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Carousel } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 const ArtworksCarousel: React.FC = () => {
+  const settings = {
+    dots: false,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    infinite: true,
+    arrows: true,
+    adaptiveHeight: true,
+    nextArrow: <RightOutlined />,
+    prevArrow: <LeftOutlined />,
+  };
   return (
-    <Carousel dots={false} autoplay>
+    <Carousel {...settings}>
       <div>
         <StyledArtworksItem>
           <div className='cover'>
@@ -51,7 +62,7 @@ const StyledArtworksItem = styled.div`
   justify-content: center;
   text-align: center;
   flex-direction: column;
-  height: 792px;
+  /* height: 792px; */
   .cover {
     width: 100%;
     max-height: 720px;

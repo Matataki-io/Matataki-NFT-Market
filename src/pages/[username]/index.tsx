@@ -581,6 +581,13 @@ const StyledVideo = styled.div`
 `;
 const StyledArtworks = styled.div`
   margin-top: 64px;
+  .ant-carousel .slick-prev,
+  .ant-carousel .slick-next,
+  .ant-carousel .slick-prev:hover,
+  .ant-carousel .slick-next:hover {
+    font-size: inherit;
+    color: currentColor;
+  }
 `;
 
 const StyledAbout = styled.div`

@@ -24,7 +24,7 @@ const Gallery: React.FC = () => {
       </StyledHead>
       <StyledGallery>
         {galleryList.map((i: User, idx: number) => (
-          <Link key={`${idx}-${i.address}`} href={`/gallery/${i.id}`}>
+          <Link key={`${idx}-${i.address}`} href={`/${i.username}`}>
             <a>
               <GalleryCard {...i}></GalleryCard>
             </a>
