@@ -1,6 +1,6 @@
 import { default as BACKEND_CLIENT } from './client';
 import { PaginationResult } from '../types/PaginationResult';
-import { User } from '../types/User.types';
+import { User, Gallery } from '../types/User.types';
 import { BidLog } from '../types/Bid.d';
 import { setCookie } from '../utils/cookie';
 import { GeneralResponse } from '../types/Backend.types';
@@ -78,7 +78,20 @@ export async function listUsers({ page = 1, limit = 9 }) {
   });
   return data;
 }
-
+// 用户 收藏家
+export async function listUsersCollector() {
+  const { data } = await BACKEND_CLIENT.get<GeneralResponse<User>>(
+    '/user/collector'
+  );
+  return data.data;
+}
+// 用户 艺术家
+export async function listUsersArtist() {
+  const { data } = await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
+    '/user/artist'
+  );
+  return data.data;
+}
 export async function getUser(username: string) {
   const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}`);
   return data;
@@ -90,10 +103,19 @@ export async function getUserBids(username: string) {
   );
   return data;
 }
-
+// 用户 画廊
 export async function getGalleryUsers(): Promise<User[]> {
   const { data } = await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
     `/user/gallery`
   );
   return data.data;
+}
+// 画廊 subordinateArtists
+export async function getGallerySubordinateArtists(
+  username: string
+): Promise<Gallery> {
+  const { data } = await BACKEND_CLIENT.get<GeneralResponse<Gallery>>(
+    `/user/@${username}/subordinateArtists`
+  );
+  return data as any;
 }

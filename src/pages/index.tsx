@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useMount } from 'ahooks';
 import { Spin, message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import InfiniteScroll from 'react-infinite-scroller';
 
 import Creators from '../components/Creators';
 import About from '../components/About';
@@ -13,7 +12,9 @@ import { NFTProps } from '../../next-env';
 import Banner from '../components/Banner';
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
-import { getMediaList, getMediaMetadata } from '../backend/media';
+import { getHotMediaList, getMediaMetadata } from '../backend/media';
+import { listUsersArtist } from '../backend/user';
+import { User } from '../types/User.types.d';
 
 type PaginationMeta = PaginationResult['meta'];
 
@@ -21,139 +22,87 @@ type MediaWithMetadata = Media & {
   metadata: MediaMetadata;
 };
 
-// 作家列表
-const creatorsList = [
-  {
-    bc: 'https://placeimg.com/540/184/nature?t=1617247698083',
-    avatar: 'https://placeimg.com/200/200/people',
-    username: '@Skull Pedestal',
-  },
-  {
-    bc: 'https://placeimg.com/540/184/nature',
-    avatar: 'https://placeimg.com/200/200/people?t=1617247587231',
-    username: '@Skull Pedestal',
-  },
-  {
-    bc: 'https://placeimg.com/540/184/nature?t=1617247711431',
-    avatar: 'https://placeimg.com/200/200/people?t=1617247595366',
-    username: '@Skull Pedestal',
-  },
-  {
-    bc: 'https://placeimg.com/540/184/nature?t=1617247718870',
-    avatar: 'https://placeimg.com/200/200/people?t=1617247602577',
-    username: '@Skull Pedestal',
-  },
-];
-
 // 关于更多 NFT
 const AboutNFTList = [
   {
     img: 'https://placeimg.com/700/340/arch',
     text: 'How to collect your favorite NFTs at NFT Market?',
-    link: 'https://matataki.io',
+    link: 1,
   },
   {
     img: 'https://placeimg.com/700/340/arch?t=1617248569810',
     text:
       'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
-    link: 'https://matataki.io',
+    link: 1,
   },
   {
     img: 'https://placeimg.com/700/340/arch?t=1617248576772',
     text: 'NFTs, explained: what they are,why are some worth millions?',
-    link: 'https://matataki.io',
+    link: 1,
   },
   {
     img: 'https://placeimg.com/700/340/arch?t=1617248585076',
     text: 'How to make, buy and sell NFTs',
-    link: 'https://matataki.io',
+    link: 1,
   },
 ];
 
 const Home: React.FC<void> = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [page, setPage] = useState<number>(1);
-  const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
-    totalItems: 0,
-    itemCount: 0,
-    itemsPerPage: 0,
-    totalPages: 0,
-    currentPage: 0,
-  });
+  const [creatorsList, setCreatorsList] = useState<Array<User>>([]);
 
   // 获取NFT数据
   const fetchNFTData = async () => {
     try {
-      const mediaList = await getMediaList(page, 12);
+      const mediaList = await getHotMediaList(6);
       console.log('mediaList', mediaList);
-      if (mediaList.items.length) {
-        const getMediaWithMetaList = mediaList.items.map(async item => {
-          const metadata = await getMediaMetadata(item.metadataURI);
-          return {
-            ...item,
-            metadata,
-          };
-        });
-        const mediaWithMetaList: MediaWithMetadata[] = await Promise.all(
-          getMediaWithMetaList
-        );
-        const realNftList: NFTProps[] = mediaWithMetaList.map(media => {
-          return {
-            id: media.id,
-            type: media.metadata.mimeType.split('/')[0],
-            title: media.metadata.name,
-            fields: {
-              low: { stringValue: media.tokenURI },
-              stream: { stringValue: media.tokenURI },
-              medium: { stringValue: media.tokenURI },
-              high: { stringValue: media.tokenURI },
-              thumbnail: { stringValue: media.tokenURI },
-            },
-            content: {
-              low: media.tokenURI,
-              stream: media.tokenURI,
-              medium: media.tokenURI,
-              high: media.tokenURI,
-              thumbnail: media.tokenURI,
-            },
-            owner: media.owner,
-            creator: media.creator,
-          };
-        });
-
-        setNFTList(NFTList.concat(realNftList));
-        setPaginationMeta(mediaList.meta);
+      const list: Array<NFTProps> = mediaList.map(i => ({
+        type: 'image',
+        content: {
+          low: i.tokenURI,
+          stream: i.tokenURI,
+          medium: i.tokenURI,
+          high: i.tokenURI,
+          thumbnail: i.tokenURI,
+        },
+        title: i.title,
+        owner: i.owner,
+        creator: i.creator,
+      }));
+      setNFTList(list);
+    } catch (e) {
+      message.error(`数据获取失败${e.toString()}`);
+    }
+  };
+  // 获取用户 艺术家数据
+  const fetchUserArtist = async () => {
+    try {
+      const data: Array<User> = await listUsersArtist();
+      console.log('listUsersArtist', data);
+      // 不足四个
+      if (data.length < 4) {
+        let len = 4 - data.length;
+        let list: User = Object.assign({}, data[0]);
+        let arr = [];
+        for (let i = 0; i <= len; i++) {
+          arr.push(list);
+        }
+        setCreatorsList(arr);
+      } else {
+        setCreatorsList(data.slice(0, 4));
       }
-      let _page = page;
-      setPage(++_page);
     } catch (e) {
       message.error(`数据获取失败${e.toString()}`);
     }
   };
 
-  useMount(() => {});
+  useEffect(() => {
+    fetchNFTData();
+    fetchUserArtist();
+  }, []);
 
-  // 处理滚动Load
-  const handleInfiniteOnLoad = async () => {
-    setLoading(true);
-    // 第一页不判断
-    // if (page !== 1 && paginationMeta.currentPage >= paginationMeta.totalPages) {
-    //   setLoading(false);
-    //   setHasMore(false);
-    //   return;
-    // }
-    if (page > 1) {
-      // 只需要一页
-      setLoading(false);
-      setHasMore(false);
-      return;
-    }
-    await fetchNFTData();
-    setLoading(false);
-  };
+  useMount(() => {});
 
   return (
     <StyledWrapper>
@@ -161,7 +110,7 @@ const Home: React.FC<void> = () => {
       <StyledModule className='nfts'>
         <StyledModuleHead>
           <StyledTitle>
-            Upcoming NFTs<span>New</span>
+            Hot NFTs<span>New</span>
           </StyledTitle>
           <Link href='/market'>
             <a target='_blank' className='more'>
@@ -170,27 +119,17 @@ const Home: React.FC<void> = () => {
             </a>
           </Link>
         </StyledModuleHead>
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={handleInfiniteOnLoad}
-          hasMore={!loading && hasMore}>
-          <StyledNfts>
-            {NFTList.map((i, idx) => (
-              // 这里有报错
-              // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
-              <Link href={`/p/${i.id}`} key={idx}>
-                <a target='_blank'>
-                  <NFT {...i}></NFT>
-                </a>
-              </Link>
-            ))}
-            {loading && hasMore && (
-              <div className='loading-container'>
-                <Spin />
-              </div>
-            )}
-          </StyledNfts>
-        </InfiniteScroll>
+        <StyledNfts>
+          {NFTList.map((i, idx) => (
+            // 这里有报错
+            // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
+            <Link href={`/p/${i.id}`} key={idx}>
+              <a target='_blank'>
+                <NFT {...i}></NFT>
+              </a>
+            </Link>
+          ))}
+        </StyledNfts>
       </StyledModule>
       <StyledModule className='creators'>
         <StyledModuleHead>
@@ -208,9 +147,9 @@ const Home: React.FC<void> = () => {
           {creatorsList.map((i, idx) => (
             <Creators
               key={idx}
-              bc={i.bc}
+              bc={i.avatar}
               avatar={i.avatar}
-              username={i.username}></Creators>
+              username={i.nickname || i.username}></Creators>
           ))}
         </StyledCreators>
       </StyledModule>
@@ -230,7 +169,10 @@ const Home: React.FC<void> = () => {
         <StyledAbout>
           {AboutNFTList.map((i, idx) => (
             <div key={idx} className='box'>
-              <About img={i.img} text={i.text} link={i.link}></About>
+              <About
+                img={i.img}
+                text={i.text}
+                link={`/community/${i.link}`}></About>
             </div>
           ))}
         </StyledAbout>

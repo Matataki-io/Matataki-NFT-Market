@@ -45,3 +45,7 @@ export interface User {
   role: UserRole;
   waitingForScreen: MediaToScreen[];
 }
+
+export interface Gallery extends User {
+  subordinateArtists: Array<User>;
+}

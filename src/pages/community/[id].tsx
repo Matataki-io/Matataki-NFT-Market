@@ -82,7 +82,10 @@ const CommunityId: React.FC = () => {
   return (
     <StyledWrapper>
       <Head>
-        <title>Top 3 Visual Trends of 2020</title>
+        <title>
+          Web3 个人代币平台 Meta Network 完成新一轮 200 万美元的融资，参投方包括
+          NGC
+        </title>
         <link
           rel='preload'
           href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css'
@@ -93,7 +96,10 @@ const CommunityId: React.FC = () => {
           href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css'
         />
       </Head>
-      <StyledTitle>Top 3 Visual Trends of 2020</StyledTitle>
+      <StyledTitle>
+        Web3 个人代币平台 Meta Network 完成新一轮 200 万美元的融资，参投方包括
+        NGC
+      </StyledTitle>
       <StyledTime>March 28, 2021</StyledTime>
       <StyledUser>
         <Avatar></Avatar>
