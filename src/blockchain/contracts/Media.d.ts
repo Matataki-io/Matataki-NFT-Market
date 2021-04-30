@@ -20,17 +20,6 @@ import { BytesLike } from '@ethersproject/bytes';
 import { Listener, Provider } from '@ethersproject/providers';
 import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
 
-export class TransferEvent {
-  from: string;
-  to: string;
-  tokenId: number;
-}
-
-export class MintEvent {
-  to: string;
-  tokenId: number;
-}
-
 interface MediaInterface extends ethers.utils.Interface {
   functions: {
     'MINT_AND_TRANFER_WITH_SIG_TYPEHASH()': FunctionFragment;
@@ -48,6 +37,7 @@ interface MediaInterface extends ethers.utils.Interface {
     'mint(tuple,tuple)': FunctionFragment;
     'mintAndTransfer(tuple,tuple,address)': FunctionFragment;
     'mintAndTransferWithSig(address,tuple,tuple,address,tuple)': FunctionFragment;
+    'mintAndTransferWithSigNonces(address,address)': FunctionFragment;
     'mintWithSig(address,tuple,tuple,tuple)': FunctionFragment;
     'mintWithSigNonces(address)': FunctionFragment;
     'name()': FunctionFragment;
@@ -176,6 +166,10 @@ interface MediaInterface extends ethers.utils.Interface {
       string,
       { deadline: BigNumberish; v: BigNumberish; r: BytesLike; s: BytesLike }
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: 'mintAndTransferWithSigNonces',
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: 'mintWithSig',
@@ -347,6 +341,10 @@ interface MediaInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: 'mintAndTransferWithSig',
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: 'mintAndTransferWithSigNonces',
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -729,6 +727,22 @@ export class Media extends Contract {
       },
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    mintAndTransferWithSigNonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    'mintAndTransferWithSigNonces(address,address)'(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     mintWithSig(
       creator: string,
@@ -1357,6 +1371,18 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  mintAndTransferWithSigNonces(
+    arg0: string,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  'mintAndTransferWithSigNonces(address,address)'(
+    arg0: string,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   mintWithSig(
     creator: string,
     data: {
@@ -1899,6 +1925,18 @@ export class Media extends Contract {
       },
       overrides?: CallOverrides
     ): Promise<void>;
+
+    mintAndTransferWithSigNonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    'mintAndTransferWithSigNonces(address,address)'(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     mintWithSig(
       creator: string,
@@ -2473,6 +2511,18 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    mintAndTransferWithSigNonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    'mintAndTransferWithSigNonces(address,address)'(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     mintWithSig(
       creator: string,
       data: {
@@ -3032,6 +3082,18 @@ export class Media extends Contract {
         s: BytesLike;
       },
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    mintAndTransferWithSigNonces(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    'mintAndTransferWithSigNonces(address,address)'(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     mintWithSig(

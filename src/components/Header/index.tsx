@@ -161,7 +161,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                   userDataByWallet?.role
                 ) && (
                   <Link
-                    href={`http://localhost:8000/auth?token=${accessToken}`}>
+                    href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
                     管理后台
                   </Link>
                 )}
