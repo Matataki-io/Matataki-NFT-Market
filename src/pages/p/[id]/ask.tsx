@@ -21,15 +21,19 @@ import { useWallet } from 'use-wallet';
 import { utils } from 'ethers';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import Link from 'next/link';
-import { getDecimalOf } from '../../../utils/tokens';
+import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 import NFTPreview from '../../../components/NFTPreview/index';
 import { getMediaById, getMediaMetadata } from '../../../backend/media';
+import { ZERO_ADDRESS } from '../../../constant';
+import { useBoolean } from 'ahooks';
 
 export default function AskPage() {
   const router = useRouter();
   const wallet = useWallet();
   const { id } = router.query;
-  const { isMeTheOwner } = useMediaToken(Number(id));
+  const { isMeTheOwner, profile, removeAsk, isAskExist } = useMediaToken(
+    Number(id)
+  );
   const mediaContract = useMedia();
   const handler = (val: string | string[]) => {
     setCurrency(val as string);
@@ -45,14 +49,25 @@ export default function AskPage() {
     },
   });
 
+  const [isSigning, signingActions] = useBoolean(false);
+
   async function setAsk() {
     if (!wallet.account) throw new Error('Wallet have to be connected');
-    const tx = await mediaContract.setAsk(
-      id as string,
-      constructAsk(currency, amount)
-    );
-    const receipt = await tx.wait();
-    alert(`问价成功，TxHash: ${receipt.transactionHash}`);
+    signingActions.setTrue();
+    const theAsk = constructAsk(currency, amount);
+    try {
+      const tx = await mediaContract.setAsk(id as string, theAsk);
+      const receipt = await tx.wait();
+      alert(`问价成功，TxHash: ${receipt.transactionHash}`);
+    } catch (error) {
+      mediaContract.callStatic.setAsk(id as string, theAsk).catch(callError => {
+        console.error('callError', callError);
+        console.error('reason', callError.reason);
+        alert('Error happened: ' + callError.reason);
+      });
+    } finally {
+      signingActions.setFalse();
+    }
   }
 
   // get media
@@ -122,6 +137,21 @@ export default function AskPage() {
       <Grid xs={24} md={12}>
         <BiddingBox>
           <Text h3>Your ask</Text>
+
+          {isAskExist && (
+            <GreyCard>
+              <p className='title'>CURRENT ASK</p>
+              <p className='value'>
+                {utils.formatUnits(
+                  profile.currentAsk.amount,
+                  getDecimalOf(profile.currentAsk.currency)
+                )}
+                {' ' + getSymbolOf(profile.currentAsk.currency)}
+              </p>
+              <Button onClick={() => removeAsk()}>Remove Ask</Button>
+            </GreyCard>
+          )}
+
           <StyledBidsInput>
             <Select
               placeholder='Bidding Currency'
@@ -164,6 +194,7 @@ export default function AskPage() {
                 type='secondary'
                 size='large'
                 style={FullWidth}
+                loading={isSigning}
                 onClick={() => setAsk()}>
                 Make your Ask
               </Button>
@@ -190,6 +221,32 @@ const StyledPermissions = styled.div`
   align-items: center;
   flex-direction: column;
   padding: 100px 0 0;
+`;
+
+const GreyCard = styled.div`
+  box-sizing: border-box;
+  margin: 0;
+  min-width: 0;
+  padding: 20px 20px;
+  width: 100%;
+  flex-direction: column;
+  border-radius: 4px;
+  border: 2px solid #f2f2f2;
+  background-color: #f2f2f2;
+  margin-bottom: 10px;
+  display: flex;
+  .title {
+    color: rgb(136, 136, 136);
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+  }
+  .value {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0;
+    margin: 10px 0 0 0;
+  }
 `;
 
 const BiddingBox = styled.div`

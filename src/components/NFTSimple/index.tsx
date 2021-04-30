@@ -103,13 +103,18 @@ const StyledNFTContent = styled.div`
   overflow: hidden;
   z-index: 0;
   position: relative;
-  height: 100%;
-  width: 100%;
+  /* height: 100%;
+  width: 100%; */
+  height: 342px;
+  max-width: 342px;
+  /* width: 342px; */
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  flex: 1;
+  /* flex: 1; */
+  border: 1px solid rgb(0 0 0 / 5%);
+  box-sizing: border;
   .media-video,
   .media-text,
   .media-file,
@@ -133,10 +138,10 @@ const StyledNFTContent = styled.div`
       display: block;
       max-width: 100%;
       max-height: 100%;
-      width: auto;
-      height: auto;
+      width: 100%;
+      height: 100%;
       margin: 0px auto;
-      object-fit: contain;
+      object-fit: cover;
     }
   }
   .media-audio {

@@ -9,7 +9,7 @@ import { useWallet } from 'use-wallet';
 import styled from 'styled-components';
 import { Spin } from 'antd';
 
-import { backendSWRFetcher, getBidsOfToken } from '../../../backend/media';
+import { backendSWRFetcher } from '../../../backend/media';
 import { useMedia } from '../../../hooks/useMedia';
 import { BidLog } from '../../../types/Bid';
 import { getSymbolOf } from '../../../utils/tokens';

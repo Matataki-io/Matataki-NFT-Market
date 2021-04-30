@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 import ButtonCustom from '../Button/index';
-import { shortedWalletAccount } from '../../utils/index';
+import { shortedWalletAccount, diffData } from '../../utils/index';
 import { updateUser } from '../../backend/user';
 import { useLogin } from '../../hooks/useLogin';
 import styles from './index.module.scss';
@@ -88,18 +88,6 @@ const Profile: React.FC<Props> = ({ isProfile, setIsProfile }) => {
       let { nickname, bio, username } = values;
       if (isRegistered) {
         // 更新
-        // diff
-        const diffData = (newData: any, oldData: any) => {
-          let data: any = {};
-          for (const key in newData) {
-            if (Object.prototype.hasOwnProperty.call(newData, key)) {
-              if (newData[key] !== oldData[key]) {
-                data[key] = newData[key];
-              }
-            }
-          }
-          return data;
-        };
         let profile: UserProps = diffData(
           {
             username,

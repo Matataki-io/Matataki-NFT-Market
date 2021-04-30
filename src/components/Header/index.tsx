@@ -1,9 +1,9 @@
 import React, {
-  useState,
-  useMemo,
   Fragment,
-  useEffect,
   useCallback,
+  useEffect,
+  useMemo,
+  useState,
 } from 'react';
 import { useMount } from 'ahooks';
 import Link from 'next/link';
@@ -13,11 +13,13 @@ import Button from '../Button/index';
 import { useWallet } from 'use-wallet';
 import UserDropdown from '../UserDropdown';
 import { useLogin } from '../../hooks/useLogin';
-import { currentChainId } from '../../constant';
+import { currentChainId, UserRole } from '../../constant';
 import { getCookie } from '../../utils/cookie';
-import { shortedWalletAccount } from '../../utils/index';
+import { shortedWalletAccount } from '../../utils';
 import { message } from 'antd';
 import { isEmpty } from 'lodash';
+import { useRouter } from 'next/router';
+
 // import Search from '../Search';
 
 interface HeaderProps {
@@ -32,6 +34,8 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   setIsProfile,
 }) => {
   const wallet = useWallet();
+  const router = useRouter();
+
   const shortedccount = useMemo(() => {
     if (wallet.status !== 'connected') return 'Not Connected';
     return wallet.account ? shortedWalletAccount(wallet.account) : '';
@@ -42,6 +46,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     userDataByWallet,
     loginWithSignature,
     caughtError,
+    accessToken,
   } = useLogin();
   const [networkVersion, setNetworkVersion] = useState<string>('');
   const [connect, setConnect] = useState<boolean>(false);
@@ -74,6 +79,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     ) {
       wallet.connect('injected'); // 自动链接 不用签名
     }
+    console.log(userDataByWallet);
   }, [wallet]);
   // 链接钱包
   const connectWallet = useCallback(async () => {
@@ -94,22 +100,23 @@ const HeaderComponents: React.FC<HeaderProps> = ({
       if (registeredLoading) return;
       // 查询完是否注册
       if (isRegistered) {
-        setIsProfile(false);
         if (!getCookie('token')) loginWithSignature();
       } else {
-        setIsProfile(true);
+        router.push('/register/collector');
       }
       setConnect(false);
     }
   }, [
     wallet.status,
     isRegistered,
-    setIsProfile,
     loginWithSignature,
     registeredLoading,
     connect,
+    router,
   ]);
 
+  // @ts-ignore
+  // @ts-ignore
   return (
     <StyledHeader>
       <StyledHeaderWrapper>
@@ -149,6 +156,15 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                 <Link href='/community'>
                   <a>Community</a>
                 </Link>
+                {[UserRole.Gallery, UserRole.SuperAdmin].includes(
+                  // @ts-ignore
+                  userDataByWallet?.role
+                ) && (
+                  <Link
+                    href={`http://localhost:8000/auth?token=${accessToken}`}>
+                    管理后台
+                  </Link>
+                )}
               </StyledHeaderNav>
             </StyledHeaderLeft>
             {/* <Search></Search> */}
@@ -157,6 +173,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               <div>
                 <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
                   <Button className='hover-underline'>Learn</Button>
+                  <span>{wallet.account}</span>
                 </a>
                 {wallet.status === 'connected' ? (
                   <>

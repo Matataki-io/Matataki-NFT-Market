@@ -1,16 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
+import { User } from '../../types/User.types';
 
-const GalleryCard: React.FC = () => {
+const GalleryCard: React.FC<User> = ({ username, avatar, nickname, bio }) => {
   return (
     <StyledWrapper>
       <StyledCover>
-        <img src='https://placeimg.com/540/184/nature?t=1617247698083' alt='' />
+        {avatar ? <img src={avatar} alt='Image' /> : null}
       </StyledCover>
-      <StyledTitle>K2 Gallery</StyledTitle>
-      <Styleddescription>
-        Jongno-gu Seoul, Republic of Korea | 119 works
-      </Styleddescription>
+      <StyledTitle>{nickname || username}</StyledTitle>
+      <Styleddescription>{bio || 'Not...'}</Styleddescription>
     </StyledWrapper>
   );
 };
@@ -19,6 +18,7 @@ const StyledCover = styled.div`
   width: 100%;
   height: 192px;
   overflow: hidden;
+  border: 1px solid rgb(0 0 0 / 5%);
   img {
     width: 100%;
     height: 100%;

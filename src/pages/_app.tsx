@@ -48,7 +48,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Providers>
       <NextHead>
-        <title>Meta NFT Market</title>
+        <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
         <link rel='icon' href='/favicon.ico' />
       </NextHead>
       {isCreate ? <Create setIsCreate={setIsCreate}></Create> : ''}

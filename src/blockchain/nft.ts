@@ -1,7 +1,10 @@
 import { MediaFactory } from './contracts/MediaFactory';
 import { Decimal } from '../utils/Decimal';
-import { Signer } from 'ethers';
+import { providers, Signer, utils } from 'ethers';
 import { currentContracts } from '../constant/contracts';
+import { signMintWithSig } from './permitUtils';
+import { Media } from './contracts/Media';
+import type { MintAndTransferParameters } from '../types/MintAndTransfer';
 
 /**
  * 铸 Media 币
@@ -20,24 +23,13 @@ export async function mintMediaToken(
   creatorShare: number,
   wallet: Signer
 ) {
-  if (!tokenURI) {
-    throw new Error('--tokenURI token URI is required');
-  }
-  if (!metadataURI) {
-    throw new Error('--metadataURI metadata URI is required');
-  }
-  if (!contentHash) {
-    throw new Error('--contentHash content hash is required');
-  }
-  if (!metadataHash) {
-    throw new Error('--metadataHash content hash is required');
-  }
-  if (!creatorShare && creatorShare !== 0) {
-    throw new Error('--creatorShare creator share is required');
-  }
-  if (creatorShare < 0 || creatorShare > 100) {
-    throw new Error('--creatorShare creator share range is [0, 100]');
-  }
+  checkParameters(
+    tokenURI,
+    metadataURI,
+    contentHash,
+    metadataHash,
+    creatorShare
+  );
   const addressBook = currentContracts;
   if (!addressBook) {
     throw new Error('No address book');
@@ -98,3 +90,112 @@ export async function mintMediaToken(
     });
   }
 }
+
+export async function GenerateCreationSignature(
+  tokenURI: string,
+  metadataURI: string,
+  contentHash: string,
+  metadataHash: string,
+  to: string,
+  creatorShare: number,
+  wallet: providers.JsonRpcSigner
+): Promise<MintAndTransferParameters> {
+  checkParameters(
+    tokenURI,
+    metadataURI,
+    contentHash,
+    metadataHash,
+    creatorShare
+  );
+  const addressBook = currentContracts;
+  if (!utils.isAddress(to)) {
+    throw new Error('Bad `to`, please contact team ASAP.');
+  }
+  if (!addressBook) {
+    throw new Error('No address book');
+  }
+  if (!addressBook.MEDIA) {
+    throw new Error(`Media contract has not yet been deployed`);
+  }
+  const media = MediaFactory.connect(addressBook.MEDIA, wallet);
+
+  console.log(
+    'Minting by signing... ',
+    tokenURI,
+    contentHash,
+    metadataURI,
+    metadataHash
+  );
+  // @todo: get it from the backend
+  const nonce = 0;
+  const { signer, sig } = await signMintWithSig(
+    wallet,
+    media,
+    media.address,
+    {
+      contentHash: contentHash,
+      metadataHash: metadataHash,
+      creatorShare: Decimal.new(creatorShare).value,
+      to,
+    },
+    nonce
+  );
+
+  return {
+    creator: signer,
+    data: {
+      tokenURI: tokenURI,
+      metadataURI: metadataURI,
+      contentHash: '0x' + Buffer.from(contentHash, 'hex').toString('hex'),
+      metadataHash: '0x' + Buffer.from(metadataHash, 'hex').toString('hex'),
+    },
+    bidShares: {
+      // I fxxking hate Zora's Decimal lib
+      prevOwner: { value: Decimal.new(0).value.toHexString() },
+      creator: { value: Decimal.new(creatorShare).value.toHexString() },
+      owner: { value: Decimal.new(100 - creatorShare).value.toHexString() },
+    },
+    to,
+    sig,
+  };
+}
+
+export function checkParameters(
+  tokenURI: string,
+  metadataURI: string,
+  contentHash: string,
+  metadataHash: string,
+  creatorShare: number
+) {
+  if (!tokenURI) {
+    throw new Error('--tokenURI token URI is required');
+  }
+  if (!metadataURI) {
+    throw new Error('--metadataURI metadata URI is required');
+  }
+  if (!contentHash) {
+    throw new Error('--contentHash content hash is required');
+  }
+  if (!metadataHash) {
+    throw new Error('--metadataHash content hash is required');
+  }
+  if (!creatorShare && creatorShare !== 0) {
+    throw new Error('--creatorShare creator share is required');
+  }
+  if (creatorShare < 0 || creatorShare > 100) {
+    throw new Error('--creatorShare creator share range is [0, 100]');
+  }
+}
+
+// export async function sendPermitToMint(
+//   media: Media,
+//   data: MintAndTransferParameters
+// ) {
+//   const res = await media.mintAndTransferWithSig(
+//     data.creator,
+//     data.data,
+//     data.bidShares,
+//     data.to,
+//     data.sig
+//   );
+// }

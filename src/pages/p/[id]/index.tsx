@@ -29,9 +29,7 @@ import { IconRespondArrow } from '../../../components/Icons';
 import { useMediaData } from '../../../hooks/useMediaData';
 import NFTTimeline from '../../../components/NFTTimeline/index';
 import { Ask } from '../../../types/Ask';
-import { BidLog } from '../../../types/Bid';
-import { MediaLog } from '../../../types/MediaLog';
-import { axiosFetcher } from '../../../utils/swr.util';
+import { BidLogWithUser, MediaLogWithUser } from '../../../types/TokenLog.dto';
 
 type Props = {
   post?: {
@@ -51,20 +49,19 @@ interface Params extends ParsedUrlQuery {
 }
 
 const PostPage: NextPage<Props> = ({ post, isError }) => {
-  const router = useRouter();
+  const { query, isFallback } = useRouter();
 
-  const { id } = router.query;
+  const { id } = query;
   const { backendData, metadata } = useMediaData(post);
 
-  const { profile, isMeTheOwner } = useMediaToken(Number(post?.id));
+  const { profile, isMeTheOwner, isAskExist } = useMediaToken(Number(post?.id));
 
   const scanLink = getTokenOnScan(Number(id));
   const ipfsLink = post?.backendData.tokenURI;
 
-  const { data: timeline, error } = useSWR<Array<Ask | MediaLog | BidLog>>(
-    `/media/${id}/logs`,
-    backendSWRFetcher
-  );
+  const { data: timeline, error } = useSWR<
+    Array<Ask | MediaLogWithUser | BidLogWithUser>
+  >(`/media/${id}/logs`, backendSWRFetcher);
 
   const copyText = useMemo(() => {
     if (process.browser) {
@@ -74,8 +71,8 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
     }
   }, [metadata]);
 
-  if (router.isFallback) {
-    return <h1>Loading...</h1>;
+  if (isFallback) {
+    return <h1>Loading the latest data...</h1>;
   }
   if (!post && !isError) return <div>Loading</div>;
   if (!post)
@@ -109,7 +106,7 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
                   {utils.formatUnits(profile.bidsShares.creator.value, 18)}%
                 </LargeValue>
               </ContainerShare>
-              {profile.currentAsk.amount.gt(0) && (
+              {isAskExist && (
                 <ContainerShare>
                   <SmallLabel>Current Price</SmallLabel>
                   <LargeValue>
@@ -134,7 +131,9 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
                 </Link>
               ) : (
                 <Link href={`/p/${post.id}/ask`}>
-                  <TradeButton colorType='secondary'>Add Price</TradeButton>
+                  <TradeButton colorType='secondary'>
+                    {isAskExist ? 'Edit Price' : 'Add Price'}
+                  </TradeButton>
                 </Link>
               )}
               <CopyToClipboard
@@ -170,6 +169,7 @@ export async function getStaticProps(
     // Call an external API endpoint to get posts
     const backendData = await getMediaById(Number(id));
     const metadata = await getMediaMetadata(backendData.metadataURI);
+
     return {
       props: {
         post: {
@@ -178,6 +178,9 @@ export async function getStaticProps(
           metadata,
         },
       },
+      // Incremental Static ReGeneration Magic!
+      // If you interested, Checkout: https://nextjs.org/docs/basic-features/data-fetching#incremental-static-regeneration
+      revalidate: 60,
     };
   } catch (error) {
     return { props: { isError: true } };

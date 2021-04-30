@@ -1,12 +1,12 @@
-import React, { useState, Fragment, useMemo } from 'react';
+import React, { useState, Fragment, useMemo, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
 import { Signer } from 'ethers';
 import { PostMedia } from '../../backend/media';
-
+import { getGalleryUsers } from '../../backend/user';
 import ButtonCustom from '../Button';
-import NFT from '../NFT';
+import NFT from '../NFTCreate';
 import { firstUpperCase } from '../../utils/index';
 import { storageUploadToIpfsUrl } from '../../backend/storage';
 import {
@@ -20,14 +20,21 @@ import {
   Spin,
   Tooltip,
   Popconfirm,
+  Select,
+  Avatar,
 } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 const { Dragger } = Upload;
-
-import { mintMediaToken } from '../../blockchain/nft';
-
+const { Option } = Select;
+import {
+  mintMediaToken,
+  GenerateCreationSignature,
+} from '../../blockchain/nft';
 import { UploadProps } from 'antd/lib/upload/interface';
 import { useLogin } from '../../hooks/useLogin';
+import { useMedia } from '../../hooks/useMedia';
 import { NFTProps } from '../../../next-env';
+import { User } from '../../types/User.types';
 import {
   NFTTempImage,
   NFTTempVideo,
@@ -63,7 +70,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const wallet = useWallet();
   const { signer, isSignerReady } = useSigner();
   const { userDataByWallet } = useLogin();
-
   const [step, setStep] = useState<number>(0); // 步骤
   const [mediaType, setMediaType] = useState<mediaTypeProps>('image'); // 当前上传媒体类型
   const [mediaUrl, setMediaUrl] = useState<string>(''); // 媒体类型为Url的Value
@@ -77,6 +83,16 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     description: string;
   }>({ name: '', description: '' }); // 备份 formNameAndDescription 数据
   // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
+  const [galleryList, setGalleryList] = useState<Array<any>>([]);
+  const mediaContract = useMedia();
+
+  useEffect(() => {
+    const fetch = async () => {
+      const data: Array<User> = await getGalleryUsers();
+      setGalleryList(data);
+    };
+    fetch();
+  }, []);
 
   // 媒体类型 placeholder
   const mediaPlaceholder: mediaTypeState = {
@@ -307,10 +323,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.warning('请上传资源');
     }
   };
-  // price填写完成
-  const onFinishPrice = async (values: any) => {
-    console.log('Success:', values);
-
+  // 自己mint
+  const mintToken = async () => {
     let {
       tokenURI,
       metadataURI,
@@ -368,6 +382,64 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.error(e);
     }
   };
+  // mint到画廊
+  const mintTokenToGallery = async () => {
+    if (!isSignerReady(signer)) return;
+
+    let {
+      tokenURI,
+      metadataURI,
+      contentHash,
+      metadataHash,
+    } = mediaData.storage['MediaData'];
+    let { price: creatorShare, gallery } = formPricingAndFees.getFieldsValue();
+    console.log(
+      'info',
+      tokenURI,
+      metadataURI,
+      contentHash,
+      metadataHash,
+      creatorShare,
+      gallery
+    );
+
+    const res = await GenerateCreationSignature(
+      tokenURI,
+      metadataURI,
+      contentHash,
+      metadataHash,
+      gallery,
+      Number(creatorShare),
+      signer
+    );
+    console.log('res', res);
+    if (!res) {
+      message.error('not res');
+      return;
+    }
+    const resp = await mediaContract.mintAndTransferWithSig(
+      wallet.account as string,
+      res?.data,
+      res?.bidShares,
+      res?.to,
+      res?.sig
+    );
+    const receipt = await resp.wait();
+    console.info('re', receipt);
+    alert('txHash' + receipt.transactionHash);
+
+    setIsCreate(false);
+  };
+
+  // price填写完成
+  const onFinishPrice = async (values: any) => {
+    console.log('Success:', values);
+    if (isEmpty(values.gallery)) {
+      mintToken();
+    } else {
+      mintTokenToGallery();
+    }
+  };
   // price填写失败
   const onFinishFailedPrice = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
@@ -401,7 +473,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     return (
       <Fragment>
         <StyledSubtitle>Add information</StyledSubtitle>
-        <StyledMultiiMediaForm
+        <StyledForm
           name='nameAndDescription'
           form={formNameAndDescription}
           layout='vertical'
@@ -410,20 +482,17 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           onFinishFailed={onFinishFailedInfo}>
           <StyledMultiiMediaFormItem className='input'>
             <Form.Item
-              label='Name'
+              label=''
               name='name'
               rules={[{ required: true, message: 'Name is required' }]}>
-              <Input placeholder='Enter Name' className='input-name' />
+              <Input placeholder='Enter Name' />
             </Form.Item>
 
             <Form.Item
-              label='Description'
+              label=''
               name='description'
               rules={[{ required: true, message: 'Description is required' }]}>
-              <Input.TextArea
-                placeholder='Enter Description'
-                className='input-textarea'
-              />
+              <Input.TextArea placeholder='Enter Description' />
             </Form.Item>
           </StyledMultiiMediaFormItem>
           <StyledMultiiMediaFormItem className='footer'>
@@ -434,7 +503,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               Continue
             </ButtonCustom>
           </StyledMultiiMediaFormItem>
-        </StyledMultiiMediaForm>
+        </StyledForm>
       </Fragment>
     );
   };
@@ -583,6 +652,21 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                   max={100}
                 />
               </Form.Item>
+              <Form.Item label='Gallery' name='gallery'>
+                <Select placeholder='Select a gallery'>
+                  {galleryList.map((i: User, idx: number) => (
+                    <Option key={`${idx}-${i.address}`} value={i.address}>
+                      <span>
+                        <Avatar
+                          size={20}
+                          icon={<UserOutlined />}
+                          src={i.avatar}></Avatar>{' '}
+                        <span>{i.nickname || i.username}</span>
+                      </span>
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </Form.Item>
           </StyledMultiiMediaFormItem>
           <StyledMultiiMediaFormItem className='footer'>
@@ -601,9 +685,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   return (
     <StyledWrapper>
       <StyledContainer>
+        <StyledTitle>Create Artworks</StyledTitle>
+
         <StyledContainerGrid>
           <StyledContainerGridCol start='0' end='6'>
-            <StyledTitle>Create Media</StyledTitle>
             {step === 0 ? (
               <Step0></Step0>
             ) : step === 1 ? (
@@ -642,7 +727,7 @@ const StyledUploadWrapper = styled.div`
 `;
 const StyledWrapper = styled.div`
   margin: 0px;
-  padding: 130px 0px;
+  padding: 80px 20px 0;
   background: rgb(255, 255, 255);
   z-index: 3;
   position: fixed;
@@ -666,7 +751,7 @@ const StyledHead = styled.div`
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
-  padding: 30px;
+  padding: 48px 0 0 0;
   margin: 0px auto;
   width: 100%;
   max-width: calc(1246px);
@@ -708,15 +793,13 @@ const StyledSubtitle = styled.h4`
 `;
 const StyledMultiiMediaInput = styled.div`
   width: 100%;
-  border: 2px solid rgba(0, 0, 0, 0.1);
   padding: 20px 0px 0px;
   position: relative;
 `;
 const StyledMultiiMediaInputHead = styled.div`
   color: #000;
   width: auto;
-  padding: 0px 20px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  padding: 0;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -760,8 +843,9 @@ const StyledMultiiMediaInputHeadTab = styled.h5<{ actions?: boolean }>`
 const StyledMultiiMediaInputWrapper = styled.div`
   width: auto;
   height: 100px;
-  margin: 20px;
-  background: rgba(0, 0, 0, 0.05);
+  margin: 20px 0;
+  border: 1px solid #dbdbdb;
+  color: #b2b2b2;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -822,10 +906,6 @@ const StyledMultiiMediaInputContainer = styled.div`
 `;
 const StyledMultiiMediaActions = styled.div`
   width: 100%;
-  padding: 20px;
-  border-right: 2px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-  border-left: 2px solid rgba(0, 0, 0, 0.1);
   border-image: initial;
   border-top: none;
   display: flex;
@@ -839,13 +919,11 @@ const StyledMultiiMediaForm = styled(Form)`
 `;
 const StyledMultiiMediaFormItem = styled.div`
   width: 100%;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   &.input {
-    border: 2px solid rgba(0, 0, 0, 0.1);
     label {
       font-size: 17px;
       font-weight: 500;
@@ -853,20 +931,7 @@ const StyledMultiiMediaFormItem = styled.div`
       text-transform: none;
     }
   }
-  .input-name {
-    box-sizing: border-box;
-    padding: 15px;
-    width: 100%;
-    min-height: 50px;
-    font-size: 15px;
-    line-height: 14px;
-    font-weight: 400;
-    transition: all 0.1s ease-in 0s;
-    color: rgb(0, 0, 0);
-    border: 1px solid transparent;
-    background: rgba(0, 0, 0, 0.05);
-    outline: none;
-  }
+
   .input-name-number {
     box-sizing: border-box;
     padding: 10px;
@@ -877,29 +942,12 @@ const StyledMultiiMediaFormItem = styled.div`
     font-weight: 400;
     transition: all 0.1s ease-in 0s;
     color: rgb(0, 0, 0);
-    border: 1px solid transparent;
-    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-bottom: 1px solid #d9d9d9;
     outline: none;
   }
-  .input-textarea {
-    box-sizing: border-box;
-    padding: 15px;
-    width: 100%;
-    font-size: 15px;
-    font-weight: 400;
-    transition: all 0.1s ease-in 0s;
-    color: rgb(0, 0, 0);
-    border: 1px solid transparent;
-    background: rgba(0, 0, 0, 0.05);
-    outline: none;
-    line-height: 20px;
-    min-height: 100px;
-    resize: none;
-  }
+
   &.footer {
-    border-right: 2px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    border-left: 2px solid rgba(0, 0, 0, 0.1);
     border-image: initial;
     border-top: none;
     display: flex;
@@ -918,5 +966,23 @@ const StyledMultiiMediaFormItemText = styled.p`
   color: rgba(0, 0, 0, 0.7);
   margin-bottom: 20px;
   line-height: 1.15;
+`;
+const StyledForm = styled(Form)`
+  width: 100%;
+  margin-top: 20px;
+  .ant-form-item {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #d9d9d9;
+    .ant-input,
+    .ant-input-affix-wrapper {
+      border: none;
+    }
+    .ant-input:focus,
+    .ant-input-focused,
+    .ant-input-affix-wrapper:focus,
+    .ant-input-affix-wrapper-focused {
+      box-shadow: none;
+    }
+  }
 `;
 export default CreateComponents;

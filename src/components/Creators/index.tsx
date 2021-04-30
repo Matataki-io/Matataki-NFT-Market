@@ -1,6 +1,34 @@
 import React from 'react';
 import styled from 'styled-components';
 
+interface CreatorsProps {
+  bc: string;
+  avatar: string;
+  username: string;
+}
+
+const CreatorsComponents: React.FC<CreatorsProps> = ({
+  bc,
+  avatar,
+  username,
+}) => {
+  return (
+    <StyledCreatorsComponents>
+      <div className='cover'>
+        <div className='cover-bc'>
+          {bc ? <img src={bc} alt='About' /> : null}
+        </div>
+        <div className='avatar-box'>
+          <div className='avatar'>
+            {avatar ? <img src={avatar} alt='Avatar' /> : null}
+          </div>
+        </div>
+      </div>
+      <p>{username}</p>
+    </StyledCreatorsComponents>
+  );
+};
+
 const StyledCreatorsComponents = styled.div`
   width: 100%;
   height: 100%;
@@ -12,6 +40,13 @@ const StyledCreatorsComponents = styled.div`
       width: calc(100% - 122px);
       height: 100%;
       margin-left: 122px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
     }
     .avatar-box {
       position: absolute;
@@ -59,31 +94,5 @@ const StyledCreatorsComponents = styled.div`
     margin: 24px 0 0 0;
   }
 `;
-
-interface CreatorsProps {
-  bc: string;
-  avatar: string;
-  username: string;
-}
-
-const CreatorsComponents: React.FC<CreatorsProps> = ({
-  bc,
-  avatar,
-  username,
-}) => {
-  return (
-    <StyledCreatorsComponents>
-      <div className='cover'>
-        <img className='cover-bc' src={bc} alt='About' />
-        <div className='avatar-box'>
-          <div className='avatar'>
-            <img src={avatar} alt='Avatar' />
-          </div>
-        </div>
-      </div>
-      <p>{username}</p>
-    </StyledCreatorsComponents>
-  );
-};
 
 export default CreatorsComponents;

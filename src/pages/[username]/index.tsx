@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, message } from 'antd';
+import { Avatar, message, Button, Spin } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
-import Page from '../../components/Page';
+import { ReactSVG } from 'react-svg';
 import {
   AccountName,
   AccountUsername,
@@ -19,12 +19,21 @@ import NFTSimple from '../../components/NFTSimple';
 import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 
 import { useLogin } from '../../hooks/useLogin';
-import { getUser, getUserBids } from '../../backend/user';
+import {
+  getUser,
+  getUserBids,
+  getGallerySubordinateArtists,
+} from '../../backend/user';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
 import { BidLog } from '../../types/Bid.d';
 import BidsCard from '../../components/BidsCard';
 import BidsCancelModal from '../../components/BidsCancelModal';
+import ArtworksCarousel from '../../components/ArtworksCarousel';
+
+import IconTelegram from '../../assets/icons/telegram.svg';
+import IconTwitter from '../../assets/icons/twitter.svg';
+import IconEmail from '../../assets/icons/email1.svg';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -37,6 +46,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     avatar: '',
     nickname: '',
     username: '',
+    role: undefined,
   });
   const [isVerifiedUser, setIsVerifiedUser] = useState(false);
   const [isMyself, setIsMyself] = useState(false);
@@ -54,6 +64,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   // click bid idx
   const [currentBidsIdx, setCurrentBidsIdx] = useState<number>(0);
   const keyMessage = 'fetchUser';
+
+  const [subordinateArtist, setSubordinateArtist] = useState<Array<User>>([]);
 
   useEffect(() => {
     const fetchUserInfoData = async () => {
@@ -134,88 +146,319 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
     fetchAll();
   }, [appUserInfo, userDataByWallet, username]);
-  // get user bids list
+
   useEffect(() => {
-    if (typeof username !== 'string') return;
-
     const fetch = async () => {
-      try {
-        const data = await getUserBids(username);
-        setBidsList(data);
-        // console.log('data', data);
-      } catch (e) {
-        console.error('e', e.toString());
-      }
+      if (typeof username !== 'string') return;
+      const data = await getGallerySubordinateArtists(username);
+      console.log('data', data);
+      setSubordinateArtist(data.subordinateArtists);
     };
-
-    if (switchFeedOrBids === 'bids') {
+    if (userInfo?.role === 'GALLERY') {
       fetch();
     }
-  }, [switchFeedOrBids, username]);
+  }, [userInfo, username]);
 
-  // switch feed or bids
-  const SwitchFeedOrBids = () => {
+  const subordinateArtistWord = useMemo(() => {
+    let list: any = {};
+    for (let i = 10; i < 36; i++) {
+      //   console.log(i.toString(36))
+      list[i.toString(36)] = [];
+    }
+    list['#'] = [];
+
+    subordinateArtist.forEach(i => {
+      let key = i.username.substr(0, 1).toLocaleLowerCase();
+      if (list[key]) {
+        list[key].push(i);
+      } else {
+        list['#'].push(i);
+      }
+    });
+
+    for (const key in list) {
+      if (Object.prototype.hasOwnProperty.call(list, key)) {
+        const element = list[key];
+        if (isEmpty(element)) {
+          delete list[key];
+        }
+      }
+    }
+
+    return list;
+  }, [subordinateArtist]);
+
+  const collectionContainner = () => {
     return (
-      <StyledSwitchWrapper>
-        <StyledSwitchButton
-          active={switchFeedOrBids === 'feed'}
-          onClick={() => setSwitchFeedOrBids('feed')}>
-          Feed
-        </StyledSwitchButton>
-        <StyledSwitchButton
-          active={switchFeedOrBids === 'bids'}
-          onClick={() => setSwitchFeedOrBids('bids')}>
-          Bids
-        </StyledSwitchButton>
-      </StyledSwitchWrapper>
+      <>
+        <StyledTitle>Collection</StyledTitle>
+        <StyledMediaCardContainer>
+          {nftListData.map((item, index) => (
+            <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+              <a target='_blank'>
+                <NFTSimple {...item} />
+              </a>
+            </Link>
+          ))}
+        </StyledMediaCardContainer>
+      </>
+    );
+  };
+  const ArtworksContainner = () => {
+    return (
+      <>
+        <StyledItem>
+          <StyledItemTitle>Presentation</StyledItemTitle>
+          <StyledVideo>
+            <video
+              src={
+                'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
+              }
+              loop
+              playsInline
+              // autoPlay
+              // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
+              className='media-video'></video>
+          </StyledVideo>
+        </StyledItem>
+        <StyledLine></StyledLine>
+        <StyledItem>
+          <StyledItemTitle>Artworks</StyledItemTitle>
+          <StyledArtworks>
+            <ArtworksCarousel></ArtworksCarousel>
+          </StyledArtworks>
+        </StyledItem>
+
+        <StyledLine></StyledLine>
+        <StyledItem>
+          <StyledItemTitle>About</StyledItemTitle>
+          <StyledAbout>
+            <div className='item'>
+              <p className='text'>
+                Since Kukje Gallery opened at the center of Seoul in 1982, it
+                has been committed to presenting the work of the most current
+                and significant Korean and international contemporary artists.
+                The Gallery has established itself as a leading venue for
+                showing works by major international artists such as Damien
+                Hirst, Eva Hesse, Jean-Michel Basquiat, Joan Mitchell, Cy
+                Twombly, Ed Ruscha, Joseph Beuys, Anselm Kiefer, Louise
+                Bourgeois, Jenny Holzer, Candida Hofer, Bill Viola, Anish
+                Kapoor, etc. The exhibitions provided the foremost rare
+                opportunity for the Korean art audiences to encounter the works
+                of world-renowned contemporary artists without going abroad.
+              </p>
+              <p className='text'>
+                Recognizing the importance of promoting Korean artists abroad,
+                Kukje Gallery participates annually in major art fairs such as
+                Art Basel, Art Basel Miami Beach and The Armory Show. The
+                Gallery first presented the most significant artworks by Korean
+                artists alongside more recognizable works of high caliber by
+                international artists. Consequently, the Korean artists as well
+                as the Gallery have been successfully gaining wide exposure and
+                receiving much attention from the non-Korean collectors. The
+                Gallery has also been promoting Korean artists to non-commercial
+                venues, using its solid network of museum curators and critics
+                worldwide. Many of Korean artists who have been presented by
+                Kukje Gallery have gone on to participate in international
+                biennials and major art museum exhibitions.
+              </p>
+              <p className='text'>
+                Kukje Gallery has an unmatched reputation in Korea for having
+                introduced many of the most critically acclaimed international
+                artists, and for supporting the most promising Korean artists.
+                The Gallery continues to play a key role in developing the
+                domestic art market and promoting Korean artists; as well as
+                drawing the national audience’s attention to the currently
+                international art world.
+              </p>
+            </div>
+            <div className='item'>
+              <div className='cover'>
+                <img
+                  src='https://placeimg.com/540/184/nature?t=1617247698083'
+                  alt=''
+                />
+              </div>
+              <p className='gallery-name'>K1 Gallery</p>
+              <StyledAboutItem>
+                <ReactSVG className='icon' src={IconTelegram} />
+                <span>@K1Gallery</span>
+              </StyledAboutItem>
+              <StyledAboutItem>
+                <ReactSVG className='icon' src={IconTwitter} />
+                <span>@K1Gallery</span>
+              </StyledAboutItem>
+              <StyledAboutItem>
+                <ReactSVG className='icon' src={IconEmail} />
+                <span>@K1Gallery</span>
+              </StyledAboutItem>
+            </div>
+          </StyledAbout>
+        </StyledItem>
+      </>
     );
   };
 
-  // show bid cancel modal fn
-  const showBidCancelModal = (idx: number) => {
-    setCurrentBidsIdx(idx);
-    setIsModalVisibleBidsCancel(true);
-  };
-  // return show cancel modal data
-  const currentBids: BidLog = useMemo(() => {
-    if (bidsList.length) {
-      return bidsList[currentBidsIdx];
-    }
-    return {} as any;
-  }, [currentBidsIdx, bidsList]);
+  const GalleryContainner = () => {
+    return (
+      <>
+        <StyledItem>
+          <StyledItemTitle>Presentation</StyledItemTitle>
+          <StyledVideo>
+            <video
+              src={
+                'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
+              }
+              loop
+              playsInline
+              // autoPlay
+              // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
+              className='media-video'></video>
+          </StyledVideo>
+        </StyledItem>
+        <StyledLine></StyledLine>
+        <StyledItem>
+          <StyledItemTitle>Artworks</StyledItemTitle>
+          <StyledArtworks>
+            <ArtworksCarousel></ArtworksCarousel>
+          </StyledArtworks>
+        </StyledItem>
 
+        <StyledLine></StyledLine>
+        <StyledItem>
+          <StyledItemTitle>About</StyledItemTitle>
+          <StyledAbout>
+            <div className='item'>
+              <p className='text'>
+                Since Kukje Gallery opened at the center of Seoul in 1982, it
+                has been committed to presenting the work of the most current
+                and significant Korean and international contemporary artists.
+                The Gallery has established itself as a leading venue for
+                showing works by major international artists such as Damien
+                Hirst, Eva Hesse, Jean-Michel Basquiat, Joan Mitchell, Cy
+                Twombly, Ed Ruscha, Joseph Beuys, Anselm Kiefer, Louise
+                Bourgeois, Jenny Holzer, Candida Hofer, Bill Viola, Anish
+                Kapoor, etc. The exhibitions provided the foremost rare
+                opportunity for the Korean art audiences to encounter the works
+                of world-renowned contemporary artists without going abroad.
+              </p>
+              <p className='text'>
+                Recognizing the importance of promoting Korean artists abroad,
+                Kukje Gallery participates annually in major art fairs such as
+                Art Basel, Art Basel Miami Beach and The Armory Show. The
+                Gallery first presented the most significant artworks by Korean
+                artists alongside more recognizable works of high caliber by
+                international artists. Consequently, the Korean artists as well
+                as the Gallery have been successfully gaining wide exposure and
+                receiving much attention from the non-Korean collectors. The
+                Gallery has also been promoting Korean artists to non-commercial
+                venues, using its solid network of museum curators and critics
+                worldwide. Many of Korean artists who have been presented by
+                Kukje Gallery have gone on to participate in international
+                biennials and major art museum exhibitions.
+              </p>
+              <p className='text'>
+                Kukje Gallery has an unmatched reputation in Korea for having
+                introduced many of the most critically acclaimed international
+                artists, and for supporting the most promising Korean artists.
+                The Gallery continues to play a key role in developing the
+                domestic art market and promoting Korean artists; as well as
+                drawing the national audience’s attention to the currently
+                international art world.
+              </p>
+            </div>
+            <div className='item'>
+              <div className='cover'>
+                <img
+                  src='https://placeimg.com/540/184/nature?t=1617247698083'
+                  alt=''
+                />
+              </div>
+              <p className='gallery-name'>K1 Gallery</p>
+              <StyledAboutItem>
+                <ReactSVG className='icon' src={IconTelegram} />
+                <span>@K1Gallery</span>
+              </StyledAboutItem>
+              <StyledAboutItem>
+                <ReactSVG className='icon' src={IconTwitter} />
+                <span>@K1Gallery</span>
+              </StyledAboutItem>
+              <StyledAboutItem>
+                <ReactSVG className='icon' src={IconEmail} />
+                <span>@K1Gallery</span>
+              </StyledAboutItem>
+            </div>
+          </StyledAbout>
+        </StyledItem>
+
+        <StyledLine></StyledLine>
+        <StyledItem>
+          <StyledItemTitle>Contracted Artists</StyledItemTitle>
+
+          <StyledWord>
+            {/* 需要合并组件 */}
+            {Object.keys(subordinateArtistWord).map((key, idx) => (
+              <ul key={idx} className='item'>
+                <li>
+                  <h3>{key.toLocaleUpperCase()}</h3>
+                </li>
+                {subordinateArtistWord[key].map(
+                  (i: { username: string; nickname: string }, idx: number) => (
+                    <li key={idx}>
+                      <Link href={`/${i.username}`}>
+                        <a>
+                          {i.username}({i.nickname})
+                        </a>
+                      </Link>
+                    </li>
+                  )
+                )}
+              </ul>
+            ))}
+          </StyledWord>
+        </StyledItem>
+      </>
+    );
+  };
   return (
     <StyledWrapper>
-      <div>
-        <div>
-          <StyledAvatar
-            icon={<UserOutlined />}
-            src={userInfo.avatar}
-            size={120}
-          />
-          <div>
-            <AccountName>
+      <StyledHead>
+        <StyledHeadUser>
+          <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
+          <StyledHeadUserInfo>
+            <h1>
               {userInfo.nickname}({userInfo.username})
-            </AccountName>
-            {userInfo.bio && <AccountBio>{userInfo.bio}</AccountBio>}
-          </div>
-        </div>
+            </h1>
+            <p>{userInfo.bio || 'Not...'}</p>
+          </StyledHeadUserInfo>
+        </StyledHeadUser>
         <div>
-          <span>Icon</span>
-          <span>Icon</span>
-          <span>Icon</span>
+          <StyledHeadIcon>
+            <ReactSVG className='icon' src={IconTelegram} />
+            <ReactSVG className='icon' src={IconTwitter} />
+            <ReactSVG className='icon' src={IconEmail} />
+          </StyledHeadIcon>
+          {isMyself ? (
+            <StyledHeadEdit>
+              <Button onClick={() => router.push(`/${username}/edit`)}>
+                EDIT PROFILE
+              </Button>
+            </StyledHeadEdit>
+          ) : null}
         </div>
-      </div>
+      </StyledHead>
       <StyledLine></StyledLine>
-      <StyledMediaCardContainer>
-        {nftListData.map((item, index) => (
-          <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
-            <a target='_blank'>
-              <NFTSimple {...item} />
-            </a>
-          </Link>
-        ))}
-      </StyledMediaCardContainer>
+      {userInfo?.role === 'COLLECTOR' ? (
+        collectionContainner()
+      ) : userInfo?.role === 'ARTIST' ? (
+        ArtworksContainner()
+      ) : userInfo?.role === 'GALLERY' ? (
+        GalleryContainner()
+      ) : userInfo?.role === 'SUPER_ADMIN' ? (
+        collectionContainner()
+      ) : (
+        <Spin />
+      )}
     </StyledWrapper>
   );
 };
@@ -240,24 +483,69 @@ const StyledLine = styled.div`
   height: 1px;
   background: #dbdbdb;
 `;
-const StyledAvatar = styled(Avatar)`
-  margin-bottom: 50px;
+const StyledTitle = styled.div`
+  font-size: 32px;
+  font-family: BigCaslon-Medium, BigCaslon;
+  font-weight: 500;
+  color: #333333;
+  line-height: 39px;
+  padding: 0;
+  margin: 24px 0 0 0;
 `;
-
-const StyledInfoBox = styled.div`
-  box-sizing: border-box;
-  padding: 30px;
-  margin: 0px auto;
-  width: 100%;
-  max-width: calc(530px);
-`;
-
-const StyledInfo = styled.div`
-  width: 100%;
+const StyledHead = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  align-items: cennter;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 48px 0;
+`;
+const StyledHeadUser = styled.div`
+  display: flex;
   align-items: center;
+  flex-wrap: wrap;
+`;
+const StyledHeadUserInfo = styled.div`
+  margin: 0 0 0 15px;
+  position: relative;
+  top: 10px;
+  h1 {
+    font-size: 34px;
+    font-family: DINAlternate-Bold, DINAlternate;
+    font-weight: bold;
+    color: #333333;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+  }
+  p {
+    font-size: 16px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #333333;
+    line-height: 1.2;
+    padding: 0;
+    margin: 6px 0 0 0;
+  }
+`;
+const StyledHeadIcon = styled.div`
+  display: flex;
+  align-items: center;
+  .icon {
+    width: 32px;
+    height: 32px;
+    margin-left: 32px;
+    &:nth-of-type(1) {
+      margin-left: 0;
+    }
+    svg {
+      font-size: 32px;
+      color: #333333;
+    }
+  }
+`;
+const StyledHeadEdit = styled.div`
+  margin: 10px 0 0 0;
+  text-align: right;
 `;
 
 const StyledMediaCardContainer = styled.div`
@@ -266,6 +554,7 @@ const StyledMediaCardContainer = styled.div`
   justify-content: center;
   gap: 30px 20px;
   margin: 48px auto 0;
+  min-height: 320px;
   grid-template-columns: repeat(4, minmax(0px, 330px));
   @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 330px));
@@ -279,47 +568,147 @@ const StyledMediaCardContainer = styled.div`
     align-items: center;
   }
 `;
-const StyledBidsContainer = styled.div`
-  width: 100%;
-  max-width: 680px;
-  padding: 0 20px;
-  box-sizing: border-box;
-`;
-// from EditProfileButton Copy
-const StyledEditButton = styled.button`
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
+
+// artist start
+const StyledItemTitle = styled.h3`
+  font-size: 32px;
+  font-family: BigCaslon-Medium, BigCaslon;
   font-weight: 500;
-  padding: 14px 20px;
-  margin: 0px 5px;
-  text-align: center;
-  cursor: pointer;
-  text-decoration: none;
-  white-space: nowrap;
-  appearance: none;
-  color: rgb(0, 0, 0);
-  background-color: rgb(230, 230, 230);
-  border: 1px solid transparent;
-  &:hover {
-    background-color: rgb(230, 230, 230);
-    border-color: rgb(0, 0, 0);
+  color: #333333;
+  line-height: 39px;
+  padding: 0;
+  margin: 0;
+`;
+const StyledItem = styled.div`
+  margin: 24px 0 64px;
+`;
+const StyledVideo = styled.div`
+  margin: 64px 0 0;
+  height: 810px;
+  .media-video {
+    width: 100%;
+    height: 100%;
+  }
+`;
+const StyledArtworks = styled.div`
+  margin-top: 64px;
+  .ant-carousel .slick-prev,
+  .ant-carousel .slick-next,
+  .ant-carousel .slick-prev:hover,
+  .ant-carousel .slick-next:hover {
+    font-size: inherit;
+    color: currentColor;
   }
 `;
 
-const StyledSwitchWrapper = styled.div`
-  margin: 60px auto 0;
+const StyledAbout = styled.div`
+  margin-top: 64px;
+  display: flex;
+  flex-wrap: wrap;
+  .item {
+    flex: 1;
+    &:nth-child(1) {
+      margin-right: 24px;
+    }
+    &:nth-child(2) {
+      margin-left: 24px;
+    }
+  }
+  .text {
+    font-size: 16px;
+    font-family: BigCaslon-Medium, BigCaslon;
+    font-weight: 500;
+    color: #333333;
+    line-height: 24px;
+    padding: 0;
+    margin: 40px 0 0 0;
+    &:nth-child(1) {
+      margin-top: 0;
+    }
+  }
+  .cover {
+    width: 100%;
+    height: 392px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .gallery-name {
+    font-size: 24px;
+    font-family: BigCaslon-Medium, BigCaslon;
+    font-weight: 500;
+    color: #333333;
+    line-height: 28px;
+    padding: 0;
+    margin: 24px 0 0 0;
+  }
 `;
-const StyledSwitchButton = styled.button<{ active: boolean }>`
-  border: 2px solid #000;
-  color: ${({ active }) => (active ? '#fff' : '#000')};
-  outline: none;
-  padding: 10px 14px;
-  font-size: 16px;
-  background: ${({ active }) => (active ? '#000' : '#fff')};
-  cursor: pointer;
-  transition: all 0.2s;
+const StyledAboutItem = styled.div`
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  .icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 20px;
+    &:nth-of-type(1) {
+      margin-left: 0;
+    }
+    svg {
+      font-size: 20px;
+      color: #333333;
+    }
+  }
+  span {
+    font-size: 16px;
+    font-family: BigCaslon-Medium, BigCaslon;
+    font-weight: 500;
+    color: #333333;
+    line-height: 19px;
+    margin-left: 6px;
+  }
 `;
+// artist end
+
+// gallery start
+const StyledWord = styled.div`
+  column-count: 4;
+  margin-top: 16px;
+  column-gap: 20px;
+  .item {
+    /* 防止多列布局，分页媒体和多区域上下文中的意外中断 */
+    break-inside: avoid;
+    padding: 48px 0 0 0;
+    list-style: none;
+    li {
+      margin: 9px 0;
+      font-family: BigCaslon-Medium, BigCaslon;
+      font-weight: 500;
+      color: #333333;
+      a {
+        font-size: 16px;
+        line-height: 19px;
+        color: #333333;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      &:nth-child(1) {
+        margin: 0;
+      }
+      &:nth-child(2) {
+        margin-top: 16px;
+      }
+      h3 {
+        font-size: 32px;
+        line-height: 39px;
+        padding: 0;
+        margin: 0;
+      }
+    }
+  }
+`;
+// gallery end
 export default UserInfoPage;

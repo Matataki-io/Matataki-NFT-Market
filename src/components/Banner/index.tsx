@@ -1,50 +1,40 @@
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
-import { Carousel } from 'react-responsive-carousel';
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { Carousel } from 'antd';
 
-const unitedSize: CSSProperties = {
-  maxHeight: '648px',
-  objectFit: 'cover',
-};
-
-const StyledBanner = styled.div`
+const StyledWrapper = styled.div`
   width: 100%;
+  height: 648px;
+`;
+const StyledItem = styled.div`
+  width: 100%;
+  height: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const Banner = () => {
-  const carouselInterval = 5 * 1000;
-
   return (
-    <Carousel
-      autoPlay
-      interval={carouselInterval}
-      infiniteLoop
-      swipeable
-      emulateTouch
-      centerMode
-      centerSlidePercentage={100}
-      dynamicHeight={false}
-      showThumbs={false}>
-      <div>
-        <img
-          style={unitedSize}
-          src='https://placeimg.com/1280/720/arch/grayscale'
-        />
-      </div>
-      <div>
-        <img
-          style={unitedSize}
-          src='https://placeimg.com/1080/720/arch/grayscale'
-        />
-      </div>
-      <div>
-        <img
-          style={unitedSize}
-          src='https://placeimg.com/720/720/arch/grayscale'
-        />
-      </div>
-    </Carousel>
+    <StyledWrapper>
+      <Carousel autoplay>
+        <StyledItem>
+          <img src='https://placeimg.com/700/300/arch' alt='collect' />
+        </StyledItem>
+        <StyledItem>
+          <img src='https://placeimg.com/700/300/arch' alt='collect' />
+        </StyledItem>
+        <StyledItem>
+          <img src='https://placeimg.com/700/300/arch' alt='collect' />
+        </StyledItem>
+        <StyledItem>
+          <img src='https://placeimg.com/700/300/arch' alt='collect' />
+        </StyledItem>
+      </Carousel>
+    </StyledWrapper>
   );
 };
 export default Banner;

@@ -12,8 +12,10 @@ export const backendSWRFetcher = (url: string) =>
 /**
  * 主要是为了 SSG 预先渲染
  */
-export async function getHotMediaList(): Promise<Array<Media>> {
-  const { data } = await backendClient.get<Array<Media>>('/media/hot');
+export async function getHotMediaList(take = 10): Promise<Array<Media>> {
+  const { data } = await backendClient.get<Array<Media>>('/media/hot', {
+    params: { take },
+  });
   return data;
 }
 
@@ -41,19 +43,16 @@ export async function getMediaMetadata(url: string): Promise<MediaMetadata> {
 }
 // 提交 media
 export async function PostMedia({ txHash }: { txHash: string }): Promise<any> {
+  // bad habit to `any` bro
   return await backendClient.post('/media', {
     txHash,
   });
 }
 
-// Use it with `useSWR(id, functionName)`
-export function getLogOfToken(id: string) {
-  return backendClient
-    .get<Array<Ask | MediaLog | BidLog>>(`/media/${id}/logs`)
-    .then(res => res.data);
+export function getNonceByPublisherId(publisherUid: number) {
+  return backendClient.get(`/media/gasfreeCreate/${publisherUid}/nonce`);
 }
-export function getBidsOfToken(id: string) {
-  return backendClient
-    .get<Array<BidLog>>(`/media/${id}/bids`)
-    .then(res => res.data);
+
+export function sendToPublisherForPreview(publisherUid: number) {
+  return backendClient.post(`/media/gasfreeCreate/${publisherUid}`);
 }

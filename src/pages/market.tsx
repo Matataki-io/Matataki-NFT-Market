@@ -93,29 +93,39 @@ const Market: React.FC = () => {
   };
   return (
     <StyledWrapper>
+      <StyledHeadTitle>Market Place</StyledHeadTitle>
       <StyledHead>
-        <StyledHeadTitle>Market Place</StyledHeadTitle>
-      </StyledHead>
-      <div>
         <div>
           <h3>DEPARTMENT</h3>
-          <div>
-            <Checkbox>Digital Art</Checkbox>
-            <Checkbox>Art Installation</Checkbox>
-            <Checkbox>3D Art</Checkbox>
-            <Checkbox>Conceptual Art</Checkbox>
-            <Checkbox>Photograph</Checkbox>
-            <Checkbox>Graphic Art</Checkbox>
-          </div>
+          <StyledHeadContainer className='checkbox'>
+            <div>
+              <Checkbox disabled>Digital Art</Checkbox>
+            </div>
+            <div>
+              <Checkbox disabled>Art Installation</Checkbox>
+            </div>
+            <div>
+              <Checkbox disabled>3D Art</Checkbox>
+            </div>
+            <div>
+              <Checkbox disabled>Conceptual Art</Checkbox>
+            </div>
+            <div>
+              <Checkbox disabled>Photograph</Checkbox>
+            </div>
+            <div>
+              <Checkbox disabled>Graphic Art</Checkbox>
+            </div>
+          </StyledHeadContainer>
         </div>
         <div>
           <h3>SORT BY</h3>
-          <div>
-            <Radio>Creat Date - Ascending</Radio>
-            <Radio>Creat Date - Descending</Radio>
-          </div>
+          <StyledHeadContainer className='radio'>
+            <Radio disabled>Creat Date - Ascending</Radio>
+            <Radio disabled>Creat Date - Descending</Radio>
+          </StyledHeadContainer>
         </div>
-      </div>
+      </StyledHead>
       <StyledLine></StyledLine>
       <InfiniteScroll
         pageStart={0}
@@ -145,8 +155,8 @@ const Market: React.FC = () => {
 const StyledWrapper = styled.div`
   flex: 1;
 
-  max-width: 1480px;
-  padding: 0 20px 256px;
+  max-width: 1114px;
+  padding: 48px 20px 256px;
   box-sizing: border-box;
 
   margin: 0px auto;
@@ -158,7 +168,6 @@ const StyledWrapper = styled.div`
   }
 `;
 
-const StyledHead = styled.div``;
 const StyledHeadTitle = styled.h2`
   font-size: 48px;
   font-family: BigCaslon-Medium, BigCaslon;
@@ -168,6 +177,36 @@ const StyledHeadTitle = styled.h2`
   padding: 0;
   margin: 0;
 `;
+const StyledHead = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 48px 0;
+  .title {
+    font-size: 20px;
+    font-family: DINCondensed-Bold, DINCondensed;
+    font-weight: bold;
+    color: #333333;
+    line-height: 24px;
+    padding: 0;
+    margin: 0;
+  }
+`;
+const StyledHeadContainer = styled.div`
+  margin: 24px 0 0 0;
+  &.checkbox {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-row-gap: 24px;
+    grid-column-gap: 60px;
+  }
+  &.radio {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-row-gap: 24px;
+  }
+`;
+
 const StyledLine = styled.div`
   width: 100%;
   height: 1px;
@@ -178,13 +217,13 @@ const StyledNfts = styled.div`
   width: 100%;
   display: grid;
   justify-content: center;
-  grid-template-columns: repeat(4, minmax(0px, 330px));
-  gap: 30px 20px;
-  margin: 48px auto 0;
+  grid-template-columns: repeat(3, minmax(0px, 330px));
+  gap: 40px 24px;
+  margin: 44px auto 0;
   min-height: 320px;
-  @media screen and (max-width: 1366px) {
+  /* @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 330px));
-  }
+  } */
   @media screen and (max-width: 1140px) {
     grid-template-columns: repeat(2, minmax(0px, 330px));
   }
