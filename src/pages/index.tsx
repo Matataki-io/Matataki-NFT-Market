@@ -12,7 +12,11 @@ import { NFTProps } from '../../next-env';
 import Banner from '../components/Banner';
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
-import { getHotMediaList, getMediaMetadata } from '../backend/media';
+import {
+  getHotMediaList,
+  getMediaMetadata,
+  getMediaList,
+} from '../backend/media';
 import { listUsersArtist } from '../backend/user';
 import { User } from '../types/User.types.d';
 
@@ -55,9 +59,9 @@ const Home: React.FC<void> = () => {
   // 获取NFT数据
   const fetchNFTData = async () => {
     try {
-      const mediaList = await getHotMediaList(6);
+      const mediaList = await getMediaList(1, 8);
       console.log('mediaList', mediaList);
-      const list: Array<NFTProps> = mediaList.map(i => ({
+      const list: Array<NFTProps> = mediaList.items.map(i => ({
         id: i.id,
         type: 'image',
         content: {
@@ -111,7 +115,7 @@ const Home: React.FC<void> = () => {
       <StyledModule className='nfts'>
         <StyledModuleHead>
           <StyledTitle>
-            Hot NFTs<span>New</span>
+            NFTs<span>New</span>
           </StyledTitle>
           <Link href='/market'>
             <a target='_blank' className='more'>
