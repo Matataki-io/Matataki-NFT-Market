@@ -44,6 +44,11 @@ export interface User {
   verified: boolean;
   role: UserRole;
   waitingForScreen: MediaToScreen[];
+  telegram: string;
+  twitter: string;
+  email: string;
+  medium: string;
+  facebook: string;
 }
 
 export interface Gallery extends User {
