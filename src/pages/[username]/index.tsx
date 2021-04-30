@@ -622,11 +622,11 @@ const StyledHeadIcon = styled.div`
   }
 `;
 const StyledHeadTags = styled.div`
+  max-width: 400px;
   text-align: right;
-  margin: 10px 0;
+  margin: 6px 0;
   .ant-tag {
-    margin-right: 0;
-    margin-left: 8px;
+    margin: 4px 0 4px 8px;
   }
 `;
 const StyledHeadEdit = styled.div`
