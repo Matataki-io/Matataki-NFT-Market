@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, message, Button, Spin } from 'antd';
+import { Avatar, message, Button, Spin, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
@@ -17,12 +17,14 @@ import { useAppSelector } from '../../hooks/redux';
 import { NFTProps } from '../../../next-env';
 import NFTSimple from '../../components/NFTSimple';
 import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { useLogin } from '../../hooks/useLogin';
 import {
   getUser,
   getUserBids,
   getGallerySubordinateArtists,
+  getUserTags,
 } from '../../backend/user';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
@@ -34,6 +36,8 @@ import ArtworksCarousel from '../../components/ArtworksCarousel';
 import IconTelegram from '../../assets/icons/telegram.svg';
 import IconTwitter from '../../assets/icons/twitter.svg';
 import IconEmail from '../../assets/icons/email1.svg';
+import IconMedium from '../../assets/icons/medium.svg';
+import IconFacebook from '../../assets/icons/facebook.svg';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -47,6 +51,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     nickname: '',
     username: '',
     role: undefined,
+    telegram: '',
+    twitter: '',
+    email: '',
+    medium: '',
+    facebook: '',
   });
   const [isVerifiedUser, setIsVerifiedUser] = useState(false);
   const [isMyself, setIsMyself] = useState(false);
@@ -66,6 +75,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const keyMessage = 'fetchUser';
 
   const [subordinateArtist, setSubordinateArtist] = useState<Array<User>>([]);
+  const [tagsList, setTagsList] = useState<Array<string>>([]);
 
   useEffect(() => {
     const fetchUserInfoData = async () => {
@@ -157,6 +167,17 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     if (userInfo?.role === 'GALLERY') {
       fetch();
     }
+  }, [userInfo, username]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (typeof username !== 'string') return;
+      const data = await getUserTags(username);
+      console.log('getUserTags', data);
+      const list = data.tags.map(i => i.name);
+      setTagsList(list);
+    };
+    fetch();
   }, [userInfo, username]);
 
   const subordinateArtistWord = useMemo(() => {
@@ -424,20 +445,75 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     <StyledWrapper>
       <StyledHead>
         <StyledHeadUser>
-          <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
+          {userInfo.avatar ? (
+            <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
+          ) : null}
           <StyledHeadUserInfo>
-            <h1>
-              {userInfo.nickname}({userInfo.username})
-            </h1>
-            <p>{userInfo.bio || 'Not...'}</p>
+            {userInfo.nickname || userInfo.username ? (
+              <>
+                <h1>
+                  {userInfo.nickname}({userInfo.username})
+                </h1>
+                <p>{userInfo.bio || 'Not...'}</p>
+              </>
+            ) : null}
           </StyledHeadUserInfo>
         </StyledHeadUser>
         <div>
           <StyledHeadIcon>
-            <ReactSVG className='icon' src={IconTelegram} />
-            <ReactSVG className='icon' src={IconTwitter} />
-            <ReactSVG className='icon' src={IconEmail} />
+            {userInfo?.telegram ? (
+              <CopyToClipboard
+                text={userInfo?.telegram}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.telegram ? (
+                  <ReactSVG className='icon' src={IconTelegram} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
+            {userInfo?.twitter ? (
+              <CopyToClipboard
+                text={userInfo?.twitter}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.twitter ? (
+                  <ReactSVG className='icon' src={IconTwitter} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
+            {userInfo?.email ? (
+              <CopyToClipboard
+                text={userInfo?.email}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.email ? (
+                  <ReactSVG className='icon' src={IconEmail} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
+            {userInfo?.medium ? (
+              <CopyToClipboard
+                text={userInfo?.medium}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.medium ? (
+                  <ReactSVG className='icon' src={IconMedium} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
+            {userInfo?.facebook ? (
+              <CopyToClipboard
+                text={userInfo?.facebook}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.facebook ? (
+                  <ReactSVG className='icon' src={IconFacebook} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
           </StyledHeadIcon>
+          {tagsList.length ? (
+            <StyledHeadTags>
+              {tagsList.map((i, idx) => (
+                <Tag key={idx}>{i}</Tag>
+              ))}
+            </StyledHeadTags>
+          ) : null}
           {isMyself ? (
             <StyledHeadEdit>
               <Button onClick={() => router.push(`/${username}/edit`)}>
@@ -530,10 +606,12 @@ const StyledHeadUserInfo = styled.div`
 const StyledHeadIcon = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   .icon {
     width: 32px;
     height: 32px;
     margin-left: 32px;
+    cursor: pointer;
     &:nth-of-type(1) {
       margin-left: 0;
     }
@@ -543,8 +621,15 @@ const StyledHeadIcon = styled.div`
     }
   }
 `;
+const StyledHeadTags = styled.div`
+  max-width: 400px;
+  text-align: right;
+  margin: 6px 0;
+  .ant-tag {
+    margin: 4px 0 4px 8px;
+  }
+`;
 const StyledHeadEdit = styled.div`
-  margin: 10px 0 0 0;
   text-align: right;
 `;
 
@@ -653,6 +738,7 @@ const StyledAboutItem = styled.div`
     width: 20px;
     height: 20px;
     margin-left: 20px;
+    cursor: pointer;
     &:nth-of-type(1) {
       margin-left: 0;
     }
