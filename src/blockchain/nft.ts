@@ -97,6 +97,7 @@ export async function GenerateCreationSignature(
   contentHash: string,
   metadataHash: string,
   to: string,
+  nonce: number,
   creatorShare: number,
   wallet: providers.JsonRpcSigner
 ): Promise<MintAndTransferParameters> {
@@ -126,8 +127,6 @@ export async function GenerateCreationSignature(
     metadataURI,
     metadataHash
   );
-  // @todo: get it from the backend
-  const nonce = 0;
   const { signer, sig } = await signMintWithSig(
     wallet,
     media,
