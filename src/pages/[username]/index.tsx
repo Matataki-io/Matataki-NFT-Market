@@ -445,9 +445,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     <StyledWrapper>
       <StyledHead>
         <StyledHeadUser>
-          {userInfo.avatar ? (
-            <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
-          ) : null}
+          <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
           <StyledHeadUserInfo>
             {userInfo.nickname || userInfo.username ? (
               <>
