@@ -239,7 +239,7 @@ const Register: React.FC<void> = () => {
             <Form.Item
               label=''
               name=''
-              rules={[{ required: true, message: 'Please input your ..!' }]}>
+              rules={[{ required: false, message: 'Please input your ..!' }]}>
               <Input.TextArea
                 disabled
                 rows={6}
@@ -320,18 +320,14 @@ const Register: React.FC<void> = () => {
             <Form.Item
               label=''
               name='medium'
-              rules={[
-                { required: true, message: 'Please input your password!' },
-              ]}>
-              <Input placeholder='Enter username' />
+              rules={[{ required: false, message: 'Please input username!' }]}>
+              <Input disabled placeholder='Enter username' />
             </Form.Item>
             <Form.Item
               label=''
               name='medium'
-              rules={[
-                { required: true, message: 'Please input your password!' },
-              ]}>
-              <Input placeholder='Enter username' />
+              rules={[{ required: false, message: 'Please input username!' }]}>
+              <Input disabled placeholder='Enter username' />
             </Form.Item>
           </>
         ) : null}
