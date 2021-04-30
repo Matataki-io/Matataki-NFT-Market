@@ -1,9 +1,19 @@
-import React, { useState, Fragment, useMemo, useEffect } from 'react';
+import React, {
+  useState,
+  Fragment,
+  useMemo,
+  useEffect,
+  useCallback,
+} from 'react';
 import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
 import { Signer } from 'ethers';
-import { PostMedia } from '../../backend/media';
+import {
+  getNonceByPublisherId,
+  PostMedia,
+  sendToPublisherForPreview,
+} from '../../backend/media';
 import { getGalleryUsers } from '../../backend/user';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
@@ -83,12 +93,12 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     description: string;
   }>({ name: '', description: '' }); // 备份 formNameAndDescription 数据
   // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
-  const [galleryList, setGalleryList] = useState<Array<any>>([]);
+  const [galleryList, setGalleryList] = useState<User[]>([]);
   const mediaContract = useMedia();
 
   useEffect(() => {
     const fetch = async () => {
-      const data: Array<User> = await getGalleryUsers();
+      const data = await getGalleryUsers();
       setGalleryList(data);
     };
     fetch();
@@ -324,7 +334,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     }
   };
   // 自己mint
-  const mintToken = async () => {
+  const mintToken = useCallback(async () => {
     let {
       tokenURI,
       metadataURI,
@@ -341,14 +351,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       creatorShare
     );
 
-    // 获取 Signer
-    let wallet: Signer;
-
     if (!isSignerReady(signer)) {
       message.error('No Signer detected');
       return;
     }
-    wallet = signer;
     console.log('signer', signer);
 
     try {
@@ -359,7 +365,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         contentHash,
         metadataHash,
         creatorShare,
-        wallet
+        signer
       );
       setMediaSubmitLoading(false);
       console.log('res', res);
@@ -381,9 +387,9 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       console.log('e', e);
       message.error(e);
     }
-  };
+  }, [signer, mediaData, formPricingAndFees]);
   // mint到画廊
-  const mintTokenToGallery = async () => {
+  const mintTokenToGallery = useCallback(async () => {
     if (!isSignerReady(signer)) return;
 
     let {
@@ -403,12 +409,17 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       gallery
     );
 
+    const galleryUser = galleryList.find(u => u.address === gallery);
+    if (!galleryUser) throw new Error('Unable to find the gallery user');
+    const nonce = await getNonceByPublisherId(galleryUser.id);
+
     const res = await GenerateCreationSignature(
       tokenURI,
       metadataURI,
       contentHash,
       metadataHash,
       gallery,
+      nonce,
       Number(creatorShare),
       signer
     );
@@ -417,19 +428,26 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.error('not res');
       return;
     }
-    const resp = await mediaContract.mintAndTransferWithSig(
-      wallet.account as string,
-      res?.data,
-      res?.bidShares,
-      res?.to,
-      res?.sig
-    );
-    const receipt = await resp.wait();
-    console.info('re', receipt);
-    alert('txHash' + receipt.transactionHash);
-
+    await sendToPublisherForPreview(galleryUser.id, {
+      nonce,
+      title: nameAndDescription.name,
+      description: nameAndDescription.description,
+      tokenURI,
+      permitData: res,
+    });
+    // const resp = await mediaContract.mintAndTransferWithSig(
+    //   wallet.account as string,
+    //   res?.data,
+    //   res?.bidShares,
+    //   res?.to,
+    //   res?.sig
+    // );
+    // const receipt = await resp.wait();
+    // console.info('re', receipt);
+    // alert('txHash' + receipt.transactionHash);
+    message.success('上传成功，等待画廊审核');
     setIsCreate(false);
-  };
+  }, [signer, mediaData, formPricingAndFees, galleryList]);
 
   // price填写完成
   const onFinishPrice = async (values: any) => {
@@ -654,7 +672,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               </Form.Item>
               <Form.Item label='Gallery' name='gallery'>
                 <Select placeholder='Select a gallery'>
-                  {galleryList.map((i: User, idx: number) => (
+                  {galleryList.map((i, idx: number) => (
                     <Option key={`${idx}-${i.address}`} value={i.address}>
                       <span>
                         <Avatar
