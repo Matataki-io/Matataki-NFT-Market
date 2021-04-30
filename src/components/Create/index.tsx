@@ -1,4 +1,10 @@
-import React, { useState, Fragment, useMemo, useEffect } from 'react';
+import React, {
+  useState,
+  Fragment,
+  useMemo,
+  useEffect,
+  useCallback,
+} from 'react';
 import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
@@ -328,7 +334,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     }
   };
   // 自己mint
-  const mintToken = async () => {
+  const mintToken = useCallback(async () => {
     let {
       tokenURI,
       metadataURI,
@@ -345,14 +351,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       creatorShare
     );
 
-    // 获取 Signer
-    let wallet: Signer;
-
     if (!isSignerReady(signer)) {
       message.error('No Signer detected');
       return;
     }
-    wallet = signer;
     console.log('signer', signer);
 
     try {
@@ -363,7 +365,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         contentHash,
         metadataHash,
         creatorShare,
-        wallet
+        signer
       );
       setMediaSubmitLoading(false);
       console.log('res', res);
@@ -385,9 +387,9 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       console.log('e', e);
       message.error(e);
     }
-  };
+  }, [signer, mediaData, formPricingAndFees]);
   // mint到画廊
-  const mintTokenToGallery = async () => {
+  const mintTokenToGallery = useCallback(async () => {
     if (!isSignerReady(signer)) return;
 
     let {
@@ -445,7 +447,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     // alert('txHash' + receipt.transactionHash);
     message.success('上传成功，等待画廊审核');
     setIsCreate(false);
-  };
+  }, [signer, mediaData, formPricingAndFees, galleryList]);
 
   // price填写完成
   const onFinishPrice = async (values: any) => {
