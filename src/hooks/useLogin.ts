@@ -7,8 +7,10 @@ import {
   checkIsWalletRegistered,
   registerUser,
   loginWithPermit,
+  updateUser,
 } from '../backend/user';
 import { User } from '../types/User.types';
+import { getCookie } from '../utils/cookie';
 
 interface SignInPermit {
   signature: string;
@@ -31,8 +33,13 @@ export function useLogin() {
         const { isUserExist, user } = await checkIsWalletRegistered(
           wallet.account
         );
-        if (isUserExist) updateUserData(user);
-        else updateUserData(null);
+        if (isUserExist) {
+          updateUserData(user);
+          const token = getCookie('token');
+          if (token) {
+            updateAccessToken(token);
+          }
+        } else updateUserData(null);
       } catch (e) {
         console.error('e', e);
         updateUserData(null);
@@ -40,6 +47,7 @@ export function useLogin() {
         setRegisteredLoading(false);
       }
     }
+
     // 有钱包地址就查是不是已经注册过
     fetchData();
     console.log('wallet.account', wallet.account);
