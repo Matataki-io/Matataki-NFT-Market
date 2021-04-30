@@ -66,6 +66,7 @@ const Register: React.FC<void> = () => {
         medium: userDataByWallet?.medium,
         telegram: userDataByWallet?.telegram,
         twitter: userDataByWallet?.twitter,
+        tags: userDataByWallet?.tags.map(i => i.name),
       });
       setAvatarUrl(userDataByWallet?.avatar || '');
     }
@@ -111,6 +112,7 @@ const Register: React.FC<void> = () => {
         medium,
         telegram,
         twitter,
+        tags,
       } as UserProps,
       {
         username: userDataByWallet?.username,
@@ -122,6 +124,7 @@ const Register: React.FC<void> = () => {
         medium: userDataByWallet?.medium,
         telegram: userDataByWallet?.telegram,
         twitter: userDataByWallet?.twitter,
+        tags: userDataByWallet?.tags.map(i => i.name),
       } as UserProps
     );
     if (isEmpty(profile)) {
@@ -305,7 +308,7 @@ const Register: React.FC<void> = () => {
             <Row>
               {tagsList.map((i, idx) => (
                 <Col span={12} key={idx}>
-                  <Checkbox value={i.id}>{i.name}</Checkbox>
+                  <Checkbox value={i.name}>{i.name}</Checkbox>
                 </Col>
               ))}
             </Row>
