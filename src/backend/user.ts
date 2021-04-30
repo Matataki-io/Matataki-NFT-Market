@@ -119,3 +119,8 @@ export async function getGallerySubordinateArtists(
   );
   return data as any;
 }
+// 获取用户的Tags
+export async function getUserTags(username: string) {
+  const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}/tags`);
+  return data;
+}

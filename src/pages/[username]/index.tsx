@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, message, Button, Spin } from 'antd';
+import { Avatar, message, Button, Spin, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
@@ -24,6 +24,7 @@ import {
   getUser,
   getUserBids,
   getGallerySubordinateArtists,
+  getUserTags,
 } from '../../backend/user';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
@@ -74,6 +75,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const keyMessage = 'fetchUser';
 
   const [subordinateArtist, setSubordinateArtist] = useState<Array<User>>([]);
+  const [tagsList, setTagsList] = useState<Array<string>>([]);
 
   useEffect(() => {
     const fetchUserInfoData = async () => {
@@ -165,6 +167,17 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     if (userInfo?.role === 'GALLERY') {
       fetch();
     }
+  }, [userInfo, username]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (typeof username !== 'string') return;
+      const data = await getUserTags(username);
+      console.log('getUserTags', data);
+      const list = data.tags.map(i => i.name);
+      setTagsList(list);
+    };
+    fetch();
   }, [userInfo, username]);
 
   const subordinateArtistWord = useMemo(() => {
@@ -432,12 +445,18 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     <StyledWrapper>
       <StyledHead>
         <StyledHeadUser>
-          <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
+          {userInfo.avatar ? (
+            <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
+          ) : null}
           <StyledHeadUserInfo>
-            <h1>
-              {userInfo.nickname}({userInfo.username})
-            </h1>
-            <p>{userInfo.bio || 'Not...'}</p>
+            {userInfo.nickname || userInfo.username ? (
+              <>
+                <h1>
+                  {userInfo.nickname}({userInfo.username})
+                </h1>
+                <p>{userInfo.bio || 'Not...'}</p>
+              </>
+            ) : null}
           </StyledHeadUserInfo>
         </StyledHeadUser>
         <div>
@@ -488,6 +507,13 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
               </CopyToClipboard>
             ) : null}
           </StyledHeadIcon>
+          {tagsList.length ? (
+            <StyledHeadTags>
+              {tagsList.map((i, idx) => (
+                <Tag key={idx}>{i}</Tag>
+              ))}
+            </StyledHeadTags>
+          ) : null}
           {isMyself ? (
             <StyledHeadEdit>
               <Button onClick={() => router.push(`/${username}/edit`)}>
@@ -595,8 +621,15 @@ const StyledHeadIcon = styled.div`
     }
   }
 `;
+const StyledHeadTags = styled.div`
+  text-align: right;
+  margin: 10px 0;
+  .ant-tag {
+    margin-right: 0;
+    margin-left: 8px;
+  }
+`;
 const StyledHeadEdit = styled.div`
-  margin: 10px 0 0 0;
   text-align: right;
 `;
 
