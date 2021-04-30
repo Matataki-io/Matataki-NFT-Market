@@ -173,7 +173,6 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               <div>
                 <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
                   <Button className='hover-underline'>Learn</Button>
-                  <span>{wallet.account}</span>
                 </a>
                 {wallet.status === 'connected' ? (
                   <>
