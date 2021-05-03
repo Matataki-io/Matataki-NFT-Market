@@ -1,11 +1,8 @@
-import * as http from 'http';
+import { NextApiRequest, NextApiResponse } from 'next';
 import * as _ from 'lodash';
 import { Post } from '../../../types/post';
 
-export default function handler(
-  req: http.IncomingMessage,
-  res: http.ServerResponse
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const p: Post = {
     id: 1,
     title: 'How to collect your favorite NFTs at Maven NFT?',

@@ -1,4 +1,4 @@
-import * as http from 'http';
+import { NextApiRequest, NextApiResponse } from 'next';
 import * as _ from 'lodash';
 
 const md = `# Web3 个人代币平台 Meta Network 完成新一轮 200 万美元的融资，参投方包括 NGC
@@ -78,10 +78,7 @@ Uniswap 自从被 SushiSwap 进行吸血鬼攻击后，就有一点被动，特�
 const title = `Web3 个人代币平台 Meta Network 完成新一轮 200 万美元的融资，参投方包括
 NGC`;
 
-export default function handler(
-  req: http.IncomingMessage,
-  res: http.ServerResponse
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
   res.json({
     id: 1,
