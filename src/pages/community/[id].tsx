@@ -40,7 +40,7 @@ const CommunityId: React.FC = () => {
             />
           </Head>
           <StyledTitle>{post?.title}</StyledTitle>
-          <StyledTime>March 28, 2021</StyledTime>
+          <StyledTime>{post?.updateAt}</StyledTime>
           <StyledUser>
             <Avatar></Avatar>
             <span className='username'>{post?.author}</span>
