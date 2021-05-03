@@ -1,20 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
 import CommunityCard from '../../components/CommunityCard';
+import { Post } from '../../types/post';
+import { getPosts } from '../../backend/post';
 
 const Community: React.FC = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  useEffect(() => {
+    const fetch = async () => {
+      setPosts(await getPosts(1, 10));
+    };
+    fetch();
+  }, []);
   return (
     <StyledWrapper>
       <StyledHead>
         <StyledHeadTitle>Community</StyledHeadTitle>
       </StyledHead>
       <StyledItem>
-        {[...new Array(9)].map((i, idx) => (
-          <Link key={idx} href={`/community/${idx}`}>
+        {posts.map(i => (
+          <Link key={i.id} href={`/community/${i.id}`}>
             <a>
-              <CommunityCard></CommunityCard>
+              <CommunityCard post={i}></CommunityCard>
             </a>
           </Link>
         ))}

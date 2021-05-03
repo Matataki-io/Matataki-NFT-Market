@@ -1,28 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Post } from '../../types/post';
 
-const CommunityCard: React.FC = () => {
+const CommunityCard: React.FC<{ post: Post }> = ({ post }) => {
+  const { updateAt, title, intro, cover } = post;
   return (
     <StyledWrapper>
       <StyledCover>
-        <img src='https://placeimg.com/540/184/nature?t=1617247698083' alt='' />
+        <img src={cover} alt='cover' />
       </StyledCover>
       <StyledInfo>
-        <StyledTime>Apr 08</StyledTime>
-        <StyledTitle>
-          How to collect your favorite NFTs at Maven NFT?
-        </StyledTitle>
-        <Styleddescription>
-          Wonder how much your art or object might be worth and how to sell it?
-          Simply follow the steps below and our specialists will review your
-          submission at no cost and provide preliminary estimates for items that
-          can be included in our sales in 5 to 7 business days blah blah blah
-          blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-          blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-          blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-          blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-          blah blah blah blah blah blah blah blah blah blah bla
-        </Styleddescription>
+        <StyledTime>{updateAt}</StyledTime>
+        <StyledTitle>{title}</StyledTitle>
+        <Styleddescription>{intro}</Styleddescription>
       </StyledInfo>
     </StyledWrapper>
   );
