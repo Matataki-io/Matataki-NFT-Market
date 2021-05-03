@@ -1,7 +1,11 @@
+import * as http from 'http';
 import * as _ from 'lodash';
 import { Post } from '../../../types/post';
 
-export default function handler(req, res) {
+export default function handler(
+  req: http.IncomingMessage,
+  res: http.ServerResponse
+) {
   const p: Post = {
     id: 1,
     title: 'How to collect your favorite NFTs at Maven NFT?',
