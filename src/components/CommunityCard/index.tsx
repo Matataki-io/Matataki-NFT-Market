@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Post } from '../../types/article';
+import { Article } from '../../types/article';
 
-const CommunityCard: React.FC<{ post: Post }> = ({ post }) => {
+const CommunityCard: React.FC<{ article: Article }> = ({ article: post }) => {
   const { updateAt, title, intro, cover } = post;
   return (
     <StyledWrapper>

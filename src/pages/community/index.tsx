@@ -28,7 +28,7 @@ const Community: React.FC = () => {
         {articles.items.map(i => (
           <Link key={i.id} href={`/community/${i.id}`}>
             <a>
-              <CommunityCard post={i}></CommunityCard>
+              <CommunityCard article={i}></CommunityCard>
             </a>
           </Link>
         ))}
