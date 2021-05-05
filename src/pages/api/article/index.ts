@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import * as _ from 'lodash';
-import { Post } from '../../../types/post';
+import { Article } from '../../../types/article';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const p: Post = {
+  const p: Article = {
     id: 1,
     title: 'How to collect your favorite NFTs at Maven NFT?',
     author: 'haskell',

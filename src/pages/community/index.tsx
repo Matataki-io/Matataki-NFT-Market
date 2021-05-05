@@ -3,14 +3,14 @@ import styled from 'styled-components';
 import Link from 'next/link';
 
 import CommunityCard from '../../components/CommunityCard';
-import { Post } from '../../types/post';
-import { getPosts } from '../../backend/post';
+import { Article } from '../../types/article';
+import { getArticles } from '../../backend/article';
 
 const Community: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   useEffect(() => {
     const fetch = async () => {
-      setPosts(await getPosts(1, 10));
+      setArticles(await getArticles(1, 10));
     };
     fetch();
   }, []);
@@ -20,7 +20,7 @@ const Community: React.FC = () => {
         <StyledHeadTitle>Community</StyledHeadTitle>
       </StyledHead>
       <StyledItem>
-        {posts.map(i => (
+        {articles.map(i => (
           <Link key={i.id} href={`/community/${i.id}`}>
             <a>
               <CommunityCard post={i}></CommunityCard>

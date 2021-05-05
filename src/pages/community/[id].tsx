@@ -4,18 +4,18 @@ import { Avatar } from 'antd';
 import ReactMarkdown from 'react-markdown';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Post } from '../../types/post';
-import { getPost } from '../../backend/post';
+import { Article } from '../../types/article';
+import { getArticle } from '../../backend/article';
 
 const CommunityId: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [post, setPost] = useState<Post | null>(null);
+  const [article, setArticle] = useState<Article | null>(null);
   useEffect(() => {
     const fetchPost = async () => {
       if (id) {
-        const x = await getPost(Number.parseInt(id as string));
-        setPost(x);
+        const x = await getArticle(Number.parseInt(id as string));
+        setArticle(x);
       }
     };
     fetchPost();
@@ -23,12 +23,12 @@ const CommunityId: React.FC = () => {
 
   return (
     <>
-      {post === null ? (
+      {article === null ? (
         <div>loading</div>
       ) : (
         <StyledWrapper>
           <Head>
-            <title>{post?.title}</title>
+            <title>{article?.title}</title>
             <link
               rel='preload'
               href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css'
@@ -39,16 +39,16 @@ const CommunityId: React.FC = () => {
               href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css'
             />
           </Head>
-          <StyledTitle>{post?.title}</StyledTitle>
-          <StyledTime>{post?.updateAt}</StyledTime>
+          <StyledTitle>{article?.title}</StyledTitle>
+          <StyledTime>{article?.updateAt}</StyledTime>
           <StyledUser>
             <Avatar></Avatar>
-            <span className='username'>{post?.author}</span>
+            <span className='username'>{article?.author}</span>
           </StyledUser>
           <StyledLine></StyledLine>
           <StyledMd>
             <ReactMarkdown className='markdown-body'>
-              {post?.content}
+              {article?.content}
             </ReactMarkdown>
           </StyledMd>
         </StyledWrapper>

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Post } from '../../types/post';
+import { Post } from '../../types/article';
 
 const CommunityCard: React.FC<{ post: Post }> = ({ post }) => {
   const { updateAt, title, intro, cover } = post;
