@@ -15,6 +15,13 @@ const mockClient = axios.create({
   withCredentials: false,
 });
 
+const localClient = axios.create({
+  baseURL: 'http://localhost:3688',
+  timeout: 1000 * 60,
+  headers: {},
+  withCredentials: false,
+});
+
 // Just copy from matataki-fe
 backendClient.interceptors.request.use(
   config => {
@@ -56,4 +63,4 @@ backendClient.interceptors.response.use(
 );
 
 export default backendClient;
-export { backendClient, mockClient };
+export { backendClient, mockClient, localClient };

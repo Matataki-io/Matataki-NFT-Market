@@ -5,22 +5,27 @@ import Link from 'next/link';
 import CommunityCard from '../../components/CommunityCard';
 import { Article } from '../../types/article';
 import { getArticles } from '../../backend/article';
+import { PaginationResult } from '../../types/PaginationResult';
 
 const Community: React.FC = () => {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<PaginationResult<Article> | null>(
+    null
+  );
   useEffect(() => {
     const fetch = async () => {
       setArticles(await getArticles(1, 10));
     };
     fetch();
   }, []);
+
+  if (articles === null) return <div>Empty</div>;
   return (
     <StyledWrapper>
       <StyledHead>
         <StyledHeadTitle>Community</StyledHeadTitle>
       </StyledHead>
       <StyledItem>
-        {articles.map(i => (
+        {articles.items.map(i => (
           <Link key={i.id} href={`/community/${i.id}`}>
             <a>
               <CommunityCard post={i}></CommunityCard>

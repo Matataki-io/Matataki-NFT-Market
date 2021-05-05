@@ -17,5 +17,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   for (let i = 0; i < ps.length; ++i) {
     ps[i].id = i + 1;
   }
-  res.json(ps);
+  res.json({
+    items: ps,
+    meta: {
+      totalItems: 10,
+      itemCount: 10,
+      itemsPerPage: 10,
+      totalPages: 1,
+      currentPage: 1,
+    },
+  });
 }
