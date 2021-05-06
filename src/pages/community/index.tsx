@@ -1,20 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
 import CommunityCard from '../../components/CommunityCard';
+import { Article } from '../../types/article';
+import { getArticles } from '../../backend/article';
+import { PaginationResult } from '../../types/PaginationResult';
 
 const Community: React.FC = () => {
+  const [articles, setArticles] = useState<PaginationResult<Article> | null>(
+    null
+  );
+  useEffect(() => {
+    const fetch = async () => {
+      setArticles(await getArticles(1, 10));
+    };
+    fetch();
+  }, []);
+
+  if (articles === null) return <div>Empty</div>;
   return (
     <StyledWrapper>
       <StyledHead>
         <StyledHeadTitle>Community</StyledHeadTitle>
       </StyledHead>
       <StyledItem>
-        {[...new Array(9)].map((i, idx) => (
-          <Link key={idx} href={`/community/${idx}`}>
+        {articles.items.map(i => (
+          <Link key={i.id} href={`/community/${i.id}`}>
             <a>
-              <CommunityCard></CommunityCard>
+              <CommunityCard article={i}></CommunityCard>
             </a>
           </Link>
         ))}
