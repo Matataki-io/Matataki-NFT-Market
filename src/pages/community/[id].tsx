@@ -91,11 +91,11 @@ const StyledWrapper = styled.div`
 `;
 
 const StyledTitle = styled.h1`
-  font-size: 48px;
+  font-size: 30px;
   font-family: BigCaslon-Medium, BigCaslon;
   font-weight: 500;
   color: #333333;
-  line-height: 58px;
+  line-height: 1.4;
   padding: 0;
   margin: 0;
 `;

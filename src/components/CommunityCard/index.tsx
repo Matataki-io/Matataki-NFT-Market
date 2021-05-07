@@ -36,7 +36,9 @@ const StyledCover = styled.div`
     object-fit: cover;
   }
 `;
-const StyledInfo = styled.div``;
+const StyledInfo = styled.div`
+  overflow: hidden;
+`;
 const StyledTime = styled.time`
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
@@ -52,6 +54,9 @@ const StyledTitle = styled.p`
   line-height: 28px;
   padding: 0;
   margin: 8px 0 24px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 const Styleddescription = styled.p`
   font-size: 16px;
