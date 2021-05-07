@@ -16,7 +16,7 @@ const CommunityId: React.FC = () => {
     const fetchPost = async () => {
       try {
         if (id) {
-          const res = await getArticle(Number.parseInt(id as string));
+          const res: any = await getArticle(Number.parseInt(id as string));
           if (res.status === 200) {
             setArticle(res.data);
           } else {
@@ -62,9 +62,11 @@ const CommunityId: React.FC = () => {
           </StyledUser> */}
           <StyledLine></StyledLine>
           <StyledMd>
-            <ReactMarkdown className='markdown-body'>
-              {article?.content}
-            </ReactMarkdown>
+            {article?.content ? (
+              <ReactMarkdown className='markdown-body'>
+                {article?.content}
+              </ReactMarkdown>
+            ) : null}
           </StyledMd>
         </StyledWrapper>
       )}
