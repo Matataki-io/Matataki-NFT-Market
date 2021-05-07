@@ -33,7 +33,7 @@ const Community: React.FC = () => {
         <StyledHeadTitle>Community</StyledHeadTitle>
       </StyledHead>
       <StyledItem>
-        {data.items.map(i => (
+        {data.items.map((i: any) => (
           <Link key={i.id} href={`/community/${i.id}`}>
             <a>
               <CommunityCard article={i}></CommunityCard>
