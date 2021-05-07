@@ -1,21 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Avatar } from 'antd';
+import { Avatar, message, Image, Pagination } from 'antd';
 import ReactMarkdown from 'react-markdown';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Article } from '../../types/article';
 import { getArticle } from '../../backend/article';
+import moment from 'moment';
 
 const CommunityId: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [article, setArticle] = useState<Article | null>(null);
+  const [article, setArticle] = useState<Article>();
   useEffect(() => {
     const fetchPost = async () => {
-      if (id) {
-        const x = await getArticle(Number.parseInt(id as string));
-        setArticle(x);
+      try {
+        if (id) {
+          const res = await getArticle(Number.parseInt(id as string));
+          if (res.status === 200) {
+            setArticle(res.data);
+          } else {
+            message.error('获取失败');
+          }
+        }
+      } catch (e) {
+        console.log('e', e);
       }
     };
     fetchPost();
@@ -39,12 +48,18 @@ const CommunityId: React.FC = () => {
               href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css'
             />
           </Head>
+
+          {article?.cover ? (
+            <Image width={200} src={article?.cover}></Image>
+          ) : null}
           <StyledTitle>{article?.title}</StyledTitle>
-          <StyledTime>{article?.updateAt}</StyledTime>
-          <StyledUser>
+          <StyledTime>
+            {moment(article?.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
+          </StyledTime>
+          {/* <StyledUser>
             <Avatar></Avatar>
             <span className='username'>{article?.author}</span>
-          </StyledUser>
+          </StyledUser> */}
           <StyledLine></StyledLine>
           <StyledMd>
             <ReactMarkdown className='markdown-body'>

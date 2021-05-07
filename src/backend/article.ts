@@ -1,18 +1,14 @@
-import { Article } from '../types/article';
 import { PaginationResult } from '../types/PaginationResult';
-import { localClient as client } from './client';
+import { backendClient } from './client';
 
-export async function getArticles(
-  page: number,
-  limit: number
-): Promise<PaginationResult<Article>> {
-  const resp = await client.get<PaginationResult<Article>>('/article', {
-    params: { page, limit },
-  });
-  return resp.data;
+export interface getArticlesProps {
+  page: number;
+  limit: number;
 }
 
-export async function getArticle(id: number): Promise<Article> {
-  const resp = await client.get<Article>(`/article/${id}`);
-  return resp.data;
+export function getArticles(params: getArticlesProps) {
+  return backendClient.post<PaginationResult<any>>(`/article`, params);
+}
+export function getArticle(id: number) {
+  return backendClient.get<PaginationResult<any>>(`/article/${id}`);
 }

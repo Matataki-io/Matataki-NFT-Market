@@ -6,5 +6,5 @@ export type Article = {
   intro: string;
   cover: string;
   createdAt: string;
-  updateAt: string;
+  updatedAt: string;
 };

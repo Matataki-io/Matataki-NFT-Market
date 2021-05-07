@@ -1,16 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Article } from '../../types/article';
+import moment from 'moment';
 
 const CommunityCard: React.FC<{ article: Article }> = ({ article: post }) => {
-  const { updateAt, title, intro, cover } = post;
+  const { updatedAt, title, intro, cover } = post;
   return (
     <StyledWrapper>
       <StyledCover>
-        <img src={cover} alt='cover' />
+        {cover ? <img src={cover} alt='cover' /> : null}
       </StyledCover>
       <StyledInfo>
-        <StyledTime>{updateAt}</StyledTime>
+        <StyledTime>
+          {moment(updatedAt).format('YYYY-MM-DD HH:mm:ss')}
+        </StyledTime>
         <StyledTitle>{title}</StyledTitle>
         <Styleddescription>{intro}</Styleddescription>
       </StyledInfo>
