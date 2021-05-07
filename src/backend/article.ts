@@ -1,5 +1,7 @@
 import { PaginationResult } from '../types/PaginationResult';
 import { backendClient } from './client';
+import { Article } from '../types/article.d';
+import { GeneralResponse } from '../types/Backend.types';
 
 export interface getArticlesProps {
   page: number;
@@ -7,8 +9,8 @@ export interface getArticlesProps {
 }
 
 export function getArticles(params: getArticlesProps) {
-  return backendClient.post<PaginationResult<any>>(`/article`, params);
+  return backendClient.post<PaginationResult<Article>>(`/article`, params);
 }
 export function getArticle(id: number) {
-  return backendClient.get<PaginationResult<any>>(`/article/${id}`);
+  return backendClient.get<GeneralResponse<Article>>(`/article/${id}`);
 }
