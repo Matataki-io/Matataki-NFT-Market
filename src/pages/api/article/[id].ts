@@ -80,14 +80,5 @@ NGC`;
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  res.json({
-    id: 1,
-    title: title,
-    author: 'haskell',
-    intro: _.fill(Array(33), 'intro').join(' '),
-    cover: 'https://placeimg.com/540/184/nature?t=1617247698083',
-    content: md,
-    createdAt: '2021/5/1',
-    updateAt: '2021/5/1',
-  });
+  res.json({});
 }
