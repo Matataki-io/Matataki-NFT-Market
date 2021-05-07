@@ -6,32 +6,47 @@ import CommunityCard from '../../components/CommunityCard';
 import { Article } from '../../types/article';
 import { getArticles } from '../../backend/article';
 import { PaginationResult } from '../../types/PaginationResult';
+import { isEmpty } from 'lodash';
+import useSWR from 'swr';
+import { backendSWRFetcher } from '../../backend/media';
+import { Pagination } from 'antd';
 
 const Community: React.FC = () => {
-  const [articles, setArticles] = useState<PaginationResult<Article> | null>(
-    null
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
+  const { data, error } = useSWR(
+    `/article?page=${pageIndex}&limit=10`,
+    backendSWRFetcher
   );
-  useEffect(() => {
-    const fetch = async () => {
-      setArticles(await getArticles(1, 10));
-    };
-    fetch();
-  }, []);
 
-  if (articles === null) return <div>Empty</div>;
+  if (!data && !error) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className='error'>发生了错误 {error}</div>;
+  }
+
   return (
     <StyledWrapper>
       <StyledHead>
         <StyledHeadTitle>Community</StyledHeadTitle>
       </StyledHead>
       <StyledItem>
-        {articles.items.map(i => (
+        {data.items.map(i => (
           <Link key={i.id} href={`/community/${i.id}`}>
             <a>
               <CommunityCard article={i}></CommunityCard>
             </a>
           </Link>
         ))}
+        {isEmpty(data.items) ? <div>Empty</div> : ''}
+        <StyledPagination>
+          <Pagination
+            defaultCurrent={pageIndex}
+            onChange={(page, pageSize) => setPageIndex(page)}
+            total={data.meta.totalItems}></Pagination>
+        </StyledPagination>
       </StyledItem>
     </StyledWrapper>
   );
@@ -67,5 +82,8 @@ const StyledItem = styled.div`
     display: block;
     margin: 48px 0;
   }
+`;
+const StyledPagination = styled.div`
+  text-align: center;
 `;
 export default Community;
