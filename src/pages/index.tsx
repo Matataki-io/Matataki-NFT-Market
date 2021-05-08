@@ -207,7 +207,7 @@ const StyledTitle = styled.h3`
   font-family: BigCaslon-Medium, BigCaslon;
   font-weight: 500;
   color: #333333;
-  line-height: 39px;
+  line-height: 1.2;
   padding: 0;
   margin: 0;
   position: relative;
@@ -219,6 +219,12 @@ const StyledTitle = styled.h3`
     font-weight: normal;
     color: #f4cf1f;
     line-height: 37px;
+  }
+  @media screen and (max-width: 768px) {
+    font-size: 18px;
+    span {
+      font-size: 12px;
+    }
   }
 `;
 
@@ -252,6 +258,11 @@ const StyledModuleHead = styled.div`
     color: #333333;
     line-height: 22px;
   }
+  @media screen and (max-width: 768px) {
+    .more {
+      font-size: 12px;
+    }
+  }
 `;
 const StyledAbout = styled.div`
   display: grid;
@@ -284,6 +295,16 @@ const StyledAbout = styled.div`
       }
     }
   }
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .box {
+      .cover {
+        height: 120px !important;
+      }
+    }
+  }
 `;
 
 const StyledCreators = styled.div`
@@ -292,6 +313,11 @@ const StyledCreators = styled.div`
   grid-row-gap: 48px;
   grid-column-gap: 80px;
   margin-top: 48px;
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const StyledNfts = styled.div`
@@ -320,6 +346,7 @@ const StyledNfts = styled.div`
   }
   & > a {
     height: 456px;
+    width: 100%;
   }
 `;
 

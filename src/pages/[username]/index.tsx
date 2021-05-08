@@ -639,6 +639,9 @@ const StyledMediaCardContainer = styled.div`
   margin: 48px auto 0;
   min-height: 320px;
   grid-template-columns: repeat(4, minmax(0px, 330px));
+  & > a {
+    width: 100%;
+  }
   @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 330px));
   }
@@ -761,6 +764,9 @@ const StyledWord = styled.div`
   column-count: 4;
   margin-top: 16px;
   column-gap: 20px;
+  @media screen and (max-width: 768px) {
+    column-count: 2;
+  }
   .item {
     /* 防止多列布局，分页媒体和多区域上下文中的意外中断 */
     break-inside: avoid;

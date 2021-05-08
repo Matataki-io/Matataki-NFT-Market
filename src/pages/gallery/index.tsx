@@ -69,6 +69,9 @@ const StyledGallery = styled.div`
   gap: 48px 24px;
   margin: 48px auto 0;
   min-height: 320px;
+  & > a {
+    width: 100%;
+  }
   @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 1fr));
   }

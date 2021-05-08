@@ -255,6 +255,7 @@ const StyledHeaderWrapper = styled.div`
 const StyledHeaderLeft = styled.div`
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 `;
 const StyledHeaderLogo = styled.a`
   display: flex;

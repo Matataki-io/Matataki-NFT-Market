@@ -157,7 +157,7 @@ const StyledHeadTitle = styled.h2`
   margin: 0;
 `;
 const StyledBanner = styled.div`
-  height: 576px;
+  /* height: 576px; */
   margin: 48px 0 64px;
   .ant-carousel .slick-prev,
   .ant-carousel .slick-next,
@@ -176,6 +176,9 @@ const StyledWord = styled.div`
   column-count: 4;
   margin-top: 16px;
   column-gap: 20px;
+  @media screen and (max-width: 768px) {
+    column-count: 2;
+  }
   .item {
     /* 防止多列布局，分页媒体和多区域上下文中的意外中断 */
     break-inside: avoid;
@@ -242,6 +245,15 @@ const StyledAbout = styled.div`
     &:nth-of-type(4) {
       grid-row: 2 / 3;
       grid-column: 10 / 14;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-wrap: wrap;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+    .box {
+      height: 134px;
     }
   }
 `;
