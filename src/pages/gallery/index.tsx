@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import { isEmpty } from 'lodash';
 
 import GalleryCard from '../../components/GalleryCard';
 import { getGalleryUsers } from '../../backend/user';
 import { User } from '../../types/User.types';
+import { Table } from 'antd';
+import useSWR from 'swr';
+import { localFetcher as fetcher } from '../../backend/client';
 
 const Gallery: React.FC = () => {
   const [galleryList, setGalleryList] = useState<Array<any>>([]);
+  const { data: reviewData, error } = useSWR(
+    '/gallery/request?page=1&limit=10',
+    fetcher
+  );
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageLimit, setPageLimit] = useState(10);
+  const columns = [];
 
   useEffect(() => {
     const fetch = async () => {
@@ -17,20 +28,57 @@ const Gallery: React.FC = () => {
     fetch();
   }, []);
 
+  if (!reviewData && !error) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className='error'>发生了错误 {error}</div>;
+  }
+
   return (
     <StyledWrapper>
-      <StyledHead>
-        <StyledHeadTitle>Gallery List</StyledHeadTitle>
-      </StyledHead>
-      <StyledGallery>
-        {galleryList.map((i: User, idx: number) => (
-          <Link key={`${idx}-${i.address}`} href={`/${i.username}`}>
-            <a>
-              <GalleryCard {...i}></GalleryCard>
-            </a>
-          </Link>
-        ))}
-      </StyledGallery>
+      <div>
+        <StyledHead>
+          <h3>Review List:</h3>
+        </StyledHead>
+        <div>
+          {isEmpty(reviewData.items) ? (
+            'empty'
+          ) : (
+            <Table
+              dataSource={reviewData.items}
+              pagination={{
+                current: pageIndex,
+                total: reviewData.length,
+                defaultPageSize: pageLimit,
+                pageSize: pageLimit,
+                showSizeChanger: true,
+                position: ['bottomCenter'],
+                onChange: (page, limit) => {
+                  setPageIndex(page);
+                  if (limit) setPageLimit(limit);
+                },
+              }}
+              columns={columns}
+            />
+          )}
+        </div>
+      </div>
+      <div>
+        <StyledHead>
+          <StyledHeadTitle>Gallery List</StyledHeadTitle>
+        </StyledHead>
+        <StyledGallery>
+          {galleryList.map((i: User, idx: number) => (
+            <Link key={`${idx}-${i.address}`} href={`/${i.username}`}>
+              <a>
+                <GalleryCard {...i}></GalleryCard>
+              </a>
+            </Link>
+          ))}
+        </StyledGallery>
+      </div>
     </StyledWrapper>
   );
 };

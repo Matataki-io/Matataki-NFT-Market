@@ -22,6 +22,25 @@ const localClient = axios.create({
   withCredentials: false,
 });
 
+localClient.interceptors.request.use(
+  config => {
+    let token = getCookie('token');
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    return config;
+  },
+  error => {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
+
+const localFetcher = (url: string) =>
+  localClient.get(url).then(res => res.data);
+
 // Just copy from matataki-fe
 backendClient.interceptors.request.use(
   config => {
@@ -63,4 +82,4 @@ backendClient.interceptors.response.use(
 );
 
 export default backendClient;
-export { backendClient, mockClient, localClient };
+export { backendClient, mockClient, localClient, localFetcher };
