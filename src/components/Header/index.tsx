@@ -162,7 +162,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                 ) && (
                   <Link
                     href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
-                    管理后台
+                    Management Background
                   </Link>
                 )}
               </StyledHeaderNav>
