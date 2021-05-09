@@ -1,6 +1,6 @@
 import { default as BACKEND_CLIENT } from './client';
 import { PaginationResult } from '../types/PaginationResult';
-import { User, Gallery } from '../types/User.types';
+import { User } from '../types/User.types';
 import { BidLog } from '../types/Bid.d';
 import { setCookie } from '../utils/cookie';
 import { GeneralResponse } from '../types/Backend.types';

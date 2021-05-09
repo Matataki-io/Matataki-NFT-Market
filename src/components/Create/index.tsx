@@ -54,6 +54,7 @@ import {
   NFTTempUrl,
 } from './temp';
 import { isEmpty } from 'lodash';
+import { Gallery } from '../../types/Gallery';
 
 // 非负整数
 const creatorShare = /^\d+$/;
@@ -93,7 +94,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     description: string;
   }>({ name: '', description: '' }); // 备份 formNameAndDescription 数据
   // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
-  const [galleryList, setGalleryList] = useState<User[]>([]);
+  const [galleryList, setGalleryList] = useState<Gallery[]>([]);
   const mediaContract = useMedia();
 
   useEffect(() => {
@@ -409,7 +410,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       gallery
     );
 
-    const galleryUser = galleryList.find(u => u.address === gallery);
+    const galleryUser = galleryList.find(u => u.owner.address === gallery);
     if (!galleryUser) throw new Error('Unable to find the gallery user');
     const nonce = await getNonceByPublisherId(galleryUser.id);
 
@@ -673,13 +674,16 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               <Form.Item label='Gallery' name='gallery'>
                 <Select placeholder='Select a gallery'>
                   {galleryList.map((i, idx: number) => (
-                    <Option key={`${idx}-${i.address}`} value={i.address}>
+                    <Option
+                      key={`${idx}-${i.owner.address}`}
+                      value={i.owner.address}>
                       <span>
                         <Avatar
                           size={20}
                           icon={<UserOutlined />}
-                          src={i.avatar}></Avatar>{' '}
-                        <span>{i.nickname || i.username}</span>
+                          src={i.owner.avatar}
+                        />{' '}
+                        <span>{i.owner.nickname || i.owner.username}</span>
                       </span>
                     </Option>
                   ))}

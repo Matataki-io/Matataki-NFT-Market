@@ -52,7 +52,3 @@ export interface User {
   facebook: string;
   tags: Array<Tag>;
 }
-
-export interface Gallery extends User {
-  subordinateArtists: Array<User>;
-}
