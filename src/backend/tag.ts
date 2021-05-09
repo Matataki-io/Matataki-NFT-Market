@@ -1,5 +1,5 @@
 import client from './client';
-import { Tag } from '../types/tag';
+import { Tag } from '../types/Tag';
 
 const getTags = async (): Promise<{ data: Array<Tag> }> =>
   await client.get('/tag');

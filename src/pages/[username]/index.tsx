@@ -20,12 +20,8 @@ import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { useLogin } from '../../hooks/useLogin';
-import {
-  getUser,
-  getUserBids,
-  getGallerySubordinateArtists,
-  getUserTags,
-} from '../../backend/user';
+import { getUser, getUserBids, getUserTags } from '../../backend/user';
+import { getGallerySubordinateArtists } from '../../backend/gallery';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
 import { BidLog } from '../../types/Bid.d';

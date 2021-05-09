@@ -4,7 +4,7 @@ import { Avatar, message, Image, Pagination } from 'antd';
 import ReactMarkdown from 'react-markdown';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Article } from '../../types/article';
+import { Article } from '../../types/Article';
 import { getArticle } from '../../backend/article';
 import moment from 'moment';
 

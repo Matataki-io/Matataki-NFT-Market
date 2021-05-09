@@ -14,7 +14,7 @@ import {
   PostMedia,
   sendToPublisherForPreview,
 } from '../../backend/media';
-import { getGalleryUsers } from '../../backend/user';
+import { getGalleryUsers } from '../../backend/gallery';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
 import { firstUpperCase } from '../../utils/index';

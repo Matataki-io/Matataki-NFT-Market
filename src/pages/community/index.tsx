@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 
 import CommunityCard from '../../components/CommunityCard';
-import { Article } from '../../types/article';
+import { Article } from '../../types/Article';
 import { getArticles } from '../../backend/article';
 import { PaginationResult } from '../../types/PaginationResult';
 import { isEmpty } from 'lodash';
