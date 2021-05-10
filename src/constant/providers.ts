@@ -18,7 +18,7 @@ export const providers: {
   //     'kovan',
   //     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY,
   //   ),
-  [ChainId.RINKEBY]: new ethers.providers.AlchemyWebSocketProvider(
+  [ChainId.RINKEBY]: new ethers.providers.AlchemyProvider(
     'rinkeby',
     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY
   ),
