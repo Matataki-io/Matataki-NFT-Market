@@ -11,7 +11,6 @@ import Profile from '../components/Profile';
 import { removeCookie } from '../utils/cookie';
 
 import '../styles/globals.css';
-import 'inter-ui/inter.css';
 import 'antd/dist/antd.css';
 
 import Providers from '../providers';

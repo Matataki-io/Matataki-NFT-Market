@@ -557,7 +557,7 @@ const StyledLine = styled.div`
 `;
 const StyledTitle = styled.div`
   font-size: 32px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 39px;
@@ -582,7 +582,6 @@ const StyledHeadUserInfo = styled.div`
   top: 10px;
   h1 {
     font-size: 34px;
-    font-family: DINAlternate-Bold, DINAlternate;
     font-weight: bold;
     color: #333333;
     line-height: 1;
@@ -591,7 +590,6 @@ const StyledHeadUserInfo = styled.div`
   }
   p {
     font-size: 16px;
-    font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: #333333;
     line-height: 1.2;
@@ -656,7 +654,7 @@ const StyledMediaCardContainer = styled.div`
 // artist start
 const StyledItemTitle = styled.h3`
   font-size: 32px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 39px;
@@ -700,7 +698,7 @@ const StyledAbout = styled.div`
   }
   .text {
     font-size: 16px;
-    font-family: BigCaslon-Medium, BigCaslon;
+    font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
     line-height: 24px;
@@ -721,7 +719,7 @@ const StyledAbout = styled.div`
   }
   .gallery-name {
     font-size: 24px;
-    font-family: BigCaslon-Medium, BigCaslon;
+    font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
     line-height: 28px;
@@ -748,7 +746,7 @@ const StyledAboutItem = styled.div`
   }
   span {
     font-size: 16px;
-    font-family: BigCaslon-Medium, BigCaslon;
+    font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
     line-height: 19px;
@@ -772,7 +770,7 @@ const StyledWord = styled.div`
     list-style: none;
     li {
       margin: 9px 0;
-      font-family: BigCaslon-Medium, BigCaslon;
+      font-family: 'Playfair Display', serif;
       font-weight: 500;
       color: #333333;
       a {

@@ -199,7 +199,7 @@ const StyledWrapper = styled.div`
 
 const StyledTitle = styled.h3`
   font-size: 32px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 1.2;
@@ -210,7 +210,6 @@ const StyledTitle = styled.h3`
     position: absolute;
     top: -10px;
     font-size: 24px;
-    font-family: Playlist-Script, Playlist, 'Dancing Script', cursive;
     font-weight: normal;
     color: #f4cf1f;
     line-height: 37px;
@@ -248,7 +247,6 @@ const StyledModuleHead = styled.div`
   margin: 20px 0;
   .more {
     font-size: 16px;
-    font-family: PingFangSC-Medium, PingFang SC;
     font-weight: 500;
     color: #333333;
     line-height: 22px;

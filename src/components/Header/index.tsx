@@ -304,7 +304,7 @@ const StyledHeaderLogo = styled.a`
     padding: 0;
     margin: 0;
     font-size: 32px;
-    font-family: BigCaslon-Medium, BigCaslon;
+    font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #000000;
   }
@@ -318,14 +318,12 @@ const StyledHeaderNav = styled.nav`
     line-height: 22px;
     padding: 0;
     margin: 0 24px;
-    font-family: PingFangSC-Medium, PingFang SC;
   }
 `;
 const StyledHeaderNavMobile = styled.nav`
   a {
     color: #333333;
     padding: 0;
-    font-family: PingFangSC-Medium, PingFang SC;
     display: block;
     margin: 10px 0;
     font-weight: 400;

@@ -170,7 +170,7 @@ const StyledWrapper = styled.div`
 
 const StyledHeadTitle = styled.h2`
   font-size: 48px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 58px;
@@ -185,7 +185,6 @@ const StyledHead = styled.div`
   flex-wrap: wrap;
   .title {
     font-size: 20px;
-    font-family: DINCondensed-Bold, DINCondensed;
     font-weight: bold;
     color: #333333;
     line-height: 24px;

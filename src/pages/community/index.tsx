@@ -70,7 +70,7 @@ const StyledWrapper = styled.div`
 const StyledHead = styled.div``;
 const StyledHeadTitle = styled.h2`
   font-size: 48px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 58px;
