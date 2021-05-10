@@ -1,12 +1,15 @@
 import backendClient, { default as BACKEND_CLIENT } from './client';
-import { GeneralResponse } from '../types/Backend.types';
+import { GeneralResponse, PaginationProps } from '../types/Backend.types';
 import { Gallery } from '../types/Gallery';
 
-export async function getGalleryUsers(): Promise<Gallery[]> {
+export async function getGalleryUsers(
+  params: PaginationProps
+): Promise<Gallery[]> {
   const { data } = await BACKEND_CLIENT.get<GeneralResponse<Gallery[]>>(
-    `/gallery`
+    `/gallery`,
+    { params }
   );
-  return data.data;
+  return data as any;
 }
 export async function getGallerySubordinateArtists(
   username: string

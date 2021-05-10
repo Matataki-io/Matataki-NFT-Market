@@ -141,7 +141,7 @@ const Home: React.FC<void> = () => {
           <StyledTitle>
             Top NFT Creators<span>Hot</span>
           </StyledTitle>
-          <Link href='/market'>
+          <Link href='/artist'>
             <a target='_blank' className='more'>
               VIEW MORE
               <RightOutlined />
@@ -164,7 +164,7 @@ const Home: React.FC<void> = () => {
           <StyledTitle>
             Learn More about NFT Market<span>Fun</span>
           </StyledTitle>
-          <Link href='/market'>
+          <Link href='/community'>
             <a target='_blank' className='more'>
               VIEW MORE
               <RightOutlined />
