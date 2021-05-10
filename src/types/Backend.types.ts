@@ -3,3 +3,8 @@ export interface GeneralResponse<T = Record<string, any>> {
   data: T;
   message?: string;
 }
+
+export interface PaginationProps {
+  page: number;
+  limit: number;
+}

@@ -16,10 +16,11 @@ import { useLogin } from '../../hooks/useLogin';
 import { currentChainId, UserRole } from '../../constant';
 import { getCookie } from '../../utils/cookie';
 import { shortedWalletAccount } from '../../utils';
-import { message } from 'antd';
+import { message, Drawer } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
-
+import { isMobile } from 'react-device-detect';
 // import Search from '../Search';
 
 interface HeaderProps {
@@ -50,6 +51,8 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   } = useLogin();
   const [networkVersion, setNetworkVersion] = useState<string>('');
   const [connect, setConnect] = useState<boolean>(false);
+
+  const [visible, setVisible] = useState(false);
 
   // TODO: 这里可能要改 暂时用来显示 network error
   useMount(() => {
@@ -115,8 +118,83 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     router,
   ]);
 
-  // @ts-ignore
-  // @ts-ignore
+  const showDrawer = () => {
+    setVisible(true);
+  };
+  const onClose = () => {
+    setVisible(false);
+  };
+
+  const NavComponents = () => {
+    return (
+      <StyledHeaderNav>
+        <Link href='/artist'>
+          <a>Featured Artists</a>
+        </Link>
+        <Link href='/gallery'>
+          <a>Gallery List</a>
+        </Link>
+        <Link href='/market'>
+          <a>Market Place</a>
+        </Link>
+        <Link href='/community'>
+          <a>Community</a>
+        </Link>
+        {[UserRole.Gallery, UserRole.SuperAdmin].includes(
+          // @ts-ignore
+          userDataByWallet?.role
+        ) && (
+          <Link
+            href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
+            Management Background
+          </Link>
+        )}
+      </StyledHeaderNav>
+    );
+  };
+
+  const ContainerComponents = () => {
+    return (
+      <div>
+        <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
+          <Button className='hover-underline'>Learn</Button>
+        </a>
+        {wallet.status === 'connected' ? (
+          <>
+            {isRegistered ? (
+              <UserDropdown>
+                <StyledHeaderUserdorpdownContainer>
+                  <Button color='gray'>{`@${userDataByWallet?.username}`}</Button>
+                </StyledHeaderUserdorpdownContainer>
+              </UserDropdown>
+            ) : (
+              <Button color='gray'>{shortedccount}</Button>
+            )}
+          </>
+        ) : (
+          <Button color='dark' onClick={connectWallet}>
+            Connect Wallet
+          </Button>
+        )}
+        {wallet.status === 'connected' &&
+        isRegistered &&
+        (userDataByWallet?.role
+          ? [UserRole.Gallery, UserRole.Artist].includes(userDataByWallet.role)
+          : false) ? (
+          <Button color='dark' onClick={() => setIsCreate(true)}>
+            Create
+          </Button>
+        ) : null}
+
+        {Number(networkVersion) !== Number(currentChainId) &&
+        networkVersion !== ''
+          ? // <Button color='error'>Wrong Network</Button>
+            null
+          : null}
+      </div>
+    );
+  };
+
   return (
     <StyledHeader>
       <StyledHeaderWrapper>
@@ -140,72 +218,31 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                   <h1>Maven NFT</h1>
                 </StyledHeaderLogo>
               </Link>
-              <StyledHeaderNav>
-                {/* <Link href='/'>
-                  <a>New Release</a>
-                </Link> */}
-                <Link href='/artist'>
-                  <a>Featured Artists</a>
-                </Link>
-                <Link href='/gallery'>
-                  <a>Gallery List</a>
-                </Link>
-                <Link href='/market'>
-                  <a>Market Place</a>
-                </Link>
-                <Link href='/community'>
-                  <a>Community</a>
-                </Link>
-                {[UserRole.Gallery, UserRole.SuperAdmin].includes(
-                  // @ts-ignore
-                  userDataByWallet?.role
-                ) && (
-                  <Link
-                    href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
-                    Management Background
-                  </Link>
-                )}
-              </StyledHeaderNav>
+              {isMobile ? null : (
+                <StyledHeaderNav>{NavComponents()}</StyledHeaderNav>
+              )}
             </StyledHeaderLeft>
             {/* <Search></Search> */}
 
             <StyledHeaderContainer>
-              <div>
-                <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
-                  <Button className='hover-underline'>Learn</Button>
-                </a>
-                {wallet.status === 'connected' ? (
-                  <>
-                    {isRegistered ? (
-                      <UserDropdown>
-                        <StyledHeaderUserdorpdownContainer>
-                          <Button color='gray'>{`@${userDataByWallet?.username}`}</Button>
-                        </StyledHeaderUserdorpdownContainer>
-                      </UserDropdown>
-                    ) : (
-                      <Button color='gray'>{shortedccount}</Button>
-                    )}
-                  </>
-                ) : (
-                  <Button color='dark' onClick={connectWallet}>
-                    Connect Wallet
-                  </Button>
-                )}
-                {wallet.status === 'connected' && isRegistered ? (
-                  <Button color='dark' onClick={() => setIsCreate(true)}>
-                    Create
-                  </Button>
-                ) : null}
-                {Number(networkVersion) !== Number(currentChainId) &&
-                networkVersion !== ''
-                  ? // <Button color='error'>Wrong Network</Button>
-                    null
-                  : null}
-              </div>
+              {isMobile ? (
+                <StyledMoreIcon onClick={showDrawer} />
+              ) : (
+                ContainerComponents()
+              )}
             </StyledHeaderContainer>
           </Fragment>
         )}
       </StyledHeaderWrapper>
+      <Drawer
+        title='Basic Drawer'
+        placement='right'
+        closable={false}
+        onClose={onClose}
+        visible={visible}>
+        {<StyledHeaderNavMobile>{NavComponents()}</StyledHeaderNavMobile>}
+        {ContainerComponents()}
+      </Drawer>
     </StyledHeader>
   );
 };
@@ -284,6 +321,17 @@ const StyledHeaderNav = styled.nav`
     font-family: PingFangSC-Medium, PingFang SC;
   }
 `;
+const StyledHeaderNavMobile = styled.nav`
+  a {
+    color: #333333;
+    padding: 0;
+    font-family: PingFangSC-Medium, PingFang SC;
+    display: block;
+    margin: 10px 0;
+    font-weight: 400;
+    font-size: 14px;
+  }
+`;
 
 const StyledHeaderContainer = styled.div`
   display: flex;
@@ -291,4 +339,9 @@ const StyledHeaderContainer = styled.div`
 `;
 const StyledHeaderUserdorpdownContainer = styled.div`
   display: inline-block;
+`;
+const StyledMoreIcon = styled(MenuOutlined)`
+  color: #000;
+  font-size: 20px;
+  cursor: pointer;
 `;
