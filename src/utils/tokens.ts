@@ -1,9 +1,16 @@
 import { utils } from 'ethers';
-import { currentSupportedTokens } from '../constant/contracts';
+import { ChainId } from '../constant';
+import { currentSupportedTokens, TOKENS } from '../constant/contracts';
 
 export const getDecimalOf = (address: string) => {
-  switch (address) {
-    // case value:
+  const checksumedAddress = utils.getAddress(address);
+  switch (checksumedAddress) {
+    case TOKENS[ChainId.MAINNET]?.USDT:
+      return 6;
+    case TOKENS[ChainId.MAINNET]?.USDC:
+      return 6;
+    case TOKENS[ChainId.MAINNET]?.WBTC:
+      return 8;
 
     //     break;
 
