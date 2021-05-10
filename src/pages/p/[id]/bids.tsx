@@ -61,7 +61,7 @@ export default function Bids() {
         sellOnShare: bid.sellOnShare,
       });
       const receipt = await tx.wait();
-      alert(`Please check on BSCScan, txHash: ${receipt.transactionHash}`);
+      alert(`Please check on EtherScan, txHash: ${receipt.transactionHash}`);
     },
     [id, media]
   );
@@ -70,7 +70,7 @@ export default function Bids() {
     if (!id) return;
     const tx = await media.removeBid(id as string);
     const receipt = await tx.wait();
-    alert(`Please check on BSCScan, txHash: ${receipt.transactionHash}`);
+    alert(`Please check on EtherScan, txHash: ${receipt.transactionHash}`);
   }, [id, media]);
 
   const activeBidsList = useMemo(() => {
