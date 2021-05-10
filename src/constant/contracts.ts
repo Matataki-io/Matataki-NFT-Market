@@ -1,19 +1,27 @@
 import { ChainId, currentChainId } from '.';
 
-export const CONTRACTS: {
+export type AddressBookForNetwork = {
+  [chainId in ChainId]: string;
+};
+
+export type OptionalAddressBookForNetwork = Partial<AddressBookForNetwork>;
+
+export type ServiceAddressBook = {
   [chainId in ChainId]?: {
     [contractName: string]: string;
     MARKET: string;
     MEDIA: string;
   };
-} = {
+};
+
+export const CONTRACTS: ServiceAddressBook = {
   [ChainId.BSC_TESTNET]: {
     MARKET: '0x8ACEb26E137D20276A9cDC6fa8f825187A67A9E2',
     MEDIA: '0xc76ab5F4Fea51C69f2370d2CC95F8C1F583F2A57',
   },
 };
 
-export const MULTICALL_NETWORKS: { [chainId in ChainId]: string } = {
+export const MULTICALL_NETWORKS: AddressBookForNetwork = {
   [ChainId.MAINNET]: '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
   [ChainId.ROPSTEN]: '0x53C43764255c17BD724F74c4eF150724AC50a3ed',
   [ChainId.KOVAN]: '0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A',
@@ -34,9 +42,7 @@ export const TOKENS: {
   },
 };
 
-export const WETH: {
-  [chainId in ChainId]: string;
-} = {
+export const WETH: AddressBookForNetwork = {
   [ChainId.MAINNET]: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
   [ChainId.ROPSTEN]: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
   [ChainId.RINKEBY]: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
