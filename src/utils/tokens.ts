@@ -3,6 +3,7 @@ import { ChainId } from '../constant';
 import { currentSupportedTokens, TOKENS } from '../constant/contracts';
 
 export const getDecimalOf = (address: string) => {
+  if (!address) return 18;
   const checksumedAddress = utils.getAddress(address);
   switch (checksumedAddress) {
     case TOKENS[ChainId.MAINNET]?.USDT:
