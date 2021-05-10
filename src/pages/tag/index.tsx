@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createTag, deleteTag, getTags } from '../../backend/tag';
-import { Tag } from '../../types/tag';
+import { Tag } from '../../types/Tag';
 import { Button, Form, Input, List, message } from 'antd';
 
 const TagPage: React.FC = () => {

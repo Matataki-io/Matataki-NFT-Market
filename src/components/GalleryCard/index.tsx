@@ -1,8 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { User } from '../../types/User.types';
+import { Gallery } from '../../types/Gallery';
 
-const GalleryCard: React.FC<User> = ({ username, avatar, nickname, bio }) => {
+const GalleryCard: React.FC<Gallery> = ({
+  id,
+  artists,
+  owner,
+  joinRequests,
+}) => {
+  const { avatar, nickname, username, bio } = owner;
   return (
     <StyledWrapper>
       <StyledCover>
@@ -19,6 +25,7 @@ const StyledCover = styled.div`
   height: 192px;
   overflow: hidden;
   border: 1px solid rgb(0 0 0 / 5%);
+
   img {
     width: 100%;
     height: 100%;

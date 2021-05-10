@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Article } from '../../types/article';
+import { Article } from '../../types/Article';
 import moment from 'moment';
 
 const CommunityCard: React.FC<{ article: Article }> = ({ article: post }) => {

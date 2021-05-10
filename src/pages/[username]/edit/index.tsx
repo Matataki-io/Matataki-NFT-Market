@@ -22,7 +22,7 @@ import { useLogin } from '../../../hooks/useLogin';
 import { storageUploadFile } from '../../../backend/storage';
 import { diffData } from '../../../utils/index';
 import { getTags } from '../../../backend/tag';
-import { Tag } from '../../../types/tag';
+import { Tag } from '../../../types/Tag';
 
 // 用户名校验
 const usernamePattern = /^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;

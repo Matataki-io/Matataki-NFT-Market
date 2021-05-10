@@ -1,6 +1,6 @@
 import { PaginationResult } from '../types/PaginationResult';
 import { backendClient } from './client';
-import { Article } from '../types/article.d';
+import { Article } from '../types/Article';
 import { GeneralResponse } from '../types/Backend.types';
 
 export interface getArticlesProps {

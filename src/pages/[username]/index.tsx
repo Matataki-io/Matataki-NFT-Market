@@ -20,15 +20,11 @@ import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { useLogin } from '../../hooks/useLogin';
-import {
-  getUser,
-  getUserBids,
-  getGallerySubordinateArtists,
-  getUserTags,
-} from '../../backend/user';
+import { getUser, getUserBids, getUserTags } from '../../backend/user';
+import { getGallerySubordinateArtists } from '../../backend/gallery';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
-import { BidLog } from '../../types/Bid.d';
+import { BidLog } from '../../types/Bid';
 import BidsCard from '../../components/BidsCard';
 import BidsCancelModal from '../../components/BidsCancelModal';
 import ArtworksCarousel from '../../components/ArtworksCarousel';
@@ -160,9 +156,9 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   useEffect(() => {
     const fetch = async () => {
       if (typeof username !== 'string') return;
-      const data = await getGallerySubordinateArtists(username);
-      console.log('data', data);
-      setSubordinateArtist(data.subordinateArtists);
+      // const data = await getGallerySubordinateArtists(username);
+      // console.log('data', data);
+      // setSubordinateArtist(data.subordinateArtists);
     };
     if (userInfo?.role === 'GALLERY') {
       fetch();
@@ -180,34 +176,34 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     fetch();
   }, [userInfo, username]);
 
-  const subordinateArtistWord = useMemo(() => {
-    let list: any = {};
-    for (let i = 10; i < 36; i++) {
-      //   console.log(i.toString(36))
-      list[i.toString(36)] = [];
-    }
-    list['#'] = [];
-
-    subordinateArtist.forEach(i => {
-      let key = i.username.substr(0, 1).toLocaleLowerCase();
-      if (list[key]) {
-        list[key].push(i);
-      } else {
-        list['#'].push(i);
-      }
-    });
-
-    for (const key in list) {
-      if (Object.prototype.hasOwnProperty.call(list, key)) {
-        const element = list[key];
-        if (isEmpty(element)) {
-          delete list[key];
-        }
-      }
-    }
-
-    return list;
-  }, [subordinateArtist]);
+  // const subordinateArtistWord = useMemo(() => {
+  //   let list: any = {};
+  //   for (let i = 10; i < 36; i++) {
+  //     //   console.log(i.toString(36))
+  //     list[i.toString(36)] = [];
+  //   }
+  //   list['#'] = [];
+  //
+  //   subordinateArtist.forEach(i => {
+  //     let key = i.username.substr(0, 1).toLocaleLowerCase();
+  //     if (list[key]) {
+  //       list[key].push(i);
+  //     } else {
+  //       list['#'].push(i);
+  //     }
+  //   });
+  //
+  //   for (const key in list) {
+  //     if (Object.prototype.hasOwnProperty.call(list, key)) {
+  //       const element = list[key];
+  //       if (isEmpty(element)) {
+  //         delete list[key];
+  //       }
+  //     }
+  //   }
+  //
+  //   return list;
+  // }, [subordinateArtist]);
 
   const collectionContainner = () => {
     return (
@@ -239,18 +235,19 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
               playsInline
               // autoPlay
               // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-              className='media-video'></video>
+              className='media-video'
+            />
           </StyledVideo>
         </StyledItem>
-        <StyledLine></StyledLine>
+        <StyledLine />
         <StyledItem>
           <StyledItemTitle>Artworks</StyledItemTitle>
           <StyledArtworks>
-            <ArtworksCarousel></ArtworksCarousel>
+            <ArtworksCarousel />
           </StyledArtworks>
         </StyledItem>
 
-        <StyledLine></StyledLine>
+        <StyledLine />
         <StyledItem>
           <StyledItemTitle>About</StyledItemTitle>
           <StyledAbout>
@@ -334,18 +331,19 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
               playsInline
               // autoPlay
               // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-              className='media-video'></video>
+              className='media-video'
+            />
           </StyledVideo>
         </StyledItem>
-        <StyledLine></StyledLine>
+        <StyledLine />
         <StyledItem>
           <StyledItemTitle>Artworks</StyledItemTitle>
           <StyledArtworks>
-            <ArtworksCarousel></ArtworksCarousel>
+            <ArtworksCarousel />
           </StyledArtworks>
         </StyledItem>
 
-        <StyledLine></StyledLine>
+        <StyledLine />
         <StyledItem>
           <StyledItemTitle>About</StyledItemTitle>
           <StyledAbout>
@@ -412,32 +410,32 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </StyledAbout>
         </StyledItem>
 
-        <StyledLine></StyledLine>
-        <StyledItem>
-          <StyledItemTitle>Contracted Artists</StyledItemTitle>
+        <StyledLine />
+        {/*<StyledItem>*/}
+        {/*  <StyledItemTitle>Contracted Artists</StyledItemTitle>*/}
 
-          <StyledWord>
-            {/* 需要合并组件 */}
-            {Object.keys(subordinateArtistWord).map((key, idx) => (
-              <ul key={idx} className='item'>
-                <li>
-                  <h3>{key.toLocaleUpperCase()}</h3>
-                </li>
-                {subordinateArtistWord[key].map(
-                  (i: { username: string; nickname: string }, idx: number) => (
-                    <li key={idx}>
-                      <Link href={`/${i.username}`}>
-                        <a>
-                          {i.username}({i.nickname})
-                        </a>
-                      </Link>
-                    </li>
-                  )
-                )}
-              </ul>
-            ))}
-          </StyledWord>
-        </StyledItem>
+        {/*  <StyledWord>*/}
+        {/*     需要合并组件 */}
+        {/*    {Object.keys(subordinateArtistWord).map((key, idx) => (*/}
+        {/*      <ul key={idx} className='item'>*/}
+        {/*        <li>*/}
+        {/*          <h3>{key.toLocaleUpperCase()}</h3>*/}
+        {/*        </li>*/}
+        {/*        {subordinateArtistWord[key].map(*/}
+        {/*          (i: { username: string; nickname: string }, idx: number) => (*/}
+        {/*            <li key={idx}>*/}
+        {/*              <Link href={`/${i.username}`}>*/}
+        {/*                <a>*/}
+        {/*                  {i.username}({i.nickname})*/}
+        {/*                </a>*/}
+        {/*              </Link>*/}
+        {/*            </li>*/}
+        {/*          )*/}
+        {/*        )}*/}
+        {/*      </ul>*/}
+        {/*    ))}*/}
+        {/*  </StyledWord>*/}
+        {/*</StyledItem>*/}
       </>
     );
   };
@@ -521,7 +519,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           ) : null}
         </div>
       </StyledHead>
-      <StyledLine></StyledLine>
+      <StyledLine />
       {userInfo?.role === 'COLLECTOR' ? (
         collectionContainner()
       ) : userInfo?.role === 'ARTIST' ? (
@@ -568,7 +566,7 @@ const StyledTitle = styled.div`
 `;
 const StyledHead = styled.div`
   display: flex;
-  align-items: cennter;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 48px 0;
