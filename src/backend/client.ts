@@ -8,6 +8,39 @@ const backendClient = axios.create({
   withCredentials: false,
 });
 
+const mockClient = axios.create({
+  baseURL: 'http://localhost:4000/api',
+  timeout: 1000 * 60,
+  headers: {},
+  withCredentials: false,
+});
+
+const localClient = axios.create({
+  baseURL: 'http://localhost:3688',
+  timeout: 1000 * 60,
+  headers: {},
+  withCredentials: false,
+});
+
+localClient.interceptors.request.use(
+  config => {
+    let token = getCookie('token');
+    if (token) {
+      config.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
+    return config;
+  },
+  error => {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
+
+const localFetcher = (url: string) =>
+  localClient.get(url).then(res => res.data);
+
 // Just copy from matataki-fe
 backendClient.interceptors.request.use(
   config => {
@@ -49,4 +82,4 @@ backendClient.interceptors.response.use(
 );
 
 export default backendClient;
-export { backendClient };
+export { backendClient, mockClient, localClient, localFetcher };

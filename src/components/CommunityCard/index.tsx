@@ -1,28 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Article } from '../../types/Article';
+import moment from 'moment';
 
-const CommunityCard: React.FC = () => {
+const CommunityCard: React.FC<{ article: Article }> = ({ article: post }) => {
+  const { updatedAt, title, intro, cover } = post;
   return (
     <StyledWrapper>
       <StyledCover>
-        <img src='https://placeimg.com/540/184/nature?t=1617247698083' alt='' />
+        {cover ? <img src={cover} alt='cover' /> : null}
       </StyledCover>
       <StyledInfo>
-        <StyledTime>Apr 08</StyledTime>
-        <StyledTitle>
-          How to collect your favorite NFTs at Maven NFT?
-        </StyledTitle>
-        <Styleddescription>
-          Wonder how much your art or object might be worth and how to sell it?
-          Simply follow the steps below and our specialists will review your
-          submission at no cost and provide preliminary estimates for items that
-          can be included in our sales in 5 to 7 business days blah blah blah
-          blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-          blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-          blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-          blah blah blah blah blah blah blah blah blah blah blah blah blah blah
-          blah blah blah blah blah blah blah blah blah blah bla
-        </Styleddescription>
+        <StyledTime>
+          {moment(updatedAt).format('YYYY-MM-DD HH:mm:ss')}
+        </StyledTime>
+        <StyledTitle>{title}</StyledTitle>
+        <Styleddescription>{intro}</Styleddescription>
       </StyledInfo>
     </StyledWrapper>
   );
@@ -43,7 +36,9 @@ const StyledCover = styled.div`
     object-fit: cover;
   }
 `;
-const StyledInfo = styled.div``;
+const StyledInfo = styled.div`
+  overflow: hidden;
+`;
 const StyledTime = styled.time`
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
@@ -59,6 +54,9 @@ const StyledTitle = styled.p`
   line-height: 28px;
   padding: 0;
   margin: 8px 0 24px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 const Styleddescription = styled.p`
   font-size: 16px;

@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
 import GalleryCard from '../../components/GalleryCard';
-import { getGalleryUsers } from '../../backend/user';
-import { User } from '../../types/User.types';
+import type { Gallery } from '../../types/Gallery';
+import useSWR from 'swr';
+import { localFetcher } from '../../backend/client';
 
-const Gallery: React.FC = () => {
-  const [galleryList, setGalleryList] = useState<Array<any>>([]);
+const GalleryIndex: React.FC = () => {
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data, error } = useSWR(
+    `/gallery?page=${page}&limit=${limit}`,
+    localFetcher
+  );
 
-  useEffect(() => {
-    const fetch = async () => {
-      const data: Array<User> = await getGalleryUsers();
-      setGalleryList(data);
-    };
-    fetch();
-  }, []);
+  if (!data) return <div>Loading</div>;
 
   return (
     <StyledWrapper>
@@ -23,10 +23,10 @@ const Gallery: React.FC = () => {
         <StyledHeadTitle>Gallery List</StyledHeadTitle>
       </StyledHead>
       <StyledGallery>
-        {galleryList.map((i: User, idx: number) => (
-          <Link key={`${idx}-${i.address}`} href={`/${i.username}`}>
+        {data.items.map((i: Gallery, idx: number) => (
+          <Link key={`${i.id}`} href={`/gallery/${i.id}`}>
             <a>
-              <GalleryCard {...i}></GalleryCard>
+              <GalleryCard {...i} />
             </a>
           </Link>
         ))}
@@ -69,6 +69,11 @@ const StyledGallery = styled.div`
   gap: 48px 24px;
   margin: 48px auto 0;
   min-height: 320px;
+
+  & > a {
+    width: 100%;
+  }
+
   @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 1fr));
   }
@@ -80,6 +85,7 @@ const StyledGallery = styled.div`
     flex-direction: column;
     align-items: center;
   }
+
   .loading-container {
     margin-top: 20px;
     width: 100%;
@@ -87,4 +93,4 @@ const StyledGallery = styled.div`
   }
 `;
 
-export default Gallery;
+export default GalleryIndex;

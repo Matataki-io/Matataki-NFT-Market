@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Avatar, Form, Input, Button, message, Upload } from 'antd';
+import {
+  Avatar,
+  Form,
+  Input,
+  Button,
+  message,
+  Upload,
+  Checkbox,
+  Row,
+  Col,
+} from 'antd';
 import { UploadProps } from 'antd/lib/upload/interface';
 import { useRouter } from 'next/router';
 import { useWallet } from 'use-wallet';
@@ -11,6 +21,8 @@ import { updateUser } from '../../../backend/user';
 import { useLogin } from '../../../hooks/useLogin';
 import { storageUploadFile } from '../../../backend/storage';
 import { diffData } from '../../../utils/index';
+import { getTags } from '../../../backend/tag';
+import { Tag } from '../../../types/Tag';
 
 // 用户名校验
 const usernamePattern = /^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
@@ -31,6 +43,7 @@ const Register: React.FC<void> = () => {
   const { username } = router.query;
   const [avatarUrl, setAvatarUrl] = useState<string>();
   const { isRegistered, userDataByWallet, register } = useLogin();
+  const [tagsList, setTagsList] = useState<Array<Tag>>([]);
 
   useEffect(() => {
     if (!isRegistered) {
@@ -38,6 +51,7 @@ const Register: React.FC<void> = () => {
     } else if (userDataByWallet?.username !== username) {
       // router.push('/');
     }
+    console.log('userDataByWallet', userDataByWallet);
   }, [userDataByWallet, isRegistered, username]);
 
   // 设置默认值
@@ -47,15 +61,45 @@ const Register: React.FC<void> = () => {
         username: userDataByWallet?.username,
         nickname: userDataByWallet?.nickname,
         bio: userDataByWallet?.bio,
+        email: userDataByWallet?.email,
+        facebook: userDataByWallet?.facebook,
+        medium: userDataByWallet?.medium,
+        telegram: userDataByWallet?.telegram,
+        twitter: userDataByWallet?.twitter,
+        tags: userDataByWallet?.tags.map(i => i.name),
       });
       setAvatarUrl(userDataByWallet?.avatar || '');
     }
   }, [isRegistered, userDataByWallet, formProfile]);
 
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res: any = await getTags();
+        console.log('res', res);
+        if (res.status === 200) {
+          setTagsList(res.data);
+        }
+      } catch (e) {
+        console.log('error', e.toString());
+      }
+    };
+    fetch();
+  }, []);
+
   const onFinish = async (values: any) => {
     console.log('Success:', values);
-    let { bio, username } = values;
-    const nickname = '';
+    let {
+      bio,
+      username,
+      nickname,
+      email,
+      facebook,
+      medium,
+      telegram,
+      twitter,
+      tags,
+    } = values;
 
     let profile: UserProps = diffData(
       {
@@ -63,12 +107,24 @@ const Register: React.FC<void> = () => {
         nickname,
         bio,
         avatar: avatarUrl!,
+        email,
+        facebook,
+        medium,
+        telegram,
+        twitter,
+        tags,
       } as UserProps,
       {
         username: userDataByWallet?.username,
         nickname: userDataByWallet?.nickname,
         bio: userDataByWallet?.bio,
         avatar: userDataByWallet?.avatar,
+        email: userDataByWallet?.email,
+        facebook: userDataByWallet?.facebook,
+        medium: userDataByWallet?.medium,
+        telegram: userDataByWallet?.telegram,
+        twitter: userDataByWallet?.twitter,
+        tags: userDataByWallet?.tags.map(i => i.name),
       } as UserProps
     );
     if (isEmpty(profile)) {
@@ -162,6 +218,17 @@ const Register: React.FC<void> = () => {
         </Form.Item>
         <Form.Item
           label=''
+          name='nickname'
+          rules={[
+            {
+              required: false,
+              message: 'Please input your nickname',
+            },
+          ]}>
+          <Input placeholder='Your nickname' autoComplete='off' />
+        </Form.Item>
+        <Form.Item
+          label=''
           name='bio'
           rules={[{ required: true, message: 'Please input your bio!' }]}>
           <Input placeholder='Describe yourself by single sentence' />
@@ -172,7 +239,7 @@ const Register: React.FC<void> = () => {
             <Form.Item
               label=''
               name=''
-              rules={[{ required: true, message: 'Please input your ..!' }]}>
+              rules={[{ required: false, message: 'Please input your ..!' }]}>
               <Input.TextArea
                 disabled
                 rows={6}
@@ -201,23 +268,23 @@ const Register: React.FC<void> = () => {
               message: 'Please input your email address',
             },
           ]}>
-          <Input disabled placeholder='Email address' />
+          <Input placeholder='Email address' />
         </Form.Item>
         <Form.Item
           label=''
-          name='email'
+          name='twitter'
           rules={[
             { required: false, message: 'Please input your twitter username' },
           ]}>
-          <Input disabled placeholder='Twitter username' />
+          <Input placeholder='Twitter username' />
         </Form.Item>
         <Form.Item
           label=''
-          name='email'
+          name='facebook'
           rules={[
             { required: false, message: 'Please input your facebook username' },
           ]}>
-          <Input disabled placeholder='Facebook username' />
+          <Input placeholder='Facebook username' />
         </Form.Item>
         <Form.Item
           label=''
@@ -225,7 +292,7 @@ const Register: React.FC<void> = () => {
           rules={[
             { required: false, message: 'Please input your telegram username' },
           ]}>
-          <Input disabled placeholder='Telegram username' />
+          <Input placeholder='Telegram username' />
         </Form.Item>
         <Form.Item
           label=''
@@ -233,7 +300,19 @@ const Register: React.FC<void> = () => {
           rules={[
             { required: false, message: 'Please input your medium username' },
           ]}>
-          <Input disabled placeholder='Medium username' />
+          <Input placeholder='Medium username' />
+        </Form.Item>
+        <StyledFormTitle>Tags</StyledFormTitle>
+        <Form.Item name='tags' className='not-border'>
+          <Checkbox.Group>
+            <Row>
+              {tagsList.map((i, idx) => (
+                <Col span={12} key={idx}>
+                  <Checkbox value={i.name}>{i.name}</Checkbox>
+                </Col>
+              ))}
+            </Row>
+          </Checkbox.Group>
         </Form.Item>
         {userDataByWallet?.role === 'GALLERY' ? (
           <>
@@ -241,17 +320,13 @@ const Register: React.FC<void> = () => {
             <Form.Item
               label=''
               name='medium'
-              rules={[
-                { required: false, message: 'Please input your password!' },
-              ]}>
+              rules={[{ required: false, message: 'Please input username!' }]}>
               <Input disabled placeholder='Enter username' />
             </Form.Item>
             <Form.Item
               label=''
               name='medium'
-              rules={[
-                { required: false, message: 'Please input your password!' },
-              ]}>
+              rules={[{ required: false, message: 'Please input username!' }]}>
               <Input disabled placeholder='Enter username' />
             </Form.Item>
           </>
@@ -329,6 +404,9 @@ const StyledForm = styled(Form)`
     .ant-input-affix-wrapper-focused {
       box-shadow: none;
     }
+  }
+  .not-border.ant-form-item {
+    border: none;
   }
 `;
 const StyledItemWrapper = styled.div`

@@ -1,5 +1,6 @@
 import type { MediaToScreen } from './MediaToScreen';
 import { UserRole } from '../constant';
+import { Tag } from './Tag';
 
 export type MatatakiUserStat = {
   id: number;
@@ -44,8 +45,10 @@ export interface User {
   verified: boolean;
   role: UserRole;
   waitingForScreen: MediaToScreen[];
-}
-
-export interface Gallery extends User {
-  subordinateArtists: Array<User>;
+  telegram: string;
+  twitter: string;
+  email: string;
+  medium: string;
+  facebook: string;
+  tags: Array<Tag>;
 }

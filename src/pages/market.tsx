@@ -182,6 +182,7 @@ const StyledHead = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 48px 0;
+  flex-wrap: wrap;
   .title {
     font-size: 20px;
     font-family: DINCondensed-Bold, DINCondensed;
@@ -199,6 +200,10 @@ const StyledHeadContainer = styled.div`
     grid-template-columns: repeat(3, 1fr);
     grid-row-gap: 24px;
     grid-column-gap: 60px;
+    @media screen and (max-width: 768px) {
+      display: flex;
+      flex-wrap: wrap;
+    }
   }
   &.radio {
     display: grid;
@@ -221,6 +226,9 @@ const StyledNfts = styled.div`
   gap: 40px 24px;
   margin: 44px auto 0;
   min-height: 320px;
+  & > a {
+    width: 100%;
+  }
   /* @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 330px));
   } */

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, message, Button, Spin } from 'antd';
+import { Avatar, message, Button, Spin, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
@@ -17,16 +17,14 @@ import { useAppSelector } from '../../hooks/redux';
 import { NFTProps } from '../../../next-env';
 import NFTSimple from '../../components/NFTSimple';
 import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { useLogin } from '../../hooks/useLogin';
-import {
-  getUser,
-  getUserBids,
-  getGallerySubordinateArtists,
-} from '../../backend/user';
+import { getUser, getUserBids, getUserTags } from '../../backend/user';
+import { getGallerySubordinateArtists } from '../../backend/gallery';
 import { getMediaById, getMediaMetadata } from '../../backend/media';
 import { User } from '../../types/User.types';
-import { BidLog } from '../../types/Bid.d';
+import { BidLog } from '../../types/Bid';
 import BidsCard from '../../components/BidsCard';
 import BidsCancelModal from '../../components/BidsCancelModal';
 import ArtworksCarousel from '../../components/ArtworksCarousel';
@@ -34,6 +32,8 @@ import ArtworksCarousel from '../../components/ArtworksCarousel';
 import IconTelegram from '../../assets/icons/telegram.svg';
 import IconTwitter from '../../assets/icons/twitter.svg';
 import IconEmail from '../../assets/icons/email1.svg';
+import IconMedium from '../../assets/icons/medium.svg';
+import IconFacebook from '../../assets/icons/facebook.svg';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -47,6 +47,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     nickname: '',
     username: '',
     role: undefined,
+    telegram: '',
+    twitter: '',
+    email: '',
+    medium: '',
+    facebook: '',
   });
   const [isVerifiedUser, setIsVerifiedUser] = useState(false);
   const [isMyself, setIsMyself] = useState(false);
@@ -66,6 +71,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const keyMessage = 'fetchUser';
 
   const [subordinateArtist, setSubordinateArtist] = useState<Array<User>>([]);
+  const [tagsList, setTagsList] = useState<Array<string>>([]);
 
   useEffect(() => {
     const fetchUserInfoData = async () => {
@@ -150,43 +156,54 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   useEffect(() => {
     const fetch = async () => {
       if (typeof username !== 'string') return;
-      const data = await getGallerySubordinateArtists(username);
-      console.log('data', data);
-      setSubordinateArtist(data.subordinateArtists);
+      // const data = await getGallerySubordinateArtists(username);
+      // console.log('data', data);
+      // setSubordinateArtist(data.subordinateArtists);
     };
     if (userInfo?.role === 'GALLERY') {
       fetch();
     }
   }, [userInfo, username]);
 
-  const subordinateArtistWord = useMemo(() => {
-    let list: any = {};
-    for (let i = 10; i < 36; i++) {
-      //   console.log(i.toString(36))
-      list[i.toString(36)] = [];
-    }
-    list['#'] = [];
+  useEffect(() => {
+    const fetch = async () => {
+      if (typeof username !== 'string') return;
+      const data = await getUserTags(username);
+      console.log('getUserTags', data);
+      const list = data.tags.map(i => i.name);
+      setTagsList(list);
+    };
+    fetch();
+  }, [userInfo, username]);
 
-    subordinateArtist.forEach(i => {
-      let key = i.username.substr(0, 1).toLocaleLowerCase();
-      if (list[key]) {
-        list[key].push(i);
-      } else {
-        list['#'].push(i);
-      }
-    });
-
-    for (const key in list) {
-      if (Object.prototype.hasOwnProperty.call(list, key)) {
-        const element = list[key];
-        if (isEmpty(element)) {
-          delete list[key];
-        }
-      }
-    }
-
-    return list;
-  }, [subordinateArtist]);
+  // const subordinateArtistWord = useMemo(() => {
+  //   let list: any = {};
+  //   for (let i = 10; i < 36; i++) {
+  //     //   console.log(i.toString(36))
+  //     list[i.toString(36)] = [];
+  //   }
+  //   list['#'] = [];
+  //
+  //   subordinateArtist.forEach(i => {
+  //     let key = i.username.substr(0, 1).toLocaleLowerCase();
+  //     if (list[key]) {
+  //       list[key].push(i);
+  //     } else {
+  //       list['#'].push(i);
+  //     }
+  //   });
+  //
+  //   for (const key in list) {
+  //     if (Object.prototype.hasOwnProperty.call(list, key)) {
+  //       const element = list[key];
+  //       if (isEmpty(element)) {
+  //         delete list[key];
+  //       }
+  //     }
+  //   }
+  //
+  //   return list;
+  // }, [subordinateArtist]);
 
   const collectionContainner = () => {
     return (
@@ -218,18 +235,19 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
               playsInline
               // autoPlay
               // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-              className='media-video'></video>
+              className='media-video'
+            />
           </StyledVideo>
         </StyledItem>
-        <StyledLine></StyledLine>
+        <StyledLine />
         <StyledItem>
           <StyledItemTitle>Artworks</StyledItemTitle>
           <StyledArtworks>
-            <ArtworksCarousel></ArtworksCarousel>
+            <ArtworksCarousel />
           </StyledArtworks>
         </StyledItem>
 
-        <StyledLine></StyledLine>
+        <StyledLine />
         <StyledItem>
           <StyledItemTitle>About</StyledItemTitle>
           <StyledAbout>
@@ -313,18 +331,19 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
               playsInline
               // autoPlay
               // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-              className='media-video'></video>
+              className='media-video'
+            />
           </StyledVideo>
         </StyledItem>
-        <StyledLine></StyledLine>
+        <StyledLine />
         <StyledItem>
           <StyledItemTitle>Artworks</StyledItemTitle>
           <StyledArtworks>
-            <ArtworksCarousel></ArtworksCarousel>
+            <ArtworksCarousel />
           </StyledArtworks>
         </StyledItem>
 
-        <StyledLine></StyledLine>
+        <StyledLine />
         <StyledItem>
           <StyledItemTitle>About</StyledItemTitle>
           <StyledAbout>
@@ -391,32 +410,32 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </StyledAbout>
         </StyledItem>
 
-        <StyledLine></StyledLine>
-        <StyledItem>
-          <StyledItemTitle>Contracted Artists</StyledItemTitle>
+        <StyledLine />
+        {/*<StyledItem>*/}
+        {/*  <StyledItemTitle>Contracted Artists</StyledItemTitle>*/}
 
-          <StyledWord>
-            {/* 需要合并组件 */}
-            {Object.keys(subordinateArtistWord).map((key, idx) => (
-              <ul key={idx} className='item'>
-                <li>
-                  <h3>{key.toLocaleUpperCase()}</h3>
-                </li>
-                {subordinateArtistWord[key].map(
-                  (i: { username: string; nickname: string }, idx: number) => (
-                    <li key={idx}>
-                      <Link href={`/${i.username}`}>
-                        <a>
-                          {i.username}({i.nickname})
-                        </a>
-                      </Link>
-                    </li>
-                  )
-                )}
-              </ul>
-            ))}
-          </StyledWord>
-        </StyledItem>
+        {/*  <StyledWord>*/}
+        {/*     需要合并组件 */}
+        {/*    {Object.keys(subordinateArtistWord).map((key, idx) => (*/}
+        {/*      <ul key={idx} className='item'>*/}
+        {/*        <li>*/}
+        {/*          <h3>{key.toLocaleUpperCase()}</h3>*/}
+        {/*        </li>*/}
+        {/*        {subordinateArtistWord[key].map(*/}
+        {/*          (i: { username: string; nickname: string }, idx: number) => (*/}
+        {/*            <li key={idx}>*/}
+        {/*              <Link href={`/${i.username}`}>*/}
+        {/*                <a>*/}
+        {/*                  {i.username}({i.nickname})*/}
+        {/*                </a>*/}
+        {/*              </Link>*/}
+        {/*            </li>*/}
+        {/*          )*/}
+        {/*        )}*/}
+        {/*      </ul>*/}
+        {/*    ))}*/}
+        {/*  </StyledWord>*/}
+        {/*</StyledItem>*/}
       </>
     );
   };
@@ -426,18 +445,71 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         <StyledHeadUser>
           <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
           <StyledHeadUserInfo>
-            <h1>
-              {userInfo.nickname}({userInfo.username})
-            </h1>
-            <p>{userInfo.bio || 'Not...'}</p>
+            {userInfo.nickname || userInfo.username ? (
+              <>
+                <h1>
+                  {userInfo.nickname}({userInfo.username})
+                </h1>
+                <p>{userInfo.bio || 'Not...'}</p>
+              </>
+            ) : null}
           </StyledHeadUserInfo>
         </StyledHeadUser>
         <div>
           <StyledHeadIcon>
-            <ReactSVG className='icon' src={IconTelegram} />
-            <ReactSVG className='icon' src={IconTwitter} />
-            <ReactSVG className='icon' src={IconEmail} />
+            {userInfo?.telegram ? (
+              <CopyToClipboard
+                text={userInfo?.telegram}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.telegram ? (
+                  <ReactSVG className='icon' src={IconTelegram} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
+            {userInfo?.twitter ? (
+              <CopyToClipboard
+                text={userInfo?.twitter}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.twitter ? (
+                  <ReactSVG className='icon' src={IconTwitter} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
+            {userInfo?.email ? (
+              <CopyToClipboard
+                text={userInfo?.email}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.email ? (
+                  <ReactSVG className='icon' src={IconEmail} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
+            {userInfo?.medium ? (
+              <CopyToClipboard
+                text={userInfo?.medium}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.medium ? (
+                  <ReactSVG className='icon' src={IconMedium} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
+            {userInfo?.facebook ? (
+              <CopyToClipboard
+                text={userInfo?.facebook}
+                onCopy={() => message.info('复制成功！')}>
+                {userInfo?.facebook ? (
+                  <ReactSVG className='icon' src={IconFacebook} />
+                ) : null}
+              </CopyToClipboard>
+            ) : null}
           </StyledHeadIcon>
+          {tagsList.length ? (
+            <StyledHeadTags>
+              {tagsList.map((i, idx) => (
+                <Tag key={idx}>{i}</Tag>
+              ))}
+            </StyledHeadTags>
+          ) : null}
           {isMyself ? (
             <StyledHeadEdit>
               <Button onClick={() => router.push(`/${username}/edit`)}>
@@ -447,7 +519,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           ) : null}
         </div>
       </StyledHead>
-      <StyledLine></StyledLine>
+      <StyledLine />
       {userInfo?.role === 'COLLECTOR' ? (
         collectionContainner()
       ) : userInfo?.role === 'ARTIST' ? (
@@ -494,7 +566,7 @@ const StyledTitle = styled.div`
 `;
 const StyledHead = styled.div`
   display: flex;
-  align-items: cennter;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 48px 0;
@@ -530,10 +602,12 @@ const StyledHeadUserInfo = styled.div`
 const StyledHeadIcon = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   .icon {
     width: 32px;
     height: 32px;
     margin-left: 32px;
+    cursor: pointer;
     &:nth-of-type(1) {
       margin-left: 0;
     }
@@ -543,8 +617,15 @@ const StyledHeadIcon = styled.div`
     }
   }
 `;
+const StyledHeadTags = styled.div`
+  max-width: 400px;
+  text-align: right;
+  margin: 6px 0;
+  .ant-tag {
+    margin: 4px 0 4px 8px;
+  }
+`;
 const StyledHeadEdit = styled.div`
-  margin: 10px 0 0 0;
   text-align: right;
 `;
 
@@ -556,6 +637,9 @@ const StyledMediaCardContainer = styled.div`
   margin: 48px auto 0;
   min-height: 320px;
   grid-template-columns: repeat(4, minmax(0px, 330px));
+  & > a {
+    width: 100%;
+  }
   @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 330px));
   }
@@ -653,6 +737,7 @@ const StyledAboutItem = styled.div`
     width: 20px;
     height: 20px;
     margin-left: 20px;
+    cursor: pointer;
     &:nth-of-type(1) {
       margin-left: 0;
     }
@@ -677,6 +762,9 @@ const StyledWord = styled.div`
   column-count: 4;
   margin-top: 16px;
   column-gap: 20px;
+  @media screen and (max-width: 768px) {
+    column-count: 2;
+  }
   .item {
     /* 防止多列布局，分页媒体和多区域上下文中的意外中断 */
     break-inside: avoid;

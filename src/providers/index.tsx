@@ -13,7 +13,8 @@ const Providers: React.FC = ({ children }) => (
       connectors={{
         injected: {},
         walletconnect: {
-          rpcUrl: process.env.NEXT_PUBLIC_USE_WALLET_WC_RPC as string,
+          rpcUrl: 'https://data-seed-prebsc-2-s2.binance.org:8545',
+          // rpcUrl: process.env.NEXT_PUBLIC_USE_WALLET_WC_RPC as string,
         },
       }}>
       <GeistProvider themes={[light, dark]}>{children}</GeistProvider>

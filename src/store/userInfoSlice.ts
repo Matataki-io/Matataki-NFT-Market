@@ -9,6 +9,11 @@ export interface UserInfoState {
   introduction?: string;
   bio?: string;
   role?: UserRole | undefined;
+  telegram: string;
+  twitter: string;
+  email: string;
+  medium: string;
+  facebook: string;
 }
 
 const initialState: UserInfoState = {
@@ -17,6 +22,11 @@ const initialState: UserInfoState = {
   username: '',
   website: '',
   introduction: '',
+  telegram: '',
+  twitter: '',
+  email: '',
+  medium: '',
+  facebook: '',
 };
 
 export const userInfoSlice = createSlice({

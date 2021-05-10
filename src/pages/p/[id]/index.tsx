@@ -212,6 +212,10 @@ const StyledContentWrapper = styled.div`
   display: inline-grid;
   column-gap: 30px;
   grid-template-columns: repeat(12, 1fr);
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-wrap: wrap;
+  }
 `;
 
 const StyledContentLeft = styled.div`
