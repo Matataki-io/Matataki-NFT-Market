@@ -1,36 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import useSWR from 'swr';
-import { localFetcher } from '../../backend/client';
+import useSWR, { mutate } from 'swr';
 import GalleryCard from '../../components/GalleryCard';
-import {
-  Button,
-  Divider,
-  List,
-  message,
-  Modal,
-  Pagination,
-  Spin,
-  Typography,
-} from 'antd';
+import { Button, Divider, List, message, Modal, Spin } from 'antd';
 import { User } from '../../types/User.types';
 import { backendSWRFetcher } from '../../backend/media';
 import { UserRole } from '../../constant';
-import { createGalleryJoinRequest } from '../../backend/gallery';
+import {
+  createGalleryJoinRequest,
+  findGalleryJoinRequest,
+  updateGalleryJoinRequest,
+} from '../../backend/gallery';
+import {
+  GalleryJoinRequest,
+  GalleryJoinRequestStatus,
+} from '../../types/GalleryJoinRequest';
+import { Gallery } from '../../types/Gallery';
 
 const AGallery: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { data, error } = useSWR(`/gallery/${id}`, localFetcher);
+  const { data: galleryData, error: galleryError } = useSWR(
+    `/gallery/${id}`,
+    backendSWRFetcher
+  );
 
   const { data: meData, error: meError } = useSWR(
     `/user/me`,
     backendSWRFetcher
   );
 
+  const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const gallery: Gallery = galleryData as Gallery;
+      const res = await findGalleryJoinRequest({
+        gallery,
+        status: GalleryJoinRequestStatus.PENDING,
+      });
+      setRequests(res);
+    };
+    // noinspection JSIgnoredPromiseFromCall
+    fetch();
+  }, [galleryData]);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  if (!data || !meData) return <Spin size='large' />;
+  if (!galleryData || !meData) return <Spin size='large' />;
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -47,11 +64,11 @@ const AGallery: React.FC = () => {
 
   return (
     <div>
-      <GalleryCard {...data} />
+      <GalleryCard {...galleryData} />
       <Divider orientation='left' />
       <h3>Artists:</h3>
       <List
-        dataSource={data.artists}
+        dataSource={galleryData.artists}
         renderItem={(item: User) => <List.Item>{item.username}</List.Item>}
       />
       {meData.data.role === UserRole.Artist && (
@@ -68,12 +85,23 @@ const AGallery: React.FC = () => {
       )}
       {meData.data.role === UserRole.Gallery && (
         <div>
-          request list
-          {/*<List*/}
-          {/*  size='small'*/}
-          {/*  dataSource={data}*/}
-          {/*  renderItem={item => <List.Item>{item}</List.Item>}*/}
-          {/*/>{' '}*/}
+          <h3>Join Requests:</h3>
+          <List
+            size='small'
+            dataSource={requests}
+            renderItem={item => (
+              <List.Item>
+                {item.artist}
+                <Button onClick={() => updateGalleryJoinRequest(item.id, true)}>
+                  Accept
+                </Button>{' '}
+                <Button
+                  onClick={() => updateGalleryJoinRequest(item.id, false)}>
+                  Reject
+                </Button>
+              </List.Item>
+            )}
+          />{' '}
         </div>
       )}
     </div>
