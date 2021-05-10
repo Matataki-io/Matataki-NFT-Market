@@ -10,7 +10,6 @@ import {
 import ArrowLeft from '@geist-ui/react-icons/arrowLeft';
 import { useRouter } from 'next/router';
 import { InputNumber, Spin } from 'antd';
-import { ArtView } from '../../../components/Bid/ArtView';
 import styled from 'styled-components';
 import { isEmpty } from 'lodash';
 import { currentSupportedTokens as tokens } from '../../../constant/contracts';
@@ -28,10 +27,10 @@ import Link from 'next/link';
 import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 import NFTPreview from '../../../components/NFTPreview/index';
 import { getMediaById, getMediaMetadata } from '../../../backend/media';
-import { Bid } from '../../../types/ContractTypes';
 import { ZERO_ADDRESS } from '../../../constant';
 import { useMyBid } from '../../../hooks/useMyBid';
 import { useBoolean } from 'ahooks';
+import { WETHHelpTip } from '../../../components/Bid/WethHelpTip';
 
 export default function BidPage() {
   const router = useRouter();
@@ -229,6 +228,22 @@ export default function BidPage() {
                 Balance: {utils.formatUnits(balance, getDecimalOf(currency))}
               </p>
             )}
+            {/* 
+              { 
+                currency && currentWETH === utils.getAddress(currency) && balance.lt(amount) &&
+                <GreyCard>
+                  <Text>WETH (Wrapped ETH) selected, You may need to upgrade your ETH to WETH in order to set bid</Text>
+                  <Text>Balance: {utils.formatEther(ethBalance)} ETH (Good to upgrade to WETH)</Text>
+                  <Button type="secondary" onClick={() => depositToWETH(amount)}>Upgrade for {utils.formatEther(amount)} WETH</Button>
+                  <Button type="secondary" onClick={() => depositToWETH(BigNumber.from(amount).sub(balance))}>Upgrade for {utils.formatEther(BigNumber.from(amount).sub(balance))} WETH to add up the price</Button>
+                  { balance.gt(0) && <Button type='error' onClick={() => withdrawBacktoETH(balance)}>Downgrade All WETH back to ETH</Button> }
+                </GreyCard>
+              } */}
+            <WETHHelpTip
+              currency={currency}
+              bidPrice={amount}
+              wethBalance={balance}
+            />
           </StyledBidsItem>
 
           <StyledBidsItem>
