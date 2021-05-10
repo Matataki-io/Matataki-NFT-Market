@@ -2,20 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { Gallery } from '../../types/Gallery';
 
-const GalleryCard: React.FC<Gallery> = ({
-  id,
-  artists,
-  owner,
-  joinRequests,
-}) => {
-  const { avatar, nickname, username, bio } = owner;
+const GalleryCard: React.FC<Gallery> = ({ name, cover, intro }) => {
   return (
     <StyledWrapper>
       <StyledCover>
-        {avatar ? <img src={avatar} alt='Image' /> : null}
+        {cover ? <img src={cover} alt='Image' /> : null}
       </StyledCover>
-      <StyledTitle>{nickname || username}</StyledTitle>
-      <Styleddescription>{bio || 'Not...'}</Styleddescription>
+      <StyledTitle>{name}</StyledTitle>
+      {intro && <Styleddescription>{intro}</Styleddescription>}
     </StyledWrapper>
   );
 };

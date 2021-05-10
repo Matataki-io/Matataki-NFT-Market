@@ -156,6 +156,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   useEffect(() => {
     const fetch = async () => {
       if (typeof username !== 'string') return;
+      const user: User = userInfo as User;
+
       // const data = await getGallerySubordinateArtists(username);
       // console.log('data', data);
       // setSubordinateArtist(data.subordinateArtists);
