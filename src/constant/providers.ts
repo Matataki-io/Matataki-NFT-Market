@@ -12,19 +12,19 @@ export const providers: {
   ),
   //   [ChainId.MAINNET]: new ethers.providers.AlchemyWebSocketProvider(
   //     'homestead',
-  //     process.env.ALCHEMY_APIKEY,
+  //     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY,
   //   ),
   //   [ChainId.KOVAN]: new ethers.providers.AlchemyWebSocketProvider(
   //     'kovan',
-  //     process.env.ALCHEMY_APIKEY,
+  //     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY,
   //   ),
-  //   [ChainId.RINKEBY]: new ethers.providers.AlchemyWebSocketProvider(
-  //     'rinkeby',
-  //     process.env.ALCHEMY_APIKEY,
-  //   ),
+  [ChainId.RINKEBY]: new ethers.providers.AlchemyWebSocketProvider(
+    'rinkeby',
+    process.env.NEXT_PUBLIC_ALCHEMY_APIKEY
+  ),
   //   [ChainId.GÖRLI]: new ethers.providers.AlchemyWebSocketProvider(
   //     'gorli',
-  //     process.env.ALCHEMY_APIKEY,
+  //     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY,
   //   ),
 };
 
