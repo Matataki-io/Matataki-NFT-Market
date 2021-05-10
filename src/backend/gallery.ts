@@ -37,8 +37,9 @@ export async function findGalleryJoinRequest(
 }
 
 export async function updateGalleryJoinRequest(id: number, accept: boolean) {
-  const { data } = await BACKEND_CLIENT.post<GalleryJoinRequest[]>(
-    `/gallery/request/${id}?accept=${accept}`
+  const { data } = await BACKEND_CLIENT.patch<GalleryJoinRequest[]>(
+    `/gallery/request/${id}`,
+    { accept }
   );
   return data;
 }

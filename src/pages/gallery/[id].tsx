@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import useSWR, { mutate } from 'swr';
-import GalleryCard from '../../components/GalleryCard';
-import { Button, Divider, List, message, Modal, Spin } from 'antd';
+import useSWR from 'swr';
+import { Button, Divider, Image, List, message, Modal, Spin } from 'antd';
 import { User } from '../../types/User.types';
 import { backendSWRFetcher } from '../../backend/media';
 import { UserRole } from '../../constant';
@@ -66,7 +65,11 @@ const AGallery: React.FC = () => {
 
   return (
     <div>
-      <GalleryCard {...gallery} />
+      <div>
+        <Image src={gallery.cover} alt={'gallery cover'} />
+        <h3>{gallery.name}</h3>
+        <p>{gallery.intro}</p>
+      </div>
       <Divider orientation='left' />
       <h3>Artists:</h3>
       <List
