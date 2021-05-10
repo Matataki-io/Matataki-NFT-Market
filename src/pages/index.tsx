@@ -17,8 +17,10 @@ import {
   getMediaMetadata,
   getMediaList,
 } from '../backend/media';
+import { getArticles } from '../backend/article';
 import { listUsersArtist } from '../backend/user';
 import { User } from '../types/User.types.d';
+import { Article } from '../types/Article.d';
 
 type PaginationMeta = PaginationResult['meta'];
 
@@ -26,35 +28,11 @@ type MediaWithMetadata = Media & {
   metadata: MediaMetadata;
 };
 
-// 关于更多 NFT
-const AboutNFTList = [
-  {
-    img: 'https://placeimg.com/700/340/arch',
-    text: 'How to collect your favorite NFTs at NFT Market?',
-    link: 1,
-  },
-  {
-    img: 'https://placeimg.com/700/340/arch?t=1617248569810',
-    text:
-      'Collecting NFTs is more easier then you think,it’s only 3 steps to collect them!',
-    link: 1,
-  },
-  {
-    img: 'https://placeimg.com/700/340/arch?t=1617248576772',
-    text: 'NFTs, explained: what they are,why are some worth millions?',
-    link: 1,
-  },
-  {
-    img: 'https://placeimg.com/700/340/arch?t=1617248585076',
-    text: 'How to make, buy and sell NFTs',
-    link: 1,
-  },
-];
-
 const Home: React.FC<void> = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
   const [creatorsList, setCreatorsList] = useState<Array<User>>([]);
+  const [articleList, setArticleList] = useState<Array<Article>>([]);
 
   // 获取NFT数据
   const fetchNFTData = async () => {
@@ -101,10 +79,27 @@ const Home: React.FC<void> = () => {
       message.error(`数据获取失败${e.toString()}`);
     }
   };
+  const fetchArticle = async () => {
+    try {
+      const res: any = await getArticles({
+        page: 1,
+        limit: 4,
+      });
+      console.log('getArticles', res);
+      if (res.status === 200) {
+        setArticleList(res.data.items);
+      } else {
+        throw new Error('faild');
+      }
+    } catch (e) {
+      message.error(`数据获取失败${e.toString()}`);
+    }
+  };
 
   useEffect(() => {
     fetchNFTData();
     fetchUserArtist();
+    fetchArticle();
   }, []);
 
   useMount(() => {});
@@ -172,12 +167,12 @@ const Home: React.FC<void> = () => {
           </Link>
         </StyledModuleHead>
         <StyledAbout>
-          {AboutNFTList.map((i, idx) => (
+          {articleList.map((i, idx) => (
             <div key={idx} className='box'>
               <About
-                img={i.img}
-                text={i.text}
-                link={`/community/${i.link}`}></About>
+                img={i.cover}
+                text={i.title}
+                link={`/community/${i.id}`}></About>
             </div>
           ))}
         </StyledAbout>
