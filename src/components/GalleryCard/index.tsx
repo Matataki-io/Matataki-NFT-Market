@@ -34,7 +34,7 @@ const StyledCover = styled.div`
 `;
 const StyledTitle = styled.p`
   font-size: 24px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 28px;
@@ -43,7 +43,6 @@ const StyledTitle = styled.p`
 `;
 const Styleddescription = styled.p`
   font-size: 14px;
-  font-family: PingFangSC-Light, PingFang SC;
   font-weight: 300;
   color: #777777;
   line-height: 20px;

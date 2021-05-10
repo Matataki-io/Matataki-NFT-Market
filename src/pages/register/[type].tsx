@@ -159,7 +159,7 @@ const StyledWrapper = styled.div`
 `;
 const StyledTitle = styled.h1`
   font-size: 48px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 58px;
@@ -169,7 +169,6 @@ const StyledTitle = styled.h1`
 `;
 const StyledSubtitle = styled.p`
   font-size: 16px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #333333;
   line-height: 22px;
@@ -198,14 +197,12 @@ const StyledButtonWrapper = styled.div`
   margin-top: 64px;
   p {
     font-size: 12px;
-    font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: #333333;
     line-height: 17px;
     text-align: center;
     a {
       font-size: 12px;
-      font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #193cb1;
       line-height: 17px;
@@ -217,7 +214,6 @@ const StyledButton = styled(Button)`
   height: 60px;
   border: 2px solid #333333;
   font-size: 16px;
-  font-family: PingFangSC-Medium, PingFang SC;
   font-weight: 500;
   color: #333333;
   line-height: 22px;

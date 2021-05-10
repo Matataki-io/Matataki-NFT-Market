@@ -166,9 +166,6 @@ const StyledHead = styled.div`
 const StyledTitle = styled.h2`
   box-sizing: border-box;
   margin: 0px;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol';
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.05em;

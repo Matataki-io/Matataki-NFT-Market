@@ -92,7 +92,7 @@ const StyledWrapper = styled.div`
 
 const StyledTitle = styled.h1`
   font-size: 30px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 1.4;
@@ -101,7 +101,6 @@ const StyledTitle = styled.h1`
 `;
 const StyledTime = styled.time`
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #777777;
   line-height: 20px;
