@@ -109,3 +109,10 @@ export async function getUserTags(username: string) {
   const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}/tags`);
   return data;
 }
+
+export async function getUserRelation(username: string, relation: string) {
+  const { data } = await BACKEND_CLIENT.get<User>(
+    `/user/@${username}/${relation}`
+  );
+  return data;
+}

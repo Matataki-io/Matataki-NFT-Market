@@ -16,25 +16,25 @@ import {
   GalleryJoinRequestStatus,
 } from '../../types/GalleryJoinRequest';
 import { Gallery } from '../../types/Gallery';
+import { isEmpty } from 'lodash';
 
 const AGallery: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { data: galleryData, error: galleryError } = useSWR(
+  const { data: gallery, error: galleryError } = useSWR<Gallery, any>(
     `/gallery/${id}`,
     backendSWRFetcher
   );
 
-  const { data: meData, error: meError } = useSWR(
-    `/user/me`,
-    backendSWRFetcher
-  );
+  const { data: me, error: meError } = useSWR<
+    { data: User; status: number },
+    any
+  >(`/user/me`, backendSWRFetcher);
 
   const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
 
   useEffect(() => {
     const fetch = async () => {
-      const gallery: Gallery = galleryData as Gallery;
       const res = await findGalleryJoinRequest({
         gallery,
         status: GalleryJoinRequestStatus.PENDING,
@@ -42,12 +42,14 @@ const AGallery: React.FC = () => {
       setRequests(res);
     };
     // noinspection JSIgnoredPromiseFromCall
-    fetch();
-  }, [galleryData]);
+    if (gallery?.owner.id === me?.data.id) {
+      fetch();
+    }
+  }, [gallery, me]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  if (!galleryData || !meData) return <Spin size='large' />;
+  if (!gallery || !me) return <Spin size='large' />;
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -64,14 +66,14 @@ const AGallery: React.FC = () => {
 
   return (
     <div>
-      <GalleryCard {...galleryData} />
+      <GalleryCard {...gallery} />
       <Divider orientation='left' />
       <h3>Artists:</h3>
       <List
-        dataSource={galleryData.artists}
+        dataSource={gallery.artists}
         renderItem={(item: User) => <List.Item>{item.username}</List.Item>}
       />
-      {meData.data.role === UserRole.Artist && (
+      {me.data.role === UserRole.Artist && (
         <>
           <Button onClick={showModal}>Join Gallery</Button>
           <Modal
@@ -83,7 +85,7 @@ const AGallery: React.FC = () => {
           </Modal>
         </>
       )}
-      {meData.data.role === UserRole.Gallery && (
+      {!isEmpty(requests) && (
         <div>
           <h3>Join Requests:</h3>
           <List
@@ -91,7 +93,7 @@ const AGallery: React.FC = () => {
             dataSource={requests}
             renderItem={item => (
               <List.Item>
-                {item.artist}
+                {item.artist.username}
                 <Button onClick={() => updateGalleryJoinRequest(item.id, true)}>
                   Accept
                 </Button>{' '}
