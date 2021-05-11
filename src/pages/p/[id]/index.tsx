@@ -91,9 +91,8 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             <StyledMarketContainer>
               <NFTPreview
                 src={backendData.tokenURI}
-                type={
-                  metadata.mimeType ? metadata.mimeType.split('/')[0] : ''
-                }></NFTPreview>
+                type={metadata.mimeType ? metadata.mimeType.split('/')[0] : ''}
+              />
             </StyledMarketContainer>
           </StyledContentLeft>
           <StyledContentRight>
@@ -152,7 +151,8 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
             <ProofOfAuthenticity scanLink={scanLink} ipfsLink={ipfsLink} />
             <NFTTimeline
               timeline={timeline || []}
-              creator={post.backendData.creator?.username}></NFTTimeline>
+              creator={post.backendData.creator?.username}
+            />
           </StyledContentRight>
         </StyledContentWrapper>
       </StyledWrapper>
