@@ -434,11 +434,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.error('not res');
       return;
     }
+    // 改这里
+    const tags: string[] = [];
     await sendToPublisherForPreview(galleryUser.id, {
       nonce,
       title: nameAndDescription.name,
       description: nameAndDescription.description,
       tokenURI,
+      tags,
       permitData: res,
     });
     // const resp = await mediaContract.mintAndTransferWithSig(
