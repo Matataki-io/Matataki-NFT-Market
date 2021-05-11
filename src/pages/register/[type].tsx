@@ -33,7 +33,13 @@ const Register: React.FC<void> = () => {
     console.log('Success:', values);
     let { username } = values;
     try {
-      await register({ username });
+      const token = await register({ username });
+      if (token) {
+        message.success('注册成功');
+        router.push('/');
+      } else {
+        throw new Error('not token');
+      }
     } catch (e) {
       message.error(`e: ${e.toString()}`);
     }
@@ -75,30 +81,6 @@ const Register: React.FC<void> = () => {
             },
           ]}>
           <Input placeholder='Your username' autoComplete='off' />
-        </Form.Item>
-
-        <Form.Item
-          label=''
-          name='email'
-          rules={[
-            {
-              required: false,
-              type: 'email',
-              message: 'Please input your email address!',
-            },
-          ]}>
-          <Input disabled placeholder='Email address' />
-        </Form.Item>
-
-        <Form.Item
-          label=''
-          name='password'
-          rules={[{ required: false, message: 'Please input your password!' }]}>
-          <Input.Password
-            disabled
-            placeholder='Password'
-            autoComplete='new-password'
-          />
         </Form.Item>
 
         {type === 'artist' || type === 'gallery' ? (
