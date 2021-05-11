@@ -1,7 +1,10 @@
 import backendClient, { default as BACKEND_CLIENT } from './client';
 import { GeneralResponse, PaginationProps } from '../types/Backend.types';
 import { Gallery } from '../types/Gallery';
-import { GalleryJoinRequest } from '../types/GalleryJoinRequest';
+import {
+  GalleryJoinRequest,
+  GalleryJoinRequestStatus,
+} from '../types/GalleryJoinRequest';
 import { User } from '../types/User.types';
 
 export async function getGalleryUsers(
@@ -45,8 +48,7 @@ export async function findGalleryJoinRequest(
     id: number;
     artist: User;
     gallery: Gallery;
-    // database use string as enum value
-    status: string;
+    status: GalleryJoinRequestStatus;
   }>
 ) {
   const { data } = await BACKEND_CLIENT.post<GalleryJoinRequest[]>(
