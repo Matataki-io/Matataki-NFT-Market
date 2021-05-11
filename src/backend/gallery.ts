@@ -33,7 +33,8 @@ export async function createGallery(gallery: {
   owner: User;
 }) {
   const { data } = await BACKEND_CLIENT.post<GeneralResponse<Gallery>>(
-    `/gallery`
+    `/gallery`,
+    gallery
   );
   return data;
 }
