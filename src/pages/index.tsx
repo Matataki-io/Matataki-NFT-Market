@@ -161,11 +161,14 @@ const Home: React.FC<void> = () => {
         </StyledModuleHead>
         <StyledCreators>
           {creatorsList.map((i, idx) => (
-            <Creators
-              key={idx}
-              bc={i.avatar}
-              avatar={i.avatar}
-              username={i.nickname || i.username}></Creators>
+            <Link href={`/${i.username}`} key={idx}>
+              <a target='_blank'>
+                <Creators
+                  bc={i.avatar}
+                  avatar={i.avatar}
+                  username={i.nickname || i.username}></Creators>
+              </a>
+            </Link>
           ))}
         </StyledCreators>
       </StyledModule>
@@ -253,6 +256,14 @@ const StyledModule = styled.div`
   &.about {
     margin-top: 100px;
   }
+  @media screen and (max-width: 768px) {
+    &.creators {
+      margin-top: 20px;
+    }
+    &.about {
+      margin-top: 20px;
+    }
+  }
 `;
 
 const StyledModuleHead = styled.div`
@@ -326,6 +337,11 @@ const StyledCreators = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    grid-row-gap: 20px;
+    grid-column-gap: 0;
+  }
+  & > a {
+    width: 100%;
   }
 `;
 

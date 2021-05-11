@@ -73,14 +73,20 @@ const StyledHeadTitle = styled.h2`
   font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
-  line-height: 58px;
+  line-height: 1.2;
   padding: 0;
   margin: 0;
+  @media screen and (max-width: 678px) {
+    font-size: 30px;
+  }
 `;
 const StyledItem = styled.div`
   & > a {
     display: block;
     margin: 48px 0;
+    @media screen and (max-width: 678px) {
+      margin: 20px 0;
+    }
   }
 `;
 const StyledPagination = styled.div`

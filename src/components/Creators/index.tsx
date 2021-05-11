@@ -38,6 +38,9 @@ const StyledCreatorsComponents = styled.div`
   .cover {
     height: 184px;
     position: relative;
+    @media screen and (max-width: 678px) {
+      height: 100px;
+    }
     &-bc {
       width: calc(100% - 122px);
       height: 100%;
@@ -46,6 +49,10 @@ const StyledCreatorsComponents = styled.div`
       border: 1px solid rgba(0, 0, 0, 0.2);
       display: flex;
       justify-content: flex-end;
+      @media screen and (max-width: 678px) {
+        width: calc(100% - 70px);
+        margin-left: 70px;
+      }
       img {
         width: 33.33%;
         height: 100%;
@@ -59,6 +66,10 @@ const StyledCreatorsComponents = styled.div`
       bottom: 0;
       width: 184px;
       height: 184px;
+      @media screen and (max-width: 678px) {
+        width: 100px;
+        height: 100px;
+      }
       &::after {
         content: '';
         display: block;

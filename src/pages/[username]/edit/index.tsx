@@ -362,10 +362,13 @@ const StyledTitle = styled.h1`
   font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
-  line-height: 58px;
+  line-height: 1.2;
   padding: 0;
   margin: 0;
   text-align: center;
+  @media screen and (max-width: 768px) {
+    font-size: 30px;
+  }
 `;
 const StyledFormTitle = styled.h3`
   font-size: 20px;
