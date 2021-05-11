@@ -9,7 +9,7 @@ import Creators from '../components/Creators';
 import About from '../components/About';
 import NFT from '../components/NFTSimple';
 import { NFTProps } from '../../next-env';
-import Banner from '../components/Banner';
+import BannerComponents from '../components/Banner';
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
 import {
@@ -19,8 +19,10 @@ import {
 } from '../backend/media';
 import { getArticles } from '../backend/article';
 import { listUsersArtist } from '../backend/user';
+import { getBanners } from '../backend/bannner';
 import { User } from '../types/User.types.d';
 import { Article } from '../types/Article.d';
+import { Banner } from '../types/banner';
 
 type PaginationMeta = PaginationResult['meta'];
 
@@ -29,10 +31,23 @@ type MediaWithMetadata = Media & {
 };
 
 const Home: React.FC<void> = () => {
+  const [BannerData, setBannerData] = useState<Array<Banner>>([]);
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
   const [creatorsList, setCreatorsList] = useState<Array<User>>([]);
   const [articleList, setArticleList] = useState<Array<Article>>([]);
+
+  // 获取Banner
+  const fetchBanner = async () => {
+    try {
+      const res = await getBanners();
+      if (res.status === 200) {
+        setBannerData(res.data);
+      }
+    } catch (e) {
+      message.error(`数据获取失败${e.toString()}`);
+    }
+  };
 
   // 获取NFT数据
   const fetchNFTData = async () => {
@@ -97,6 +112,7 @@ const Home: React.FC<void> = () => {
   };
 
   useEffect(() => {
+    fetchBanner();
     fetchNFTData();
     fetchUserArtist();
     fetchArticle();
@@ -106,7 +122,7 @@ const Home: React.FC<void> = () => {
 
   return (
     <StyledWrapper>
-      <Banner></Banner>
+      <BannerComponents data={BannerData}></BannerComponents>
       <StyledModule className='nfts'>
         <StyledModuleHead>
           <StyledTitle>
