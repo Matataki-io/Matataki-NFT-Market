@@ -36,7 +36,7 @@ const AGallery: React.FC = () => {
     const fetch = async () => {
       const res = await findGalleryJoinRequest({
         gallery,
-        status: GalleryJoinRequestStatus.PENDING.toString(),
+        status: GalleryJoinRequestStatus.PENDING,
       });
       setRequests(res);
     };
