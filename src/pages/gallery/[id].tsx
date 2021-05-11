@@ -1,17 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import {
-  Avatar,
-  Button,
-  Divider,
-  Image,
-  List,
-  message,
-  Modal,
-  Spin,
-  Tag,
-} from 'antd';
+import { Avatar, Button, List, message, Modal, Spin } from 'antd';
 import { User } from '../../types/User.types';
 import { backendSWRFetcher } from '../../backend/media';
 import { UserRole } from '../../constant';
@@ -27,17 +17,9 @@ import {
 import { Gallery } from '../../types/Gallery';
 import { isEmpty } from 'lodash';
 import ArtworksCarousel from '../../components/ArtworksCarousel';
-import { ReactSVG } from 'react-svg';
-import IconTelegram from '../../assets/icons/telegram.svg';
-import IconTwitter from '../../assets/icons/twitter.svg';
-import IconEmail from '../../assets/icons/email1.svg';
 import Link from 'next/link';
 import styled from 'styled-components';
-import UserInfoPage from '../[username]';
 import { UserOutlined } from '@ant-design/icons';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import IconMedium from '../../assets/icons/medium.svg';
-import IconFacebook from '../../assets/icons/facebook.svg';
 
 const AGallery: React.FC = () => {
   const router = useRouter();
@@ -52,6 +34,11 @@ const AGallery: React.FC = () => {
     any
   >(`/user/me`, backendSWRFetcher);
 
+  const isOwner = useMemo(
+    () => gallery && me && gallery.owner.id === me.data.id,
+    [gallery, me]
+  );
+
   const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
 
   useEffect(() => {
@@ -63,10 +50,10 @@ const AGallery: React.FC = () => {
       setRequests(res);
     };
     // noinspection JSIgnoredPromiseFromCall
-    if (gallery?.owner.id === me?.data.id) {
+    if (isOwner) {
       fetch();
     }
-  }, [gallery, me]);
+  }, [gallery, me, isOwner]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
