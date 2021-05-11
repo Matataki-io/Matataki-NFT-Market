@@ -17,7 +17,7 @@ import {
 import { getGalleryUsers } from '../../backend/gallery';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
-import { firstUpperCase } from '../../utils/index';
+import { firstUpperCase } from '../../utils';
 import { storageUploadToIpfsUrl } from '../../backend/storage';
 import {
   Form,
@@ -590,7 +590,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                     type: 'url',
                     storage: {},
                   });
-                }}></input>
+                }}
+              />
             </StyledMultiiMediaInputContainer>
           )}
         </StyledMultiiMediaInput>
@@ -688,7 +689,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                           icon={<UserOutlined />}
                           src={i.owner.avatar}
                         />{' '}
-                        <span>{i.owner.nickname || i.owner.username}</span>
+                        <span>{i.name}</span>
                       </span>
                     </Option>
                   ))}

@@ -37,7 +37,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   const wallet = useWallet();
   const router = useRouter();
 
-  const shortedccount = useMemo(() => {
+  const shortedAccount = useMemo(() => {
     if (wallet.status !== 'connected') return 'Not Connected';
     return wallet.account ? shortedWalletAccount(wallet.account) : '';
   }, [wallet]);
@@ -140,10 +140,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         <Link href='/community'>
           <a>Community</a>
         </Link>
-        {[UserRole.Gallery, UserRole.SuperAdmin].includes(
-          // @ts-ignore
-          userDataByWallet?.role
-        ) && (
+        {userDataByWallet?.role === UserRole.SuperAdmin && (
           <Link
             href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
             Management Background
@@ -168,7 +165,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                 </StyledHeaderUserdorpdownContainer>
               </UserDropdown>
             ) : (
-              <Button color='gray'>{shortedccount}</Button>
+              <Button color='gray'>{shortedAccount}</Button>
             )}
           </>
         ) : (
@@ -177,14 +174,12 @@ const HeaderComponents: React.FC<HeaderProps> = ({
           </Button>
         )}
         {wallet.status === 'connected' &&
-        isRegistered &&
-        (userDataByWallet?.role
-          ? [UserRole.Gallery, UserRole.Artist].includes(userDataByWallet.role)
-          : false) ? (
-          <Button color='dark' onClick={() => setIsCreate(true)}>
-            Create
-          </Button>
-        ) : null}
+          isRegistered &&
+          userDataByWallet?.role === UserRole.Artist && (
+            <Button color='dark' onClick={() => setIsCreate(true)}>
+              Create
+            </Button>
+          )}
 
         {Number(networkVersion) !== Number(currentChainId) &&
         networkVersion !== ''
@@ -207,7 +202,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               <a href='https://matataki.io/'>
                 <Button className='hover-underline'>Learn</Button>
               </a>
-              <Button color='gray'>{shortedccount}</Button>
+              <Button color='gray'>{shortedAccount}</Button>
             </div>
           </Fragment>
         ) : (
