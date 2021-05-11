@@ -179,7 +179,9 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         {wallet.status === 'connected' &&
         isRegistered &&
         (userDataByWallet?.role
-          ? [UserRole.Gallery, UserRole.Artist].includes(userDataByWallet.role)
+          ? [UserRole.SuperAdmin, UserRole.Artist].includes(
+              userDataByWallet.role
+            )
           : false) ? (
           <Button color='dark' onClick={() => setIsCreate(true)}>
             Create
