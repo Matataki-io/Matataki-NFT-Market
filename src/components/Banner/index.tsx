@@ -2,17 +2,18 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a lo
 import React from 'react';
 import styled from 'styled-components';
 import { Carousel } from 'antd';
+import { Banner } from '../../types/banner';
 
 const StyledWrapper = styled.div`
+  width: 100%;
+  /* height: 648px; */
+`;
+const StyledItem = styled.div`
   width: 100%;
   height: 648px;
   @media screen and (max-width: 768px) {
     height: 160px;
   }
-`;
-const StyledItem = styled.div`
-  width: 100%;
-  height: 100%;
   img {
     width: 100%;
     height: 100%;
@@ -20,24 +21,21 @@ const StyledItem = styled.div`
   }
 `;
 
-const Banner = () => {
+interface Props {
+  data: Banner[];
+}
+
+const BannerComponents: React.FC<Props> = ({ data }) => {
   return (
     <StyledWrapper>
-      <Carousel autoplay>
-        <StyledItem>
-          <img src='https://placeimg.com/700/300/arch' alt='collect' />
-        </StyledItem>
-        <StyledItem>
-          <img src='https://placeimg.com/700/300/arch' alt='collect' />
-        </StyledItem>
-        <StyledItem>
-          <img src='https://placeimg.com/700/300/arch' alt='collect' />
-        </StyledItem>
-        <StyledItem>
-          <img src='https://placeimg.com/700/300/arch' alt='collect' />
-        </StyledItem>
+      <Carousel autoplay autoplaySpeed={5000}>
+        {data.map((i: Banner, idx: number) => (
+          <StyledItem key={idx}>
+            <img src={i.image} alt={i.title} />
+          </StyledItem>
+        ))}
       </Carousel>
     </StyledWrapper>
   );
 };
-export default Banner;
+export default BannerComponents;
