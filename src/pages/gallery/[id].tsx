@@ -21,7 +21,7 @@ const AGallery: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
   const { data: gallery, error: galleryError } = useSWR<Gallery, any>(
-    `/gallery/${id}`,
+    id ? `/gallery/${id}` : null,
     backendSWRFetcher
   );
 
