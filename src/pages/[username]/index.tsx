@@ -1,32 +1,26 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, message, Button, Spin, Tag } from 'antd';
+import { Avatar, Button, List, message, Spin, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
 import { ReactSVG } from 'react-svg';
-import {
-  AccountName,
-  AccountUsername,
-  AccountBio,
-  AccountWebsite,
-} from '../../components/UserInformation';
 import { UserInfoState } from '../../store/userInfoSlice';
 import { useAppSelector } from '../../hooks/redux';
 import { NFTProps } from '../../../next-env';
 import NFTSimple from '../../components/NFTSimple';
-import ProfileFeedPlaceholder from '../../components/ProfileFeedPlaceholder';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { useLogin } from '../../hooks/useLogin';
-import { getUser, getUserBids, getUserTags } from '../../backend/user';
-import { getGallerySubordinateArtists } from '../../backend/gallery';
-import { getMediaById, getMediaMetadata } from '../../backend/media';
+import { getUser, getUserTags } from '../../backend/user';
+import {
+  backendSWRFetcher,
+  getMediaById,
+  getMediaMetadata,
+} from '../../backend/media';
 import { User } from '../../types/User.types';
 import { BidLog } from '../../types/Bid';
-import BidsCard from '../../components/BidsCard';
-import BidsCancelModal from '../../components/BidsCancelModal';
 import ArtworksCarousel from '../../components/ArtworksCarousel';
 
 import IconTelegram from '../../assets/icons/telegram.svg';
@@ -34,6 +28,7 @@ import IconTwitter from '../../assets/icons/twitter.svg';
 import IconEmail from '../../assets/icons/email1.svg';
 import IconMedium from '../../assets/icons/medium.svg';
 import IconFacebook from '../../assets/icons/facebook.svg';
+import useSWR from 'swr';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -70,7 +65,16 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const [currentBidsIdx, setCurrentBidsIdx] = useState<number>(0);
   const keyMessage = 'fetchUser';
 
-  const [subordinateArtist, setSubordinateArtist] = useState<Array<User>>([]);
+  const { data: contractedArtists, error: artistsError } = useSWR<User[], any>(
+    `/user/${userDataByWallet?.id}/owned-artists`,
+    backendSWRFetcher
+  );
+
+  const { data: ownedGalleries, error: galleryError } = useSWR<User, any>(
+    `/user/@${username}/ownedGalleries`,
+    backendSWRFetcher
+  );
+
   const [tagsList, setTagsList] = useState<Array<string>>([]);
 
   useEffect(() => {
@@ -156,18 +160,6 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   useEffect(() => {
     const fetch = async () => {
       if (typeof username !== 'string') return;
-      // const data = await getGallerySubordinateArtists(username);
-      // console.log('data', data);
-      // setSubordinateArtist(data.subordinateArtists);
-    };
-    if (userInfo?.role === 'GALLERY') {
-      fetch();
-    }
-  }, [userInfo, username]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      if (typeof username !== 'string') return;
       const data = await getUserTags(username);
       console.log('getUserTags', data);
       const list = data.tags.map(i => i.name);
@@ -175,35 +167,6 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     };
     fetch();
   }, [userInfo, username]);
-
-  // const subordinateArtistWord = useMemo(() => {
-  //   let list: any = {};
-  //   for (let i = 10; i < 36; i++) {
-  //     //   console.log(i.toString(36))
-  //     list[i.toString(36)] = [];
-  //   }
-  //   list['#'] = [];
-  //
-  //   subordinateArtist.forEach(i => {
-  //     let key = i.username.substr(0, 1).toLocaleLowerCase();
-  //     if (list[key]) {
-  //       list[key].push(i);
-  //     } else {
-  //       list['#'].push(i);
-  //     }
-  //   });
-  //
-  //   for (const key in list) {
-  //     if (Object.prototype.hasOwnProperty.call(list, key)) {
-  //       const element = list[key];
-  //       if (isEmpty(element)) {
-  //         delete list[key];
-  //       }
-  //     }
-  //   }
-  //
-  //   return list;
-  // }, [subordinateArtist]);
 
   const collectionContainner = () => {
     return (
@@ -317,7 +280,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     );
   };
 
-  const GalleryContainner = () => {
+  const GalleryContainer = () => {
     return (
       <>
         <StyledItem>
@@ -411,31 +374,23 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         </StyledItem>
 
         <StyledLine />
-        {/*<StyledItem>*/}
-        {/*  <StyledItemTitle>Contracted Artists</StyledItemTitle>*/}
-
-        {/*  <StyledWord>*/}
-        {/*     需要合并组件 */}
-        {/*    {Object.keys(subordinateArtistWord).map((key, idx) => (*/}
-        {/*      <ul key={idx} className='item'>*/}
-        {/*        <li>*/}
-        {/*          <h3>{key.toLocaleUpperCase()}</h3>*/}
-        {/*        </li>*/}
-        {/*        {subordinateArtistWord[key].map(*/}
-        {/*          (i: { username: string; nickname: string }, idx: number) => (*/}
-        {/*            <li key={idx}>*/}
-        {/*              <Link href={`/${i.username}`}>*/}
-        {/*                <a>*/}
-        {/*                  {i.username}({i.nickname})*/}
-        {/*                </a>*/}
-        {/*              </Link>*/}
-        {/*            </li>*/}
-        {/*          )*/}
-        {/*        )}*/}
-        {/*      </ul>*/}
-        {/*    ))}*/}
-        {/*  </StyledWord>*/}
-        {/*</StyledItem>*/}
+        <StyledItem>
+          <StyledItemTitle>Contracted Artists</StyledItemTitle>
+          <StyledWord>
+            <List
+              dataSource={contractedArtists}
+              renderItem={artist => (
+                <List.Item>
+                  <Link href={`/${artist.username}`}>
+                    <a>
+                      {artist.username}({artist.nickname})
+                    </a>
+                  </Link>
+                </List.Item>
+              )}
+            />
+          </StyledWord>
+        </StyledItem>
       </>
     );
   };
@@ -520,12 +475,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         </div>
       </StyledHead>
       <StyledLine />
+      {!isEmpty(ownedGalleries?.ownedGalleries) && <GalleryContainer />}
       {userInfo?.role === 'COLLECTOR' ? (
         collectionContainner()
       ) : userInfo?.role === 'ARTIST' ? (
         ArtworksContainner()
-      ) : userInfo?.role === 'GALLERY' ? (
-        GalleryContainner()
       ) : userInfo?.role === 'SUPER_ADMIN' ? (
         collectionContainner()
       ) : (
@@ -542,7 +496,7 @@ const StyledWrapper = styled.div`
   padding: 0 20px 256px;
   box-sizing: border-box;
 
-  margin: 0px auto;
+  margin: 0 auto;
   width: 100%;
 
   @media screen and (max-width: 768px) {

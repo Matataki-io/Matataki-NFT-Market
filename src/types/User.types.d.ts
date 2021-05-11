@@ -1,6 +1,8 @@
 import type { MediaToScreen } from './MediaToScreen';
 import { UserRole } from '../constant';
 import { Tag } from './Tag';
+import { Gallery } from './Gallery';
+import { GalleryJoinRequest } from './GalleryJoinRequest';
 
 export type MatatakiUserStat = {
   id: number;
@@ -45,6 +47,9 @@ export interface User {
   verified: boolean;
   role: UserRole;
   waitingForScreen: MediaToScreen[];
+  belongsTo: Gallery[];
+  ownedGalleries: Gallery[];
+  requestedJoinGallery: GalleryJoinRequest[];
   telegram: string;
   twitter: string;
   email: string;
