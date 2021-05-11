@@ -19,9 +19,9 @@ import {
 } from '../backend/media';
 import { getArticles } from '../backend/article';
 import { listUsersArtist } from '../backend/user';
+import { User } from '../types/User.types';
+import { Article } from '../types/Article';
 import { getBanners } from '../backend/bannner';
-import { User } from '../types/User.types.d';
-import { Article } from '../types/Article.d';
 import { Banner } from '../types/banner';
 
 type PaginationMeta = PaginationResult['meta'];
@@ -141,7 +141,7 @@ const Home: React.FC<void> = () => {
             // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
             <Link href={`/p/${i.id}`} key={idx}>
               <a target='_blank'>
-                <NFT {...i}></NFT>
+                <NFT {...i} />
               </a>
             </Link>
           ))}
