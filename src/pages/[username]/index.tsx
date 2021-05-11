@@ -410,7 +410,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             ) : null}
           </StyledHeadUserInfo>
         </StyledHeadUser>
-        <div>
+        <StyledHeadRight>
           <StyledHeadIcon>
             {userInfo?.telegram ? (
               <CopyToClipboard
@@ -467,12 +467,14 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           ) : null}
           {isMyself ? (
             <StyledHeadEdit>
-              <Button onClick={() => router.push(`/${username}/edit`)}>
+              <Button
+                onClick={() => router.push(`/${username}/edit`)}
+                size='small'>
                 EDIT PROFILE
               </Button>
             </StyledHeadEdit>
           ) : null}
-        </div>
+        </StyledHeadRight>
       </StyledHead>
       <StyledLine />
       {!isEmpty(ownedGalleries?.ownedGalleries) && <GalleryContainer />}
@@ -529,11 +531,21 @@ const StyledHeadUser = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  @media screen and (max-width: 678px) {
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+  }
 `;
 const StyledHeadUserInfo = styled.div`
   margin: 0 0 0 15px;
   position: relative;
   top: 10px;
+  @media screen and (max-width: 678px) {
+    margin: 10px 0;
+    top: 0;
+    text-align: center;
+  }
   h1 {
     font-size: 34px;
     font-weight: bold;
@@ -541,6 +553,9 @@ const StyledHeadUserInfo = styled.div`
     line-height: 1;
     padding: 0;
     margin: 0;
+    @media screen and (max-width: 678px) {
+      font-size: 20px;
+    }
   }
   p {
     font-size: 16px;
@@ -551,10 +566,18 @@ const StyledHeadUserInfo = styled.div`
     margin: 6px 0 0 0;
   }
 `;
+const StyledHeadRight = styled.div`
+  @media screen and (max-width: 678px) {
+    width: 100%;
+  }
+`;
 const StyledHeadIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  @media screen and (max-width: 678px) {
+    justify-content: center;
+  }
   .icon {
     width: 32px;
     height: 32px;
@@ -567,6 +590,14 @@ const StyledHeadIcon = styled.div`
       font-size: 32px;
       color: #333333;
     }
+    @media screen and (max-width: 678px) {
+      margin: 0 10px;
+      width: 16px;
+      height: 16px;
+      svg {
+        font-size: 16px;
+      }
+    }
   }
 `;
 const StyledHeadTags = styled.div`
@@ -576,9 +607,18 @@ const StyledHeadTags = styled.div`
   .ant-tag {
     margin: 4px 0 4px 8px;
   }
+  @media screen and (max-width: 678px) {
+    text-align: center;
+    .ant-tag {
+      margin: 4px;
+    }
+  }
 `;
 const StyledHeadEdit = styled.div`
   text-align: right;
+  @media screen and (max-width: 678px) {
+    text-align: center;
+  }
 `;
 
 const StyledMediaCardContainer = styled.div`
@@ -611,12 +651,18 @@ const StyledItemTitle = styled.h3`
   font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
-  line-height: 39px;
+  line-height: 1.2;
   padding: 0;
   margin: 0;
+  @media screen and (max-width: 678px) {
+    font-size: 20px;
+  }
 `;
 const StyledItem = styled.div`
   margin: 24px 0 64px;
+  @media screen and (max-width: 678px) {
+    margin: 20px 0;
+  }
 `;
 const StyledVideo = styled.div`
   margin: 64px 0 0;
@@ -624,6 +670,10 @@ const StyledVideo = styled.div`
   .media-video {
     width: 100%;
     height: 100%;
+  }
+  @media screen and (max-width: 678px) {
+    margin: 20px 0 0;
+    height: 240px;
   }
 `;
 const StyledArtworks = styled.div`
@@ -641,6 +691,10 @@ const StyledAbout = styled.div`
   margin-top: 64px;
   display: flex;
   flex-wrap: wrap;
+  @media screen and (max-width: 678px) {
+    margin-top: 20px;
+    flex-direction: column;
+  }
   .item {
     flex: 1;
     &:nth-child(1) {
@@ -648,6 +702,14 @@ const StyledAbout = styled.div`
     }
     &:nth-child(2) {
       margin-left: 24px;
+    }
+    @media screen and (max-width: 678px) {
+      &:nth-child(1) {
+        margin-right: 0;
+      }
+      &:nth-child(2) {
+        margin-left: 0;
+      }
     }
   }
   .text {
@@ -665,6 +727,9 @@ const StyledAbout = styled.div`
   .cover {
     width: 100%;
     height: 392px;
+    @media screen and (max-width: 678px) {
+      height: 200px;
+    }
     img {
       width: 100%;
       height: 100%;
@@ -711,6 +776,7 @@ const StyledAboutItem = styled.div`
 
 // gallery start
 const StyledWord = styled.div`
+  display: block;
   column-count: 4;
   margin-top: 16px;
   column-gap: 20px;

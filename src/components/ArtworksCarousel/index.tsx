@@ -75,6 +75,9 @@ const StyledArtworksItem = styled.div`
       height: 100%;
       object-fit: contain;
     }
+    @media screen and (max-width: 678px) {
+      max-height: 240px;
+    }
   }
   .title {
     font-size: 16px;
