@@ -140,15 +140,20 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         <Link href='/community'>
           <a>Community</a>
         </Link>
-        {[UserRole.Gallery, UserRole.SuperAdmin].includes(
-          // @ts-ignore
-          userDataByWallet?.role
-        ) && (
-          <Link
-            href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
-            Management Background
-          </Link>
-        )}
+        {
+          // do not just `ts-ignore`, use expression to do typesafe check~
+          // need to have user data
+          userDataByWallet &&
+            // at least owned a gallery
+            (userDataByWallet.ownedGalleries.length > 0 ||
+              // or is a super admin
+              userDataByWallet.role === UserRole.SuperAdmin) && (
+              <Link
+                href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
+                Management Background
+              </Link>
+            )
+        }
       </StyledHeaderNav>
     );
   };
