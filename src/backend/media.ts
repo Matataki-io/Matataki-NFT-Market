@@ -7,6 +7,7 @@ import { MediaLog } from '../types/MediaLog';
 import { BidLog } from '../types/Bid';
 import { GeneralResponse } from '../types/Backend.types';
 import { MintAndTransferParameters } from '../types/MintAndTransfer';
+import { Tag } from '../types/Tag';
 
 export const backendSWRFetcher = (url: string) =>
   backendClient.get(url).then(res => res.data);
@@ -66,6 +67,7 @@ export function sendToPublisherForPreview(
     description: string;
     tokenURI: string;
     permitData: MintAndTransferParameters;
+    tags: string[];
   }
 ) {
   return backendClient.post<GeneralResponse<{ msg: string }>>(
