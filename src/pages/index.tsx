@@ -161,11 +161,14 @@ const Home: React.FC<void> = () => {
         </StyledModuleHead>
         <StyledCreators>
           {creatorsList.map((i, idx) => (
-            <Creators
-              key={idx}
-              bc={i.avatar}
-              avatar={i.avatar}
-              username={i.nickname || i.username}></Creators>
+            <Link href={`/${i.username}`} key={idx}>
+              <a target='_blank'>
+                <Creators
+                  bc={i.avatar}
+                  avatar={i.avatar}
+                  username={i.nickname || i.username}></Creators>
+              </a>
+            </Link>
           ))}
         </StyledCreators>
       </StyledModule>
