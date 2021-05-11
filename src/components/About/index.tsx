@@ -13,7 +13,7 @@ const StyledAboutComponents = styled.a`
   }
   p {
     font-size: 20px;
-    font-family: BigCaslon-Medium, BigCaslon;
+    font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
     line-height: 24px;

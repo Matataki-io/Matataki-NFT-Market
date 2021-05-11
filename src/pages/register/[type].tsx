@@ -33,7 +33,13 @@ const Register: React.FC<void> = () => {
     console.log('Success:', values);
     let { username } = values;
     try {
-      await register({ username });
+      const token = await register({ username });
+      if (token) {
+        message.success('注册成功');
+        router.push('/');
+      } else {
+        throw new Error('not token');
+      }
     } catch (e) {
       message.error(`e: ${e.toString()}`);
     }
@@ -75,30 +81,6 @@ const Register: React.FC<void> = () => {
             },
           ]}>
           <Input placeholder='Your username' autoComplete='off' />
-        </Form.Item>
-
-        <Form.Item
-          label=''
-          name='email'
-          rules={[
-            {
-              required: false,
-              type: 'email',
-              message: 'Please input your email address!',
-            },
-          ]}>
-          <Input disabled placeholder='Email address' />
-        </Form.Item>
-
-        <Form.Item
-          label=''
-          name='password'
-          rules={[{ required: false, message: 'Please input your password!' }]}>
-          <Input.Password
-            disabled
-            placeholder='Password'
-            autoComplete='new-password'
-          />
         </Form.Item>
 
         {type === 'artist' || type === 'gallery' ? (
@@ -159,7 +141,7 @@ const StyledWrapper = styled.div`
 `;
 const StyledTitle = styled.h1`
   font-size: 48px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 58px;
@@ -169,7 +151,6 @@ const StyledTitle = styled.h1`
 `;
 const StyledSubtitle = styled.p`
   font-size: 16px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #333333;
   line-height: 22px;
@@ -198,14 +179,12 @@ const StyledButtonWrapper = styled.div`
   margin-top: 64px;
   p {
     font-size: 12px;
-    font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: #333333;
     line-height: 17px;
     text-align: center;
     a {
       font-size: 12px;
-      font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #193cb1;
       line-height: 17px;
@@ -217,7 +196,6 @@ const StyledButton = styled(Button)`
   height: 60px;
   border: 2px solid #333333;
   font-size: 16px;
-  font-family: PingFangSC-Medium, PingFang SC;
   font-weight: 500;
   color: #333333;
   line-height: 22px;

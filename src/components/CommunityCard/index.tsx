@@ -41,14 +41,12 @@ const StyledInfo = styled.div`
 `;
 const StyledTime = styled.time`
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #777777;
   line-height: 20px;
 `;
 const StyledTitle = styled.p`
   font-size: 24px;
-  font-family: BigCaslon-Medium, BigCaslon;
   font-weight: 500;
   color: #333333;
   line-height: 28px;

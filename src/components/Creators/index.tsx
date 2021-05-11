@@ -17,6 +17,8 @@ const CreatorsComponents: React.FC<CreatorsProps> = ({
       <div className='cover'>
         <div className='cover-bc'>
           {bc ? <img src={bc} alt='About' /> : null}
+          {bc ? <img src={bc} alt='About' /> : null}
+          {bc ? <img src={bc} alt='About' /> : null}
         </div>
         <div className='avatar-box'>
           <div className='avatar'>
@@ -42,8 +44,10 @@ const StyledCreatorsComponents = styled.div`
       margin-left: 122px;
       overflow: hidden;
       border: 1px solid rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: flex-end;
       img {
-        width: 100%;
+        width: 33.33%;
         height: 100%;
         object-fit: cover;
       }
@@ -86,7 +90,7 @@ const StyledCreatorsComponents = styled.div`
   }
   p {
     font-size: 20px;
-    font-family: BigCaslon-Medium, BigCaslon;
+    font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
     line-height: 24px;

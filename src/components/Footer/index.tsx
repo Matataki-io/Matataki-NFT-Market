@@ -44,14 +44,12 @@ const StyledFooterItem = styled.div`
     margin-top: 56px;
     .rights {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #777777;
       line-height: 20px;
     }
     .language {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #777777;
       line-height: 20px;
@@ -69,7 +67,6 @@ const StyledFooterNav = styled.div`
       margin-right: 0;
     }
     li {
-      font-family: PingFangSC-Regular, PingFang SC;
       margin-bottom: 16px;
       &::before {
         display: none;

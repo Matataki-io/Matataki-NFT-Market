@@ -2,20 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { Gallery } from '../../types/Gallery';
 
-const GalleryCard: React.FC<Gallery> = ({
-  id,
-  artists,
-  owner,
-  joinRequests,
-}) => {
-  const { avatar, nickname, username, bio } = owner;
+const GalleryCard: React.FC<Gallery> = ({ name, cover, intro }) => {
   return (
     <StyledWrapper>
       <StyledCover>
-        {avatar ? <img src={avatar} alt='Image' /> : null}
+        {cover ? <img src={cover} alt='Image' /> : null}
       </StyledCover>
-      <StyledTitle>{nickname || username}</StyledTitle>
-      <Styleddescription>{bio || 'Not...'}</Styleddescription>
+      <StyledTitle>{name}</StyledTitle>
+      {intro && <Styleddescription>{intro}</Styleddescription>}
     </StyledWrapper>
   );
 };
@@ -34,7 +28,7 @@ const StyledCover = styled.div`
 `;
 const StyledTitle = styled.p`
   font-size: 24px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 28px;
@@ -43,7 +37,6 @@ const StyledTitle = styled.p`
 `;
 const Styleddescription = styled.p`
   font-size: 14px;
-  font-family: PingFangSC-Light, PingFang SC;
   font-weight: 300;
   color: #777777;
   line-height: 20px;

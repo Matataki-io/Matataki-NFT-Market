@@ -99,8 +99,13 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
   useEffect(() => {
     const fetch = async () => {
-      const data = await getGalleryUsers();
-      setGalleryList(data);
+      // TODO: 后续改为滚动分页 + 下拉查询
+      const data: any = await getGalleryUsers({
+        page: 1,
+        limit: 9999,
+      });
+      console.log('data', data);
+      setGalleryList(data.items);
     };
     fetch();
   }, []);
@@ -672,7 +677,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                 />
               </Form.Item>
               <Form.Item label='Gallery' name='gallery'>
-                <Select placeholder='Select a gallery'>
+                <Select placeholder='Select a gallery' size='large'>
                   {galleryList.map((i, idx: number) => (
                     <Option
                       key={`${idx}-${i.owner.address}`}

@@ -184,7 +184,7 @@ const StyledNFTFooter = styled.div`
     white-space: nowrap;
     width: 100%;
     font-size: 24px;
-    font-family: BigCaslon-Medium, BigCaslon;
+    font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
     line-height: 28px;

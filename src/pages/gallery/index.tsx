@@ -5,14 +5,14 @@ import Link from 'next/link';
 import GalleryCard from '../../components/GalleryCard';
 import type { Gallery } from '../../types/Gallery';
 import useSWR from 'swr';
-import { localFetcher } from '../../backend/client';
+import { backendSWRFetcher } from '../../backend/media';
 
 const GalleryIndex: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const { data, error } = useSWR(
     `/gallery?page=${page}&limit=${limit}`,
-    localFetcher
+    backendSWRFetcher
   );
 
   if (!data) return <div>Loading</div>;
@@ -23,10 +23,10 @@ const GalleryIndex: React.FC = () => {
         <StyledHeadTitle>Gallery List</StyledHeadTitle>
       </StyledHead>
       <StyledGallery>
-        {data.items.map((i: Gallery, idx: number) => (
-          <Link key={`${i.id}`} href={`/gallery/${i.id}`}>
+        {data.items.map((gallery: Gallery, idx: number) => (
+          <Link key={`${gallery.id}`} href={`/gallery/${gallery.id}`}>
             <a>
-              <GalleryCard {...i} />
+              <GalleryCard {...gallery} />
             </a>
           </Link>
         ))}
@@ -53,7 +53,7 @@ const StyledWrapper = styled.div`
 const StyledHead = styled.div``;
 const StyledHeadTitle = styled.h2`
   font-size: 48px;
-  font-family: BigCaslon-Medium, BigCaslon;
+  font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
   line-height: 58px;

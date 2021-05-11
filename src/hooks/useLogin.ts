@@ -81,6 +81,7 @@ export function useLogin() {
     const signedLoginPermit = await requestToSign();
     const token = await registerUser(profile, signedLoginPermit);
     updateAccessToken(token);
+    return token;
   }
 
   const loginWithSignature = useCallback(async () => {

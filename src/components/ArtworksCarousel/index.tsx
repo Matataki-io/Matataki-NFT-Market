@@ -78,7 +78,6 @@ const StyledArtworksItem = styled.div`
   }
   .title {
     font-size: 16px;
-    font-family: BigCaslon-Medium, BigCaslon;
     font-weight: 500;
     color: #333333;
     line-height: 20px;
@@ -87,7 +86,6 @@ const StyledArtworksItem = styled.div`
   }
   .desc {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: #b2b2b2;
     line-height: 20px;
