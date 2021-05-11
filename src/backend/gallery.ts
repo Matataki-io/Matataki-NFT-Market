@@ -22,6 +22,19 @@ export async function getGallerySubordinateArtists(
   return data as any;
 }
 
+export async function createGallery(gallery: {
+  name: string;
+  cover: string;
+  intro: string;
+  artists: User[];
+  owner: User;
+}) {
+  const { data } = await BACKEND_CLIENT.post<GeneralResponse<Gallery>>(
+    `/gallery`
+  );
+  return data;
+}
+
 export async function createGalleryJoinRequest(gid: number) {
   const { data } = await BACKEND_CLIENT.post(`/gallery/${gid}/request`);
   return data;

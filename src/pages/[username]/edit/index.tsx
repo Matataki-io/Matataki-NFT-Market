@@ -20,7 +20,7 @@ import { isEmpty } from 'lodash';
 import { updateUser } from '../../../backend/user';
 import { useLogin } from '../../../hooks/useLogin';
 import { storageUploadFile } from '../../../backend/storage';
-import { diffData } from '../../../utils/index';
+import { diffData } from '../../../utils';
 import { getTags } from '../../../backend/tag';
 import { Tag } from '../../../types/Tag';
 
