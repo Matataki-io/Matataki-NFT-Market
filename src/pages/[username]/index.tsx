@@ -66,12 +66,12 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const keyMessage = 'fetchUser';
 
   const { data: contractedArtists, error: artistsError } = useSWR<User[], any>(
-    `/user/${userDataByWallet?.id}/owned-artists`,
+    userDataByWallet ? `/user/${userDataByWallet.id}/owned-artists` : null,
     backendSWRFetcher
   );
 
   const { data: ownedGalleries, error: galleryError } = useSWR<User, any>(
-    `/user/@${username}/ownedGalleries`,
+    username ? `/user/@${username}/ownedGalleries` : null,
     backendSWRFetcher
   );
 

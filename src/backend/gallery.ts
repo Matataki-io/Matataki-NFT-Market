@@ -1,7 +1,11 @@
 import backendClient, { default as BACKEND_CLIENT } from './client';
 import { GeneralResponse, PaginationProps } from '../types/Backend.types';
 import { Gallery } from '../types/Gallery';
-import { GalleryJoinRequest } from '../types/GalleryJoinRequest';
+import {
+  GalleryJoinRequest,
+  GalleryJoinRequestStatus,
+} from '../types/GalleryJoinRequest';
+import { User } from '../types/User.types';
 
 export async function getGalleryUsers(
   params: PaginationProps
@@ -21,13 +25,31 @@ export async function getGallerySubordinateArtists(
   return data as any;
 }
 
+export async function createGallery(gallery: {
+  name: string;
+  cover: string;
+  intro: string;
+  artists: User[];
+  owner: User;
+}) {
+  const { data } = await BACKEND_CLIENT.post<GeneralResponse<Gallery>>(
+    `/gallery`
+  );
+  return data;
+}
+
 export async function createGalleryJoinRequest(gid: number) {
   const { data } = await BACKEND_CLIENT.post(`/gallery/${gid}/request`);
   return data;
 }
 
 export async function findGalleryJoinRequest(
-  condition: Partial<GalleryJoinRequest>
+  condition: Partial<{
+    id: number;
+    artist: User;
+    gallery: Gallery;
+    status: GalleryJoinRequestStatus;
+  }>
 ) {
   const { data } = await BACKEND_CLIENT.post<GalleryJoinRequest[]>(
     '/gallery/request/find',

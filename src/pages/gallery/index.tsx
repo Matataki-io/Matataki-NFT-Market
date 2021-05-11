@@ -6,6 +6,7 @@ import GalleryCard from '../../components/GalleryCard';
 import type { Gallery } from '../../types/Gallery';
 import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
+import { Button } from 'antd';
 
 const GalleryIndex: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -21,6 +22,9 @@ const GalleryIndex: React.FC = () => {
     <StyledWrapper>
       <StyledHead>
         <StyledHeadTitle>Gallery List</StyledHeadTitle>
+        <Button type='primary' href={'/gallery/create'}>
+          Create Gallery
+        </Button>
       </StyledHead>
       <StyledGallery>
         {data.items.map((gallery: Gallery, idx: number) => (

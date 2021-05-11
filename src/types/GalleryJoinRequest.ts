@@ -2,9 +2,9 @@ import { User } from './User.types';
 import { Gallery } from './Gallery';
 
 export enum GalleryJoinRequestStatus {
-  PENDING,
-  ACCEPTED,
-  REJECTED,
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
 }
 
 export type GalleryJoinRequest = {
