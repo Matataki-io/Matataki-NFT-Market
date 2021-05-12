@@ -2,8 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { Carousel } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { NFTProps } from '../../../next-env';
+import Link from 'next/link';
 
-const ArtworksCarousel: React.FC = () => {
+interface Props {
+  data: Array<NFTProps>;
+}
+
+const ArtworksCarousel: React.FC<Props> = ({ data }) => {
   const settings = {
     dots: false,
     autoplay: true,
@@ -16,42 +22,23 @@ const ArtworksCarousel: React.FC = () => {
   };
   return (
     <Carousel {...settings}>
-      <div>
-        <StyledArtworksItem>
-          <div className='cover'>
-            <img
-              src='https://placeimg.com/1280/720/nature?t=1617247698083'
-              alt=''
-            />
-          </div>
-          <p className='title'>45a Festa de la Verema d&apos;Alella</p>
-          <p className='desc'>© Phoebe Geber Attila 2021 </p>
-        </StyledArtworksItem>
-      </div>
-      <div>
-        <StyledArtworksItem>
-          <div className='cover'>
-            <img
-              src='https://placeimg.com/300/300/nature?t=1617247698083'
-              alt=''
-            />
-          </div>
-          <p className='title'>45a Festa de la Verema d&apos;Alella</p>
-          <p className='desc'>© Phoebe Geber Attila 123123 </p>
-        </StyledArtworksItem>
-      </div>
-      <div>
-        <StyledArtworksItem>
-          <div className='cover'>
-            <img
-              src='https://placeimg.com/500/500/nature?t=1617247698083'
-              alt=''
-            />
-          </div>
-          <p className='title'>45a Festa de la Verema d&apos;Alella</p>
-          <p className='desc'>© Phoebe Geber Attila 123123 </p>
-        </StyledArtworksItem>
-      </div>
+      {data
+        ? data.map((i: NFTProps, idx: number) => (
+            <Link key={idx} href={`/p/${i.id}`}>
+              <a target='_blank'>
+                <div>
+                  <StyledArtworksItem>
+                    <div className='cover'>
+                      <img src={i.content?.medium} alt={i?.title} />
+                    </div>
+                    <p className='title'>{i?.title}</p>
+                    <p className='desc'>{i?.title}</p>
+                  </StyledArtworksItem>
+                </div>
+              </a>
+            </Link>
+          ))
+        : null}
     </Carousel>
   );
 };
