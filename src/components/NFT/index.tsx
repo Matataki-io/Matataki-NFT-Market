@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { Button } from '@geist-ui/react';
 import moment from 'moment';
@@ -7,6 +7,9 @@ import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import AudioRender from '../AudioRender';
 import { NFTProps } from '../../../next-env';
+import { isAskExist } from '../../hooks/useMarketPrices';
+import { getDecimalOf, getSymbolOf } from '../../utils/tokens';
+import { utils } from 'ethers';
 
 const NFTComponents: React.FC<NFTProps> = ({
   id,
@@ -16,7 +19,15 @@ const NFTComponents: React.FC<NFTProps> = ({
   title,
   owner,
   creator,
+  currentAsk,
 }) => {
+  const priceDisplay = useMemo(() => {
+    if (!isAskExist(currentAsk)) return '---';
+    const decimals = getDecimalOf(currentAsk.currency);
+    const formattedPrice = utils.formatUnits(currentAsk.amount, decimals);
+    const tokenSymbol = getSymbolOf(currentAsk.currency);
+    return `${formattedPrice} ${tokenSymbol}`;
+  }, []);
   return (
     <StyledNFTWrapper>
       <StyledNFTHead>
@@ -79,13 +90,13 @@ const NFTComponents: React.FC<NFTProps> = ({
         <h5>{title}</h5>
         <StyledNFTFooterPrice>
           <div>
-            <p className='price'>15Ξ ($31,920)</p>
+            <p className='price'> {priceDisplay} </p>
             <p className='name'>List price</p>
           </div>
-          <div>
-            <p className='price'>32Ξ ($63,841)</p>
+          {/* <div>
+            <p className='price'>{ currentAsk?.amount } { currentAsk?.currency } </p>
             <p className='name'>Current offer</p>
-          </div>
+          </div> */}
         </StyledNFTFooterPrice>
       </StyledNFTFooter>
     </StyledNFTWrapper>
