@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
 import { User } from '../../types/User.types';
+import { Page, Text } from '@geist-ui/react';
 
 const GalleryCreate: React.FC = () => {
   const [cover, setCover] = useState('');
@@ -69,38 +70,42 @@ const GalleryCreate: React.FC = () => {
   function onFinishFailed() {}
 
   return (
-    <Form onFinish={onFinish} onFinishFailed={onFinishFailed}>
-      <Form.Item
-        label='Name'
-        name='name'
-        rules={[{ required: true, message: 'Please input gallery name!' }]}>
-        <Input />
-      </Form.Item>
+    <Page>
+      <Text h1>Create Gallery</Text>
+      <Text>You must be the Super Admin to create a gallery</Text>
+      <Form onFinish={onFinish} onFinishFailed={onFinishFailed}>
+        <Form.Item
+          label='Name'
+          name='name'
+          rules={[{ required: true, message: 'Please input gallery name!' }]}>
+          <Input />
+        </Form.Item>
 
-      <Form.Item
-        label='Intro'
-        name='intro'
-        rules={[{ required: true, message: 'Please input gallery intro!' }]}>
-        <Input />
-      </Form.Item>
+        <Form.Item
+          label='Intro'
+          name='intro'
+          rules={[{ required: true, message: 'Please input gallery intro!' }]}>
+          <Input />
+        </Form.Item>
 
-      <Form.Item
-        label='Cover'
-        name='cover'
-        rules={[{ required: true, message: 'Please upload gallery cover!' }]}
-        getValueFromEvent={normFile}>
-        <Upload {...props}>
-          <Button icon={<UploadOutlined />}>Click to upload</Button>
-          <Image src={cover} />
-        </Upload>
-      </Form.Item>
+        <Form.Item
+          label='Cover'
+          name='cover'
+          rules={[{ required: true, message: 'Please upload gallery cover!' }]}
+          getValueFromEvent={normFile}>
+          <Upload {...props}>
+            <Button icon={<UploadOutlined />}>Click to upload</Button>
+            <Image src={cover} />
+          </Upload>
+        </Form.Item>
 
-      <Form.Item>
-        <Button type='primary' htmlType='submit'>
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item>
+          <Button type='primary' htmlType='submit'>
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    </Page>
   );
 };
 

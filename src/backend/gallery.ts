@@ -7,15 +7,14 @@ import {
 } from '../types/GalleryJoinRequest';
 import { User } from '../types/User.types';
 
-export async function getGalleryUsers(
-  params: PaginationProps
-): Promise<Gallery[]> {
+export async function getGallery(params: PaginationProps): Promise<Gallery[]> {
   const { data } = await BACKEND_CLIENT.get<GeneralResponse<Gallery[]>>(
     `/gallery`,
     { params }
   );
   return data as any;
 }
+
 export async function getGallerySubordinateArtists(
   username: string
 ): Promise<Gallery> {

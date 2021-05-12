@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { Avatar, Button, List, message, Modal, Spin } from 'antd';
 import { User } from '../../types/User.types';
 import { backendSWRFetcher } from '../../backend/media';
-import { UserRole } from '../../constant';
+import { BACKEND_CLIENT, UserRole } from '../../constant';
 import {
   createGalleryJoinRequest,
   findGalleryJoinRequest,
@@ -20,6 +20,8 @@ import ArtworksCarousel from '../../components/ArtworksCarousel';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
+import { Media } from '../../types/Media.entity';
+import { GeneralResponse } from '../../types/Backend.types';
 
 const AGallery: React.FC = () => {
   const router = useRouter();
@@ -54,6 +56,20 @@ const AGallery: React.FC = () => {
       fetch();
     }
   }, [gallery, me, isOwner]);
+
+  const [media, setMedia] = useState<Media[]>();
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await BACKEND_CLIENT.post<GeneralResponse<Media[]>>(
+        '/media/search',
+        {
+          gallery: gallery?.id,
+        }
+      );
+      setMedia(data as any);
+    })();
+  }, [gallery]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -108,7 +124,7 @@ const AGallery: React.FC = () => {
             <StyledItem>
               <StyledItemTitle>Artworks</StyledItemTitle>
               <StyledArtworks>
-                <ArtworksCarousel />
+                <ArtworksCarousel media={media} />
               </StyledArtworks>
             </StyledItem>
 
@@ -116,47 +132,7 @@ const AGallery: React.FC = () => {
             <StyledItem>
               <StyledItemTitle>About</StyledItemTitle>
               <StyledAbout>
-                <div className='item'>
-                  <p className='text'>
-                    Since Kukje Gallery opened at the center of Seoul in 1982,
-                    it has been committed to presenting the work of the most
-                    current and significant Korean and international
-                    contemporary artists. The Gallery has established itself as
-                    a leading venue for showing works by major international
-                    artists such as Damien Hirst, Eva Hesse, Jean-Michel
-                    Basquiat, Joan Mitchell, Cy Twombly, Ed Ruscha, Joseph
-                    Beuys, Anselm Kiefer, Louise Bourgeois, Jenny Holzer,
-                    Candida Hofer, Bill Viola, Anish Kapoor, etc. The
-                    exhibitions provided the foremost rare opportunity for the
-                    Korean art audiences to encounter the works of
-                    world-renowned contemporary artists without going abroad.
-                  </p>
-                  <p className='text'>
-                    Recognizing the importance of promoting Korean artists
-                    abroad, Kukje Gallery participates annually in major art
-                    fairs such as Art Basel, Art Basel Miami Beach and The
-                    Armory Show. The Gallery first presented the most
-                    significant artworks by Korean artists alongside more
-                    recognizable works of high caliber by international artists.
-                    Consequently, the Korean artists as well as the Gallery have
-                    been successfully gaining wide exposure and receiving much
-                    attention from the non-Korean collectors. The Gallery has
-                    also been promoting Korean artists to non-commercial venues,
-                    using its solid network of museum curators and critics
-                    worldwide. Many of Korean artists who have been presented by
-                    Kukje Gallery have gone on to participate in international
-                    biennials and major art museum exhibitions.
-                  </p>
-                  <p className='text'>
-                    Kukje Gallery has an unmatched reputation in Korea for
-                    having introduced many of the most critically acclaimed
-                    international artists, and for supporting the most promising
-                    Korean artists. The Gallery continues to play a key role in
-                    developing the domestic art market and promoting Korean
-                    artists; as well as drawing the national audience’s
-                    attention to the currently international art world.
-                  </p>
-                </div>
+                <div className='item'>{gallery.intro}</div>
                 <div className='item'>
                   <div className='cover'>
                     <img src={gallery.cover} alt='cover' />

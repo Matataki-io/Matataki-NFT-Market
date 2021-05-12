@@ -150,7 +150,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               userDataByWallet.role === UserRole.SuperAdmin) && (
               <Link
                 href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
-                Management Background
+                Management
               </Link>
             )
         }
@@ -192,6 +192,12 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             Create
           </Button>
         ) : null}
+
+        {userDataByWallet?.role === UserRole.SuperAdmin && (
+          <Link href='/gallery/create'>
+            <Button color='dark'>Create Gallery</Button>
+          </Link>
+        )}
 
         {Number(networkVersion) !== Number(currentChainId) &&
         networkVersion !== ''

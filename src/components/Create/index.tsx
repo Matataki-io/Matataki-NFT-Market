@@ -14,7 +14,7 @@ import {
   PostMedia,
   sendToPublisherForPreview,
 } from '../../backend/media';
-import { getGalleryUsers } from '../../backend/gallery';
+import { getGallery } from '../../backend/gallery';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
 import { firstUpperCase } from '../../utils';
@@ -36,6 +36,10 @@ import {
   AutoComplete,
 } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+
+const { Dragger } = Upload;
+const { Option } = Select;
+
 import {
   mintMediaToken,
   GenerateCreationSignature,
@@ -60,9 +64,6 @@ import { isEmpty } from 'lodash';
 import { Gallery } from '../../types/Gallery';
 import { OptionsType } from 'rc-select/lib/interface';
 
-const { Dragger } = Upload;
-const { Option } = Select;
-
 // 非负整数
 const creatorShare = /^\d+$/;
 
@@ -72,6 +73,7 @@ interface mediaDataState extends NFTProps {
 
 interface mediaTypeState {
   [key: string]: string;
+
   image: string;
   video: string;
   audio: string;
@@ -79,9 +81,11 @@ interface mediaTypeState {
   file: string;
   url: string;
 }
+
 interface Props {
   setIsCreate: (value: boolean) => void;
 }
+
 type mediaTypeProps = 'image' | 'video' | 'audio' | 'text' | 'file' | 'url';
 
 const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
@@ -109,7 +113,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     const fetch = async () => {
       try {
         // TODO: 后续改为滚动分页 + 下拉查询
-        const data: any = await getGalleryUsers({
+        const data: any = await getGallery({
           page: 1,
           limit: 9999,
         });
@@ -434,7 +438,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
   // mint到画廊
   const mintTokenToGallery = useCallback(async () => {
-    if (!isSignerReady(signer)) return;
+    if (!isSignerReady(signer)) {
+      console.log('singer is not ready', signer);
+      return;
+    }
 
     let {
       tokenURI,
@@ -442,9 +449,13 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       contentHash,
       metadataHash,
     } = mediaData.storage['MediaData'];
-
-    let { price, tags, gallery } = formPricingAndFees.getFieldsValue();
+    let {
+      price,
+      tags_,
+      gallery: galleryId,
+    } = formPricingAndFees.getFieldsValue();
     let creatorShare = Number(price);
+    let tags = tags_ || [];
 
     console.log(
       'info',
@@ -453,21 +464,26 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       contentHash,
       metadataHash,
       creatorShare,
-      gallery
+      galleryId
     );
 
-    const galleryUser = galleryList.find(u => u.owner.address === gallery);
-    if (!galleryUser) throw new Error('Unable to find the gallery user');
-    const nonce = await getNonceByPublisherId(galleryUser.id);
+    const nonce = await getNonceByPublisherId(galleryId);
+
+    const gallery = galleryList.find(g => g.id === galleryId);
+    if (!gallery) {
+      console.log('gallery', gallery);
+      message.error('no such gallery');
+      return;
+    }
 
     const res = await GenerateCreationSignature(
       tokenURI,
       metadataURI,
       contentHash,
       metadataHash,
-      gallery,
+      gallery.owner.address,
       nonce,
-      Number(creatorShare),
+      creatorShare,
       signer
     );
     message.success('正在处理数据请不要离开页面...');
@@ -476,8 +492,9 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.error('not res');
       return;
     }
+
     message.success('正在创建...');
-    await sendToPublisherForPreview(galleryUser.id, {
+    await sendToPublisherForPreview(galleryId, {
       nonce,
       title: nameAndDescription.name,
       description: nameAndDescription.description,
@@ -502,7 +519,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   // price填写完成
   const onFinishPrice = async (values: any) => {
     console.log('Success:', values);
-    if (isEmpty(values.gallery)) {
+    if (!values.gallery) {
       mintToken();
     } else {
       mintTokenToGallery();
@@ -516,12 +533,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   // upload media back pop confirm
   // upload media visible
   const [visiblePop, setVisiblePop] = useState(false);
+
   // upload media back pop confirm
   function popconfirmFn() {
     setVisiblePop(false);
     setMediaData({} as any);
     setStep(0);
   }
+
   // 是否显示 pop confirm
   const handleVisibleChangeUploadMedia = (visible: boolean) => {
     console.log(',visible', visible);
@@ -724,9 +743,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               <Form.Item label='Gallery' name='gallery'>
                 <Select placeholder='Select a gallery'>
                   {galleryList.map((i, idx: number) => (
-                    <Option
-                      key={`${idx}-${i.owner.address}`}
-                      value={i.owner.address}>
+                    <Option key={`${idx}-${i.owner.address}`} value={i.id}>
                       <span>
                         <Avatar
                           size={20}
@@ -900,6 +917,7 @@ const StyledMultiiMediaInputHeadTab = styled.h5<{ actions?: boolean }>`
   font-weight: 400;
   cursor: pointer;
   color: rgba(0, 0, 0, 0.7);
+
   &::after {
     content: '';
     position: absolute;
@@ -909,17 +927,20 @@ const StyledMultiiMediaInputHeadTab = styled.h5<{ actions?: boolean }>`
     right: 0px;
     bottom: -17px;
   }
+
   ${props =>
     props.actions &&
     css`
       color: rgb(0, 0, 0);
       font-weight: 600;
+
       &::after {
         background: rgb(0, 0, 0);
       }
     `}
   &:hover {
     color: rgb(0, 0, 0);
+
     &::after {
       background: rgb(0, 0, 0);
     }
@@ -936,6 +957,7 @@ const StyledMultiiMediaInputWrapper = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
+
   p {
     text-align: center;
     white-space: pre-wrap;
@@ -946,14 +968,17 @@ const StyledMultiiMediaInputWrapper = styled.div`
     font-weight: 400;
     margin-top: 0px;
   }
+
   .upload {
     border: 0;
     background: transparent;
   }
+
   & > span {
     width: 100%;
     height: 100%;
   }
+
   .ant-upload-list {
     display: none;
   }
@@ -965,6 +990,7 @@ const StyledMultiiMediaInputContainer = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   padding: 15px;
+
   .label {
     font-size: 12px;
     font-weight: 400;
@@ -974,6 +1000,7 @@ const StyledMultiiMediaInputContainer = styled.div`
     margin-bottom: 10px;
     display: block;
   }
+
   .input {
     box-sizing: border-box;
     padding: 15px;
@@ -1008,6 +1035,7 @@ const StyledMultiiMediaFormItem = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+
   &.input {
     label {
       font-size: 17px;
@@ -1040,6 +1068,7 @@ const StyledMultiiMediaFormItem = styled.div`
     align-items: center;
     justify-content: space-between;
   }
+
   & > div {
     width: 100%;
   }
@@ -1055,13 +1084,16 @@ const StyledMultiiMediaFormItemText = styled.p`
 const StyledForm = styled(Form)`
   width: 100%;
   margin-top: 20px;
+
   .ant-form-item {
     margin-bottom: 40px;
     border-bottom: 1px solid #d9d9d9;
+
     .ant-input,
     .ant-input-affix-wrapper {
       border: none;
     }
+
     .ant-input:focus,
     .ant-input-focused,
     .ant-input-affix-wrapper:focus,
