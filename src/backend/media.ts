@@ -55,7 +55,7 @@ export async function PostMedia({
   // bad habit to `any` bro
   return await backendClient.post('/media', {
     txHash,
-    tags: tags,
+    tags,
   });
 }
 
