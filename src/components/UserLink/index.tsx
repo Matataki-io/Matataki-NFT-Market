@@ -31,7 +31,7 @@ const UserLink: React.FC<UserLinkProps> = ({
       <HeadLabel>{label}</HeadLabel>
       <UserInfo>
         <AccountAvatar icon={<UserOutlined />} size={30} src={avatar} />
-        <UserName>@{nickname || username}</UserName>
+        <UserName>{nickname ? nickname : '@' + username}</UserName>
         {isVerified && (
           <VerifiedIcon>
             <IconVerified />

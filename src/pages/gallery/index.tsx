@@ -7,6 +7,7 @@ import type { Gallery } from '../../types/Gallery';
 import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
 import { Button } from 'antd';
+import { UserRole } from '../../constant';
 
 const GalleryIndex: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -15,16 +16,19 @@ const GalleryIndex: React.FC = () => {
     `/gallery?page=${page}&limit=${limit}`,
     backendSWRFetcher
   );
+  const { data: me, error: meError } = useSWR('/user/me', backendSWRFetcher);
 
-  if (!data) return <div>Loading</div>;
+  if (!data || !me) return <div>Loading</div>;
 
   return (
     <StyledWrapper>
       <StyledHead>
         <StyledHeadTitle>Gallery List</StyledHeadTitle>
-        <Button type='primary' href={'/gallery/create'}>
-          Create Gallery
-        </Button>
+        {me.data.role === UserRole.SuperAdmin && (
+          <Button type='primary' href={'/gallery/create'}>
+            Create Gallery
+          </Button>
+        )}
       </StyledHead>
       <StyledGallery>
         {data.items.map((gallery: Gallery, idx: number) => (

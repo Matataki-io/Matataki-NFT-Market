@@ -23,6 +23,7 @@ import { storageUploadFile } from '../../../backend/storage';
 import { diffData } from '../../../utils';
 import { getTags } from '../../../backend/tag';
 import { Tag } from '../../../types/Tag';
+import { UserRole } from '../../../constant';
 
 // 用户名校验
 const usernamePattern = /^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
@@ -233,8 +234,7 @@ const Register: React.FC<void> = () => {
           rules={[{ required: true, message: 'Please input your bio!' }]}>
           <Input placeholder='Describe yourself by single sentence' />
         </Form.Item>
-        {userDataByWallet?.role === 'ARTIST' ||
-        userDataByWallet?.role === 'GALLERY' ? (
+        {userDataByWallet?.role === 'ARTIST' ? (
           <>
             <Form.Item
               label=''
@@ -243,7 +243,7 @@ const Register: React.FC<void> = () => {
               <Input.TextArea
                 disabled
                 rows={6}
-                placeholder='Describe yourself compeletly…'
+                placeholder='Describe yourself completely…'
               />
             </Form.Item>
             <StyledPhotoWrapper>
@@ -314,7 +314,7 @@ const Register: React.FC<void> = () => {
             </Row>
           </Checkbox.Group>
         </Form.Item>
-        {userDataByWallet?.role === 'GALLERY' ? (
+        {userDataByWallet?.role === UserRole.Artist ? (
           <>
             <StyledFormTitle>Contracted Artists</StyledFormTitle>
             <Form.Item
