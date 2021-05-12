@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { Avatar, Button, List, message, Modal, Spin } from 'antd';
 import { User } from '../../types/User.types';
 import { backendSWRFetcher } from '../../backend/media';
-import { UserRole } from '../../constant';
+import { BACKEND_CLIENT, UserRole } from '../../constant';
 import {
   createGalleryJoinRequest,
   findGalleryJoinRequest,
@@ -20,6 +20,8 @@ import ArtworksCarousel from '../../components/ArtworksCarousel';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
+import { Media } from '../../types/Media.entity';
+import { GeneralResponse } from '../../types/Backend.types';
 
 const AGallery: React.FC = () => {
   const router = useRouter();
@@ -54,6 +56,20 @@ const AGallery: React.FC = () => {
       fetch();
     }
   }, [gallery, me, isOwner]);
+
+  const [media, setMedia] = useState<Media[]>();
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await BACKEND_CLIENT.post<GeneralResponse<Media[]>>(
+        '/media/search',
+        {
+          gallery: gallery?.id,
+        }
+      );
+      setMedia(data as any);
+    })();
+  }, [gallery]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -108,7 +124,7 @@ const AGallery: React.FC = () => {
             <StyledItem>
               <StyledItemTitle>Artworks</StyledItemTitle>
               <StyledArtworks>
-                <ArtworksCarousel />
+                <ArtworksCarousel media={media} />
               </StyledArtworks>
             </StyledItem>
 
