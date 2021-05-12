@@ -72,4 +72,15 @@ export interface User {
   medium: string;
   facebook: string;
   tags: Array<Tag>;
+  about: {
+    description: string;
+    banner: string;
+    bannerDescription: string;
+    telegram: string;
+    twitter: string;
+    medium: string;
+    facebook: string;
+    discord: string;
+    email: string;
+  };
 }

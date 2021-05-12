@@ -21,12 +21,13 @@ import {
 } from '../../backend/media';
 import { User } from '../../types/User.types';
 import { BidLog } from '../../types/Bid';
-import ArtworksCarousel from '../../components/ArtworksCarousel';
+import ArtworksCarousel from '../../components/ArtworksCarouselUser';
 
 import IconTelegram from '../../assets/icons/telegram.svg';
-import IconTwitter from '../../assets/icons/twitter.svg';
 import IconEmail from '../../assets/icons/email1.svg';
 import IconMedium from '../../assets/icons/medium.svg';
+import IconTwitter from '../../assets/icons/twitter.svg';
+import IconDiscord from '../../assets/icons/discord.svg';
 import IconFacebook from '../../assets/icons/facebook.svg';
 import useSWR from 'swr';
 
@@ -37,11 +38,10 @@ interface Props {
 const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const router = useRouter();
   const { username } = router.query;
-  const [userInfo, setUserInfo] = useState<UserInfoState>({
+  const [userInfo, setUserInfo] = useState<User | any>({
     avatar: '',
     nickname: '',
     username: '',
-    role: undefined,
     telegram: '',
     twitter: '',
     email: '',
@@ -187,7 +187,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const ArtworksContainer = () => {
     return (
       <>
-        <StyledItem>
+        {/* <StyledItem>
           <StyledItemTitle>Presentation</StyledItemTitle>
           <StyledVideo>
             <video
@@ -202,11 +202,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             />
           </StyledVideo>
         </StyledItem>
-        <StyledLine />
+        <StyledLine /> */}
         <StyledItem>
           <StyledItemTitle>Artworks</StyledItemTitle>
           <StyledArtworks>
-            <ArtworksCarousel />
+            <ArtworksCarousel data={nftListData} />
           </StyledArtworks>
         </StyledItem>
 
@@ -215,64 +215,54 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           <StyledItemTitle>About</StyledItemTitle>
           <StyledAbout>
             <div className='item'>
-              <p className='text'>
-                Since Kukje Gallery opened at the center of Seoul in 1982, it
-                has been committed to presenting the work of the most current
-                and significant Korean and international contemporary artists.
-                The Gallery has established itself as a leading venue for
-                showing works by major international artists such as Damien
-                Hirst, Eva Hesse, Jean-Michel Basquiat, Joan Mitchell, Cy
-                Twombly, Ed Ruscha, Joseph Beuys, Anselm Kiefer, Louise
-                Bourgeois, Jenny Holzer, Candida Hofer, Bill Viola, Anish
-                Kapoor, etc. The exhibitions provided the foremost rare
-                opportunity for the Korean art audiences to encounter the works
-                of world-renowned contemporary artists without going abroad.
-              </p>
-              <p className='text'>
-                Recognizing the importance of promoting Korean artists abroad,
-                Kukje Gallery participates annually in major art fairs such as
-                Art Basel, Art Basel Miami Beach and The Armory Show. The
-                Gallery first presented the most significant artworks by Korean
-                artists alongside more recognizable works of high caliber by
-                international artists. Consequently, the Korean artists as well
-                as the Gallery have been successfully gaining wide exposure and
-                receiving much attention from the non-Korean collectors. The
-                Gallery has also been promoting Korean artists to non-commercial
-                venues, using its solid network of museum curators and critics
-                worldwide. Many of Korean artists who have been presented by
-                Kukje Gallery have gone on to participate in international
-                biennials and major art museum exhibitions.
-              </p>
-              <p className='text'>
-                Kukje Gallery has an unmatched reputation in Korea for having
-                introduced many of the most critically acclaimed international
-                artists, and for supporting the most promising Korean artists.
-                The Gallery continues to play a key role in developing the
-                domestic art market and promoting Korean artists; as well as
-                drawing the national audience’s attention to the currently
-                international art world.
-              </p>
+              <p className='text'>{userInfo?.about.description}</p>
             </div>
             <div className='item'>
               <div className='cover'>
                 <img
-                  src='https://placeimg.com/540/184/nature?t=1617247698083'
-                  alt=''
+                  src={userInfo?.about.banner}
+                  alt={userInfo?.about.bannerDescription}
                 />
               </div>
-              <p className='gallery-name'>K1 Gallery</p>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconTelegram} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconTwitter} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconEmail} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
+              <p className='gallery-name'>
+                {userInfo?.about.bannerDescription}
+              </p>
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconTelegram} />
+                  <span>{userInfo?.about.telegram}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconTwitter} />
+                  <span>{userInfo?.about.twitter}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconMedium} />
+                  <span>{userInfo?.about.medium}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconFacebook} />
+                  <span>{userInfo?.about.facebook}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconDiscord} />
+                  <span>{userInfo?.about.discord}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconEmail} />
+                  <span>{userInfo?.about.email}</span>
+                </StyledAboutItem>
+              ) : null}
             </div>
           </StyledAbout>
         </StyledItem>
@@ -283,7 +273,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const GalleryContainer = () => {
     return (
       <>
-        <StyledItem>
+        {/* <StyledItem>
           <StyledItemTitle>Presentation</StyledItemTitle>
           <StyledVideo>
             <video
@@ -298,11 +288,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             />
           </StyledVideo>
         </StyledItem>
-        <StyledLine />
+        <StyledLine /> */}
         <StyledItem>
           <StyledItemTitle>Artworks</StyledItemTitle>
           <StyledArtworks>
-            <ArtworksCarousel />
+            <ArtworksCarousel data={nftListData} />
           </StyledArtworks>
         </StyledItem>
 
@@ -311,64 +301,54 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           <StyledItemTitle>About</StyledItemTitle>
           <StyledAbout>
             <div className='item'>
-              <p className='text'>
-                Since Kukje Gallery opened at the center of Seoul in 1982, it
-                has been committed to presenting the work of the most current
-                and significant Korean and international contemporary artists.
-                The Gallery has established itself as a leading venue for
-                showing works by major international artists such as Damien
-                Hirst, Eva Hesse, Jean-Michel Basquiat, Joan Mitchell, Cy
-                Twombly, Ed Ruscha, Joseph Beuys, Anselm Kiefer, Louise
-                Bourgeois, Jenny Holzer, Candida Hofer, Bill Viola, Anish
-                Kapoor, etc. The exhibitions provided the foremost rare
-                opportunity for the Korean art audiences to encounter the works
-                of world-renowned contemporary artists without going abroad.
-              </p>
-              <p className='text'>
-                Recognizing the importance of promoting Korean artists abroad,
-                Kukje Gallery participates annually in major art fairs such as
-                Art Basel, Art Basel Miami Beach and The Armory Show. The
-                Gallery first presented the most significant artworks by Korean
-                artists alongside more recognizable works of high caliber by
-                international artists. Consequently, the Korean artists as well
-                as the Gallery have been successfully gaining wide exposure and
-                receiving much attention from the non-Korean collectors. The
-                Gallery has also been promoting Korean artists to non-commercial
-                venues, using its solid network of museum curators and critics
-                worldwide. Many of Korean artists who have been presented by
-                Kukje Gallery have gone on to participate in international
-                biennials and major art museum exhibitions.
-              </p>
-              <p className='text'>
-                Kukje Gallery has an unmatched reputation in Korea for having
-                introduced many of the most critically acclaimed international
-                artists, and for supporting the most promising Korean artists.
-                The Gallery continues to play a key role in developing the
-                domestic art market and promoting Korean artists; as well as
-                drawing the national audience’s attention to the currently
-                international art world.
-              </p>
+              <p className='text'>{userInfo?.about.description}</p>
             </div>
             <div className='item'>
               <div className='cover'>
                 <img
-                  src='https://placeimg.com/540/184/nature?t=1617247698083'
-                  alt=''
+                  src={userInfo?.about.banner}
+                  alt={userInfo?.about.bannerDescription}
                 />
               </div>
-              <p className='gallery-name'>K1 Gallery</p>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconTelegram} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconTwitter} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconEmail} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
+              <p className='gallery-name'>
+                {userInfo?.about.bannerDescription}
+              </p>
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconTelegram} />
+                  <span>{userInfo?.about.telegram}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconTwitter} />
+                  <span>{userInfo?.about.twitter}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconMedium} />
+                  <span>{userInfo?.about.medium}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconFacebook} />
+                  <span>{userInfo?.about.facebook}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconDiscord} />
+                  <span>{userInfo?.about.discord}</span>
+                </StyledAboutItem>
+              ) : null}
+              {userInfo?.about.telegram ? (
+                <StyledAboutItem>
+                  <ReactSVG className='icon' src={IconEmail} />
+                  <span>{userInfo?.about.email}</span>
+                </StyledAboutItem>
+              ) : null}
             </div>
           </StyledAbout>
         </StyledItem>
@@ -736,10 +716,9 @@ const StyledAbout = styled.div`
     font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
-    line-height: 24px;
     padding: 0;
     margin: 40px 0 0 0;
-
+    word-break: break-word;
     &:nth-child(1) {
       margin-top: 0;
     }
@@ -770,7 +749,7 @@ const StyledAbout = styled.div`
   }
 `;
 const StyledAboutItem = styled.div`
-  margin-top: 24px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
 
@@ -792,8 +771,7 @@ const StyledAboutItem = styled.div`
 
   span {
     font-size: 16px;
-    font-family: 'Playfair Display', serif;
-    font-weight: 500;
+    font-weight: 400;
     color: #333333;
     line-height: 19px;
     margin-left: 6px;
