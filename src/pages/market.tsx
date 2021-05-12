@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Checkbox, Radio, Spin, message } from 'antd';
+import { Checkbox, Radio, Spin, message, Select } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import NFT from '../components/NFT';
@@ -9,17 +9,27 @@ import { NFTProps } from '../../next-env';
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
 import { getMediaList, getMediaMetadata } from '../backend/media';
+import { getTags } from '../backend/tag';
+const { Option } = Select;
 
 type PaginationMeta = PaginationResult['meta'];
 type MediaWithMetadata = Media & {
   metadata: MediaMetadata;
 };
 
+enum SortBy {
+  ASCE = 'ASCE',
+  DECE = 'DECE',
+}
+
 const Market: React.FC = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
+  const [fullNFTList, setFullNFTList] = useState<Array<NFTProps>>([]);
+  const [departmentTags, setDepartmentTags] = useState<Array<JSX.Element>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [sort, setSort] = useState<SortBy>(SortBy.DECE);
   const [page, setPage] = useState<number>(1);
   const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
     totalItems: 0,
@@ -66,10 +76,12 @@ const Market: React.FC = () => {
             },
             owner: media.owner,
             creator: media.creator,
+            tags: media.tags,
           };
         });
 
         setNFTList(NFTList.concat(realNftList));
+        setFullNFTList(fullNFTList.concat(realNftList));
         setPaginationMeta(mediaList.meta);
       }
       let _page = page;
@@ -79,15 +91,48 @@ const Market: React.FC = () => {
     }
   };
 
+  // fetch department tags
+  getTags().then(res => {
+    setDepartmentTags(
+      res.data.map(tag => (
+        <Option value={tag.name} key={tag.name}>
+          {tag.name}
+        </Option>
+      ))
+    );
+  });
+
+  const onListDepartment = (checkedList: any[]) => {
+    if (!checkedList.length) {
+      setNFTList(fullNFTList);
+      setHasMore(true);
+    } else {
+      setHasMore(false);
+
+      const subList = fullNFTList.filter(media => {
+        const mediaTags = media.tags.map(tag => tag.name);
+        return checkedList.every(tag => mediaTags.includes(tag));
+      });
+
+      setNFTList(subList);
+    }
+  };
+
+  const onSort = (e: any) => {
+    if (NFTList.length) {
+      NFTList.sort((a, b) =>
+        // @ts-ignore
+        e.target.value === SortBy.ASCE ? a.id - b.id : b.id - a.id
+      );
+    }
+
+    setSort(e.target.value);
+  };
+
   // 处理滚动Load
   const handleInfiniteOnLoad = async () => {
     setLoading(true);
     // 第一页不判断
-    if (page !== 1 && paginationMeta.currentPage >= paginationMeta.totalPages) {
-      setLoading(false);
-      setHasMore(false);
-      return;
-    }
     await fetchNFTData();
     setLoading(false);
   };
@@ -97,32 +142,25 @@ const Market: React.FC = () => {
       <StyledHead>
         <div>
           <h3>DEPARTMENT</h3>
-          <StyledHeadContainer className='checkbox'>
-            <div>
-              <Checkbox disabled>Digital Art</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>Art Installation</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>3D Art</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>Conceptual Art</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>Photograph</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>Graphic Art</Checkbox>
-            </div>
+          <StyledHeadContainer className='filter'>
+            <Select
+              mode='multiple'
+              allowClear
+              size='large'
+              style={{ width: '420px' }}
+              placeholder='Select tag to filter media'
+              onChange={onListDepartment}>
+              {departmentTags}
+            </Select>
           </StyledHeadContainer>
         </div>
         <div>
           <h3>SORT BY</h3>
-          <StyledHeadContainer className='radio'>
-            <Radio disabled>Creat Date - Ascending</Radio>
-            <Radio disabled>Creat Date - Descending</Radio>
+          <StyledHeadContainer className='filter'>
+            <Radio.Group onChange={onSort} value={sort}>
+              <Radio value={SortBy.ASCE}>Creat Date - Ascending</Radio>
+              <Radio value={SortBy.DECE}>Creat Date - Descending</Radio>
+            </Radio.Group>
           </StyledHeadContainer>
         </div>
       </StyledHead>
@@ -194,17 +232,7 @@ const StyledHead = styled.div`
 `;
 const StyledHeadContainer = styled.div`
   margin: 24px 0 0 0;
-  &.checkbox {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-row-gap: 24px;
-    grid-column-gap: 60px;
-    @media screen and (max-width: 768px) {
-      display: flex;
-      flex-wrap: wrap;
-    }
-  }
-  &.radio {
+  &.filter {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     grid-row-gap: 24px;

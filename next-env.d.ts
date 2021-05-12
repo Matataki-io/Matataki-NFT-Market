@@ -1,5 +1,6 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
+import { Tag } from './src/types/Tag';
 
 interface NFTFiedlsStringValueProps {
   stringValue: string;
@@ -29,4 +30,5 @@ export interface NFTProps {
   title?: string;
   owner: any;
   creator: any;
+  tags: Tag[];
 }
