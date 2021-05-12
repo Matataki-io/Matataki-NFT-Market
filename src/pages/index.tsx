@@ -18,7 +18,7 @@ import {
   getMediaList,
 } from '../backend/media';
 import { getArticles } from '../backend/article';
-import { listUsersArtist } from '../backend/user';
+import { listUsersArtist, userTopArtist } from '../backend/user';
 import { User } from '../types/User.types';
 import { Article } from '../types/Article';
 import { getBanners } from '../backend/bannner';
@@ -74,22 +74,14 @@ const Home: React.FC<void> = () => {
     }
   };
   // 获取用户 艺术家数据
-  const fetchUserArtist = async () => {
+  const fetchUserTopArtist = async () => {
     try {
-      const data: Array<User> = await listUsersArtist();
-      console.log('listUsersArtist', data);
-      // 不足四个
-      if (data.length < 4) {
-        let len = 4 - data.length;
-        let list: User = Object.assign({}, data[0]);
-        let arr = data.slice(0);
-        for (let i = 0; i < len; i++) {
-          arr.push(list);
-        }
-        setCreatorsList(arr);
-      } else {
-        setCreatorsList(data.slice(0, 4));
+      const res = await userTopArtist();
+      if (res.status !== 200) {
+        throw new Error('status is not 200');
       }
+      let { data } = res.data;
+      setCreatorsList(data);
     } catch (e) {
       message.error(`数据获取失败${e.toString()}`);
     }
@@ -114,7 +106,8 @@ const Home: React.FC<void> = () => {
   useEffect(() => {
     fetchBanner();
     fetchNFTData();
-    fetchUserArtist();
+    // fetchUserArtist();
+    fetchUserTopArtist();
     fetchArticle();
   }, []);
 
@@ -329,7 +322,7 @@ const StyledAbout = styled.div`
 
 const StyledCreators = styled.div`
   display: grid;
-  grid: repeat(2, 1fr) / repeat(2, 1fr);
+  grid: repeat(1, 1fr) / repeat(2, 1fr);
   grid-row-gap: 48px;
   grid-column-gap: 80px;
   margin-top: 48px;

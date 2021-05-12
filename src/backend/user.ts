@@ -116,3 +116,7 @@ export async function getUserRelation(username: string, relation: string) {
   );
   return data;
 }
+// top artist
+export async function userTopArtist() {
+  return await BACKEND_CLIENT.get<GeneralResponse<User[]>>('/user/topArtist');
+}
