@@ -45,10 +45,17 @@ export async function getMediaMetadata(url: string): Promise<MediaMetadata> {
   return data;
 }
 // 提交 media
-export async function PostMedia({ txHash }: { txHash: string }): Promise<any> {
+export async function PostMedia({
+  txHash,
+  tags,
+}: {
+  txHash: string;
+  tags: string[];
+}): Promise<any> {
   // bad habit to `any` bro
   return await backendClient.post('/media', {
     txHash,
+    tags,
   });
 }
 
