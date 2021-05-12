@@ -25,11 +25,6 @@ const GalleryIndex: React.FC = () => {
           <>
             <StyledHead>
               <StyledHeadTitle>Gallery List</StyledHeadTitle>
-              {me?.data.role === UserRole.SuperAdmin && (
-                <Button type='primary' href={'/gallery/create'}>
-                  Create Gallery
-                </Button>
-              )}
             </StyledHead>
             <StyledGallery>
               {data.items.map((gallery: Gallery, idx: number) => (
