@@ -383,9 +383,13 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       setMediaSubmitLoading(false);
       console.log('res', res);
 
+      // 改这里
+      const tags: string[] = [];
+
       if (res && res.hash) {
         const resMedia = await PostMedia({
           txHash: res.hash,
+          tags,
         });
         console.log('resMedia', resMedia);
         message.success('mint success...');
