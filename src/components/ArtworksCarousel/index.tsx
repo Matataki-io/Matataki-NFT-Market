@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Carousel } from 'antd';
+import { Carousel, Image } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Media } from '../../types/Media.entity';
 
-const ArtworksCarousel: React.FC = () => {
+const ArtworksCarousel: React.FC<{ media?: Media[] }> = ({ media = [] }) => {
   const settings = {
     dots: false,
     autoplay: true,
@@ -16,42 +17,18 @@ const ArtworksCarousel: React.FC = () => {
   };
   return (
     <Carousel {...settings}>
-      <div>
-        <StyledArtworksItem>
-          <div className='cover'>
-            <img
-              src='https://placeimg.com/1280/720/nature?t=1617247698083'
-              alt=''
-            />
+      {media &&
+        media.map(x => (
+          <div key={x.id}>
+            <StyledArtworksItem>
+              <div className='cover'>
+                <Image src={x.tokenURI} alt='cover' />
+              </div>
+              <p className='title'>{x.title}</p>
+              <p className='desc'>{x.description}</p>
+            </StyledArtworksItem>
           </div>
-          <p className='title'>45a Festa de la Verema d&apos;Alella</p>
-          <p className='desc'>© Phoebe Geber Attila 2021 </p>
-        </StyledArtworksItem>
-      </div>
-      <div>
-        <StyledArtworksItem>
-          <div className='cover'>
-            <img
-              src='https://placeimg.com/300/300/nature?t=1617247698083'
-              alt=''
-            />
-          </div>
-          <p className='title'>45a Festa de la Verema d&apos;Alella</p>
-          <p className='desc'>© Phoebe Geber Attila 123123 </p>
-        </StyledArtworksItem>
-      </div>
-      <div>
-        <StyledArtworksItem>
-          <div className='cover'>
-            <img
-              src='https://placeimg.com/500/500/nature?t=1617247698083'
-              alt=''
-            />
-          </div>
-          <p className='title'>45a Festa de la Verema d&apos;Alella</p>
-          <p className='desc'>© Phoebe Geber Attila 123123 </p>
-        </StyledArtworksItem>
-      </div>
+        ))}
     </Carousel>
   );
 };
@@ -63,6 +40,7 @@ const StyledArtworksItem = styled.div`
   text-align: center;
   flex-direction: column;
   /* height: 792px; */
+
   .cover {
     width: 100%;
     max-height: 720px;
@@ -71,11 +49,17 @@ const StyledArtworksItem = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+
     img {
       height: 100%;
       object-fit: contain;
     }
+
+    @media screen and (max-width: 678px) {
+      max-height: 240px;
+    }
   }
+
   .title {
     font-size: 16px;
     font-weight: 500;
@@ -84,6 +68,7 @@ const StyledArtworksItem = styled.div`
     padding: 0;
     margin: 24px 0 8px;
   }
+
   .desc {
     font-size: 14px;
     font-weight: 400;

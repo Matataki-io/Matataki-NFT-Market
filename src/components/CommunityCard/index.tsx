@@ -23,6 +23,9 @@ const CommunityCard: React.FC<{ article: Article }> = ({ article: post }) => {
 const StyledWrapper = styled.div`
   display: flex;
   align-items: stretch;
+  @media screen and (max-width: 678px) {
+    flex-wrap: wrap;
+  }
 `;
 const StyledCover = styled.div`
   flex: 0 0 342px;
@@ -30,6 +33,12 @@ const StyledCover = styled.div`
   height: 192px;
   overflow: hidden;
   margin-right: 24px;
+  @media screen and (max-width: 678px) {
+    width: 100%;
+    height: 160px;
+    flex: 1;
+    margin-right: 0;
+  }
   img {
     width: 100%;
     height: 100%;
@@ -44,17 +53,24 @@ const StyledTime = styled.time`
   font-weight: 400;
   color: #777777;
   line-height: 20px;
+  @media screen and (max-width: 678px) {
+    margin-top: 10px;
+    display: inline-block;
+  }
 `;
 const StyledTitle = styled.p`
   font-size: 24px;
   font-weight: 500;
   color: #333333;
-  line-height: 28px;
+  line-height: 1.2;
   padding: 0;
   margin: 8px 0 24px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  @media screen and (max-width: 678px) {
+    margin: 10px 0 10px;
+  }
 `;
 const Styleddescription = styled.p`
   font-size: 16px;
@@ -68,5 +84,6 @@ const Styleddescription = styled.p`
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word;
 `;
 export default CommunityCard;

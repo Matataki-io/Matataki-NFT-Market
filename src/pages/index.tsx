@@ -9,7 +9,7 @@ import Creators from '../components/Creators';
 import About from '../components/About';
 import NFT from '../components/NFTSimple';
 import { NFTProps } from '../../next-env';
-import Banner from '../components/Banner';
+import BannerComponents from '../components/Banner';
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
 import {
@@ -18,9 +18,11 @@ import {
   getMediaList,
 } from '../backend/media';
 import { getArticles } from '../backend/article';
-import { listUsersArtist } from '../backend/user';
-import { User } from '../types/User.types.d';
-import { Article } from '../types/Article.d';
+import { listUsersArtist, userTopArtist } from '../backend/user';
+import { User } from '../types/User.types';
+import { Article } from '../types/Article';
+import { getBanners } from '../backend/bannner';
+import { Banner } from '../types/banner';
 
 type PaginationMeta = PaginationResult['meta'];
 
@@ -29,10 +31,23 @@ type MediaWithMetadata = Media & {
 };
 
 const Home: React.FC<void> = () => {
+  const [BannerData, setBannerData] = useState<Array<Banner>>([]);
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
   const [creatorsList, setCreatorsList] = useState<Array<User>>([]);
   const [articleList, setArticleList] = useState<Array<Article>>([]);
+
+  // 获取Banner
+  const fetchBanner = async () => {
+    try {
+      const res = await getBanners();
+      if (res.status === 200) {
+        setBannerData(res.data);
+      }
+    } catch (e) {
+      message.error(`数据获取失败${e.toString()}`);
+    }
+  };
 
   // 获取NFT数据
   const fetchNFTData = async () => {
@@ -59,22 +74,14 @@ const Home: React.FC<void> = () => {
     }
   };
   // 获取用户 艺术家数据
-  const fetchUserArtist = async () => {
+  const fetchUserTopArtist = async () => {
     try {
-      const data: Array<User> = await listUsersArtist();
-      console.log('listUsersArtist', data);
-      // 不足四个
-      if (data.length < 4) {
-        let len = 4 - data.length;
-        let list: User = Object.assign({}, data[0]);
-        let arr = data.slice(0);
-        for (let i = 0; i < len; i++) {
-          arr.push(list);
-        }
-        setCreatorsList(arr);
-      } else {
-        setCreatorsList(data.slice(0, 4));
+      const res = await userTopArtist();
+      if (res.status !== 200) {
+        throw new Error('status is not 200');
       }
+      let { data } = res.data;
+      setCreatorsList(data);
     } catch (e) {
       message.error(`数据获取失败${e.toString()}`);
     }
@@ -97,8 +104,10 @@ const Home: React.FC<void> = () => {
   };
 
   useEffect(() => {
+    fetchBanner();
     fetchNFTData();
-    fetchUserArtist();
+    // fetchUserArtist();
+    fetchUserTopArtist();
     fetchArticle();
   }, []);
 
@@ -106,7 +115,7 @@ const Home: React.FC<void> = () => {
 
   return (
     <StyledWrapper>
-      <Banner></Banner>
+      <BannerComponents data={BannerData}></BannerComponents>
       <StyledModule className='nfts'>
         <StyledModuleHead>
           <StyledTitle>
@@ -125,7 +134,7 @@ const Home: React.FC<void> = () => {
             // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
             <Link href={`/p/${i.id}`} key={idx}>
               <a target='_blank'>
-                <NFT {...i}></NFT>
+                <NFT {...i} />
               </a>
             </Link>
           ))}
@@ -145,11 +154,14 @@ const Home: React.FC<void> = () => {
         </StyledModuleHead>
         <StyledCreators>
           {creatorsList.map((i, idx) => (
-            <Creators
-              key={idx}
-              bc={i.avatar}
-              avatar={i.avatar}
-              username={i.nickname || i.username}></Creators>
+            <Link href={`/${i.username}`} key={idx}>
+              <a target='_blank'>
+                <Creators
+                  bc={i.avatar}
+                  avatar={i.avatar}
+                  username={i.nickname || i.username}></Creators>
+              </a>
+            </Link>
           ))}
         </StyledCreators>
       </StyledModule>
@@ -237,6 +249,14 @@ const StyledModule = styled.div`
   &.about {
     margin-top: 100px;
   }
+  @media screen and (max-width: 768px) {
+    &.creators {
+      margin-top: 20px;
+    }
+    &.about {
+      margin-top: 20px;
+    }
+  }
 `;
 
 const StyledModuleHead = styled.div`
@@ -302,7 +322,7 @@ const StyledAbout = styled.div`
 
 const StyledCreators = styled.div`
   display: grid;
-  grid: repeat(2, 1fr) / repeat(2, 1fr);
+  grid: repeat(1, 1fr) / repeat(2, 1fr);
   grid-row-gap: 48px;
   grid-column-gap: 80px;
   margin-top: 48px;
@@ -310,6 +330,11 @@ const StyledCreators = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    grid-row-gap: 20px;
+    grid-column-gap: 0;
+  }
+  & > a {
+    width: 100%;
   }
 `;
 

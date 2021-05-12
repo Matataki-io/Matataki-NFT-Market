@@ -14,12 +14,13 @@ import {
   PostMedia,
   sendToPublisherForPreview,
 } from '../../backend/media';
-import { getGalleryUsers } from '../../backend/gallery';
+import { getGallery } from '../../backend/gallery';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
-import { firstUpperCase } from '../../utils/index';
+import { firstUpperCase } from '../../utils';
 import { storageUploadToIpfsUrl } from '../../backend/storage';
 import {
+  Tag,
   Form,
   Input,
   InputNumber,
@@ -32,10 +33,13 @@ import {
   Popconfirm,
   Select,
   Avatar,
+  AutoComplete,
 } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+
 const { Dragger } = Upload;
 const { Option } = Select;
+
 import {
   mintMediaToken,
   GenerateCreationSignature,
@@ -44,7 +48,10 @@ import { UploadProps } from 'antd/lib/upload/interface';
 import { useLogin } from '../../hooks/useLogin';
 import { useMedia } from '../../hooks/useMedia';
 import { NFTProps } from '../../../next-env';
+import { searchTags, getTags } from '../../backend/tag';
 import { User } from '../../types/User.types';
+import { Tag as TagTypes } from '../../types/Tag';
+
 import {
   NFTTempImage,
   NFTTempVideo,
@@ -55,6 +62,7 @@ import {
 } from './temp';
 import { isEmpty } from 'lodash';
 import { Gallery } from '../../types/Gallery';
+import { OptionsType } from 'rc-select/lib/interface';
 
 // 非负整数
 const creatorShare = /^\d+$/;
@@ -65,6 +73,7 @@ interface mediaDataState extends NFTProps {
 
 interface mediaTypeState {
   [key: string]: string;
+
   image: string;
   video: string;
   audio: string;
@@ -72,9 +81,11 @@ interface mediaTypeState {
   file: string;
   url: string;
 }
+
 interface Props {
   setIsCreate: (value: boolean) => void;
 }
+
 type mediaTypeProps = 'image' | 'video' | 'audio' | 'text' | 'file' | 'url';
 
 const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
@@ -95,17 +106,39 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   }>({ name: '', description: '' }); // 备份 formNameAndDescription 数据
   // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
   const [galleryList, setGalleryList] = useState<Gallery[]>([]);
+  const [tagsList, setTagsList] = useState<TagTypes[]>([]);
   const mediaContract = useMedia();
 
   useEffect(() => {
     const fetch = async () => {
-      // TODO: 后续改为滚动分页 + 下拉查询
-      const data: any = await getGalleryUsers({
-        page: 1,
-        limit: 9999,
-      });
-      console.log('data', data);
-      setGalleryList(data.items);
+      try {
+        // TODO: 后续改为滚动分页 + 下拉查询
+        const data: any = await getGallery({
+          page: 1,
+          limit: 9999,
+        });
+        console.log('data', data);
+        setGalleryList(data.items);
+      } catch (e) {
+        console.log(`e: ${e.toString()}`);
+      }
+    };
+    fetch();
+  }, []);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res: any = await getTags();
+        if (res.status !== 200) {
+          throw new Error('status is not 200');
+        }
+        let { data } = res;
+        console.log('data', res.data);
+        setTagsList(data);
+      } catch (e) {
+        console.log(`e: ${e.toString()}`);
+      }
     };
     fetch();
   }, []);
@@ -347,7 +380,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       contentHash,
       metadataHash,
     } = mediaData.storage['MediaData'];
-    let creatorShare = Number(formPricingAndFees.getFieldsValue().price);
+
+    let { price, tags } = formPricingAndFees.getFieldsValue();
+    let creatorShare = Number(price);
+
     console.log(
       'info',
       tokenURI,
@@ -376,13 +412,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       setMediaSubmitLoading(false);
       console.log('res', res);
 
-      // 改这里
-      const tags: string[] = [];
+      message.success('正在处理数据请不要离开页面...');
+      await res.wait();
 
       if (res && res.hash) {
+        message.success('正在创建...');
         const resMedia = await PostMedia({
           txHash: res.hash,
-          tags,
+          tags: tags,
         });
         console.log('resMedia', resMedia);
         message.success('mint success...');
@@ -398,9 +435,13 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.error(e);
     }
   }, [signer, mediaData, formPricingAndFees]);
+
   // mint到画廊
   const mintTokenToGallery = useCallback(async () => {
-    if (!isSignerReady(signer)) return;
+    if (!isSignerReady(signer)) {
+      console.log('singer is not ready', signer);
+      return;
+    }
 
     let {
       tokenURI,
@@ -408,7 +449,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       contentHash,
       metadataHash,
     } = mediaData.storage['MediaData'];
-    let { price: creatorShare, gallery } = formPricingAndFees.getFieldsValue();
+    let {
+      price,
+      tags_,
+      gallery: galleryId,
+    } = formPricingAndFees.getFieldsValue();
+    let creatorShare = Number(price);
+    let tags = tags_ || [];
+
     console.log(
       'info',
       tokenURI,
@@ -416,31 +464,37 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       contentHash,
       metadataHash,
       creatorShare,
-      gallery
+      galleryId
     );
 
-    const galleryUser = galleryList.find(u => u.owner.address === gallery);
-    if (!galleryUser) throw new Error('Unable to find the gallery user');
-    const nonce = await getNonceByPublisherId(galleryUser.id);
+    const nonce = await getNonceByPublisherId(galleryId);
+
+    const gallery = galleryList.find(g => g.id === galleryId);
+    if (!gallery) {
+      console.log('gallery', gallery);
+      message.error('no such gallery');
+      return;
+    }
 
     const res = await GenerateCreationSignature(
       tokenURI,
       metadataURI,
       contentHash,
       metadataHash,
-      gallery,
+      gallery.owner.address,
       nonce,
-      Number(creatorShare),
+      creatorShare,
       signer
     );
+    message.success('正在处理数据请不要离开页面...');
     console.log('res', res);
     if (!res) {
       message.error('not res');
       return;
     }
-    // 改这里
-    const tags: string[] = [];
-    await sendToPublisherForPreview(galleryUser.id, {
+
+    message.success('正在创建...');
+    await sendToPublisherForPreview(galleryId, {
       nonce,
       title: nameAndDescription.name,
       description: nameAndDescription.description,
@@ -465,7 +519,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   // price填写完成
   const onFinishPrice = async (values: any) => {
     console.log('Success:', values);
-    if (isEmpty(values.gallery)) {
+    if (!values.gallery) {
       mintToken();
     } else {
       mintTokenToGallery();
@@ -479,12 +533,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   // upload media back pop confirm
   // upload media visible
   const [visiblePop, setVisiblePop] = useState(false);
+
   // upload media back pop confirm
   function popconfirmFn() {
     setVisiblePop(false);
     setMediaData({} as any);
     setStep(0);
   }
+
   // 是否显示 pop confirm
   const handleVisibleChangeUploadMedia = (visible: boolean) => {
     console.log(',visible', visible);
@@ -597,7 +653,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                     type: 'url',
                     storage: {},
                   });
-                }}></input>
+                }}
+              />
             </StyledMultiiMediaInputContainer>
           )}
         </StyledMultiiMediaInput>
@@ -684,19 +741,30 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                 />
               </Form.Item>
               <Form.Item label='Gallery' name='gallery'>
-                <Select placeholder='Select a gallery' size='large'>
+                <Select placeholder='Select a gallery'>
                   {galleryList.map((i, idx: number) => (
-                    <Option
-                      key={`${idx}-${i.owner.address}`}
-                      value={i.owner.address}>
+                    <Option key={`${idx}-${i.owner.address}`} value={i.id}>
                       <span>
                         <Avatar
                           size={20}
                           icon={<UserOutlined />}
                           src={i.owner.avatar}
                         />{' '}
-                        <span>{i.owner.nickname || i.owner.username}</span>
+                        <span>{i.name}</span>
                       </span>
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item label='Tags' name='tags'>
+                <Select
+                  mode='multiple'
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder='Please select'>
+                  {tagsList.map((i: TagTypes, idx: number) => (
+                    <Option key={idx} value={i.name}>
+                      {i.name}
                     </Option>
                   ))}
                 </Select>
@@ -849,6 +917,7 @@ const StyledMultiiMediaInputHeadTab = styled.h5<{ actions?: boolean }>`
   font-weight: 400;
   cursor: pointer;
   color: rgba(0, 0, 0, 0.7);
+
   &::after {
     content: '';
     position: absolute;
@@ -858,17 +927,20 @@ const StyledMultiiMediaInputHeadTab = styled.h5<{ actions?: boolean }>`
     right: 0px;
     bottom: -17px;
   }
+
   ${props =>
     props.actions &&
     css`
       color: rgb(0, 0, 0);
       font-weight: 600;
+
       &::after {
         background: rgb(0, 0, 0);
       }
     `}
   &:hover {
     color: rgb(0, 0, 0);
+
     &::after {
       background: rgb(0, 0, 0);
     }
@@ -885,6 +957,7 @@ const StyledMultiiMediaInputWrapper = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
+
   p {
     text-align: center;
     white-space: pre-wrap;
@@ -895,14 +968,17 @@ const StyledMultiiMediaInputWrapper = styled.div`
     font-weight: 400;
     margin-top: 0px;
   }
+
   .upload {
     border: 0;
     background: transparent;
   }
+
   & > span {
     width: 100%;
     height: 100%;
   }
+
   .ant-upload-list {
     display: none;
   }
@@ -914,6 +990,7 @@ const StyledMultiiMediaInputContainer = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   padding: 15px;
+
   .label {
     font-size: 12px;
     font-weight: 400;
@@ -923,6 +1000,7 @@ const StyledMultiiMediaInputContainer = styled.div`
     margin-bottom: 10px;
     display: block;
   }
+
   .input {
     box-sizing: border-box;
     padding: 15px;
@@ -957,6 +1035,7 @@ const StyledMultiiMediaFormItem = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+
   &.input {
     label {
       font-size: 17px;
@@ -989,6 +1068,7 @@ const StyledMultiiMediaFormItem = styled.div`
     align-items: center;
     justify-content: space-between;
   }
+
   & > div {
     width: 100%;
   }
@@ -1004,13 +1084,16 @@ const StyledMultiiMediaFormItemText = styled.p`
 const StyledForm = styled(Form)`
   width: 100%;
   margin-top: 20px;
+
   .ant-form-item {
     margin-bottom: 40px;
     border-bottom: 1px solid #d9d9d9;
+
     .ant-input,
     .ant-input-affix-wrapper {
       border: none;
     }
+
     .ant-input:focus,
     .ant-input-focused,
     .ant-input-affix-wrapper:focus,

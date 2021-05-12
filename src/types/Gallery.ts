@@ -1,5 +1,6 @@
 import { User } from './User.types';
 import { GalleryJoinRequest } from './GalleryJoinRequest';
+import { Media } from './Media.entity';
 import type { About } from './About';
 
 export type Gallery = {
@@ -9,6 +10,7 @@ export type Gallery = {
   intro: string;
   artists: User[];
   owner: User;
+  media: Media[];
   joinRequests: GalleryJoinRequest;
 
   about: About;

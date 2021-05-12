@@ -6,6 +6,8 @@ import GalleryCard from '../../components/GalleryCard';
 import type { Gallery } from '../../types/Gallery';
 import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
+import { Button, Spin } from 'antd';
+import { UserRole } from '../../constant';
 
 const GalleryIndex: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -14,23 +16,33 @@ const GalleryIndex: React.FC = () => {
     `/gallery?page=${page}&limit=${limit}`,
     backendSWRFetcher
   );
-
-  if (!data) return <div>Loading</div>;
+  const { data: me, error: meError } = useSWR('/user/me', backendSWRFetcher);
 
   return (
     <StyledWrapper>
-      <StyledHead>
-        <StyledHeadTitle>Gallery List</StyledHeadTitle>
-      </StyledHead>
-      <StyledGallery>
-        {data.items.map((gallery: Gallery, idx: number) => (
-          <Link key={`${gallery.id}`} href={`/gallery/${gallery.id}`}>
-            <a>
-              <GalleryCard {...gallery} />
-            </a>
-          </Link>
-        ))}
-      </StyledGallery>
+      <Spin size={'large'} spinning={!data}>
+        {data && (
+          <>
+            <StyledHead>
+              <StyledHeadTitle>Gallery List</StyledHeadTitle>
+              {me?.data.role === UserRole.SuperAdmin && (
+                <Button type='primary' href={'/gallery/create'}>
+                  Create Gallery
+                </Button>
+              )}
+            </StyledHead>
+            <StyledGallery>
+              {data.items.map((gallery: Gallery, idx: number) => (
+                <Link key={`${gallery.id}`} href={`/gallery/${gallery.id}`}>
+                  <a>
+                    <GalleryCard {...gallery} />
+                  </a>
+                </Link>
+              ))}
+            </StyledGallery>
+          </>
+        )}
+      </Spin>
     </StyledWrapper>
   );
 };
@@ -42,7 +54,7 @@ const StyledWrapper = styled.div`
   padding: 48px 20px 256px;
   box-sizing: border-box;
 
-  margin: 0px auto;
+  margin: 0 auto;
   width: 100%;
 
   @media screen and (max-width: 768px) {
@@ -56,9 +68,12 @@ const StyledHeadTitle = styled.h2`
   font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
-  line-height: 58px;
+  line-height: 1.2;
   padding: 0;
   margin: 0;
+  @media screen and (max-width: 678px) {
+    font-size: 30px;
+  }
 `;
 
 const StyledGallery = styled.div`

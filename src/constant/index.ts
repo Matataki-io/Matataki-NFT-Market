@@ -62,7 +62,6 @@ export const BACKEND_CLIENT = axios.create({
 export enum UserRole {
   Collector = 'COLLECTOR',
   Artist = 'ARTIST',
-  Gallery = 'GALLERY',
   SuperAdmin = 'SUPER_ADMIN',
 }
 

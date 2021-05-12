@@ -37,7 +37,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   const wallet = useWallet();
   const router = useRouter();
 
-  const shortedccount = useMemo(() => {
+  const shortedAccount = useMemo(() => {
     if (wallet.status !== 'connected') return 'Not Connected';
     return wallet.account ? shortedWalletAccount(wallet.account) : '';
   }, [wallet]);
@@ -173,7 +173,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                 </StyledHeaderUserdorpdownContainer>
               </UserDropdown>
             ) : (
-              <Button color='gray'>{shortedccount}</Button>
+              <Button color='gray'>{shortedAccount}</Button>
             )}
           </>
         ) : (
@@ -214,7 +214,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               <a href='https://matataki.io/'>
                 <Button className='hover-underline'>Learn</Button>
               </a>
-              <Button color='gray'>{shortedccount}</Button>
+              <Button color='gray'>{shortedAccount}</Button>
             </div>
           </Fragment>
         ) : (
