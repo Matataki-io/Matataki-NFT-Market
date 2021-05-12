@@ -29,4 +29,8 @@ export interface NFTProps {
   title?: string;
   owner: any;
   creator: any;
+  currentAsk?: {
+    currency: string;
+    amount: BigNumber;
+  };
 }

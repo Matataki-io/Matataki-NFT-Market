@@ -22,9 +22,9 @@ export const getDecimalOf = (address: string) => {
 
 export const getSymbolOf = (address: string) => {
   const list = currentSupportedTokens;
-  if (!list || !address) return 'Unknown';
+  if (!list || !address) return 'Bad Token';
   const [addresses, symbols] = [Object.values(list), Object.keys(list)];
   const checkSumed = addresses.map(addr => utils.getAddress(addr));
   const idx = checkSumed.indexOf(utils.getAddress(address));
-  return idx > -1 ? symbols[idx] : 'Unknown';
+  return idx > -1 ? symbols[idx] : 'Bad Token';
 };
