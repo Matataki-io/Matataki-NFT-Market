@@ -6,10 +6,14 @@ import { ZERO_ADDRESS } from '../constant';
 import { useMarket } from './useMarket';
 import { useMulticall } from './useMulticall';
 
-type MarketAsk = {
+export type MarketAsk = {
   currency: string;
   amount: BigNumber;
 };
+
+export function isAskExist(currentAsk?: MarketAsk): currentAsk is MarketAsk {
+  return Boolean(currentAsk) && currentAsk?.currency !== ZERO_ADDRESS;
+}
 
 type MarketPriceBook = Record<string, MarketAsk>;
 
@@ -20,9 +24,6 @@ export function useMarketPrices(ids: BigNumber[]) {
   const { aggerateQuery } = useMulticall();
 
   const [priceBook, updatePriceBook] = useState<MarketPriceBook>({});
-
-  const isAskExist = (currentAsk: MarketAsk) =>
-    currentAsk.currency !== ZERO_ADDRESS;
 
   const getDetailOf = useCallback(async () => {
     const queries = ids.map(id => ({
@@ -52,5 +53,5 @@ export function useMarketPrices(ids: BigNumber[]) {
     return () => clearInterval(refreshInterval);
   }, [JSON.stringify(ids), getDetailOf]);
 
-  return { priceBook, isAskExist, isLoading };
+  return { priceBook, isLoading };
 }
