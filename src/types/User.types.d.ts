@@ -43,7 +43,20 @@ export interface User {
   bio: string;
   createdMedia: number[];
   ownedMedia: number[];
+  /**
+   * 是否为推荐的艺术家 (Featured artist)
+   * 为 true 时会显示在艺术家字母排序列表里
+   */
   isRecommendArtist: boolean;
+  /**
+   * 是否为艺术家页面 banner 推荐的艺术家
+   */
+  isFeaturedInBanner: boolean;
+
+  /**
+   * 是否为首页里推荐的艺术家
+   */
+  isTopArtist: boolean;
   verified: boolean;
   role: UserRole;
   waitingForScreen: MediaToScreen[];
