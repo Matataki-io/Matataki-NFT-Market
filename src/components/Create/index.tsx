@@ -20,6 +20,7 @@ import NFT from '../NFTCreate';
 import { firstUpperCase } from '../../utils';
 import { storageUploadToIpfsUrl } from '../../backend/storage';
 import {
+  Tag,
   Form,
   Input,
   InputNumber,
@@ -32,6 +33,7 @@ import {
   Popconfirm,
   Select,
   Avatar,
+  AutoComplete,
 } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 const { Dragger } = Upload;
@@ -44,6 +46,7 @@ import { UploadProps } from 'antd/lib/upload/interface';
 import { useLogin } from '../../hooks/useLogin';
 import { useMedia } from '../../hooks/useMedia';
 import { NFTProps } from '../../../next-env';
+import { searchTags } from '../../backend/tag';
 import { User } from '../../types/User.types';
 import {
   NFTTempImage,
@@ -55,6 +58,7 @@ import {
 } from './temp';
 import { isEmpty } from 'lodash';
 import { Gallery } from '../../types/Gallery';
+import { OptionsType } from 'rc-select/lib/interface';
 
 // 非负整数
 const creatorShare = /^\d+$/;
@@ -95,6 +99,9 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   }>({ name: '', description: '' }); // 备份 formNameAndDescription 数据
   // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
   const [galleryList, setGalleryList] = useState<Gallery[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagsOptions, setTagsOptions] = useState<OptionsType>([]);
+  // const [tagsInput, setTagsInput] = useState<string>('');
   const mediaContract = useMedia();
 
   useEffect(() => {
@@ -394,6 +401,55 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.error(e);
     }
   }, [signer, mediaData, formPricingAndFees]);
+
+  // get tags
+  const handleRemoveTag = (removedTag: string) => {
+    setTags(tags.filter(tag => tag !== removedTag));
+  };
+
+  const tagsInputOnSelect = async (tag: string) => {
+    if (tag && !tags.includes(tag)) {
+      await setTags([...tags, tag]);
+    }
+    console.log(tags);
+  };
+
+  // TODO: MUST solve this bug:
+  // whenever any function like this is modifying `tagsOptions` with `setTagsOptions`
+  // it clears the input value, or blur from the element if `value` attribute is set
+  const tagsInputOnSearch = async (name: string) => {
+    if (name) {
+      setTagsOptions([
+        ...(await searchTags(name)).data.map(tag => ({
+          value: tag.name,
+        })),
+        { value: name },
+      ]);
+    }
+  };
+
+  // const tagsInputOnChange = (name: string) => {
+  //   setTagsInput(name);
+  // }
+
+  const tagsDisplay = (tag: string) => {
+    const tagElem = (
+      <Tag
+        closable
+        onClose={e => {
+          e.preventDefault();
+          handleRemoveTag(tag);
+        }}>
+        {tag}
+      </Tag>
+    );
+    return (
+      <span key={tag} style={{ display: 'inline-block' }}>
+        {tagElem}
+      </span>
+    );
+  };
+
   // mint到画廊
   const mintTokenToGallery = useCallback(async () => {
     if (!isSignerReady(signer)) return;
@@ -434,8 +490,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.error('not res');
       return;
     }
-    // 改这里
-    const tags: string[] = [];
+
     await sendToPublisherForPreview(galleryUser.id, {
       nonce,
       title: nameAndDescription.name,
@@ -697,6 +752,20 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                     </Option>
                   ))}
                 </Select>
+              </Form.Item>
+              <Form.Item label='Tags'>
+                {Boolean(tags.length) && (
+                  <div style={{ marginBottom: 16 }}>
+                    {tags.map(tagsDisplay)}
+                  </div>
+                )}
+
+                <AutoComplete
+                  options={tagsOptions}
+                  onSelect={tagsInputOnSelect}
+                  onSearch={tagsInputOnSearch}
+                  placeholder='Input and search for tags'
+                />
               </Form.Item>
             </Form.Item>
           </StyledMultiiMediaFormItem>
