@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import {
   Avatar,
@@ -14,7 +14,13 @@ import {
 import { UploadProps } from 'antd/lib/upload/interface';
 import { useRouter } from 'next/router';
 import { useWallet } from 'use-wallet';
-import { UserOutlined } from '@ant-design/icons';
+import {
+  UserOutlined,
+  PlusOutlined,
+  MinusCircleOutlined,
+  CheckCircleOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
 import { isEmpty } from 'lodash';
 
 import { updateUser } from '../../../backend/user';
@@ -35,16 +41,19 @@ interface UserProps {
   bio?: string;
   username?: string;
   avatar?: string;
+  about?: any;
 }
 
 const Register: React.FC<void> = () => {
   const [formProfile] = Form.useForm();
+
   const wallet = useWallet();
   const router = useRouter();
   const { username } = router.query;
   const [avatarUrl, setAvatarUrl] = useState<string>();
   const { isRegistered, userDataByWallet, register } = useLogin();
   const [tagsList, setTagsList] = useState<Array<Tag>>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isRegistered) {
@@ -68,6 +77,16 @@ const Register: React.FC<void> = () => {
         telegram: userDataByWallet?.telegram,
         twitter: userDataByWallet?.twitter,
         tags: userDataByWallet?.tags.map(i => i.name),
+
+        aboutDescription: userDataByWallet?.about.description,
+        aboutBanner: userDataByWallet?.about.banner,
+        aboutBannerDescription: userDataByWallet?.about.bannerDescription,
+        aboutTelegram: userDataByWallet?.about.telegram,
+        aboutTwitter: userDataByWallet?.about.twitter,
+        aboutMedium: userDataByWallet?.about.medium,
+        aboutFacebook: userDataByWallet?.about.facebook,
+        aboutDiscord: userDataByWallet?.about.discord,
+        aboutEmail: userDataByWallet?.about.email,
       });
       setAvatarUrl(userDataByWallet?.avatar || '');
     }
@@ -100,6 +119,17 @@ const Register: React.FC<void> = () => {
       telegram,
       twitter,
       tags,
+      // ---- about ----
+      aboutDescription,
+      aboutBanner,
+      aboutBannerDescription,
+      aboutEmail,
+      aboutTelegram,
+      aboutTwitter,
+      aboutMedium,
+      aboutFacebook,
+      aboutDiscord,
+      // ---- about ----
     } = values;
 
     let profile: UserProps = diffData(
@@ -128,41 +158,85 @@ const Register: React.FC<void> = () => {
         tags: userDataByWallet?.tags.map(i => i.name),
       } as UserProps
     );
+
+    console.log('profile', profile);
+
+    profile.about = {
+      description: aboutDescription,
+      banner: aboutBanner,
+      bannerDescription: aboutBannerDescription,
+      telegram: aboutTelegram,
+      twitter: aboutTwitter,
+      medium: aboutMedium,
+      facebook: aboutFacebook,
+      discord: aboutDiscord,
+      email: aboutEmail,
+    };
+
     if (isEmpty(profile)) {
       message.info('没有修改');
       return;
     }
-    const res = await updateUser(Number(userDataByWallet?.id), profile);
-    console.log('res', res);
-    if (res.data.code === 200) {
-      message.success('更新成功');
-      // router.push(`/${username}`);
-    } else {
-      message.error('更新失败');
+    try {
+      const res = await updateUser(Number(userDataByWallet?.id), profile);
+      console.log('res', res);
+      if (res.data.code === 200) {
+        message.success('更新成功');
+        // router.push(`/${username}`);
+      } else {
+        throw new Error('更新失败');
+      }
+    } catch (e) {
+      message.error(e.toString());
     }
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+
+  // 头像上传
+  const onChangeAvatar = (info: any) => {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+      setLoading(true);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+      let url = info.file.response.data.url;
+      setAvatarUrl(url);
+      setLoading(false);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+      setLoading(false);
+    }
+  };
+  const onChangeBanner = (info: any) => {
+    console.log('info', info);
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+      setLoading(true);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+      const { url } = info.file.response.data;
+      const values = formProfile.getFieldsValue();
+      values.aboutBanner = url;
+
+      formProfile.setFieldsValue(values);
+      setLoading(false);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+      setLoading(false);
+    }
+  };
+
   const props: UploadProps = {
     accept: 'image/jpeg, image/png',
     name: 'file',
     action: storageUploadFile,
     method: 'PUT',
     maxCount: 1,
-    onChange(info: any) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-        let url = info.file.response.data.url;
-        setAvatarUrl(url);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
     beforeUpload(file: File) {
       message.info('Uploading...');
 
@@ -171,13 +245,29 @@ const Register: React.FC<void> = () => {
       if (!isJpgOrPng) {
         message.error('You can only upload JPG/PNG file!');
       }
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
+      const isLtMB = file.size / 1024 / 1024 < 8;
+      if (!isLtMB) {
         message.error('Image must smaller than 2MB!');
       }
-      return isJpgOrPng && isLt2M;
+      return isJpgOrPng && isLtMB;
     },
   };
+
+  const uploadButton = (
+    <div>
+      {loading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>Upload Cover</div>
+    </div>
+  );
+
+  const formImage = useCallback(() => {
+    const values = formProfile.getFieldsValue();
+    if (values.aboutBanner) {
+      return values.aboutBanner;
+    }
+    return false;
+  }, [formProfile]);
+
   return (
     <StyledWrapper>
       <StyledTitle>
@@ -191,7 +281,7 @@ const Register: React.FC<void> = () => {
           : ''}
       </StyledTitle>
       <StyledAvatarItem>
-        <Upload {...props} className='upload'>
+        <Upload onChange={onChangeAvatar} {...props} className='upload'>
           <Avatar size={125} icon={<UserOutlined />} src={avatarUrl}></Avatar>
         </Upload>
       </StyledAvatarItem>
@@ -236,7 +326,7 @@ const Register: React.FC<void> = () => {
         </Form.Item>
         {userDataByWallet?.role === 'ARTIST' ? (
           <>
-            <Form.Item
+            {/* <Form.Item
               label=''
               name=''
               rules={[{ required: false, message: 'Please input your ..!' }]}>
@@ -245,8 +335,8 @@ const Register: React.FC<void> = () => {
                 rows={6}
                 placeholder='Describe yourself completely…'
               />
-            </Form.Item>
-            <StyledPhotoWrapper>
+            </Form.Item> */}
+            {/* <StyledPhotoWrapper>
               <StyledFormTitle>Personal Photo</StyledFormTitle>
               <StyledFormPhoto>
                 <img
@@ -254,7 +344,7 @@ const Register: React.FC<void> = () => {
                   alt='Personal Photo'
                 />
               </StyledFormPhoto>
-            </StyledPhotoWrapper>
+            </StyledPhotoWrapper> */}
           </>
         ) : null}
         <StyledFormTitle>Contact</StyledFormTitle>
@@ -316,6 +406,93 @@ const Register: React.FC<void> = () => {
         </Form.Item>
         {userDataByWallet?.role === UserRole.Artist ? (
           <>
+            <StyledFormTitle>About</StyledFormTitle>
+            <Form.Item
+              label=''
+              name='aboutDescription'
+              rules={[
+                { required: false, message: 'Please input description!' },
+              ]}>
+              <Input.TextArea
+                placeholder='Enter description'
+                rows={6}
+                maxLength={5000}
+                showCount
+              />
+            </Form.Item>
+            <StyledFormAboutBannerUpload
+              {...props}
+              onChange={onChangeBanner}
+              listType={'picture-card'}>
+              {formImage() ? (
+                <img className='banner' src={formImage()} />
+              ) : (
+                uploadButton
+              )}
+            </StyledFormAboutBannerUpload>
+            <Form.Item
+              label=''
+              name='aboutBanner'
+              rules={[{ required: false, message: 'Please input banner!' }]}>
+              <Input placeholder='Enter banner' />
+            </Form.Item>
+            <Form.Item
+              label=''
+              name='aboutBannerDescription'
+              rules={[
+                {
+                  required: false,
+                  message: 'Please input banner description!',
+                },
+              ]}>
+              <Input placeholder='Enter banner description' />
+            </Form.Item>
+            <Form.Item
+              label=''
+              name='aboutEmail'
+              rules={[
+                {
+                  required: false,
+                  type: 'email',
+                  message: 'Please input email!',
+                },
+              ]}>
+              <Input placeholder='Enter email' />
+            </Form.Item>
+            <Form.Item
+              label=''
+              name='aboutTelegram'
+              rules={[{ required: false, message: 'Please input telegram!' }]}>
+              <Input placeholder='Enter telegram' />
+            </Form.Item>
+            <Form.Item
+              label=''
+              name='aboutTwitter'
+              rules={[{ required: false, message: 'Please input twitter!' }]}>
+              <Input placeholder='Enter twitter' />
+            </Form.Item>
+            <Form.Item
+              label=''
+              name='aboutMedium'
+              rules={[{ required: false, message: 'Please input medium!' }]}>
+              <Input placeholder='Enter medium' />
+            </Form.Item>
+            <Form.Item
+              label=''
+              name='aboutFacebook'
+              rules={[{ required: false, message: 'Please input facebook!' }]}>
+              <Input placeholder='Enter facebook' />
+            </Form.Item>
+            <Form.Item
+              label=''
+              name='aboutDiscord'
+              rules={[{ required: false, message: 'Please input discord!' }]}>
+              <Input placeholder='Enter discord' />
+            </Form.Item>
+          </>
+        ) : null}
+        {/* {userDataByWallet?.role === UserRole.Artist ? (
+          <>
             <StyledFormTitle>Contracted Artists</StyledFormTitle>
             <Form.Item
               label=''
@@ -330,7 +507,7 @@ const Register: React.FC<void> = () => {
               <Input disabled placeholder='Enter username' />
             </Form.Item>
           </>
-        ) : null}
+        ) : null} */}
         <StyledItemWrapper>
           <StyledButton className='black' htmlType='submit'>
             SAVE
@@ -448,6 +625,22 @@ const StyledFormPhoto = styled.div`
   height: 270px;
   overflow: hidden;
   img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const StyledFormAboutBannerUpload = styled(Upload)`
+  .ant-upload {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+  }
+  .ant-upload-list-picture-card-container {
+    display: none;
+  }
+  .banner {
     width: 100%;
     height: 100%;
     object-fit: cover;
