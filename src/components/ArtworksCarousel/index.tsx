@@ -4,7 +4,7 @@ import { Carousel, Image, Spin } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Media } from '../../types/Media.entity';
 
-const ArtworksCarousel: React.FC<{ media?: Media[] }> = ({ media }) => {
+const ArtworksCarousel: React.FC<{ media?: Media[] }> = ({ media = [] }) => {
   const settings = {
     dots: false,
     autoplay: true,
@@ -17,20 +17,18 @@ const ArtworksCarousel: React.FC<{ media?: Media[] }> = ({ media }) => {
   };
   return (
     <Carousel {...settings}>
-      <Spin size='large' spinning={!media}>
-        {media &&
-          media.map(x => (
-            <div key={x.id}>
-              <StyledArtworksItem>
-                <div className='cover'>
-                  <Image src={x.tokenURI} alt='cover' />
-                </div>
-                <p className='title'>{x.title}</p>
-                <p className='desc'>{x.description}</p>
-              </StyledArtworksItem>
-            </div>
-          ))}
-      </Spin>
+      {media &&
+        media.map(x => (
+          <div key={x.id}>
+            <StyledArtworksItem>
+              <div className='cover'>
+                <Image src={x.tokenURI} alt='cover' />
+              </div>
+              <p className='title'>{x.title}</p>
+              <p className='desc'>{x.description}</p>
+            </StyledArtworksItem>
+          </div>
+        ))}
     </Carousel>
   );
 };

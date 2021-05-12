@@ -477,7 +477,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         </StyledHeadRight>
       </StyledHead>
       <StyledLine />
-      {!isEmpty(ownedGalleries?.ownedGalleries) && <GalleryContainer />}
+      {/*{!isEmpty(ownedGalleries?.ownedGalleries) && <GalleryContainer />}*/}
       {userInfo?.role === 'COLLECTOR' ? (
         collectionContainner()
       ) : userInfo?.role === 'ARTIST' ? (
