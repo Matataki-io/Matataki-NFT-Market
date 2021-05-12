@@ -8,6 +8,7 @@ import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
 import { Button, Spin } from 'antd';
 import { UserRole } from '../../constant';
+import { Card, Text } from '@geist-ui/react';
 
 const GalleryIndex: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -26,6 +27,20 @@ const GalleryIndex: React.FC = () => {
             <StyledHead>
               <StyledHeadTitle>Gallery List</StyledHeadTitle>
             </StyledHead>
+            {me?.data.role === UserRole.SuperAdmin && (
+              <Card>
+                <Text h1>超级管理员面板</Text>
+                <Link href='/gallery/create'>
+                  <Button color='dark'>创建画廊</Button>
+                </Link>
+                <Link
+                  href={
+                    process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION + '/gallery'
+                  }>
+                  <Button>管理画廊</Button>
+                </Link>
+              </Card>
+            )}
             <StyledGallery>
               {data.items.map((gallery: Gallery, idx: number) => (
                 <Link key={`${gallery.id}`} href={`/gallery/${gallery.id}`}>
