@@ -57,6 +57,9 @@ export interface User {
    * 是否为首页里推荐的艺术家
    */
   isTopArtist: boolean;
+
+  about: About;
+
   verified: boolean;
   role: UserRole;
   waitingForScreen: MediaToScreen[];
