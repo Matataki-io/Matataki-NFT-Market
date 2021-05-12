@@ -120,3 +120,15 @@ export async function getUserRelation(username: string, relation: string) {
 export async function userTopArtist() {
   return await BACKEND_CLIENT.get<GeneralResponse<User[]>>('/user/topArtist');
 }
+// artist banner
+export async function userFeaturedArtistInBanner() {
+  return await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
+    '/user/featuredArtistInBanner'
+  );
+}
+// artist
+export async function userFeaturedArtist() {
+  return await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
+    '/user/featuredArtist'
+  );
+}

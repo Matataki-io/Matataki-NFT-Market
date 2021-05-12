@@ -3,34 +3,51 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { Carousel, message } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { listUsersArtist } from '../backend/user';
+import {
+  listUsersArtist,
+  userFeaturedArtistInBanner,
+  userFeaturedArtist,
+} from '../backend/user';
 import { User } from '../types/User.types.d';
 import { isEmpty } from 'lodash';
 
 const Artist: React.FC = () => {
-  const [artistList, setArtistList] = useState<Array<User>>([]);
+  const [artistList, setArtistList] = useState<User[][]>([]);
   const [artistWordList, setArtistWordList] = useState<Array<User>>([]);
 
-  // 获取用户 艺术家数据
-  const fetchUserArtist = async () => {
+  const userFeaturedArtistInBannerFn = async () => {
     try {
-      const data: Array<User> = await listUsersArtist();
-      console.log('listUsersArtist', data);
-      setArtistWordList(data);
-
-      // 不足四个
-      if (data.length < 4) {
-        let len = 4 - data.length;
-        let list: User = Object.assign({}, data[0]);
-        let arr = data.slice(0);
-        for (let i = 0; i < len; i++) {
-          arr.push(list);
-        }
-        console.log('arr', arr);
-        setArtistList(arr);
-      } else {
-        setArtistList(data.slice(0, 4));
+      const res = await userFeaturedArtistInBanner();
+      if (res.status !== 200) {
+        throw new Error('status is not 200');
       }
+      let { data } = res.data;
+      // console.log('userFeaturedArtistInBanner', data);
+
+      let list = [];
+      let len = data.length;
+      let n = 4;
+      let lineNum = len % n === 0 ? len / n : Math.floor(len / n + 1);
+
+      for (let i = 0; i < lineNum; i++) {
+        let temp = data.slice(i * n, i * n + n);
+        list.push(temp);
+      }
+
+      setArtistList(list);
+    } catch (e) {
+      message.error(`数据获取失败${e.toString()}`);
+    }
+  };
+  const userFeaturedArtistFn = async () => {
+    try {
+      const res = await userFeaturedArtist();
+      if (res.status !== 200) {
+        throw new Error('status is not 200');
+      }
+      let { data } = res.data;
+      // console.log('userFeaturedArtist', data);
+      setArtistWordList(data);
     } catch (e) {
       message.error(`数据获取失败${e.toString()}`);
     }
@@ -66,7 +83,8 @@ const Artist: React.FC = () => {
   }, [artistWordList]);
 
   useEffect(() => {
-    fetchUserArtist();
+    userFeaturedArtistInBannerFn();
+    userFeaturedArtistFn();
   }, []);
 
   const settings = {
@@ -85,32 +103,21 @@ const Artist: React.FC = () => {
       </StyledHead>
       <StyledBanner>
         <Carousel {...settings}>
-          <div>
-            <StyledAbout>
-              {artistList.map((i, idx) => (
-                <Link key={idx} href={`/${i.username}`}>
-                  <a className='box' target='_blank'>
-                    {i.avatar ? (
-                      <img src={i.avatar} alt={i.nickname || i.username} />
-                    ) : null}
-                  </a>
-                </Link>
-              ))}
-            </StyledAbout>
-          </div>
-          <div>
-            <StyledAbout>
-              {artistList.map((i, idx) => (
-                <Link key={idx} href={`/${i.username}`}>
-                  <a className='box' target='_blank'>
-                    {i.avatar ? (
-                      <img src={i.avatar} alt={i.nickname || i.username} />
-                    ) : null}
-                  </a>
-                </Link>
-              ))}
-            </StyledAbout>
-          </div>
+          {artistList.map((i: User[], idx: number) => (
+            <div key={idx}>
+              <StyledAbout>
+                {i.map((j: User, idxItem: number) => (
+                  <Link key={idxItem} href={`/${j.username}`}>
+                    <a className='box' target='_blank'>
+                      {j.avatar ? (
+                        <img src={j.avatar} alt={j.nickname || j.username} />
+                      ) : null}
+                    </a>
+                  </Link>
+                ))}
+              </StyledAbout>
+            </div>
+          ))}
         </Carousel>
       </StyledBanner>
       <StyledLine></StyledLine>
