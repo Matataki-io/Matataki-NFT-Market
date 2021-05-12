@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Button } from '@geist-ui/react';
 import moment from 'moment';
-import { Avatar } from 'antd';
+import { Avatar, Image } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import AudioRender from '../AudioRender';
@@ -22,7 +22,7 @@ const NFTComponents: React.FC<NFTProps> = ({
       <StyledNFTContent>
         {type === 'image' ? (
           <div className='media-images'>
-            <img src={content?.medium} alt='Content' />
+            <Image src={content?.medium} alt='Content' />
           </div>
         ) : type === 'video' ? (
           <video
@@ -115,6 +115,7 @@ const StyledNFTContent = styled.div`
   /* flex: 1; */
   border: 1px solid rgb(0 0 0 / 5%);
   box-sizing: border;
+
   .media-video,
   .media-text,
   .media-file,
@@ -127,6 +128,7 @@ const StyledNFTContent = styled.div`
     margin: 0px auto;
     object-fit: contain;
   }
+
   .media-images {
     width: 100%;
     height: 100%;
@@ -134,6 +136,7 @@ const StyledNFTContent = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+
     img {
       display: block;
       max-width: 100%;
@@ -144,6 +147,7 @@ const StyledNFTContent = styled.div`
       object-fit: cover;
     }
   }
+
   .media-audio {
     width: 100%;
     height: 100%;
@@ -160,6 +164,7 @@ const StyledNFTFooter = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-start;
+
   h5 {
     font-size: 15px;
     font-weight: 600;
@@ -178,6 +183,7 @@ const StyledNFTFooterUser = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
   .subtitle {
     font-size: 15px;
     margin: 0px 5px 0px 0px;
@@ -185,6 +191,7 @@ const StyledNFTFooterUser = styled.div`
     line-height: 30px;
     font-weight: 400;
   }
+
   .user {
     font-weight: 500;
     width: auto;
@@ -199,6 +206,7 @@ const StyledNFTFooterUser = styled.div`
     justify-content: flex-start;
     align-items: center;
   }
+
   .owner {
     width: auto;
     flex: 0 1 auto;
@@ -206,6 +214,7 @@ const StyledNFTFooterUser = styled.div`
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+
     .owner-name {
       font-weight: 500;
       font-size: 15px;
@@ -215,10 +224,12 @@ const StyledNFTFooterUser = styled.div`
       color: #000;
     }
   }
+
   .id {
     font-size: 16px;
     font-weight: 400;
   }
+
   .custom-avatar {
     flex: 0 0 16px;
   }

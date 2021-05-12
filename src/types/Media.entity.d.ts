@@ -18,6 +18,7 @@ export interface Media {
   creationTx: string;
   title?: string; // user/@username/bids
   description: string;
+  gallery: Gallery;
 }
 
 export type MediaMetadata = {

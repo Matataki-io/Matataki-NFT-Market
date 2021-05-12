@@ -155,7 +155,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     };
 
     fetchAll();
-  }, [appUserInfo, userDataByWallet, username]);
+  }, [appUserInfo, userDataByWallet, username, router]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -168,7 +168,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     fetch();
   }, [userInfo, username]);
 
-  const collectionContainner = () => {
+  const collectionContainer = () => {
     return (
       <>
         <StyledTitle>Collection</StyledTitle>
@@ -184,7 +184,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
       </>
     );
   };
-  const ArtworksContainner = () => {
+  const ArtworksContainer = () => {
     return (
       <>
         <StyledItem>
@@ -477,13 +477,13 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         </StyledHeadRight>
       </StyledHead>
       <StyledLine />
-      {!isEmpty(ownedGalleries?.ownedGalleries) && <GalleryContainer />}
+      {/*{!isEmpty(ownedGalleries?.ownedGalleries) && <GalleryContainer />}*/}
       {userInfo?.role === 'COLLECTOR' ? (
-        collectionContainner()
+        collectionContainer()
       ) : userInfo?.role === 'ARTIST' ? (
-        ArtworksContainner()
+        ArtworksContainer()
       ) : userInfo?.role === 'SUPER_ADMIN' ? (
-        collectionContainner()
+        collectionContainer()
       ) : (
         <Spin />
       )}
@@ -546,6 +546,7 @@ const StyledHeadUserInfo = styled.div`
     top: 0;
     text-align: center;
   }
+
   h1 {
     font-size: 34px;
     font-weight: bold;
@@ -557,6 +558,7 @@ const StyledHeadUserInfo = styled.div`
       font-size: 20px;
     }
   }
+
   p {
     font-size: 16px;
     font-weight: 400;
@@ -578,18 +580,22 @@ const StyledHeadIcon = styled.div`
   @media screen and (max-width: 678px) {
     justify-content: center;
   }
+
   .icon {
     width: 32px;
     height: 32px;
     margin-left: 32px;
     cursor: pointer;
+
     &:nth-of-type(1) {
       margin-left: 0;
     }
+
     svg {
       font-size: 32px;
       color: #333333;
     }
+
     @media screen and (max-width: 678px) {
       margin: 0 10px;
       width: 16px;
@@ -604,9 +610,11 @@ const StyledHeadTags = styled.div`
   max-width: 400px;
   text-align: right;
   margin: 6px 0;
+
   .ant-tag {
     margin: 4px 0 4px 8px;
   }
+
   @media screen and (max-width: 678px) {
     text-align: center;
     .ant-tag {
@@ -629,9 +637,11 @@ const StyledMediaCardContainer = styled.div`
   margin: 48px auto 0;
   min-height: 320px;
   grid-template-columns: repeat(4, minmax(0px, 330px));
+
   & > a {
     width: 100%;
   }
+
   @media screen and (max-width: 1366px) {
     grid-template-columns: repeat(3, minmax(0px, 330px));
   }
@@ -667,10 +677,12 @@ const StyledItem = styled.div`
 const StyledVideo = styled.div`
   margin: 64px 0 0;
   height: 810px;
+
   .media-video {
     width: 100%;
     height: 100%;
   }
+
   @media screen and (max-width: 678px) {
     margin: 20px 0 0;
     height: 240px;
@@ -678,6 +690,7 @@ const StyledVideo = styled.div`
 `;
 const StyledArtworks = styled.div`
   margin-top: 64px;
+
   .ant-carousel .slick-prev,
   .ant-carousel .slick-next,
   .ant-carousel .slick-prev:hover,
@@ -695,23 +708,29 @@ const StyledAbout = styled.div`
     margin-top: 20px;
     flex-direction: column;
   }
+
   .item {
     flex: 1;
+
     &:nth-child(1) {
       margin-right: 24px;
     }
+
     &:nth-child(2) {
       margin-left: 24px;
     }
+
     @media screen and (max-width: 678px) {
       &:nth-child(1) {
         margin-right: 0;
       }
+
       &:nth-child(2) {
         margin-left: 0;
       }
     }
   }
+
   .text {
     font-size: 16px;
     font-family: 'Playfair Display', serif;
@@ -720,22 +739,26 @@ const StyledAbout = styled.div`
     line-height: 24px;
     padding: 0;
     margin: 40px 0 0 0;
+
     &:nth-child(1) {
       margin-top: 0;
     }
   }
+
   .cover {
     width: 100%;
     height: 392px;
     @media screen and (max-width: 678px) {
       height: 200px;
     }
+
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
   }
+
   .gallery-name {
     font-size: 24px;
     font-family: 'Playfair Display', serif;
@@ -750,19 +773,23 @@ const StyledAboutItem = styled.div`
   margin-top: 24px;
   display: flex;
   align-items: center;
+
   .icon {
     width: 20px;
     height: 20px;
     margin-left: 20px;
     cursor: pointer;
+
     &:nth-of-type(1) {
       margin-left: 0;
     }
+
     svg {
       font-size: 20px;
       color: #333333;
     }
   }
+
   span {
     font-size: 16px;
     font-family: 'Playfair Display', serif;
@@ -783,30 +810,37 @@ const StyledWord = styled.div`
   @media screen and (max-width: 768px) {
     column-count: 2;
   }
+
   .item {
     /* 防止多列布局，分页媒体和多区域上下文中的意外中断 */
     break-inside: avoid;
     padding: 48px 0 0 0;
     list-style: none;
+
     li {
       margin: 9px 0;
       font-family: 'Playfair Display', serif;
       font-weight: 500;
       color: #333333;
+
       a {
         font-size: 16px;
         line-height: 19px;
         color: #333333;
+
         &:hover {
           text-decoration: underline;
         }
       }
+
       &:nth-child(1) {
         margin: 0;
       }
+
       &:nth-child(2) {
         margin-top: 16px;
       }
+
       h3 {
         font-size: 32px;
         line-height: 39px;
