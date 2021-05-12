@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Carousel, Image, Spin } from 'antd';
+import { Carousel, Image } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Media } from '../../types/Media.entity';
 

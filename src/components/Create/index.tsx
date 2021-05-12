@@ -64,9 +64,6 @@ import { isEmpty } from 'lodash';
 import { Gallery } from '../../types/Gallery';
 import { OptionsType } from 'rc-select/lib/interface';
 
-const { Dragger } = Upload;
-const { Option } = Select;
-
 // 非负整数
 const creatorShare = /^\d+$/;
 
@@ -76,6 +73,7 @@ interface mediaDataState extends NFTProps {
 
 interface mediaTypeState {
   [key: string]: string;
+
   image: string;
   video: string;
   audio: string;
@@ -115,7 +113,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     const fetch = async () => {
       try {
         // TODO: 后续改为滚动分页 + 下拉查询
-        const data: any = await getGalleryUsers({
+        const data: any = await getGallery({
           page: 1,
           limit: 9999,
         });
@@ -440,7 +438,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
   // mint到画廊
   const mintTokenToGallery = useCallback(async () => {
-    if (!isSignerReady(signer)) return;
+    if (!isSignerReady(signer)) {
+      console.log('singer is not ready', signer);
+      return;
+    }
 
     let {
       tokenURI,
@@ -450,10 +451,11 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     } = mediaData.storage['MediaData'];
     let {
       price,
-      tags,
+      tags_,
       gallery: galleryId,
     } = formPricingAndFees.getFieldsValue();
     let creatorShare = Number(price);
+    let tags = tags_ || [];
 
     console.log(
       'info',
@@ -481,7 +483,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       metadataHash,
       gallery.owner.address,
       nonce,
-      Number(creatorShare),
+      creatorShare,
       signer
     );
     message.success('正在处理数据请不要离开页面...');
