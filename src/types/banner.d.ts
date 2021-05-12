@@ -1,5 +1,6 @@
 export type Banner = {
-  id: number;
+  id?: number;
   image: string;
   title: string;
+  url: string;
 };
