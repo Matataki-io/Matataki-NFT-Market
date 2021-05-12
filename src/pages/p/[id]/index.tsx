@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 
 import { Button, Grid, Image, Link, Text, User } from '@geist-ui/react';
-import { message } from 'antd';
+import { message, Tag } from 'antd';
 import { getTokenOnScan } from '../../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
@@ -29,6 +29,7 @@ import { IconRespondArrow } from '../../../components/Icons';
 import { useMediaData } from '../../../hooks/useMediaData';
 import NFTTimeline from '../../../components/NFTTimeline/index';
 import { Ask } from '../../../types/Ask';
+import { Tag as TagTypes } from '../../../types/Tag';
 import { BidLogWithUser, MediaLogWithUser } from '../../../types/TokenLog.dto';
 
 type Props = {
@@ -97,7 +98,6 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
           </StyledContentLeft>
           <StyledContentRight>
             <StyledMediaTitle>{metadata?.name}</StyledMediaTitle>
-
             <StyledShareAndPrice>
               <ContainerShare className='mr'>
                 <SmallLabel>Creator Share</SmallLabel>
@@ -118,7 +118,6 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
                 </ContainerShare>
               )}
             </StyledShareAndPrice>
-
             <Container>
               {/* <TradeButton colorType='default'>Buy now</TradeButton> */}
               <Link href={`/p/${post.id}/bids`}>
@@ -147,6 +146,13 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
               {metadata?.name} by {backendData.creator?.username}
             </StyledAuthor>
             <StyledAuthor>{metadata.description}</StyledAuthor>
+            {backendData?.tags ? (
+              <StyledTags>
+                {backendData.tags.map((i: TagTypes, idx: number) => (
+                  <Tag key={idx}>{i.name}</Tag>
+                ))}
+              </StyledTags>
+            ) : null}
             <MediaOwnershipInfo info={backendData} />
             <ProofOfAuthenticity scanLink={scanLink} ipfsLink={ipfsLink} />
             <NFTTimeline
@@ -254,19 +260,26 @@ const StyledMediaTitle = styled.h1`
   font-size: 50px;
   font-weight: 400;
   margin-top: 0px;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   word-break: break-word;
 `;
 
 const StyledAuthor = styled.p`
   font-size: 16px;
-  line-height: 28px;
-  margin-bottom: 30px;
+  line-height: 1.2;
+  margin-bottom: 10px;
   color: rgba(0, 0, 0, 0.7);
   word-break: break-word;
   white-space: pre-line;
   font-weight: 400;
   margin-top: 0px;
+`;
+const StyledTags = styled.div`
+  margin-bottom: 6px;
+  .ant-tag {
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
 `;
 
 // Button 区域

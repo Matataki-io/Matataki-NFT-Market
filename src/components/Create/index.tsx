@@ -39,6 +39,7 @@ import { UserOutlined } from '@ant-design/icons';
 
 const { Dragger } = Upload;
 const { Option } = Select;
+
 import {
   mintMediaToken,
   GenerateCreationSignature,
@@ -47,8 +48,10 @@ import { UploadProps } from 'antd/lib/upload/interface';
 import { useLogin } from '../../hooks/useLogin';
 import { useMedia } from '../../hooks/useMedia';
 import { NFTProps } from '../../../next-env';
-import { searchTags } from '../../backend/tag';
+import { searchTags, getTags } from '../../backend/tag';
 import { User } from '../../types/User.types';
+import { Tag as TagTypes } from '../../types/Tag';
+
 import {
   NFTTempImage,
   NFTTempVideo,
@@ -60,6 +63,9 @@ import {
 import { isEmpty } from 'lodash';
 import { Gallery } from '../../types/Gallery';
 import { OptionsType } from 'rc-select/lib/interface';
+
+const { Dragger } = Upload;
+const { Option } = Select;
 
 // 非负整数
 const creatorShare = /^\d+$/;
@@ -102,20 +108,39 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   }>({ name: '', description: '' }); // 备份 formNameAndDescription 数据
   // const [uploadLoading, setUploadLoading] = useState<boolean>(false);
   const [galleryList, setGalleryList] = useState<Gallery[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagsOptions, setTagsOptions] = useState<OptionsType>([]);
-  // const [tagsInput, setTagsInput] = useState<string>('');
+  const [tagsList, setTagsList] = useState<TagTypes[]>([]);
   const mediaContract = useMedia();
 
   useEffect(() => {
     const fetch = async () => {
-      // TODO: 后续改为滚动分页 + 下拉查询
-      const data: any = await getGallery({
-        page: 1,
-        limit: 9999,
-      });
-      console.log('data', data);
-      setGalleryList(data.items);
+      try {
+        // TODO: 后续改为滚动分页 + 下拉查询
+        const data: any = await getGalleryUsers({
+          page: 1,
+          limit: 9999,
+        });
+        console.log('data', data);
+        setGalleryList(data.items);
+      } catch (e) {
+        console.log(`e: ${e.toString()}`);
+      }
+    };
+    fetch();
+  }, []);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res: any = await getTags();
+        if (res.status !== 200) {
+          throw new Error('status is not 200');
+        }
+        let { data } = res;
+        console.log('data', res.data);
+        setTagsList(data);
+      } catch (e) {
+        console.log(`e: ${e.toString()}`);
+      }
     };
     fetch();
   }, []);
@@ -357,7 +382,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       contentHash,
       metadataHash,
     } = mediaData.storage['MediaData'];
-    let creatorShare = Number(formPricingAndFees.getFieldsValue().price);
+
+    let { price, tags } = formPricingAndFees.getFieldsValue();
+    let creatorShare = Number(price);
+
     console.log(
       'info',
       tokenURI,
@@ -386,13 +414,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       setMediaSubmitLoading(false);
       console.log('res', res);
 
-      // 改这里
-      const tags: string[] = [];
+      message.success('正在处理数据请不要离开页面...');
+      await res.wait();
 
       if (res && res.hash) {
+        message.success('正在创建...');
         const resMedia = await PostMedia({
           txHash: res.hash,
-          tags,
+          tags: tags,
         });
         console.log('resMedia', resMedia);
         message.success('mint success...');
@@ -409,54 +438,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     }
   }, [signer, mediaData, formPricingAndFees]);
 
-  // get tags
-  const handleRemoveTag = (removedTag: string) => {
-    setTags(tags.filter(tag => tag !== removedTag));
-  };
-
-  const tagsInputOnSelect = async (tag: string) => {
-    if (tag && !tags.includes(tag)) {
-      await setTags([...tags, tag]);
-    }
-    console.log(tags);
-  };
-
-  // TODO: MUST solve this bug:
-  // whenever any function like this is modifying `tagsOptions` with `setTagsOptions`
-  // it clears the input value, or blur from the element if `value` attribute is set
-  const tagsInputOnSearch = async (name: string) => {
-    if (name) {
-      setTagsOptions([
-        ...(await searchTags(name)).data.map(tag => ({
-          value: tag.name,
-        })),
-        { value: name },
-      ]);
-    }
-  };
-
-  // const tagsInputOnChange = (name: string) => {
-  //   setTagsInput(name);
-  // }
-
-  const tagsDisplay = (tag: string) => {
-    const tagElem = (
-      <Tag
-        closable
-        onClose={e => {
-          e.preventDefault();
-          handleRemoveTag(tag);
-        }}>
-        {tag}
-      </Tag>
-    );
-    return (
-      <span key={tag} style={{ display: 'inline-block' }}>
-        {tagElem}
-      </span>
-    );
-  };
-
   // mint到画廊
   const mintTokenToGallery = useCallback(async () => {
     if (!isSignerReady(signer)) return;
@@ -468,9 +449,12 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       metadataHash,
     } = mediaData.storage['MediaData'];
     let {
-      price: creatorShare,
+      price,
+      tags,
       gallery: galleryId,
     } = formPricingAndFees.getFieldsValue();
+    let creatorShare = Number(price);
+
     console.log(
       'info',
       tokenURI,
@@ -500,12 +484,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       Number(creatorShare),
       signer
     );
+    message.success('正在处理数据请不要离开页面...');
     console.log('res', res);
     if (!res) {
       message.error('not res');
       return;
     }
 
+    message.success('正在创建...');
     await sendToPublisherForPreview(galleryId, {
       nonce,
       title: nameAndDescription.name,
@@ -753,7 +739,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                 />
               </Form.Item>
               <Form.Item label='Gallery' name='gallery'>
-                <Select placeholder='Select a gallery' size='large'>
+                <Select placeholder='Select a gallery'>
                   {galleryList.map((i, idx: number) => (
                     <Option key={`${idx}-${i.owner.address}`} value={i.id}>
                       <span>
@@ -768,19 +754,18 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                   ))}
                 </Select>
               </Form.Item>
-              <Form.Item label='Tags'>
-                {Boolean(tags.length) && (
-                  <div style={{ marginBottom: 16 }}>
-                    {tags.map(tagsDisplay)}
-                  </div>
-                )}
-
-                <AutoComplete
-                  options={tagsOptions}
-                  onSelect={tagsInputOnSelect}
-                  onSearch={tagsInputOnSearch}
-                  placeholder='Input and search for tags'
-                />
+              <Form.Item label='Tags' name='tags'>
+                <Select
+                  mode='multiple'
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder='Please select'>
+                  {tagsList.map((i: TagTypes, idx: number) => (
+                    <Option key={idx} value={i.name}>
+                      {i.name}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Form.Item>
           </StyledMultiiMediaFormItem>
