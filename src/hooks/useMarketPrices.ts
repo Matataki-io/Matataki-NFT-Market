@@ -17,7 +17,7 @@ export function isAskExist(currentAsk?: MarketAsk): currentAsk is MarketAsk {
 
 type MarketPriceBook = Record<string, MarketAsk>;
 
-export function useMarketPrices(ids: BigNumber[]) {
+export function useMarketPrices(ids: Array<number | null>) {
   const { account } = useWallet();
   const marketContract = useMarket();
   const [isLoading, { setFalse: finishLoading }] = useBoolean(true);
@@ -32,21 +32,25 @@ export function useMarketPrices(ids: BigNumber[]) {
       funcFrag: marketContract.interface.getFunction('currentAskForToken'),
       data: [id],
     }));
+    console.info('queries', queries);
     const { returns } = await aggerateQuery(queries);
-    const currentAsks = (returns.map(r => r[0]) as unknown) as Array<{
+    const currentAsks = (returns.map(r => ({
+      amount: r[0][0],
+      currency: r[0][1],
+    })) as unknown) as Array<{
       amount: BigNumber;
       currency: string;
     }>;
     const _tmpB: MarketPriceBook = {};
     ids.forEach((id, idx) => {
-      _tmpB[id.toString()] = currentAsks[idx];
+      if (id) _tmpB[id] = currentAsks[idx];
     });
     updatePriceBook(_tmpB);
     finishLoading();
   }, [marketContract, account, ids, aggerateQuery, finishLoading]);
 
   useEffect(() => {
-    if (ids) {
+    if (ids.length > 0) {
       getDetailOf();
     }
     let refreshInterval = setInterval(getDetailOf, 1000 * 30);

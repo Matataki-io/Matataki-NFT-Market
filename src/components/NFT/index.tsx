@@ -27,7 +27,7 @@ const NFTComponents: React.FC<NFTProps> = ({
     const formattedPrice = utils.formatUnits(currentAsk.amount, decimals);
     const tokenSymbol = getSymbolOf(currentAsk.currency);
     return `${formattedPrice} ${tokenSymbol}`;
-  }, []);
+  }, [currentAsk]);
   return (
     <StyledNFTWrapper>
       <StyledNFTHead>

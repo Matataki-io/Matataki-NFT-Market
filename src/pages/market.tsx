@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { Checkbox, Radio, Spin, message } from 'antd';
@@ -9,6 +9,7 @@ import { NFTProps } from '../../next-env';
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
 import { getMediaList, getMediaMetadata } from '../backend/media';
+import { useMarketPrices } from '../hooks/useMarketPrices';
 
 type PaginationMeta = PaginationResult['meta'];
 type MediaWithMetadata = Media & {
@@ -18,6 +19,12 @@ type MediaWithMetadata = Media & {
 const Market: React.FC = () => {
   // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
+  const nftIds = useMemo(
+    () => NFTList.map(i => (i.id === undefined ? null : i.id)),
+    [NFTList]
+  );
+  const { priceBook, isLoading: isPriceBookLoading } = useMarketPrices(nftIds);
+
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
@@ -137,7 +144,7 @@ const Market: React.FC = () => {
             // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
             <Link href={`/p/${i.id}`} key={idx}>
               <a target='_blank'>
-                <NFT {...i}></NFT>
+                <NFT {...i} currentAsk={priceBook[i.id as number]}></NFT>
               </a>
             </Link>
           ))}
