@@ -6,7 +6,7 @@ import GalleryCard from '../../components/GalleryCard';
 import type { Gallery } from '../../types/Gallery';
 import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
-import { Button } from 'antd';
+import { Button, Spin } from 'antd';
 import { UserRole } from '../../constant';
 
 const GalleryIndex: React.FC = () => {
@@ -18,27 +18,31 @@ const GalleryIndex: React.FC = () => {
   );
   const { data: me, error: meError } = useSWR('/user/me', backendSWRFetcher);
 
-  if (!data || !me) return <div>Loading</div>;
-
   return (
     <StyledWrapper>
-      <StyledHead>
-        <StyledHeadTitle>Gallery List</StyledHeadTitle>
-        {me.data.role === UserRole.SuperAdmin && (
-          <Button type='primary' href={'/gallery/create'}>
-            Create Gallery
-          </Button>
+      <Spin size={'large'} spinning={!data}>
+        {data && (
+          <>
+            <StyledHead>
+              <StyledHeadTitle>Gallery List</StyledHeadTitle>
+              {me?.data.role === UserRole.SuperAdmin && (
+                <Button type='primary' href={'/gallery/create'}>
+                  Create Gallery
+                </Button>
+              )}
+            </StyledHead>
+            <StyledGallery>
+              {data.items.map((gallery: Gallery, idx: number) => (
+                <Link key={`${gallery.id}`} href={`/gallery/${gallery.id}`}>
+                  <a>
+                    <GalleryCard {...gallery} />
+                  </a>
+                </Link>
+              ))}
+            </StyledGallery>
+          </>
         )}
-      </StyledHead>
-      <StyledGallery>
-        {data.items.map((gallery: Gallery, idx: number) => (
-          <Link key={`${gallery.id}`} href={`/gallery/${gallery.id}`}>
-            <a>
-              <GalleryCard {...gallery} />
-            </a>
-          </Link>
-        ))}
-      </StyledGallery>
+      </Spin>
     </StyledWrapper>
   );
 };
@@ -50,7 +54,7 @@ const StyledWrapper = styled.div`
   padding: 48px 20px 256px;
   box-sizing: border-box;
 
-  margin: 0px auto;
+  margin: 0 auto;
   width: 100%;
 
   @media screen and (max-width: 768px) {
