@@ -28,6 +28,7 @@ export interface NFTProps {
   fields?: NFTFiedlsProps;
   content?: NFTContentProps;
   title?: string;
+  description?: string;
   owner: any;
   creator: any;
   currentAsk?: {

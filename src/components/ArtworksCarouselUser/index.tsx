@@ -29,10 +29,14 @@ const ArtworksCarousel: React.FC<Props> = ({ data }) => {
                 <div>
                   <StyledArtworksItem>
                     <div className='cover'>
-                      <img src={i.content?.medium} alt={i?.title} />
+                      <img
+                        src={i.content?.medium}
+                        alt={i?.title}
+                        title={i?.title}
+                      />
                     </div>
                     <p className='title'>{i?.title}</p>
-                    <p className='desc'>{i?.title}</p>
+                    <p className='desc'>{i?.description}</p>
                   </StyledArtworksItem>
                 </div>
               </a>

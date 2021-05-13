@@ -141,7 +141,6 @@ const Market: React.FC = () => {
   // 处理滚动Load
   const handleInfiniteOnLoad = async () => {
     setLoading(true);
-    // 第一页不判断
     await fetchNFTData();
     setLoading(false);
   };
@@ -155,8 +154,7 @@ const Market: React.FC = () => {
             <Select
               mode='multiple'
               allowClear
-              size='large'
-              style={{ width: '420px' }}
+              style={{ width: '400px' }}
               placeholder='Select tag to filter media'
               onChange={onListDepartment}>
               {departmentTags}

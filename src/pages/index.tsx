@@ -153,10 +153,7 @@ const Home: React.FC<void> = () => {
           {creatorsList.map((i, idx) => (
             <Link href={`/${i.username}`} key={idx}>
               <a target='_blank'>
-                <Creators
-                  bc={i.avatar}
-                  avatar={i.avatar}
-                  username={i.nickname || i.username}></Creators>
+                <Creators {...i}></Creators>
               </a>
             </Link>
           ))}

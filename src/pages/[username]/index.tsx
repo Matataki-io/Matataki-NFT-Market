@@ -124,6 +124,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             id: media.id,
             type: metadata.mimeType.split('/')[0],
             title: metadata.name,
+            description: metadata.description,
             fields: {
               low: { stringValue: media.tokenURI },
               stream: { stringValue: media.tokenURI },
@@ -204,14 +205,19 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </StyledVideo>
         </StyledItem>
         <StyledLine /> */}
-        <StyledItem>
-          <StyledItemTitle>Artworks</StyledItemTitle>
-          <StyledArtworks>
-            <ArtworksCarousel data={nftListData} />
-          </StyledArtworks>
-        </StyledItem>
 
-        <StyledLine />
+        {nftListData.length > 0 ? (
+          <>
+            <StyledItem>
+              <StyledItemTitle>Artworks</StyledItemTitle>
+              <StyledArtworks>
+                <ArtworksCarousel data={nftListData} />
+              </StyledArtworks>
+            </StyledItem>
+            <StyledLine />
+          </>
+        ) : null}
+
         <StyledItem>
           <StyledItemTitle>About</StyledItemTitle>
           <StyledAbout>
