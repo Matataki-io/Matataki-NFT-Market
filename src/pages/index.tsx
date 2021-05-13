@@ -52,6 +52,7 @@ const Home: React.FC<void> = () => {
         title: i.title,
         owner: i.owner,
         creator: i.creator,
+        tags: i.tags,
       }));
       setNFTList(list);
     } catch (e) {

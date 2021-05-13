@@ -140,6 +140,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             },
             owner: media.owner,
             creator: media.creator,
+            tags: media.tags,
           };
         }
       );
