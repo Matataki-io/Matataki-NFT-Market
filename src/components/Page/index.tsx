@@ -11,6 +11,7 @@ const StyledWrapper = styled.div`
   padding: 0 20px 200px;
   box-sizing: border-box;
   margin: 0 auto;
+  flex: 1;
   @media screen and (max-width: 768px) {
     padding-left: 10px;
     padding-right: 10px;
