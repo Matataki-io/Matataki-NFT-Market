@@ -65,3 +65,8 @@ export async function updateGalleryJoinRequest(id: number, accept: boolean) {
   );
   return data;
 }
+
+export async function updateGallery(id: number, g: Partial<Gallery>) {
+  const { data } = await BACKEND_CLIENT.patch<any>(`/gallery/${id}`, g);
+  return data;
+}

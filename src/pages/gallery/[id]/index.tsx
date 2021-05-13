@@ -2,26 +2,26 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { Avatar, Button, Empty, List, message, Modal, Spin, Image } from 'antd';
-import { User } from '../../types/User.types';
-import { backendSWRFetcher } from '../../backend/media';
-import { BACKEND_CLIENT, UserRole } from '../../constant';
+import { User } from '../../../types/User.types';
+import { backendSWRFetcher } from '../../../backend/media';
+import { BACKEND_CLIENT, UserRole } from '../../../constant';
 import {
   createGalleryJoinRequest,
   findGalleryJoinRequest,
   updateGalleryJoinRequest,
-} from '../../backend/gallery';
+} from '../../../backend/gallery';
 import {
   GalleryJoinRequest,
   GalleryJoinRequestStatus,
-} from '../../types/GalleryJoinRequest';
-import { Gallery } from '../../types/Gallery';
+} from '../../../types/GalleryJoinRequest';
+import { Gallery } from '../../../types/Gallery';
 import { isEmpty } from 'lodash';
-import ArtworksCarousel from '../../components/ArtworksCarousel';
+import ArtworksCarousel from '../../../components/ArtworksCarousel';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
-import { Media } from '../../types/Media.entity';
-import { GeneralResponse } from '../../types/Backend.types';
+import { Media } from '../../../types/Media.entity';
+import { GeneralResponse } from '../../../types/Backend.types';
 import * as _ from 'lodash';
 
 const AGallery: React.FC = () => {
@@ -111,6 +111,11 @@ const AGallery: React.FC = () => {
                   <p>{gallery.intro}</p>
                 </StyledHeadUserInfo>
               </StyledHeadUser>
+              {me && _.some(me.data.ownedGalleries, { id: gallery.id }) && (
+                <Button type={'link'} href={`/gallery/${gallery.id}/edit`}>
+                  Edit Gallery
+                </Button>
+              )}
             </StyledHead>
             <StyledLine />
             <StyledItem>
@@ -127,11 +132,13 @@ const AGallery: React.FC = () => {
               {/*    className='media-video'*/}
               {/*  />*/}
               {/*</StyledVideo>*/}
-              {gallery?.presentations && !isEmpty(gallery?.presentations) ? (
-                <Image src={gallery.presentations[0]} alt={'presentations'} />
-              ) : (
-                <Empty />
-              )}
+              <StyledVideo>
+                {gallery?.presentations && !isEmpty(gallery?.presentations) ? (
+                  <Image src={gallery.presentations[0]} alt={'presentations'} />
+                ) : (
+                  <Empty />
+                )}
+              </StyledVideo>
             </StyledItem>
             <StyledLine />
             <StyledItem>
@@ -193,6 +200,7 @@ const AGallery: React.FC = () => {
             {me?.data.role === UserRole.Artist &&
               !me?.data.belongsTo.find(g => g.id === gallery.id) && (
                 <>
+                  <StyledLine />
                   <Button onClick={showModal}>Join Gallery</Button>
                   <Modal
                     title='confirm'
