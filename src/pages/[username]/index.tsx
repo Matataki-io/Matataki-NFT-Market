@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, Button, List, message, Spin, Tag, Image } from 'antd';
+import { Avatar, Button, List, message, Spin, Tag, Image, Empty } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
@@ -209,7 +209,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
                 <Image
                   src={
                     userInfo?.presentations ? userInfo?.presentations[0] : ''
-                  }></Image>
+                  }
+                />
               </StyledPresentation>
             </StyledItem>
             <StyledLine />
@@ -234,7 +235,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </>
         ) : null}
 
-        {userInfo?.artworks.length > 0 ? (
+        {userInfo?.artworks?.length > 0 ? (
           <>
             <StyledItem>
               <StyledItemTitle>Artworks</StyledItemTitle>
@@ -244,7 +245,9 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             </StyledItem>
             <StyledLine />
           </>
-        ) : null}
+        ) : (
+          <Empty />
+        )}
 
         <StyledItem>
           <StyledItemTitle>About</StyledItemTitle>

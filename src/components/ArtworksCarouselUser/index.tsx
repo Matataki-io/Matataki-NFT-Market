@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Carousel, Image } from 'antd';
+import { Carousel, Image, List } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { NFTProps } from '../../../next-env';
 import Link from 'next/link';

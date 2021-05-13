@@ -210,7 +210,7 @@ const Register: React.FC<void> = () => {
         message.success('更新成功');
         // router.push(`/${username}`);
       } else {
-        throw new Error('更新失败');
+        message.error('更新失败');
       }
     } catch (e) {
       message.error(e.toString());
@@ -320,7 +320,7 @@ const Register: React.FC<void> = () => {
   const uploadButton = (
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload Cover</div>
+      <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
 
@@ -346,7 +346,7 @@ const Register: React.FC<void> = () => {
       </StyledTitle>
       <StyledAvatarItem>
         <Upload onChange={onChangeAvatar} {...props} className='upload'>
-          <Avatar size={125} icon={<UserOutlined />} src={avatarUrl}></Avatar>
+          <Avatar size={125} icon={<UserOutlined />} src={avatarUrl} />
         </Upload>
       </StyledAvatarItem>
 
@@ -388,7 +388,7 @@ const Register: React.FC<void> = () => {
           rules={[{ required: true, message: 'Please input your bio!' }]}>
           <Input placeholder='Describe yourself by single sentence' />
         </Form.Item>
-        {userDataByWallet?.role === 'ARTIST' ? (
+        {userDataByWallet?.role === 'ARTIST' && (
           <>
             <StyledPhotoWrapper>
               <StyledFormTitle>Presentations</StyledFormTitle>
@@ -397,7 +397,11 @@ const Register: React.FC<void> = () => {
                 onChange={onChangePresentations}
                 listType={'picture-card'}>
                 {presentationsSrc ? (
-                  <img className='cover' src={presentationsSrc} />
+                  <Image
+                    className='cover'
+                    src={presentationsSrc}
+                    alt={'cover'}
+                  />
                 ) : (
                   uploadButton
                 )}
@@ -408,7 +412,7 @@ const Register: React.FC<void> = () => {
               <StyledArtworks>
                 {artworksFileList.map((i: string, idx: number) => (
                   <StyledArtworksItem key={idx}>
-                    <Image width={120} src={i}></Image>
+                    <Image width={120} src={i} />
                     <CloseOutlined
                       className='icon'
                       onClick={() => onRemoveArtworks(idx)}
@@ -426,7 +430,7 @@ const Register: React.FC<void> = () => {
               </StyledFormArtworksUpload>
             </StyledPhotoWrapper>
           </>
-        ) : null}
+        )}
         <StyledFormTitle>Contact</StyledFormTitle>
         <Form.Item
           label=''
@@ -484,7 +488,7 @@ const Register: React.FC<void> = () => {
             </Row>
           </Checkbox.Group>
         </Form.Item>
-        {userDataByWallet?.role === UserRole.Artist ? (
+        {userDataByWallet?.role === UserRole.Artist && (
           <>
             <StyledFormTitle>About</StyledFormTitle>
             <Form.Item
@@ -505,7 +509,7 @@ const Register: React.FC<void> = () => {
               onChange={onChangeBanner}
               listType={'picture-card'}>
               {formImage() ? (
-                <img className='banner' src={formImage()} />
+                <Image className='banner' src={formImage()} />
               ) : (
                 uploadButton
               )}
@@ -570,7 +574,7 @@ const Register: React.FC<void> = () => {
               <Input placeholder='Enter discord' />
             </Form.Item>
           </>
-        ) : null}
+        )}
         {/* {userDataByWallet?.role === UserRole.Artist ? (
           <>
             <StyledFormTitle>Contracted Artists</StyledFormTitle>

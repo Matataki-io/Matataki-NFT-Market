@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import { Avatar, Button, List, message, Modal, Spin } from 'antd';
+import { Avatar, Button, Empty, List, message, Modal, Spin } from 'antd';
 import { User } from '../../types/User.types';
 import { backendSWRFetcher } from '../../backend/media';
 import { BACKEND_CLIENT, UserRole } from '../../constant';
@@ -123,9 +123,13 @@ const AGallery: React.FC = () => {
             <StyledLine />
             <StyledItem>
               <StyledItemTitle>Artworks</StyledItemTitle>
-              <StyledArtworks>
-                <ArtworksCarousel media={media} />
-              </StyledArtworks>
+              {media && !isEmpty(media) ? (
+                <StyledArtworks>
+                  <ArtworksCarousel media={media} />
+                </StyledArtworks>
+              ) : (
+                <Empty />
+              )}
             </StyledItem>
 
             <StyledLine />
@@ -161,18 +165,19 @@ const AGallery: React.FC = () => {
               </StyledWord>
             </StyledItem>
 
-            {me?.data.role === UserRole.Artist && (
-              <>
-                <Button onClick={showModal}>Join Gallery</Button>
-                <Modal
-                  title='confirm'
-                  visible={isModalVisible}
-                  onOk={handleOk}
-                  onCancel={handleCancel}>
-                  Are you sure you want to join?
-                </Modal>
-              </>
-            )}
+            {me?.data.role === UserRole.Artist &&
+              !me?.data.belongsTo.find(g => g.id === gallery.id) && (
+                <>
+                  <Button onClick={showModal}>Join Gallery</Button>
+                  <Modal
+                    title='confirm'
+                    visible={isModalVisible}
+                    onOk={handleOk}
+                    onCancel={handleCancel}>
+                    Are you sure you want to join?
+                  </Modal>
+                </>
+              )}
             {!isEmpty(requests) && (
               <div>
                 <h3>Join Requests:</h3>
