@@ -20,6 +20,7 @@ const NFTComponents: React.FC<NFTProps> = ({
   owner,
   creator,
   currentAsk,
+  tags,
 }) => {
   const priceDisplay = useMemo(() => {
     if (!isAskExist(currentAsk)) return '---';

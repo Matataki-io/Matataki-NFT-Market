@@ -16,6 +16,7 @@ const NFTComponents: React.FC<NFTProps> = ({
   title,
   owner,
   creator,
+  tags,
 }) => {
   return (
     <StyledNFTWrapper>
