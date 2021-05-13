@@ -1,5 +1,5 @@
 import { Media, MediaMetadata } from '../types/Media.entity';
-import { backendClient } from './client';
+import client, { backendClient } from './client';
 import { PaginationResult } from '../types/PaginationResult';
 import axios from 'axios';
 import { Ask } from '../types/Ask';
@@ -73,4 +73,14 @@ export function sendToPublisherForPreview(
     `/media/gasfreeCreate/${publisherUid}`,
     data
   );
+}
+
+export async function isMediaContentExisted(contentHash: string) {
+  const { data } = await client.get<
+    GeneralResponse<{
+      data: { isExist: boolean };
+      code: number;
+    }>
+  >(`/media/utils/isContentExisted?contentHash=${contentHash}`);
+  return (data.data as any).isExist;
 }

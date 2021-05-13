@@ -8,7 +8,11 @@ import React, {
 import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
-import { PostMedia, sendToPublisherForPreview } from '../../backend/media';
+import {
+  isMediaContentExisted,
+  PostMedia,
+  sendToPublisherForPreview,
+} from '../../backend/media';
 import { getGallery } from '../../backend/gallery';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
@@ -193,15 +197,20 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         console.log(info.file, info.fileList);
       }
       if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
-
-        let url = info.file.response.data.MediaData.tokenURI;
         let storage = info.file.response.data;
+        let { contentHash, tokenURI: url } = storage.MediaData;
         setMediaLoading(false);
-        setMediaDataFn({
-          url,
-          type: mediaType,
-          storage: storage,
+        isMediaContentExisted(contentHash).then(isExist => {
+          if (isExist) {
+            message.error(`media content hash is exist!`);
+          } else {
+            message.success(`${info.file.name} file uploaded successfully.`);
+            setMediaDataFn({
+              url,
+              type: mediaType,
+              storage: storage,
+            });
+          }
         });
       } else if (status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
@@ -526,7 +535,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const [visiblePop, setVisiblePop] = useState(false);
 
   // upload media back pop confirm
-  function popconfirmFn() {
+  function popConfirmFn() {
     setVisiblePop(false);
     setMediaData({} as any);
     setStep(0);
@@ -538,10 +547,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     if (!visible) {
       return;
     }
-    // Determining condition before show the popconfirm.
+    // Determining condition before show the popConfirmFn.
     console.log('!isEmpty(mediaData)', !isEmpty(mediaData));
     if (isEmpty(mediaData)) {
-      popconfirmFn(); // next step
+      popConfirmFn(); // next step
     } else {
       setVisiblePop(visible); // show the popconfirm
     }
@@ -658,7 +667,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                 Are you sure you want to return to the previous step?
               </span>
             )}
-            onConfirm={popconfirmFn}
+            onConfirm={popConfirmFn}
             onCancel={() => {
               setVisiblePop(false);
             }}
@@ -795,7 +804,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           <StyledContainerGridCol start='7' end='12'>
             <StyledSubtitle>Preview</StyledSubtitle>
             <div style={{ width: '100%', minHeight: '113%' }}>
-              <NFT {...mediaData}></NFT>
+              <NFT {...mediaData} />
             </div>
           </StyledContainerGridCol>
         </StyledContainerGrid>
