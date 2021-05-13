@@ -8,7 +8,7 @@ import {
   userFeaturedArtistInBanner,
   userFeaturedArtist,
 } from '../backend/user';
-import { User } from '../types/User.types.d';
+import { User } from '../types/User.types';
 import { isEmpty } from 'lodash';
 
 const Artist: React.FC = () => {
@@ -120,7 +120,7 @@ const Artist: React.FC = () => {
           ))}
         </Carousel>
       </StyledBanner>
-      <StyledLine></StyledLine>
+      <StyledLine />
       <StyledWord>
         {Object.keys(artistWord).map((key, idx) => (
           <ul key={idx} className='item'>

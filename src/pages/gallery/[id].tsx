@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { Avatar, Button, Empty, List, message, Modal, Spin } from 'antd';
+import { Page, Text } from '@geist-ui/react';
 import { User } from '../../types/User.types';
 import { backendSWRFetcher } from '../../backend/media';
 import { BACKEND_CLIENT, UserRole } from '../../constant';
@@ -22,6 +23,7 @@ import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
 import { Media } from '../../types/Media.entity';
 import { GeneralResponse } from '../../types/Backend.types';
+import * as _ from 'lodash';
 
 const AGallery: React.FC = () => {
   const router = useRouter();
@@ -86,6 +88,13 @@ const AGallery: React.FC = () => {
     setIsModalVisible(false);
   };
 
+  const indexArtist = useMemo(() => {
+    let du = _.groupBy(gallery?.artists, artist =>
+      artist.username.charAt(0).toUpperCase()
+    );
+    return _.sortBy(_.entries(du), x => x[0]);
+  }, [gallery]);
+
   return (
     <StyledWrapper>
       <Spin size='large' spinning={!gallery}>
@@ -149,20 +158,32 @@ const AGallery: React.FC = () => {
             <StyledLine />
             <StyledItem>
               <StyledItemTitle>Contracted Artists</StyledItemTitle>
-              <StyledWord>
+              {
                 <List
-                  dataSource={gallery.artists}
-                  renderItem={artist => (
+                  grid={{
+                    gutter: 16,
+                    xs: 1,
+                    sm: 2,
+                    md: 4,
+                    lg: 4,
+                    xl: 6,
+                    xxl: 3,
+                  }}
+                  dataSource={indexArtist}
+                  renderItem={ind => (
                     <List.Item>
-                      <Link href={`/${artist.username}`}>
-                        <a>
-                          {artist.username}({artist.nickname})
-                        </a>
-                      </Link>
+                      <List
+                        itemLayout={'vertical'}
+                        header={ind[0]}
+                        dataSource={ind[1]}
+                        renderItem={artist => (
+                          <List.Item>{artist.username}</List.Item>
+                        )}
+                      />
                     </List.Item>
                   )}
                 />
-              </StyledWord>
+              }
             </StyledItem>
 
             {me?.data.role === UserRole.Artist &&
