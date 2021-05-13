@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import { Avatar, Button, Empty, List, message, Modal, Spin } from 'antd';
-import { Page, Text } from '@geist-ui/react';
+import { Avatar, Button, Empty, List, message, Modal, Spin, Image } from 'antd';
 import { User } from '../../types/User.types';
 import { backendSWRFetcher } from '../../backend/media';
 import { BACKEND_CLIENT, UserRole } from '../../constant';
@@ -116,18 +115,23 @@ const AGallery: React.FC = () => {
             <StyledLine />
             <StyledItem>
               <StyledItemTitle>Presentation</StyledItemTitle>
-              <StyledVideo>
-                <video
-                  src={
-                    'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
-                  }
-                  loop
-                  playsInline
-                  // autoPlay
-                  // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-                  className='media-video'
-                />
-              </StyledVideo>
+              {/*<StyledVideo>*/}
+              {/*  <video*/}
+              {/*    src={*/}
+              {/*      'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'*/}
+              {/*    }*/}
+              {/*    loop*/}
+              {/*    playsInline*/}
+              {/*    // autoPlay*/}
+              {/*    // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}*/}
+              {/*    className='media-video'*/}
+              {/*  />*/}
+              {/*</StyledVideo>*/}
+              {gallery?.presentations && !isEmpty(gallery?.presentations) ? (
+                <Image src={gallery.presentations[0]} alt={'presentations'} />
+              ) : (
+                <Empty />
+              )}
             </StyledItem>
             <StyledLine />
             <StyledItem>
