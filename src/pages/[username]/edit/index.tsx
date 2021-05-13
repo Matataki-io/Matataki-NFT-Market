@@ -615,7 +615,7 @@ const StyledWrapper = styled.div`
 `;
 
 const StyledTitle = styled.h1`
-  font-size: 48px;
+  font-size: 40px;
   font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
