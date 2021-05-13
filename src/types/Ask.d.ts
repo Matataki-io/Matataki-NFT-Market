@@ -19,4 +19,5 @@ export class Ask {
 
   amount: string;
   currency: string;
+  who: User;
 }
