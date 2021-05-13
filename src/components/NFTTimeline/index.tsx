@@ -64,7 +64,17 @@ const NFTTimeline: React.FC<Props> = ({ timeline, creator }) => {
       if (log.type === AskActionType.AskCreated) {
         return (
           <p className='logs'>
-            Owner Ask for {utils.formatUnits(log.amount, decimal)} {symbol}
+            {log?.who.username ? (
+              <a
+                target='_blank'
+                href={`/${log?.who.username}`}
+                rel='noreferrer'>
+                {log?.who.username}
+              </a>
+            ) : (
+              'Owner'
+            )}{' '}
+            Ask for {utils.formatUnits(log.amount, decimal)} {symbol}
           </p>
         );
       }
