@@ -19,7 +19,7 @@ import { useERC20 } from '../../../hooks/useERC20';
 import { constructBid } from '../../../utils/zdkUtils';
 import { useWallet } from 'use-wallet';
 import { BigNumber, utils } from 'ethers';
-import { useBalance } from '../../../hooks/useBalance';
+// import { useBalance } from '../../../hooks/useBalance';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import { useAllowance } from '../../../hooks/useAllowance';
 import { useMarket } from '../../../hooks/useMarket';
@@ -46,8 +46,12 @@ export default function BidPage() {
   const [amount, setAmount] = useState('0');
   const [sellOnShare, setSellOnShare] = useState(0);
   const { myBid, removeBid } = useMyBid(id as string);
-  const tokenContrct = useERC20(currency);
-  const { balance } = useBalance(tokenContrct);
+  const {
+    token: tokenContrct,
+    isProfileLoading,
+    tokenProfile,
+    formattedBalance,
+  } = useERC20(currency);
   // `transferFrom` happened at Market, so just approve Market
   const { isEnough, approve, isUnlocking } = useAllowance(
     tokenContrct,
@@ -212,22 +216,18 @@ export default function BidPage() {
                 onChange={setAmount}
                 style={FullWidth}
                 formatter={value =>
-                  utils.formatUnits(value as string, getDecimalOf(currency))
+                  utils.formatUnits(value as string, tokenProfile.decimals)
                 }
                 parser={value =>
                   utils
-                    .parseUnits(value as string, getDecimalOf(currency))
+                    .parseUnits(value as string, tokenProfile.decimals)
                     .toString()
                 }
                 stringMode
                 min='0'
               />
             </StyledBidsInput>
-            {currency && (
-              <p className='balance'>
-                Balance: {utils.formatUnits(balance, getDecimalOf(currency))}
-              </p>
-            )}
+            {currency && <p className='balance'>Balance: {formattedBalance}</p>}
             {/* 
               { 
                 currency && currentWETH === utils.getAddress(currency) && balance.lt(amount) &&
@@ -242,7 +242,7 @@ export default function BidPage() {
             <WETHHelpTip
               currency={currency}
               bidPrice={amount}
-              wethBalance={balance}
+              wethBalance={tokenProfile.balance}
             />
           </StyledBidsItem>
 
