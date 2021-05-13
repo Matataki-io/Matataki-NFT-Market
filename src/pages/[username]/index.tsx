@@ -107,7 +107,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     const fetchNFTListData = async (userInfo: User) => {
       const uniNftId = new Set<number>();
       if (userInfo.createdMedia) {
-        userInfo.createdMedia.map(item => uniNftId.add(item));
+        userInfo.createdMedia.map((item: any) => uniNftId.add(item));
       }
       if (userInfo.ownedMedia) {
         userInfo.ownedMedia.map(item => uniNftId.add(item));
