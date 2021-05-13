@@ -475,7 +475,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       contentHash,
       metadataHash,
       gallery.owner.address,
-      // nonce,
       creatorShare,
       signer
     );
@@ -488,8 +487,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
     message.success('正在创建...');
     await sendToPublisherForPreview(galleryId, {
-      // @todo: no more nonce
-      nonce: 0,
       title: nameAndDescription.name,
       description: nameAndDescription.description,
       tokenURI,

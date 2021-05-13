@@ -8,6 +8,5 @@ export interface MediaToScreen {
   title: string;
   description: string;
   tokenURI: string;
-  nonce: number;
   permitData: MintAndTransferParameters;
 }

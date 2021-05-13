@@ -62,7 +62,6 @@ export async function PostMedia({
 export function sendToPublisherForPreview(
   publisherUid: number,
   data: {
-    nonce: number;
     title: string;
     description: string;
     tokenURI: string;
