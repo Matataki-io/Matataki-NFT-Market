@@ -10,6 +10,7 @@ import {
   Checkbox,
   Row,
   Col,
+  Image,
 } from 'antd';
 import { UploadProps } from 'antd/lib/upload/interface';
 import { useRouter } from 'next/router';
@@ -20,6 +21,7 @@ import {
   MinusCircleOutlined,
   CheckCircleOutlined,
   LoadingOutlined,
+  CloseOutlined,
 } from '@ant-design/icons';
 import { isEmpty } from 'lodash';
 
@@ -42,6 +44,8 @@ interface UserProps {
   username?: string;
   avatar?: string;
   about?: any;
+  presentations?: string[];
+  artworks?: string[];
 }
 
 const Register: React.FC<void> = () => {
@@ -54,6 +58,8 @@ const Register: React.FC<void> = () => {
   const { isRegistered, userDataByWallet, register } = useLogin();
   const [tagsList, setTagsList] = useState<Array<Tag>>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [presentationsSrc, setPresentationsSrc] = useState<string>();
+  const [artworksFileList, setArtworksFileList] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isRegistered) {
@@ -89,6 +95,14 @@ const Register: React.FC<void> = () => {
         aboutEmail: userDataByWallet?.about.email,
       });
       setAvatarUrl(userDataByWallet?.avatar || '');
+
+      setPresentationsSrc(
+        (userDataByWallet?.presentations &&
+          userDataByWallet?.presentations[0]) ||
+          ''
+      );
+
+      setArtworksFileList(userDataByWallet?.artworks || []);
     }
   }, [isRegistered, userDataByWallet, formProfile]);
 
@@ -173,6 +187,18 @@ const Register: React.FC<void> = () => {
       email: aboutEmail,
     };
 
+    if (presentationsSrc) {
+      profile.presentations = [presentationsSrc];
+    } else {
+      profile.presentations = [];
+    }
+
+    if (artworksFileList && artworksFileList.length) {
+      profile.artworks = artworksFileList;
+    } else {
+      profile.artworks = [];
+    }
+
     if (isEmpty(profile)) {
       message.info('没有修改');
       return;
@@ -229,6 +255,44 @@ const Register: React.FC<void> = () => {
       message.error(`${info.file.name} file upload failed.`);
       setLoading(false);
     }
+  };
+  const onChangePresentations = (info: any) => {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+      setLoading(true);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+      let url = info.file.response.data.url;
+      setPresentationsSrc(url);
+      setLoading(false);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+      setLoading(false);
+    }
+  };
+  const onChangeArtworks = (info: any) => {
+    console.log('info', info);
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+      setLoading(true);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+      let url = info.file.response.data.url;
+      let _artworksFileList = artworksFileList.slice(0);
+      _artworksFileList.push(url);
+      setArtworksFileList(_artworksFileList);
+      setLoading(false);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+      setLoading(false);
+    }
+  };
+  const onRemoveArtworks = (idx: number) => {
+    let _artworksFileList = artworksFileList.slice(0);
+    _artworksFileList.splice(idx, 1);
+    setArtworksFileList(_artworksFileList);
   };
 
   const props: UploadProps = {
@@ -326,25 +390,41 @@ const Register: React.FC<void> = () => {
         </Form.Item>
         {userDataByWallet?.role === 'ARTIST' ? (
           <>
-            {/* <Form.Item
-              label=''
-              name=''
-              rules={[{ required: false, message: 'Please input your ..!' }]}>
-              <Input.TextArea
-                disabled
-                rows={6}
-                placeholder='Describe yourself completely…'
-              />
-            </Form.Item> */}
-            {/* <StyledPhotoWrapper>
-              <StyledFormTitle>Personal Photo</StyledFormTitle>
-              <StyledFormPhoto>
-                <img
-                  src='https://ipfs.fleek.co/ipfs/QmZZXE2ZnKWYmCN5vkHJuUKa5HBSrpcKy28XgKES12pHpu'
-                  alt='Personal Photo'
-                />
-              </StyledFormPhoto>
-            </StyledPhotoWrapper> */}
+            <StyledPhotoWrapper>
+              <StyledFormTitle>Presentations</StyledFormTitle>
+              <StyledFormPresentationsUpload
+                {...props}
+                onChange={onChangePresentations}
+                listType={'picture-card'}>
+                {presentationsSrc ? (
+                  <img className='cover' src={presentationsSrc} />
+                ) : (
+                  uploadButton
+                )}
+              </StyledFormPresentationsUpload>
+            </StyledPhotoWrapper>
+            <StyledPhotoWrapper>
+              <StyledFormTitle>Artworks</StyledFormTitle>
+              <StyledArtworks>
+                {artworksFileList.map((i: string, idx: number) => (
+                  <StyledArtworksItem key={idx}>
+                    <Image width={120} src={i}></Image>
+                    <CloseOutlined
+                      className='icon'
+                      onClick={() => onRemoveArtworks(idx)}
+                    />
+                  </StyledArtworksItem>
+                ))}
+              </StyledArtworks>
+
+              <StyledFormArtworksUpload
+                {...props}
+                listType='picture-card'
+                maxCount={10}
+                onChange={onChangeArtworks}>
+                {artworksFileList.length >= 10 ? null : uploadButton}
+              </StyledFormArtworksUpload>
+            </StyledPhotoWrapper>
           </>
         ) : null}
         <StyledFormTitle>Contact</StyledFormTitle>
@@ -620,11 +700,46 @@ const StyledButton = styled(Button)`
     border-color: #333333;
   }
 `;
-
-const StyledFormPhoto = styled.div`
-  height: 270px;
-  overflow: hidden;
-  img {
+const StyledArtworks = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+`;
+const StyledArtworksItem = styled.div`
+  position: relative;
+  width: 120px;
+  .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 20px;
+    color: #ffffff;
+  }
+`;
+const StyledFormPresentationsUpload = styled(Upload)`
+  .ant-upload {
+    width: 100%;
+    height: 270px;
+    overflow: hidden;
+  }
+  .ant-upload-list-picture-card-container {
+    display: none;
+  }
+  .cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+const StyledFormArtworksUpload = styled(Upload)`
+  .ant-upload {
+    overflow: hidden;
+  }
+  .ant-upload-list-picture-card-container {
+    display: none;
+  }
+  .cover {
     width: 100%;
     height: 100%;
     object-fit: cover;

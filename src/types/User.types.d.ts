@@ -85,4 +85,6 @@ export interface User {
     discord: string;
     email: string;
   };
+  presentations?: string[];
+  artworks?: string[];
 }

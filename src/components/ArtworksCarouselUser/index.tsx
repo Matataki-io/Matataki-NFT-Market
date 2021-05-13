@@ -6,7 +6,8 @@ import { NFTProps } from '../../../next-env';
 import Link from 'next/link';
 
 interface Props {
-  data: Array<NFTProps>;
+  data: Array<string>;
+  // data: Array<NFTProps>;
 }
 
 const ArtworksCarousel: React.FC<Props> = ({ data }) => {
@@ -22,7 +23,7 @@ const ArtworksCarousel: React.FC<Props> = ({ data }) => {
   };
   return (
     <Carousel {...settings}>
-      {data
+      {/* {data
         ? data.map((i: NFTProps, idx: number) => (
             <Link key={idx} href={`/p/${i.id}`}>
               <a target='_blank'>
@@ -41,6 +42,17 @@ const ArtworksCarousel: React.FC<Props> = ({ data }) => {
                 </div>
               </a>
             </Link>
+          ))
+        : null} */}
+      {data
+        ? data.map((i: string, idx: number) => (
+            <div key={idx}>
+              <StyledArtworksItem>
+                <div className='cover'>
+                  <img src={i} alt={'Artwork'} title={'Artwork'} />
+                </div>
+              </StyledArtworksItem>
+            </div>
           ))
         : null}
     </Carousel>
