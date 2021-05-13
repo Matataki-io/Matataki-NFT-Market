@@ -9,7 +9,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import ButtonCustom from '../Button';
 import NFTPreview from '../NFTPreview';
 import { BidLog } from '../../types/Bid.d';
-import { getSymbolOf } from '../../utils/tokens';
+import { getDecimalOf, getSymbolOf } from '../../utils/tokens';
 
 interface Props {
   currentBids: BidLog;
@@ -36,7 +36,9 @@ const BidsCancelModal: React.FC<Props> = ({
     return date;
   };
   const price = (amount: string, currency: string) => {
-    return `${utils.formatUnits(amount, 18)} ${getSymbolOf(currency)}`;
+    return `${utils.formatUnits(amount, getDecimalOf(currency))} ${getSymbolOf(
+      currency
+    )}`;
   };
 
   return (

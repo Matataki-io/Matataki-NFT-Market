@@ -8,7 +8,7 @@ import { utils } from 'ethers';
 import ButtonCustom from '../Button';
 import { BidLog } from '../../types/Bid';
 // import { shortedWalletAccount } from '../../utils/index';
-import { getSymbolOf } from '../../utils/tokens';
+import { getDecimalOf, getSymbolOf } from '../../utils/tokens';
 import NFTPreview from '../NFTPreview';
 
 interface Props extends BidLog {
@@ -30,7 +30,9 @@ const BidsCard: React.FC<Props> = ({
     return date;
   };
   const price = (amount: string, currency: string) => {
-    return `${utils.formatUnits(amount, 18)} ${getSymbolOf(currency)}`;
+    return `${utils.formatUnits(amount, getDecimalOf(currency))} ${getSymbolOf(
+      currency
+    )}`;
   };
 
   return (
