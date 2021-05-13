@@ -30,5 +30,5 @@ export interface NFTProps {
   title?: string;
   owner: any;
   creator: any;
-  tags: Tag[];
+  tags?: Tag[];
 }
