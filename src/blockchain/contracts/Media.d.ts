@@ -9,78 +9,78 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from 'ethers';
+} from "ethers";
 import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from '@ethersproject/contracts';
-import { BytesLike } from '@ethersproject/bytes';
-import { Listener, Provider } from '@ethersproject/providers';
-import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
+} from "@ethersproject/contracts";
+import { BytesLike } from "@ethersproject/bytes";
+import { Listener, Provider } from "@ethersproject/providers";
+import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface MediaInterface extends ethers.utils.Interface {
   functions: {
-    'MINT_AND_TRANFER_WITH_SIG_TYPEHASH()': FunctionFragment;
-    'MINT_WITH_SIG_TYPEHASH()': FunctionFragment;
-    'PERMIT_TYPEHASH()': FunctionFragment;
-    'acceptBid(uint256,tuple)': FunctionFragment;
-    'approve(address,uint256)': FunctionFragment;
-    'auctionTransfer(uint256,address)': FunctionFragment;
-    'balanceOf(address)': FunctionFragment;
-    'baseURI()': FunctionFragment;
-    'burn(uint256)': FunctionFragment;
-    'getApproved(uint256)': FunctionFragment;
-    'isApprovedForAll(address,address)': FunctionFragment;
-    'marketContract()': FunctionFragment;
-    'mint(tuple,tuple)': FunctionFragment;
-    'mintAndTransfer(tuple,tuple,address)': FunctionFragment;
-    'mintAndTransferWithSig(address,tuple,tuple,address,tuple)': FunctionFragment;
-    'mintAndTransferWithSigNonces(address,address)': FunctionFragment;
-    'mintWithSig(address,tuple,tuple,tuple)': FunctionFragment;
-    'mintWithSigNonces(address)': FunctionFragment;
-    'name()': FunctionFragment;
-    'ownerOf(uint256)': FunctionFragment;
-    'permit(address,uint256,tuple)': FunctionFragment;
-    'permitNonces(address,uint256)': FunctionFragment;
-    'previousTokenOwners(uint256)': FunctionFragment;
-    'removeAsk(uint256)': FunctionFragment;
-    'removeBid(uint256)': FunctionFragment;
-    'revokeApproval(uint256)': FunctionFragment;
-    'safeTransferFrom(address,address,uint256)': FunctionFragment;
-    'setApprovalForAll(address,bool)': FunctionFragment;
-    'setAsk(uint256,tuple)': FunctionFragment;
-    'setBid(uint256,tuple)': FunctionFragment;
-    'supportsInterface(bytes4)': FunctionFragment;
-    'symbol()': FunctionFragment;
-    'tokenByIndex(uint256)': FunctionFragment;
-    'tokenContentHashes(uint256)': FunctionFragment;
-    'tokenCreators(uint256)': FunctionFragment;
-    'tokenMetadataHashes(uint256)': FunctionFragment;
-    'tokenMetadataURI(uint256)': FunctionFragment;
-    'tokenOfOwnerByIndex(address,uint256)': FunctionFragment;
-    'tokenURI(uint256)': FunctionFragment;
-    'totalSupply()': FunctionFragment;
-    'transferFrom(address,address,uint256)': FunctionFragment;
-    'updateTokenMetadataURI(uint256,string)': FunctionFragment;
-    'updateTokenURI(uint256,string)': FunctionFragment;
+    "MINT_AND_TRANFER_WITH_SIG_TYPEHASH()": FunctionFragment;
+    "MINT_WITH_SIG_TYPEHASH()": FunctionFragment;
+    "PERMIT_TYPEHASH()": FunctionFragment;
+    "acceptBid(uint256,tuple)": FunctionFragment;
+    "approve(address,uint256)": FunctionFragment;
+    "auctionTransfer(uint256,address)": FunctionFragment;
+    "balanceOf(address)": FunctionFragment;
+    "baseURI()": FunctionFragment;
+    "burn(uint256)": FunctionFragment;
+    "getApproved(uint256)": FunctionFragment;
+    "isApprovedForAll(address,address)": FunctionFragment;
+    "isContentUploaded(bytes32[])": FunctionFragment;
+    "marketContract()": FunctionFragment;
+    "mint(tuple,tuple)": FunctionFragment;
+    "mintAndTransfer(tuple,tuple,address)": FunctionFragment;
+    "mintAndTransferWithSig(address,tuple,tuple,address,tuple)": FunctionFragment;
+    "mintWithSig(address,tuple,tuple,tuple)": FunctionFragment;
+    "mintWithSigNonces(address)": FunctionFragment;
+    "name()": FunctionFragment;
+    "ownerOf(uint256)": FunctionFragment;
+    "permit(address,uint256,tuple)": FunctionFragment;
+    "permitNonces(address,uint256)": FunctionFragment;
+    "previousTokenOwners(uint256)": FunctionFragment;
+    "removeAsk(uint256)": FunctionFragment;
+    "removeBid(uint256)": FunctionFragment;
+    "revokeApproval(uint256)": FunctionFragment;
+    "safeTransferFrom(address,address,uint256)": FunctionFragment;
+    "setApprovalForAll(address,bool)": FunctionFragment;
+    "setAsk(uint256,tuple)": FunctionFragment;
+    "setBid(uint256,tuple)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "symbol()": FunctionFragment;
+    "tokenByIndex(uint256)": FunctionFragment;
+    "tokenContentHashes(uint256)": FunctionFragment;
+    "tokenCreators(uint256)": FunctionFragment;
+    "tokenMetadataHashes(uint256)": FunctionFragment;
+    "tokenMetadataURI(uint256)": FunctionFragment;
+    "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
+    "tokenURI(uint256)": FunctionFragment;
+    "totalSupply()": FunctionFragment;
+    "transferFrom(address,address,uint256)": FunctionFragment;
+    "updateTokenMetadataURI(uint256,string)": FunctionFragment;
+    "updateTokenURI(uint256,string)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: 'MINT_AND_TRANFER_WITH_SIG_TYPEHASH',
+    functionFragment: "MINT_AND_TRANFER_WITH_SIG_TYPEHASH",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'MINT_WITH_SIG_TYPEHASH',
+    functionFragment: "MINT_WITH_SIG_TYPEHASH",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'PERMIT_TYPEHASH',
+    functionFragment: "PERMIT_TYPEHASH",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'acceptBid',
+    functionFragment: "acceptBid",
     values: [
       BigNumberish,
       {
@@ -93,30 +93,34 @@ interface MediaInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: 'approve',
+    functionFragment: "approve",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'auctionTransfer',
+    functionFragment: "auctionTransfer",
     values: [BigNumberish, string]
   ): string;
-  encodeFunctionData(functionFragment: 'balanceOf', values: [string]): string;
-  encodeFunctionData(functionFragment: 'baseURI', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'burn', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(functionFragment: "baseURI", values?: undefined): string;
+  encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
   encodeFunctionData(
-    functionFragment: 'getApproved',
+    functionFragment: "getApproved",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'isApprovedForAll',
+    functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: 'marketContract',
+    functionFragment: "isContentUploaded",
+    values: [BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "marketContract",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'mint',
+    functionFragment: "mint",
     values: [
       {
         tokenURI: string;
@@ -132,7 +136,7 @@ interface MediaInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: 'mintAndTransfer',
+    functionFragment: "mintAndTransfer",
     values: [
       {
         tokenURI: string;
@@ -149,7 +153,7 @@ interface MediaInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: 'mintAndTransferWithSig',
+    functionFragment: "mintAndTransferWithSig",
     values: [
       string,
       {
@@ -168,11 +172,7 @@ interface MediaInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: 'mintAndTransferWithSigNonces',
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: 'mintWithSig',
+    functionFragment: "mintWithSig",
     values: [
       string,
       {
@@ -190,16 +190,16 @@ interface MediaInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: 'mintWithSigNonces',
+    functionFragment: "mintWithSigNonces",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: 'name', values?: undefined): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: 'ownerOf',
+    functionFragment: "ownerOf",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'permit',
+    functionFragment: "permit",
     values: [
       string,
       BigNumberish,
@@ -207,39 +207,39 @@ interface MediaInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: 'permitNonces',
+    functionFragment: "permitNonces",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'previousTokenOwners',
+    functionFragment: "previousTokenOwners",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'removeAsk',
+    functionFragment: "removeAsk",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'removeBid',
+    functionFragment: "removeBid",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'revokeApproval',
+    functionFragment: "revokeApproval",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'safeTransferFrom',
+    functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'setApprovalForAll',
+    functionFragment: "setApprovalForAll",
     values: [string, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: 'setAsk',
+    functionFragment: "setAsk",
     values: [BigNumberish, { amount: BigNumberish; currency: string }]
   ): string;
   encodeFunctionData(
-    functionFragment: 'setBid',
+    functionFragment: "setBid",
     values: [
       BigNumberish,
       {
@@ -252,196 +252,196 @@ interface MediaInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: 'supportsInterface',
+    functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: 'symbol', values?: undefined): string;
+  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: 'tokenByIndex',
+    functionFragment: "tokenByIndex",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'tokenContentHashes',
+    functionFragment: "tokenContentHashes",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'tokenCreators',
+    functionFragment: "tokenCreators",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'tokenMetadataHashes',
+    functionFragment: "tokenMetadataHashes",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'tokenMetadataURI',
+    functionFragment: "tokenMetadataURI",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'tokenOfOwnerByIndex',
+    functionFragment: "tokenOfOwnerByIndex",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'tokenURI',
+    functionFragment: "tokenURI",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'totalSupply',
+    functionFragment: "totalSupply",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: 'transferFrom',
+    functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: 'updateTokenMetadataURI',
+    functionFragment: "updateTokenMetadataURI",
     values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
-    functionFragment: 'updateTokenURI',
+    functionFragment: "updateTokenURI",
     values: [BigNumberish, string]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: 'MINT_AND_TRANFER_WITH_SIG_TYPEHASH',
+    functionFragment: "MINT_AND_TRANFER_WITH_SIG_TYPEHASH",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'MINT_WITH_SIG_TYPEHASH',
+    functionFragment: "MINT_WITH_SIG_TYPEHASH",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'PERMIT_TYPEHASH',
+    functionFragment: "PERMIT_TYPEHASH",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: 'acceptBid', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "acceptBid", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'auctionTransfer',
+    functionFragment: "auctionTransfer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'baseURI', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'burn', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'getApproved',
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: 'isApprovedForAll',
+    functionFragment: "getApproved",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'marketContract',
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: 'mint', data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: 'mintAndTransfer',
+    functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'mintAndTransferWithSig',
+    functionFragment: "isContentUploaded",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'mintAndTransferWithSigNonces',
+    functionFragment: "marketContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintAndTransfer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'mintWithSig',
+    functionFragment: "mintAndTransferWithSig",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'mintWithSigNonces',
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'ownerOf', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'permit', data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: 'permitNonces',
+    functionFragment: "mintWithSig",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'previousTokenOwners',
+    functionFragment: "mintWithSigNonces",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: 'removeAsk', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'removeBid', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'revokeApproval',
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: 'safeTransferFrom',
+    functionFragment: "permitNonces",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'setApprovalForAll',
+    functionFragment: "previousTokenOwners",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: 'setAsk', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'setBid', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "removeAsk", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "removeBid", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'supportsInterface',
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: 'tokenByIndex',
+    functionFragment: "revokeApproval",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'tokenContentHashes',
+    functionFragment: "safeTransferFrom",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'tokenCreators',
+    functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setAsk", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setBid", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenByIndex",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'tokenMetadataHashes',
+    functionFragment: "tokenContentHashes",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'tokenMetadataURI',
+    functionFragment: "tokenCreators",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'tokenOfOwnerByIndex',
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: 'tokenURI', data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: 'totalSupply',
+    functionFragment: "tokenMetadataHashes",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'transferFrom',
+    functionFragment: "tokenMetadataURI",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'updateTokenMetadataURI',
+    functionFragment: "tokenOfOwnerByIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: 'updateTokenURI',
+    functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateTokenMetadataURI",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateTokenURI",
     data: BytesLike
   ): Result;
 
   events: {
-    'Approval(address,address,uint256)': EventFragment;
-    'ApprovalForAll(address,address,bool)': EventFragment;
-    'TokenMetadataURIUpdated(uint256,address,string)': EventFragment;
-    'TokenURIUpdated(uint256,address,string)': EventFragment;
-    'Transfer(address,address,uint256)': EventFragment;
+    "Approval(address,address,uint256)": EventFragment;
+    "ApprovalForAll(address,address,bool)": EventFragment;
+    "TokenMetadataURIUpdated(uint256,address,string)": EventFragment;
+    "TokenURIUpdated(uint256,address,string)": EventFragment;
+    "Transfer(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: 'Approval'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'ApprovalForAll'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'TokenMetadataURIUpdated'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'TokenURIUpdated'): EventFragment;
-  getEvent(nameOrSignatureOrTopic: 'Transfer'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenMetadataURIUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenURIUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
 export class Media extends Contract {
@@ -464,7 +464,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'MINT_AND_TRANFER_WITH_SIG_TYPEHASH()'(
+    "MINT_AND_TRANFER_WITH_SIG_TYPEHASH()"(
       overrides?: CallOverrides
     ): Promise<{
       0: string;
@@ -476,7 +476,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'MINT_WITH_SIG_TYPEHASH()'(
+    "MINT_WITH_SIG_TYPEHASH()"(
       overrides?: CallOverrides
     ): Promise<{
       0: string;
@@ -488,7 +488,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'PERMIT_TYPEHASH()'(
+    "PERMIT_TYPEHASH()"(
       overrides?: CallOverrides
     ): Promise<{
       0: string;
@@ -506,7 +506,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'acceptBid(uint256,tuple)'(
+    "acceptBid(uint256,tuple)"(
       tokenId: BigNumberish,
       bid: {
         amount: BigNumberish;
@@ -524,7 +524,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'approve(address,uint256)'(
+    "approve(address,uint256)"(
       to: string,
       tokenId: BigNumberish,
       overrides?: Overrides
@@ -536,7 +536,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'auctionTransfer(uint256,address)'(
+    "auctionTransfer(uint256,address)"(
       tokenId: BigNumberish,
       recipient: string,
       overrides?: Overrides
@@ -549,7 +549,7 @@ export class Media extends Contract {
       0: BigNumber;
     }>;
 
-    'balanceOf(address)'(
+    "balanceOf(address)"(
       owner: string,
       overrides?: CallOverrides
     ): Promise<{
@@ -562,7 +562,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'baseURI()'(
+    "baseURI()"(
       overrides?: CallOverrides
     ): Promise<{
       0: string;
@@ -573,7 +573,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'burn(uint256)'(
+    "burn(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -585,7 +585,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'getApproved(uint256)'(
+    "getApproved(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -600,9 +600,24 @@ export class Media extends Contract {
       0: boolean;
     }>;
 
-    'isApprovedForAll(address,address)'(
+    "isApprovedForAll(address,address)"(
       owner: string,
       operator: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: boolean;
+    }>;
+
+    "isContentUploaded(bytes32[])"(
+      hashes: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<{
+      result: boolean[];
+      0: boolean[];
+    }>;
+
+    "isContentUploaded(bytes32)"(
+      h: BytesLike,
       overrides?: CallOverrides
     ): Promise<{
       0: boolean;
@@ -614,7 +629,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'marketContract()'(
+    "marketContract()"(
       overrides?: CallOverrides
     ): Promise<{
       0: string;
@@ -635,7 +650,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'mint(tuple,tuple)'(
+    "mint(tuple,tuple)"(
       data: {
         tokenURI: string;
         metadataURI: string;
@@ -666,7 +681,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'mintAndTransfer(tuple,tuple,address)'(
+    "mintAndTransfer(tuple,tuple,address)"(
       data: {
         tokenURI: string;
         metadataURI: string;
@@ -705,7 +720,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'mintAndTransferWithSig(address,tuple,tuple,address,tuple)'(
+    "mintAndTransferWithSig(address,tuple,tuple,address,tuple)"(
       creator: string,
       data: {
         tokenURI: string;
@@ -727,22 +742,6 @@ export class Media extends Contract {
       },
       overrides?: Overrides
     ): Promise<ContractTransaction>;
-
-    mintAndTransferWithSigNonces(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    'mintAndTransferWithSigNonces(address,address)'(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
 
     mintWithSig(
       creator: string,
@@ -766,7 +765,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'mintWithSig(address,tuple,tuple,tuple)'(
+    "mintWithSig(address,tuple,tuple,tuple)"(
       creator: string,
       data: {
         tokenURI: string;
@@ -795,7 +794,7 @@ export class Media extends Contract {
       0: BigNumber;
     }>;
 
-    'mintWithSigNonces(address)'(
+    "mintWithSigNonces(address)"(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<{
@@ -808,7 +807,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'name()'(
+    "name()"(
       overrides?: CallOverrides
     ): Promise<{
       0: string;
@@ -821,7 +820,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'ownerOf(uint256)'(
+    "ownerOf(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -840,7 +839,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'permit(address,uint256,tuple)'(
+    "permit(address,uint256,tuple)"(
       spender: string,
       tokenId: BigNumberish,
       sig: {
@@ -860,7 +859,7 @@ export class Media extends Contract {
       0: BigNumber;
     }>;
 
-    'permitNonces(address,uint256)'(
+    "permitNonces(address,uint256)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -875,7 +874,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'previousTokenOwners(uint256)'(
+    "previousTokenOwners(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -887,7 +886,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'removeAsk(uint256)'(
+    "removeAsk(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -897,7 +896,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'removeBid(uint256)'(
+    "removeBid(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -907,19 +906,19 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'revokeApproval(uint256)'(
+    "revokeApproval(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'safeTransferFrom(address,address,uint256)'(
+    "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'safeTransferFrom(address,address,uint256,bytes)'(
+    "safeTransferFrom(address,address,uint256,bytes)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -933,7 +932,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'setApprovalForAll(address,bool)'(
+    "setApprovalForAll(address,bool)"(
       operator: string,
       approved: boolean,
       overrides?: Overrides
@@ -945,7 +944,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'setAsk(uint256,tuple)'(
+    "setAsk(uint256,tuple)"(
       tokenId: BigNumberish,
       ask: { amount: BigNumberish; currency: string },
       overrides?: Overrides
@@ -963,7 +962,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'setBid(uint256,tuple)'(
+    "setBid(uint256,tuple)"(
       tokenId: BigNumberish,
       bid: {
         amount: BigNumberish;
@@ -982,7 +981,7 @@ export class Media extends Contract {
       0: boolean;
     }>;
 
-    'supportsInterface(bytes4)'(
+    "supportsInterface(bytes4)"(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<{
@@ -995,7 +994,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'symbol()'(
+    "symbol()"(
       overrides?: CallOverrides
     ): Promise<{
       0: string;
@@ -1008,7 +1007,7 @@ export class Media extends Contract {
       0: BigNumber;
     }>;
 
-    'tokenByIndex(uint256)'(
+    "tokenByIndex(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -1022,7 +1021,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'tokenContentHashes(uint256)'(
+    "tokenContentHashes(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -1036,7 +1035,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'tokenCreators(uint256)'(
+    "tokenCreators(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -1050,7 +1049,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'tokenMetadataHashes(uint256)'(
+    "tokenMetadataHashes(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -1064,7 +1063,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'tokenMetadataURI(uint256)'(
+    "tokenMetadataURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -1079,7 +1078,7 @@ export class Media extends Contract {
       0: BigNumber;
     }>;
 
-    'tokenOfOwnerByIndex(address,uint256)'(
+    "tokenOfOwnerByIndex(address,uint256)"(
       owner: string,
       index: BigNumberish,
       overrides?: CallOverrides
@@ -1094,7 +1093,7 @@ export class Media extends Contract {
       0: string;
     }>;
 
-    'tokenURI(uint256)'(
+    "tokenURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
@@ -1107,7 +1106,7 @@ export class Media extends Contract {
       0: BigNumber;
     }>;
 
-    'totalSupply()'(
+    "totalSupply()"(
       overrides?: CallOverrides
     ): Promise<{
       0: BigNumber;
@@ -1120,7 +1119,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'transferFrom(address,address,uint256)'(
+    "transferFrom(address,address,uint256)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -1133,7 +1132,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'updateTokenMetadataURI(uint256,string)'(
+    "updateTokenMetadataURI(uint256,string)"(
       tokenId: BigNumberish,
       metadataURI: string,
       overrides?: Overrides
@@ -1145,7 +1144,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    'updateTokenURI(uint256,string)'(
+    "updateTokenURI(uint256,string)"(
       tokenId: BigNumberish,
       tokenURI: string,
       overrides?: Overrides
@@ -1156,17 +1155,17 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  'MINT_AND_TRANFER_WITH_SIG_TYPEHASH()'(
+  "MINT_AND_TRANFER_WITH_SIG_TYPEHASH()"(
     overrides?: CallOverrides
   ): Promise<string>;
 
   MINT_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  'MINT_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<string>;
+  "MINT_WITH_SIG_TYPEHASH()"(overrides?: CallOverrides): Promise<string>;
 
   PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  'PERMIT_TYPEHASH()'(overrides?: CallOverrides): Promise<string>;
+  "PERMIT_TYPEHASH()"(overrides?: CallOverrides): Promise<string>;
 
   acceptBid(
     tokenId: BigNumberish,
@@ -1180,7 +1179,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'acceptBid(uint256,tuple)'(
+  "acceptBid(uint256,tuple)"(
     tokenId: BigNumberish,
     bid: {
       amount: BigNumberish;
@@ -1198,7 +1197,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'approve(address,uint256)'(
+  "approve(address,uint256)"(
     to: string,
     tokenId: BigNumberish,
     overrides?: Overrides
@@ -1210,7 +1209,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'auctionTransfer(uint256,address)'(
+  "auctionTransfer(uint256,address)"(
     tokenId: BigNumberish,
     recipient: string,
     overrides?: Overrides
@@ -1218,21 +1217,21 @@ export class Media extends Contract {
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  'balanceOf(address)'(
+  "balanceOf(address)"(
     owner: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   baseURI(overrides?: CallOverrides): Promise<string>;
 
-  'baseURI()'(overrides?: CallOverrides): Promise<string>;
+  "baseURI()"(overrides?: CallOverrides): Promise<string>;
 
   burn(
     tokenId: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'burn(uint256)'(
+  "burn(uint256)"(
     tokenId: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -1242,7 +1241,7 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  'getApproved(uint256)'(
+  "getApproved(uint256)"(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -1253,15 +1252,25 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  'isApprovedForAll(address,address)'(
+  "isApprovedForAll(address,address)"(
     owner: string,
     operator: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  "isContentUploaded(bytes32[])"(
+    hashes: BytesLike[],
+    overrides?: CallOverrides
+  ): Promise<boolean[]>;
+
+  "isContentUploaded(bytes32)"(
+    h: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   marketContract(overrides?: CallOverrides): Promise<string>;
 
-  'marketContract()'(overrides?: CallOverrides): Promise<string>;
+  "marketContract()"(overrides?: CallOverrides): Promise<string>;
 
   mint(
     data: {
@@ -1278,7 +1287,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'mint(tuple,tuple)'(
+  "mint(tuple,tuple)"(
     data: {
       tokenURI: string;
       metadataURI: string;
@@ -1309,7 +1318,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'mintAndTransfer(tuple,tuple,address)'(
+  "mintAndTransfer(tuple,tuple,address)"(
     data: {
       tokenURI: string;
       metadataURI: string;
@@ -1348,7 +1357,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'mintAndTransferWithSig(address,tuple,tuple,address,tuple)'(
+  "mintAndTransferWithSig(address,tuple,tuple,address,tuple)"(
     creator: string,
     data: {
       tokenURI: string;
@@ -1370,18 +1379,6 @@ export class Media extends Contract {
     },
     overrides?: Overrides
   ): Promise<ContractTransaction>;
-
-  mintAndTransferWithSigNonces(
-    arg0: string,
-    arg1: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  'mintAndTransferWithSigNonces(address,address)'(
-    arg0: string,
-    arg1: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   mintWithSig(
     creator: string,
@@ -1405,7 +1402,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'mintWithSig(address,tuple,tuple,tuple)'(
+  "mintWithSig(address,tuple,tuple,tuple)"(
     creator: string,
     data: {
       tokenURI: string;
@@ -1432,18 +1429,18 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  'mintWithSigNonces(address)'(
+  "mintWithSigNonces(address)"(
     arg0: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  'name()'(overrides?: CallOverrides): Promise<string>;
+  "name()"(overrides?: CallOverrides): Promise<string>;
 
   ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-  'ownerOf(uint256)'(
+  "ownerOf(uint256)"(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -1460,7 +1457,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'permit(address,uint256,tuple)'(
+  "permit(address,uint256,tuple)"(
     spender: string,
     tokenId: BigNumberish,
     sig: {
@@ -1478,7 +1475,7 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  'permitNonces(address,uint256)'(
+  "permitNonces(address,uint256)"(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
@@ -1489,7 +1486,7 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  'previousTokenOwners(uint256)'(
+  "previousTokenOwners(uint256)"(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -1499,7 +1496,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'removeAsk(uint256)'(
+  "removeAsk(uint256)"(
     tokenId: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -1509,7 +1506,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'removeBid(uint256)'(
+  "removeBid(uint256)"(
     tokenId: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -1519,19 +1516,19 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'revokeApproval(uint256)'(
+  "revokeApproval(uint256)"(
     tokenId: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'safeTransferFrom(address,address,uint256)'(
+  "safeTransferFrom(address,address,uint256)"(
     from: string,
     to: string,
     tokenId: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'safeTransferFrom(address,address,uint256,bytes)'(
+  "safeTransferFrom(address,address,uint256,bytes)"(
     from: string,
     to: string,
     tokenId: BigNumberish,
@@ -1545,7 +1542,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'setApprovalForAll(address,bool)'(
+  "setApprovalForAll(address,bool)"(
     operator: string,
     approved: boolean,
     overrides?: Overrides
@@ -1557,7 +1554,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'setAsk(uint256,tuple)'(
+  "setAsk(uint256,tuple)"(
     tokenId: BigNumberish,
     ask: { amount: BigNumberish; currency: string },
     overrides?: Overrides
@@ -1575,7 +1572,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'setBid(uint256,tuple)'(
+  "setBid(uint256,tuple)"(
     tokenId: BigNumberish,
     bid: {
       amount: BigNumberish;
@@ -1592,21 +1589,21 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  'supportsInterface(bytes4)'(
+  "supportsInterface(bytes4)"(
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
-  'symbol()'(overrides?: CallOverrides): Promise<string>;
+  "symbol()"(overrides?: CallOverrides): Promise<string>;
 
   tokenByIndex(
     index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  'tokenByIndex(uint256)'(
+  "tokenByIndex(uint256)"(
     index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -1616,14 +1613,14 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  'tokenContentHashes(uint256)'(
+  "tokenContentHashes(uint256)"(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
   tokenCreators(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-  'tokenCreators(uint256)'(
+  "tokenCreators(uint256)"(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -1633,7 +1630,7 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  'tokenMetadataHashes(uint256)'(
+  "tokenMetadataHashes(uint256)"(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -1643,7 +1640,7 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  'tokenMetadataURI(uint256)'(
+  "tokenMetadataURI(uint256)"(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -1654,7 +1651,7 @@ export class Media extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  'tokenOfOwnerByIndex(address,uint256)'(
+  "tokenOfOwnerByIndex(address,uint256)"(
     owner: string,
     index: BigNumberish,
     overrides?: CallOverrides
@@ -1662,14 +1659,14 @@ export class Media extends Contract {
 
   tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-  'tokenURI(uint256)'(
+  "tokenURI(uint256)"(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'totalSupply()'(overrides?: CallOverrides): Promise<BigNumber>;
+  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferFrom(
     from: string,
@@ -1678,7 +1675,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'transferFrom(address,address,uint256)'(
+  "transferFrom(address,address,uint256)"(
     from: string,
     to: string,
     tokenId: BigNumberish,
@@ -1691,7 +1688,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'updateTokenMetadataURI(uint256,string)'(
+  "updateTokenMetadataURI(uint256,string)"(
     tokenId: BigNumberish,
     metadataURI: string,
     overrides?: Overrides
@@ -1703,7 +1700,7 @@ export class Media extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  'updateTokenURI(uint256,string)'(
+  "updateTokenURI(uint256,string)"(
     tokenId: BigNumberish,
     tokenURI: string,
     overrides?: Overrides
@@ -1714,17 +1711,17 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    'MINT_AND_TRANFER_WITH_SIG_TYPEHASH()'(
+    "MINT_AND_TRANFER_WITH_SIG_TYPEHASH()"(
       overrides?: CallOverrides
     ): Promise<string>;
 
     MINT_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-    'MINT_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<string>;
+    "MINT_WITH_SIG_TYPEHASH()"(overrides?: CallOverrides): Promise<string>;
 
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-    'PERMIT_TYPEHASH()'(overrides?: CallOverrides): Promise<string>;
+    "PERMIT_TYPEHASH()"(overrides?: CallOverrides): Promise<string>;
 
     acceptBid(
       tokenId: BigNumberish,
@@ -1738,7 +1735,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'acceptBid(uint256,tuple)'(
+    "acceptBid(uint256,tuple)"(
       tokenId: BigNumberish,
       bid: {
         amount: BigNumberish;
@@ -1756,7 +1753,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'approve(address,uint256)'(
+    "approve(address,uint256)"(
       to: string,
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -1768,7 +1765,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'auctionTransfer(uint256,address)'(
+    "auctionTransfer(uint256,address)"(
       tokenId: BigNumberish,
       recipient: string,
       overrides?: CallOverrides
@@ -1776,18 +1773,18 @@ export class Media extends Contract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    'balanceOf(address)'(
+    "balanceOf(address)"(
       owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     baseURI(overrides?: CallOverrides): Promise<string>;
 
-    'baseURI()'(overrides?: CallOverrides): Promise<string>;
+    "baseURI()"(overrides?: CallOverrides): Promise<string>;
 
     burn(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-    'burn(uint256)'(
+    "burn(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1797,7 +1794,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    'getApproved(uint256)'(
+    "getApproved(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -1808,15 +1805,25 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    'isApprovedForAll(address,address)'(
+    "isApprovedForAll(address,address)"(
       owner: string,
       operator: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    "isContentUploaded(bytes32[])"(
+      hashes: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<boolean[]>;
+
+    "isContentUploaded(bytes32)"(
+      h: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     marketContract(overrides?: CallOverrides): Promise<string>;
 
-    'marketContract()'(overrides?: CallOverrides): Promise<string>;
+    "marketContract()"(overrides?: CallOverrides): Promise<string>;
 
     mint(
       data: {
@@ -1833,7 +1840,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'mint(tuple,tuple)'(
+    "mint(tuple,tuple)"(
       data: {
         tokenURI: string;
         metadataURI: string;
@@ -1864,7 +1871,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'mintAndTransfer(tuple,tuple,address)'(
+    "mintAndTransfer(tuple,tuple,address)"(
       data: {
         tokenURI: string;
         metadataURI: string;
@@ -1903,7 +1910,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'mintAndTransferWithSig(address,tuple,tuple,address,tuple)'(
+    "mintAndTransferWithSig(address,tuple,tuple,address,tuple)"(
       creator: string,
       data: {
         tokenURI: string;
@@ -1925,18 +1932,6 @@ export class Media extends Contract {
       },
       overrides?: CallOverrides
     ): Promise<void>;
-
-    mintAndTransferWithSigNonces(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    'mintAndTransferWithSigNonces(address,address)'(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     mintWithSig(
       creator: string,
@@ -1960,7 +1955,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'mintWithSig(address,tuple,tuple,tuple)'(
+    "mintWithSig(address,tuple,tuple,tuple)"(
       creator: string,
       data: {
         tokenURI: string;
@@ -1987,18 +1982,18 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'mintWithSigNonces(address)'(
+    "mintWithSigNonces(address)"(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    'name()'(overrides?: CallOverrides): Promise<string>;
+    "name()"(overrides?: CallOverrides): Promise<string>;
 
     ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-    'ownerOf(uint256)'(
+    "ownerOf(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -2015,7 +2010,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'permit(address,uint256,tuple)'(
+    "permit(address,uint256,tuple)"(
       spender: string,
       tokenId: BigNumberish,
       sig: {
@@ -2033,7 +2028,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'permitNonces(address,uint256)'(
+    "permitNonces(address,uint256)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -2044,21 +2039,21 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    'previousTokenOwners(uint256)'(
+    "previousTokenOwners(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
     removeAsk(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-    'removeAsk(uint256)'(
+    "removeAsk(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     removeBid(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-    'removeBid(uint256)'(
+    "removeBid(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -2068,19 +2063,19 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'revokeApproval(uint256)'(
+    "revokeApproval(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'safeTransferFrom(address,address,uint256)'(
+    "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'safeTransferFrom(address,address,uint256,bytes)'(
+    "safeTransferFrom(address,address,uint256,bytes)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -2094,7 +2089,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'setApprovalForAll(address,bool)'(
+    "setApprovalForAll(address,bool)"(
       operator: string,
       approved: boolean,
       overrides?: CallOverrides
@@ -2106,7 +2101,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'setAsk(uint256,tuple)'(
+    "setAsk(uint256,tuple)"(
       tokenId: BigNumberish,
       ask: { amount: BigNumberish; currency: string },
       overrides?: CallOverrides
@@ -2124,7 +2119,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'setBid(uint256,tuple)'(
+    "setBid(uint256,tuple)"(
       tokenId: BigNumberish,
       bid: {
         amount: BigNumberish;
@@ -2141,21 +2136,21 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    'supportsInterface(bytes4)'(
+    "supportsInterface(bytes4)"(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
-    'symbol()'(overrides?: CallOverrides): Promise<string>;
+    "symbol()"(overrides?: CallOverrides): Promise<string>;
 
     tokenByIndex(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'tokenByIndex(uint256)'(
+    "tokenByIndex(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2165,7 +2160,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    'tokenContentHashes(uint256)'(
+    "tokenContentHashes(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -2175,7 +2170,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    'tokenCreators(uint256)'(
+    "tokenCreators(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -2185,7 +2180,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    'tokenMetadataHashes(uint256)'(
+    "tokenMetadataHashes(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -2195,7 +2190,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    'tokenMetadataURI(uint256)'(
+    "tokenMetadataURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -2206,7 +2201,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'tokenOfOwnerByIndex(address,uint256)'(
+    "tokenOfOwnerByIndex(address,uint256)"(
       owner: string,
       index: BigNumberish,
       overrides?: CallOverrides
@@ -2214,14 +2209,14 @@ export class Media extends Contract {
 
     tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-    'tokenURI(uint256)'(
+    "tokenURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'totalSupply()'(overrides?: CallOverrides): Promise<BigNumber>;
+    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
       from: string,
@@ -2230,7 +2225,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'transferFrom(address,address,uint256)'(
+    "transferFrom(address,address,uint256)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -2243,7 +2238,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'updateTokenMetadataURI(uint256,string)'(
+    "updateTokenMetadataURI(uint256,string)"(
       tokenId: BigNumberish,
       metadataURI: string,
       overrides?: CallOverrides
@@ -2255,7 +2250,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    'updateTokenURI(uint256,string)'(
+    "updateTokenURI(uint256,string)"(
       tokenId: BigNumberish,
       tokenURI: string,
       overrides?: CallOverrides
@@ -2299,17 +2294,17 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'MINT_AND_TRANFER_WITH_SIG_TYPEHASH()'(
+    "MINT_AND_TRANFER_WITH_SIG_TYPEHASH()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     MINT_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'MINT_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<BigNumber>;
+    "MINT_WITH_SIG_TYPEHASH()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'PERMIT_TYPEHASH()'(overrides?: CallOverrides): Promise<BigNumber>;
+    "PERMIT_TYPEHASH()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     acceptBid(
       tokenId: BigNumberish,
@@ -2323,7 +2318,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'acceptBid(uint256,tuple)'(
+    "acceptBid(uint256,tuple)"(
       tokenId: BigNumberish,
       bid: {
         amount: BigNumberish;
@@ -2341,7 +2336,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'approve(address,uint256)'(
+    "approve(address,uint256)"(
       to: string,
       tokenId: BigNumberish,
       overrides?: Overrides
@@ -2353,7 +2348,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'auctionTransfer(uint256,address)'(
+    "auctionTransfer(uint256,address)"(
       tokenId: BigNumberish,
       recipient: string,
       overrides?: Overrides
@@ -2361,18 +2356,18 @@ export class Media extends Contract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    'balanceOf(address)'(
+    "balanceOf(address)"(
       owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     baseURI(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'baseURI()'(overrides?: CallOverrides): Promise<BigNumber>;
+    "baseURI()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     burn(tokenId: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
-    'burn(uint256)'(
+    "burn(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -2382,7 +2377,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'getApproved(uint256)'(
+    "getApproved(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2393,15 +2388,25 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'isApprovedForAll(address,address)'(
+    "isApprovedForAll(address,address)"(
       owner: string,
       operator: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    "isContentUploaded(bytes32[])"(
+      hashes: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "isContentUploaded(bytes32)"(
+      h: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     marketContract(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'marketContract()'(overrides?: CallOverrides): Promise<BigNumber>;
+    "marketContract()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     mint(
       data: {
@@ -2418,7 +2423,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'mint(tuple,tuple)'(
+    "mint(tuple,tuple)"(
       data: {
         tokenURI: string;
         metadataURI: string;
@@ -2449,7 +2454,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'mintAndTransfer(tuple,tuple,address)'(
+    "mintAndTransfer(tuple,tuple,address)"(
       data: {
         tokenURI: string;
         metadataURI: string;
@@ -2488,7 +2493,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'mintAndTransferWithSig(address,tuple,tuple,address,tuple)'(
+    "mintAndTransferWithSig(address,tuple,tuple,address,tuple)"(
       creator: string,
       data: {
         tokenURI: string;
@@ -2509,18 +2514,6 @@ export class Media extends Contract {
         s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    mintAndTransferWithSigNonces(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    'mintAndTransferWithSigNonces(address,address)'(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     mintWithSig(
@@ -2545,7 +2538,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'mintWithSig(address,tuple,tuple,tuple)'(
+    "mintWithSig(address,tuple,tuple,tuple)"(
       creator: string,
       data: {
         tokenURI: string;
@@ -2572,21 +2565,21 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'mintWithSigNonces(address)'(
+    "mintWithSigNonces(address)"(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'name()'(overrides?: CallOverrides): Promise<BigNumber>;
+    "name()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     ownerOf(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'ownerOf(uint256)'(
+    "ownerOf(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2603,7 +2596,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'permit(address,uint256,tuple)'(
+    "permit(address,uint256,tuple)"(
       spender: string,
       tokenId: BigNumberish,
       sig: {
@@ -2621,7 +2614,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'permitNonces(address,uint256)'(
+    "permitNonces(address,uint256)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -2632,21 +2625,21 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'previousTokenOwners(uint256)'(
+    "previousTokenOwners(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     removeAsk(tokenId: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
-    'removeAsk(uint256)'(
+    "removeAsk(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     removeBid(tokenId: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
-    'removeBid(uint256)'(
+    "removeBid(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -2656,19 +2649,19 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'revokeApproval(uint256)'(
+    "revokeApproval(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'safeTransferFrom(address,address,uint256)'(
+    "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'safeTransferFrom(address,address,uint256,bytes)'(
+    "safeTransferFrom(address,address,uint256,bytes)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -2682,7 +2675,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'setApprovalForAll(address,bool)'(
+    "setApprovalForAll(address,bool)"(
       operator: string,
       approved: boolean,
       overrides?: Overrides
@@ -2694,7 +2687,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'setAsk(uint256,tuple)'(
+    "setAsk(uint256,tuple)"(
       tokenId: BigNumberish,
       ask: { amount: BigNumberish; currency: string },
       overrides?: Overrides
@@ -2712,7 +2705,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'setBid(uint256,tuple)'(
+    "setBid(uint256,tuple)"(
       tokenId: BigNumberish,
       bid: {
         amount: BigNumberish;
@@ -2729,21 +2722,21 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'supportsInterface(bytes4)'(
+    "supportsInterface(bytes4)"(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'symbol()'(overrides?: CallOverrides): Promise<BigNumber>;
+    "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenByIndex(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'tokenByIndex(uint256)'(
+    "tokenByIndex(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2753,7 +2746,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'tokenContentHashes(uint256)'(
+    "tokenContentHashes(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2763,7 +2756,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'tokenCreators(uint256)'(
+    "tokenCreators(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2773,7 +2766,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'tokenMetadataHashes(uint256)'(
+    "tokenMetadataHashes(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2783,7 +2776,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'tokenMetadataURI(uint256)'(
+    "tokenMetadataURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2794,7 +2787,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'tokenOfOwnerByIndex(address,uint256)'(
+    "tokenOfOwnerByIndex(address,uint256)"(
       owner: string,
       index: BigNumberish,
       overrides?: CallOverrides
@@ -2805,14 +2798,14 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    'tokenURI(uint256)'(
+    "tokenURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'totalSupply()'(overrides?: CallOverrides): Promise<BigNumber>;
+    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
       from: string,
@@ -2821,7 +2814,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'transferFrom(address,address,uint256)'(
+    "transferFrom(address,address,uint256)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -2834,7 +2827,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'updateTokenMetadataURI(uint256,string)'(
+    "updateTokenMetadataURI(uint256,string)"(
       tokenId: BigNumberish,
       metadataURI: string,
       overrides?: Overrides
@@ -2846,7 +2839,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    'updateTokenURI(uint256,string)'(
+    "updateTokenURI(uint256,string)"(
       tokenId: BigNumberish,
       tokenURI: string,
       overrides?: Overrides
@@ -2858,7 +2851,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'MINT_AND_TRANFER_WITH_SIG_TYPEHASH()'(
+    "MINT_AND_TRANFER_WITH_SIG_TYPEHASH()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2866,13 +2859,13 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'MINT_WITH_SIG_TYPEHASH()'(
+    "MINT_WITH_SIG_TYPEHASH()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    'PERMIT_TYPEHASH()'(
+    "PERMIT_TYPEHASH()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2888,7 +2881,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'acceptBid(uint256,tuple)'(
+    "acceptBid(uint256,tuple)"(
       tokenId: BigNumberish,
       bid: {
         amount: BigNumberish;
@@ -2906,7 +2899,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'approve(address,uint256)'(
+    "approve(address,uint256)"(
       to: string,
       tokenId: BigNumberish,
       overrides?: Overrides
@@ -2918,7 +2911,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'auctionTransfer(uint256,address)'(
+    "auctionTransfer(uint256,address)"(
       tokenId: BigNumberish,
       recipient: string,
       overrides?: Overrides
@@ -2929,21 +2922,21 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'balanceOf(address)'(
+    "balanceOf(address)"(
       owner: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     baseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    'baseURI()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "baseURI()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     burn(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'burn(uint256)'(
+    "burn(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -2953,7 +2946,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'getApproved(uint256)'(
+    "getApproved(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2964,15 +2957,25 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'isApprovedForAll(address,address)'(
+    "isApprovedForAll(address,address)"(
       owner: string,
       operator: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    "isContentUploaded(bytes32[])"(
+      hashes: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isContentUploaded(bytes32)"(
+      h: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     marketContract(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    'marketContract()'(
+    "marketContract()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2991,7 +2994,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'mint(tuple,tuple)'(
+    "mint(tuple,tuple)"(
       data: {
         tokenURI: string;
         metadataURI: string;
@@ -3022,7 +3025,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'mintAndTransfer(tuple,tuple,address)'(
+    "mintAndTransfer(tuple,tuple,address)"(
       data: {
         tokenURI: string;
         metadataURI: string;
@@ -3061,7 +3064,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'mintAndTransferWithSig(address,tuple,tuple,address,tuple)'(
+    "mintAndTransferWithSig(address,tuple,tuple,address,tuple)"(
       creator: string,
       data: {
         tokenURI: string;
@@ -3082,18 +3085,6 @@ export class Media extends Contract {
         s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    mintAndTransferWithSigNonces(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    'mintAndTransferWithSigNonces(address,address)'(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     mintWithSig(
@@ -3118,7 +3109,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'mintWithSig(address,tuple,tuple,tuple)'(
+    "mintWithSig(address,tuple,tuple,tuple)"(
       creator: string,
       data: {
         tokenURI: string;
@@ -3145,21 +3136,21 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'mintWithSigNonces(address)'(
+    "mintWithSigNonces(address)"(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    'name()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ownerOf(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'ownerOf(uint256)'(
+    "ownerOf(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3176,7 +3167,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'permit(address,uint256,tuple)'(
+    "permit(address,uint256,tuple)"(
       spender: string,
       tokenId: BigNumberish,
       sig: {
@@ -3194,7 +3185,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'permitNonces(address,uint256)'(
+    "permitNonces(address,uint256)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -3205,7 +3196,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'previousTokenOwners(uint256)'(
+    "previousTokenOwners(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3215,7 +3206,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'removeAsk(uint256)'(
+    "removeAsk(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -3225,7 +3216,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'removeBid(uint256)'(
+    "removeBid(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -3235,19 +3226,19 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'revokeApproval(uint256)'(
+    "revokeApproval(uint256)"(
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'safeTransferFrom(address,address,uint256)'(
+    "safeTransferFrom(address,address,uint256)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'safeTransferFrom(address,address,uint256,bytes)'(
+    "safeTransferFrom(address,address,uint256,bytes)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -3261,7 +3252,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'setApprovalForAll(address,bool)'(
+    "setApprovalForAll(address,bool)"(
       operator: string,
       approved: boolean,
       overrides?: Overrides
@@ -3273,7 +3264,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'setAsk(uint256,tuple)'(
+    "setAsk(uint256,tuple)"(
       tokenId: BigNumberish,
       ask: { amount: BigNumberish; currency: string },
       overrides?: Overrides
@@ -3291,7 +3282,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'setBid(uint256,tuple)'(
+    "setBid(uint256,tuple)"(
       tokenId: BigNumberish,
       bid: {
         amount: BigNumberish;
@@ -3308,21 +3299,21 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'supportsInterface(bytes4)'(
+    "supportsInterface(bytes4)"(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    'symbol()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokenByIndex(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'tokenByIndex(uint256)'(
+    "tokenByIndex(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3332,7 +3323,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'tokenContentHashes(uint256)'(
+    "tokenContentHashes(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3342,7 +3333,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'tokenCreators(uint256)'(
+    "tokenCreators(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3352,7 +3343,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'tokenMetadataHashes(uint256)'(
+    "tokenMetadataHashes(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3362,7 +3353,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'tokenMetadataURI(uint256)'(
+    "tokenMetadataURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3373,7 +3364,7 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'tokenOfOwnerByIndex(address,uint256)'(
+    "tokenOfOwnerByIndex(address,uint256)"(
       owner: string,
       index: BigNumberish,
       overrides?: CallOverrides
@@ -3384,14 +3375,14 @@ export class Media extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    'tokenURI(uint256)'(
+    "tokenURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    'totalSupply()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferFrom(
       from: string,
@@ -3400,7 +3391,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'transferFrom(address,address,uint256)'(
+    "transferFrom(address,address,uint256)"(
       from: string,
       to: string,
       tokenId: BigNumberish,
@@ -3413,7 +3404,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'updateTokenMetadataURI(uint256,string)'(
+    "updateTokenMetadataURI(uint256,string)"(
       tokenId: BigNumberish,
       metadataURI: string,
       overrides?: Overrides
@@ -3425,7 +3416,7 @@ export class Media extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    'updateTokenURI(uint256,string)'(
+    "updateTokenURI(uint256,string)"(
       tokenId: BigNumberish,
       tokenURI: string,
       overrides?: Overrides
