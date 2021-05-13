@@ -150,7 +150,7 @@ const Home: React.FC<void> = () => {
           </Link>
         </StyledModuleHead>
         <StyledCreators>
-          {creatorsList.map((i, idx) => (
+          {creatorsList.map((i: any, idx: number) => (
             <Link href={`/${i.username}`} key={idx}>
               <a target='_blank'>
                 <Creators {...i}></Creators>
