@@ -12,7 +12,7 @@ import { Spin } from 'antd';
 import { backendSWRFetcher } from '../../../backend/media';
 import { useMedia } from '../../../hooks/useMedia';
 import { BidLog } from '../../../types/Bid';
-import { getSymbolOf } from '../../../utils/tokens';
+import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import { Bid } from '../../../types/ContractTypes';
 import { getBidFor } from '../../../utils/MarketHelper';
@@ -76,9 +76,10 @@ export default function Bids() {
   const activeBidsList = useMemo(() => {
     const list = Object.values(activeBids).filter(i => notNull(i)) as Bid[];
     return list.map(log => {
-      const price = `${utils.formatUnits(log.amount, 18)} ${getSymbolOf(
-        log.currency
-      )}`;
+      const price = `${utils.formatUnits(
+        log.amount,
+        getDecimalOf(log.currency)
+      )} ${getSymbolOf(log.currency)}`;
       const acceptBidBtn = () => {
         if (wallet.status !== 'connected')
           return (
@@ -110,9 +111,10 @@ export default function Bids() {
     const renderedData = data?.map(log => {
       dayjs.extend(relativeTime);
       const date = dayjs(log.at.timestamp * 1000).fromNow();
-      const price = `${utils.formatUnits(log.amount, 18)} ${getSymbolOf(
-        log.currency
-      )}`;
+      const price = `${utils.formatUnits(
+        log.amount,
+        getDecimalOf(log.currency)
+      )} ${getSymbolOf(log.currency)}`;
       return { ...log, date, price };
     });
 
