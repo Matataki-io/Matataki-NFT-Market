@@ -132,9 +132,14 @@ const AGallery: React.FC = () => {
               {/*    className='media-video'*/}
               {/*  />*/}
               {/*</StyledVideo>*/}
-              <StyledVideo>
+              <StyledVideo style={{ textAlign: 'center' }}>
                 {gallery?.presentations && !isEmpty(gallery?.presentations) ? (
-                  <Image src={gallery.presentations[0]} alt={'presentations'} />
+                  <Image
+                    height={720}
+                    style={{ width: 'auto' }}
+                    src={gallery.presentations[0]}
+                    alt={'presentations'}
+                  />
                 ) : (
                   <Empty />
                 )}
