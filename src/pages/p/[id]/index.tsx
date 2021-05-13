@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 
 import { Button, Grid, Image, Link, Text, User } from '@geist-ui/react';
-import { message, Tag } from 'antd';
+import { message, Tag, Spin } from 'antd';
 import { getTokenOnScan } from '../../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
@@ -73,15 +73,30 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
   }, [metadata]);
 
   if (isFallback) {
-    return <h1>Loading the latest data...</h1>;
+    return (
+      <Page>
+        <StyledWrapperLoading>
+          <Spin tip='Loading the latest data...'></Spin>
+        </StyledWrapperLoading>
+      </Page>
+    );
   }
-  if (!post && !isError) return <div>Loading</div>;
+  if (!post && !isError)
+    return (
+      <Page>
+        <StyledWrapperLoading>
+          <Spin tip='Loading...'></Spin>
+        </StyledWrapperLoading>
+      </Page>
+    );
   if (!post)
     return (
-      <div>
-        <Text h1>Sorry</Text>
-        <Text>But the Token is not exist yet, please check with the URL</Text>
-      </div>
+      <Page>
+        <StyledWrapperLoading>
+          <Text h1>Sorry</Text>
+          <Text>But the Token is not exist yet, please check with the URL</Text>
+        </StyledWrapperLoading>
+      </Page>
     );
   //   if (!data || !metadata) return <div>loading...</div>;
   return (
@@ -204,6 +219,11 @@ export async function getStaticPaths() {
   // We'll pre-render only these paths at build time.
   return { paths, fallback: true };
 }
+
+const StyledWrapperLoading = styled.div`
+  text-align: center;
+  margin: 100px 0 0;
+`;
 
 const StyledWrapper = styled.div`
   box-sizing: border-box;

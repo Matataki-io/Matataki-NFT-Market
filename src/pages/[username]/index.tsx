@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, Button, List, message, Spin, Tag } from 'antd';
+import { Avatar, Button, List, message, Spin, Tag, Image } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
@@ -189,29 +189,57 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const ArtworksContainer = () => {
     return (
       <>
-        {/* <StyledItem>
-          <StyledItemTitle>Presentation</StyledItemTitle>
-          <StyledVideo>
-            <video
-              src={
-                'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
-              }
-              loop
-              playsInline
-              // autoPlay
-              // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-              className='media-video'
-            />
-          </StyledVideo>
-        </StyledItem>
-        <StyledLine /> */}
+        {userInfo?.presentations ? (
+          <>
+            <StyledItem>
+              <StyledItemTitle>Presentation</StyledItemTitle>
+              {/* <StyledVideo>
+                  <video
+                    src={
+                      'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
+                    }
+                    loop
+                    playsInline
+                    // autoPlay
+                    // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
+                    className='media-video'
+                  />
+                </StyledVideo> */}
+              <StyledPresentation>
+                <Image
+                  src={
+                    userInfo?.presentations ? userInfo?.presentations[0] : ''
+                  }></Image>
+              </StyledPresentation>
+            </StyledItem>
+            <StyledLine />
+          </>
+        ) : null}
 
         {nftListData.length > 0 ? (
           <>
             <StyledItem>
+              <StyledItemTitle>NFTs</StyledItemTitle>
+              <StyledMediaCardContainer>
+                {nftListData.map((item, index) => (
+                  <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+                    <a target='_blank'>
+                      <NFTSimple {...item} />
+                    </a>
+                  </Link>
+                ))}
+              </StyledMediaCardContainer>
+            </StyledItem>
+            <StyledLine />
+          </>
+        ) : null}
+
+        {userInfo?.artworks.length > 0 ? (
+          <>
+            <StyledItem>
               <StyledItemTitle>Artworks</StyledItemTitle>
               <StyledArtworks>
-                <ArtworksCarousel data={nftListData} />
+                <ArtworksCarousel data={userInfo?.artworks} />
               </StyledArtworks>
             </StyledItem>
             <StyledLine />
@@ -280,29 +308,62 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const GalleryContainer = () => {
     return (
       <>
-        {/* <StyledItem>
-          <StyledItemTitle>Presentation</StyledItemTitle>
-          <StyledVideo>
-            <video
-              src={
-                'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
-              }
-              loop
-              playsInline
-              // autoPlay
-              // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-              className='media-video'
-            />
-          </StyledVideo>
-        </StyledItem>
-        <StyledLine /> */}
-        <StyledItem>
-          <StyledItemTitle>Artworks</StyledItemTitle>
-          <StyledArtworks>
-            <ArtworksCarousel data={nftListData} />
-          </StyledArtworks>
-        </StyledItem>
+        {userInfo?.presentations ? (
+          <>
+            <StyledItem>
+              <StyledItemTitle>Presentation</StyledItemTitle>
+              {/* <StyledVideo>
+                  <video
+                    src={
+                      'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
+                    }
+                    loop
+                    playsInline
+                    // autoPlay
+                    // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
+                    className='media-video'
+                  />
+                </StyledVideo> */}
+              <StyledPresentation>
+                <Image
+                  src={
+                    userInfo?.presentations ? userInfo?.presentations[0] : ''
+                  }></Image>
+              </StyledPresentation>
+            </StyledItem>
+            <StyledLine />
+          </>
+        ) : null}
 
+        {nftListData.length > 0 ? (
+          <>
+            <StyledItem>
+              <StyledItemTitle>NFTs</StyledItemTitle>
+              <StyledMediaCardContainer>
+                {nftListData.map((item, index) => (
+                  <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+                    <a target='_blank'>
+                      <NFTSimple {...item} />
+                    </a>
+                  </Link>
+                ))}
+              </StyledMediaCardContainer>
+            </StyledItem>
+            <StyledLine />
+          </>
+        ) : null}
+
+        {userInfo?.artworks.length > 0 ? (
+          <>
+            <StyledItem>
+              <StyledItemTitle>Artworks</StyledItemTitle>
+              <StyledArtworks>
+                <ArtworksCarousel data={userInfo?.artworks} />
+              </StyledArtworks>
+            </StyledItem>
+            <StyledLine />
+          </>
+        ) : null}
         <StyledLine />
         <StyledItem>
           <StyledItemTitle>About</StyledItemTitle>
@@ -673,6 +734,13 @@ const StyledVideo = styled.div`
   @media screen and (max-width: 678px) {
     margin: 20px 0 0;
     height: 240px;
+  }
+`;
+const StyledPresentation = styled.div`
+  margin: 64px 0 0;
+  text-align: center;
+  @media screen and (max-width: 678px) {
+    margin: 20px 0 0;
   }
 `;
 const StyledArtworks = styled.div`
