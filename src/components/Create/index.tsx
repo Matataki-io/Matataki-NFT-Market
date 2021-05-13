@@ -8,12 +8,7 @@ import React, {
 import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
-import { Signer } from 'ethers';
-import {
-  getNonceByPublisherId,
-  PostMedia,
-  sendToPublisherForPreview,
-} from '../../backend/media';
+import { PostMedia, sendToPublisherForPreview } from '../../backend/media';
 import { getGallery } from '../../backend/gallery';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
@@ -467,8 +462,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       galleryId
     );
 
-    const nonce = await getNonceByPublisherId(galleryId);
-
     const gallery = galleryList.find(g => g.id === galleryId);
     if (!gallery) {
       console.log('gallery', gallery);
@@ -482,7 +475,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       contentHash,
       metadataHash,
       gallery.owner.address,
-      nonce,
+      // nonce,
       creatorShare,
       signer
     );
@@ -495,7 +488,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
     message.success('正在创建...');
     await sendToPublisherForPreview(galleryId, {
-      nonce,
+      // @todo: no more nonce
+      nonce: 0,
       title: nameAndDescription.name,
       description: nameAndDescription.description,
       tokenURI,

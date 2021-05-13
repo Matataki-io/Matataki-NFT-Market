@@ -17,8 +17,7 @@ export async function signMintWithSig(
   wallet: providers.JsonRpcSigner,
   media: Media,
   verifyingContract: string,
-  data: MintAndTransferWithSig,
-  nonce: BigNumberish
+  data: MintAndTransferWithSig
 ) {
   const deadline = getDeadline(365);
   const [signerWallet, chainId, contractName] = await Promise.all([
@@ -33,7 +32,6 @@ export async function signMintWithSig(
     metadataHash: '0x' + data.metadataHash,
     // contentHash: Uint8Array.from(Buffer.from(data.contentHash, 'hex')),
     // metadataHash: Uint8Array.from(Buffer.from(data.metadataHash, 'hex')),
-    nonce,
     deadline,
   };
   const result = await wallet._signTypedData(
@@ -48,7 +46,6 @@ export async function signMintWithSig(
         { name: 'contentHash', type: 'bytes32' },
         { name: 'metadataHash', type: 'bytes32' },
         { name: 'creatorShare', type: 'uint256' },
-        { name: 'nonce', type: 'uint256' },
         { name: 'to', type: 'address' },
         { name: 'deadline', type: 'uint256' },
       ],

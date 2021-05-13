@@ -97,7 +97,6 @@ export async function GenerateCreationSignature(
   contentHash: string,
   metadataHash: string,
   to: string,
-  nonce: number,
   creatorShare: number,
   wallet: providers.JsonRpcSigner
 ): Promise<MintAndTransferParameters> {
@@ -127,18 +126,12 @@ export async function GenerateCreationSignature(
     metadataURI,
     metadataHash
   );
-  const { signer, sig } = await signMintWithSig(
-    wallet,
-    media,
-    media.address,
-    {
-      contentHash: contentHash,
-      metadataHash: metadataHash,
-      creatorShare: Decimal.new(creatorShare).value,
-      to,
-    },
-    nonce
-  );
+  const { signer, sig } = await signMintWithSig(wallet, media, media.address, {
+    contentHash: contentHash,
+    metadataHash: metadataHash,
+    creatorShare: Decimal.new(creatorShare).value,
+    to,
+  });
 
   return {
     creator: signer,

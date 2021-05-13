@@ -59,13 +59,6 @@ export async function PostMedia({
   });
 }
 
-export async function getNonceByPublisherId(publisherUid: number) {
-  const { data } = await backendClient.get<
-    GeneralResponse<{ latestNonce: number }>
-  >(`/media/gasfreeCreate/${publisherUid}/nonce`);
-  return data.data.latestNonce;
-}
-
 export function sendToPublisherForPreview(
   publisherUid: number,
   data: {
