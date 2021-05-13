@@ -110,6 +110,7 @@ const Market: React.FC = () => {
       setHasMore(false);
 
       const subList = fullNFTList.filter(media => {
+        // @ts-ignore
         const mediaTags = media.tags.map(tag => tag.name);
         return checkedList.every(tag => mediaTags.includes(tag));
       });
