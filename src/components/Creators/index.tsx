@@ -1,24 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import { Media } from '../../types/Media.entity';
 interface CreatorsProps {
-  bc: string;
   avatar: string;
+  nickname: string;
   username: string;
+  createdMedia: Media[];
 }
 
 const CreatorsComponents: React.FC<CreatorsProps> = ({
-  bc,
   avatar,
+  nickname,
   username,
+  createdMedia,
 }) => {
   return (
     <StyledCreatorsComponents>
       <div className='cover'>
         <div className='cover-bc'>
-          {bc ? <img src={bc} alt='About' /> : null}
-          {bc ? <img src={bc} alt='About' /> : null}
-          {bc ? <img src={bc} alt='About' /> : null}
+          {createdMedia.slice(0, 3).map((i: Media) => (
+            <img key={i.id} src={i.tokenURI} alt={i.title} title={i.title} />
+          ))}
         </div>
         <div className='avatar-box'>
           <div className='avatar'>
@@ -26,7 +28,9 @@ const CreatorsComponents: React.FC<CreatorsProps> = ({
           </div>
         </div>
       </div>
-      <p>{username}</p>
+      <p>
+        {nickname}({username})
+      </p>
     </StyledCreatorsComponents>
   );
 };

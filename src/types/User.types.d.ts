@@ -3,6 +3,7 @@ import { UserRole } from '../constant';
 import { Tag } from './Tag';
 import { Gallery } from './Gallery';
 import { GalleryJoinRequest } from './GalleryJoinRequest';
+import { Media } from './Media.entity';
 
 export type MatatakiUserStat = {
   id: number;
@@ -41,7 +42,8 @@ export interface User {
   avatar: string;
   nickname: string;
   bio: string;
-  createdMedia: number[];
+  // topArtist 使用 Media[]， 其他用 number[]
+  createdMedia: number[] | Media[];
   ownedMedia: number[];
   /**
    * 是否为推荐的艺术家 (Featured artist)

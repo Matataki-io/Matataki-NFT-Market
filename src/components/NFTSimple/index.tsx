@@ -23,7 +23,7 @@ const NFTComponents: React.FC<NFTProps> = ({
       <StyledNFTContent>
         {type === 'image' ? (
           <div className='media-images'>
-            <Image src={content?.medium} alt='Content' />
+            <img src={content?.medium} alt='Content' />
           </div>
         ) : type === 'video' ? (
           <video
