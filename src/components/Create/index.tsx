@@ -407,8 +407,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       setMediaSubmitLoading(false);
       console.log('res', res);
 
-      message.success('正在处理数据请不要离开页面...');
-      await res.wait();
+      message.success('正在等待区块链网络确认，请不要离开页面...');
+      await res.wait(2);
 
       if (res && res.hash) {
         message.success('正在创建...');
@@ -475,7 +475,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       contentHash,
       metadataHash,
       gallery.owner.address,
-      // nonce,
       creatorShare,
       signer
     );
@@ -488,8 +487,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
     message.success('正在创建...');
     await sendToPublisherForPreview(galleryId, {
-      // @todo: no more nonce
-      nonce: 0,
       title: nameAndDescription.name,
       description: nameAndDescription.description,
       tokenURI,

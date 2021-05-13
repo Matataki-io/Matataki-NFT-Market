@@ -10,11 +10,11 @@ export const providers: {
   [ChainId.BSC_MAINNET]: new ethers.providers.JsonRpcProvider(
     'https://bsc-dataseed.binance.org/'
   ),
-  //   [ChainId.MAINNET]: new ethers.providers.AlchemyWebSocketProvider(
+  //   [ChainId.MAINNET]: new ethers.providers.AlchemyProvider(
   //     'homestead',
   //     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY,
   //   ),
-  //   [ChainId.KOVAN]: new ethers.providers.AlchemyWebSocketProvider(
+  //   [ChainId.KOVAN]: new ethers.providers.AlchemyProvider(
   //     'kovan',
   //     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY,
   //   ),
@@ -22,7 +22,7 @@ export const providers: {
     'rinkeby',
     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY
   ),
-  //   [ChainId.GÖRLI]: new ethers.providers.AlchemyWebSocketProvider(
+  //   [ChainId.GÖRLI]: new ethers.providers.AlchemyProvider(
   //     'gorli',
   //     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY,
   //   ),
