@@ -74,3 +74,10 @@ export function sendToPublisherForPreview(
     data
   );
 }
+
+export function mediaGasfreeCreateForPublisher(params: { gid: number }) {
+  return backendClient.get<GeneralResponse<any>>(
+    `/media/gasfreeCreate/forPublisher`,
+    { params }
+  );
+}

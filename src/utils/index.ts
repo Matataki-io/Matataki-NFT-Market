@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 // 首字母大写
 export const firstUpperCase = ([first, ...other]: any) => {
   return first.toLocaleUpperCase() + other.join('');
@@ -20,4 +21,37 @@ export const diffData = (newData: any, oldData: any) => {
     }
   }
   return data;
+};
+
+export const wordItem = (item: any) => {
+  if (isEmpty(item)) {
+    return [];
+  }
+
+  let list: any = {};
+  for (let i = 10; i < 36; i++) {
+    //   console.log(i.toString(36))
+    list[i.toString(36)] = [];
+  }
+  list['#'] = [];
+
+  item.forEach((i: any) => {
+    let key = i.username.substr(0, 1).toLocaleLowerCase();
+    if (list[key]) {
+      list[key].push(i);
+    } else {
+      list['#'].push(i);
+    }
+  });
+
+  for (const key in list) {
+    if (Object.prototype.hasOwnProperty.call(list, key)) {
+      const element = list[key];
+      if (isEmpty(element)) {
+        delete list[key];
+      }
+    }
+  }
+
+  return list;
 };
