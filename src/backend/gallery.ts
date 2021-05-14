@@ -38,6 +38,23 @@ export async function createGallery(gallery: {
   return data;
 }
 
+export async function updateGallery(
+  id: number,
+  gallery: {
+    name: string;
+    cover: string;
+    intro: string;
+    artists: User[];
+    owner: User;
+  }
+) {
+  const { data } = await BACKEND_CLIENT.patch<GeneralResponse<Gallery>>(
+    `/gallery/${id}`,
+    gallery
+  );
+  return data;
+}
+
 export async function createGalleryJoinRequest(gid: number) {
   const { data } = await BACKEND_CLIENT.post(`/gallery/${gid}/request`);
   return data;

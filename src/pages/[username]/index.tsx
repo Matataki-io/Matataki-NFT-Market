@@ -1,7 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, Button, List, message, Spin, Tag, Image } from 'antd';
+import {
+  Tag,
+  Form,
+  Modal,
+  Image,
+  Upload,
+  Avatar,
+  Button,
+  message,
+  List,
+  Spin,
+  Input,
+} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
@@ -30,6 +42,11 @@ import IconTwitter from '../../assets/icons/twitter.svg';
 import IconDiscord from '../../assets/icons/discord.svg';
 import IconFacebook from '../../assets/icons/facebook.svg';
 import useSWR from 'swr';
+import GalleryCard from '../../components/GalleryCard';
+import { Gallery } from '../../types/Gallery';
+import { UploadProps } from 'antd/lib/upload/interface';
+import { storageUploadFile } from '../../backend/storage';
+import { updateGallery } from '../../backend/gallery';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -37,6 +54,7 @@ interface Props {
 
 const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const router = useRouter();
+  const [galleryForm] = Form.useForm();
   const { username } = router.query;
   const [userInfo, setUserInfo] = useState<User | any>({
     avatar: '',
@@ -50,6 +68,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   });
   const [isVerifiedUser, setIsVerifiedUser] = useState(false);
   const [isMyself, setIsMyself] = useState(false);
+  const [editingGalleryId, setEditingGalleryId] = useState<number>(0);
   const appUserInfo = useAppSelector(state => state.userInfo);
   const [nftListData, setNFTListData] = useState<Array<NFTProps>>([]);
   const [switchFeedOrBids, setSwitchFeedOrBids] = useState<'feed' | 'bids'>(
@@ -58,11 +77,20 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const [bidsList, setBidsList] = useState<Array<BidLog>>([]);
   const { userDataByWallet } = useLogin();
   // show bid cancel modal
-  const [isModalVisibleBidsCancel, setIsModalVisibleBidsCancel] = useState(
-    false
-  );
+  const [
+    isModalVisibleBidsCancel,
+    setIsModalVisibleBidsCancel,
+  ] = useState<boolean>(false);
+
+  const [
+    isModalVisibleEditGallery,
+    setIsModalVisibleEditGallery,
+  ] = useState<boolean>(false);
+
   // click bid idx
   const [currentBidsIdx, setCurrentBidsIdx] = useState<number>(0);
+  const [coverUrl, setCoverUrl] = useState<string>('');
+
   const keyMessage = 'fetchUser';
 
   const { data: contractedArtists, error: artistsError } = useSWR<User[], any>(
@@ -70,7 +98,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     backendSWRFetcher
   );
 
-  const { data: ownedGalleries, error: galleryError } = useSWR<User, any>(
+  const { data: galleryOwner, error: galleryError } = useSWR<User, any>(
     username ? `/user/@${username}/ownedGalleries` : null,
     backendSWRFetcher
   );
@@ -305,123 +333,106 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     );
   };
 
-  const GalleryContainer = () => {
+  const onEditingGallery = (gallery: Gallery) => {
+    setEditingGalleryId(gallery.id);
+
+    if (galleryOwner?.ownedGalleries?.length) {
+      galleryForm.setFieldsValue({
+        name: gallery?.name,
+        intro: gallery?.intro,
+      });
+
+      setCoverUrl(gallery?.cover || '');
+    }
+
+    setIsModalVisibleEditGallery(true);
+  };
+
+  const editGalleryDone = () => {
+    setIsModalVisibleEditGallery(false);
+  };
+
+  const editGalleryCancelled = () => {
+    setIsModalVisibleEditGallery(false);
+  };
+
+  const editGalleryFinish = async (values: any) => {
+    console.log('Success:', values);
+
+    values.cover = coverUrl;
+
+    try {
+      const res = await updateGallery(editingGalleryId, values);
+      console.log('res', res);
+      if (res.code === 200) {
+        message.success('更新成功');
+      } else {
+        throw new Error('更新失败');
+      }
+    } catch (e) {
+      message.error(e.toString());
+    }
+  };
+
+  const onFinishFailed = (errorInfo: any) => {
+    console.log('Failed:', errorInfo);
+  };
+
+  const onChangeCover = (info: any) => {
+    console.log('info', info);
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+      const { url } = info.file.response.data;
+      setCoverUrl(url);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  };
+
+  const props: UploadProps = {
+    accept: 'image/jpeg, image/png',
+    name: 'file',
+    action: storageUploadFile,
+    method: 'PUT',
+    maxCount: 1,
+    beforeUpload(file: File) {
+      message.info('Uploading...');
+      const isJpgOrPng =
+        file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!');
+      }
+      return isJpgOrPng;
+    },
+  };
+
+  // useEffect(() => {
+  //   galleryOwner?.ownedGalleries.push(galleryOwner?.ownedGalleries[0]);
+  //   galleryOwner?.ownedGalleries.push(galleryOwner?.ownedGalleries[0]);
+  // }, [galleryOwner]);
+
+  const galleryContainer = () => {
     return (
       <>
-        {userInfo?.presentations ? (
-          <>
-            <StyledItem>
-              <StyledItemTitle>Presentation</StyledItemTitle>
-              {/* <StyledVideo>
-                  <video
-                    src={
-                      'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
-                    }
-                    loop
-                    playsInline
-                    // autoPlay
-                    // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-                    className='media-video'
-                  />
-                </StyledVideo> */}
-              <StyledPresentation>
-                <Image
-                  src={
-                    userInfo?.presentations ? userInfo?.presentations[0] : ''
-                  }></Image>
-              </StyledPresentation>
-            </StyledItem>
-            <StyledLine />
-          </>
-        ) : null}
-
-        {nftListData.length > 0 ? (
-          <>
-            <StyledItem>
-              <StyledItemTitle>NFTs</StyledItemTitle>
-              <StyledMediaCardContainer>
-                {nftListData.map((item, index) => (
-                  <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
-                    <a target='_blank'>
-                      <NFTSimple {...item} />
-                    </a>
-                  </Link>
-                ))}
-              </StyledMediaCardContainer>
-            </StyledItem>
-            <StyledLine />
-          </>
-        ) : null}
-
-        {userInfo?.artworks.length > 0 ? (
-          <>
-            <StyledItem>
-              <StyledItemTitle>Artworks</StyledItemTitle>
-              <StyledArtworks>
-                <ArtworksCarousel data={userInfo?.artworks} />
-              </StyledArtworks>
-            </StyledItem>
-            <StyledLine />
-          </>
-        ) : null}
-        <StyledLine />
         <StyledItem>
-          <StyledItemTitle>About</StyledItemTitle>
-          <StyledAbout>
-            <div className='item'>
-              <p className='text'>{userInfo?.about.description}</p>
-            </div>
-            <div className='item'>
-              <div className='cover'>
-                <img
-                  src={userInfo?.about.banner}
-                  alt={userInfo?.about.bannerDescription}
-                />
-              </div>
-              <p className='gallery-name'>
-                {userInfo?.about.bannerDescription}
-              </p>
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconTelegram} />
-                  <span>{userInfo?.about.telegram}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconTwitter} />
-                  <span>{userInfo?.about.twitter}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconMedium} />
-                  <span>{userInfo?.about.medium}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconFacebook} />
-                  <span>{userInfo?.about.facebook}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconDiscord} />
-                  <span>{userInfo?.about.discord}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconEmail} />
-                  <span>{userInfo?.about.email}</span>
-                </StyledAboutItem>
-              ) : null}
-            </div>
-          </StyledAbout>
+          <StyledItemTitle>Manage My Gallery</StyledItemTitle>
+          <StyledGallery>
+            {galleryOwner?.ownedGalleries.map(
+              (gallery: Gallery, index: number) => (
+                <GalleryCard {...gallery} key={index}>
+                  <Button onClick={() => onEditingGallery(gallery)}>
+                    Edit Information
+                  </Button>
+                </GalleryCard>
+              )
+            )}
+          </StyledGallery>
         </StyledItem>
-
         <StyledLine />
+
         <StyledItem>
           <StyledItemTitle>Contracted Artists</StyledItemTitle>
           <StyledWord>
@@ -439,6 +450,55 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             />
           </StyledWord>
         </StyledItem>
+        <StyledLine />
+
+        <Modal
+          title='Edit Gallery Information'
+          visible={isModalVisibleEditGallery}
+          forceRender={true}
+          onOk={editGalleryDone}
+          onCancel={editGalleryCancelled}
+          footer={[
+            <Button key='cancel' onClick={editGalleryCancelled}>
+              Cancel
+            </Button>,
+            <Button
+              type='primary'
+              form='galleryForm'
+              key='submit'
+              htmlType='submit'
+              onClick={editGalleryDone}>
+              Submit
+            </Button>,
+          ]}>
+          <StyledTitle style={{ fontSize: '30px', margin: '0px' }}>
+            Gallery Cover
+          </StyledTitle>
+          <StyledHelper>Click to upload a new one</StyledHelper>
+          <Upload onChange={onChangeCover} {...props} className='upload'>
+            <img width={'100%'} src={coverUrl}></img>
+          </Upload>
+          <StyledForm
+            form={galleryForm}
+            id='galleryForm'
+            name='galleryForm'
+            layout='vertical'
+            onFinish={editGalleryFinish}
+            onFinishFailed={onFinishFailed}>
+            <Form.Item label='Title' name='name' rules={[{ required: true }]}>
+              <Input placeholder='The Gallery title' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='Introduction'
+              name='intro'
+              rules={[{ required: true }]}>
+              <Input
+                placeholder='The Gallery introduction'
+                autoComplete='off'
+              />
+            </Form.Item>
+          </StyledForm>
+        </Modal>
       </>
     );
   };
@@ -525,7 +585,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         </StyledHeadRight>
       </StyledHead>
       <StyledLine />
-      {/*{!isEmpty(ownedGalleries?.ownedGalleries) && <GalleryContainer />}*/}
+      {!isEmpty(galleryOwner?.ownedGalleries) && galleryContainer()}
       {userInfo?.role === 'COLLECTOR' ? (
         collectionContainer()
       ) : userInfo?.role === 'ARTIST' ? (
@@ -901,6 +961,93 @@ const StyledWord = styled.div`
         margin: 0;
       }
     }
+  }
+`;
+
+const StyledGallery = styled.div`
+  width: 100%;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(4, minmax(0px, 1fr));
+  gap: 48px 24px;
+  margin: 48px auto 0;
+  min-height: 320px;
+
+  & > a {
+    width: 100%;
+  }
+
+  @media screen and (max-width: 1366px) {
+    grid-template-columns: repeat(3, minmax(0px, 1fr));
+  }
+  @media screen and (max-width: 1140px) {
+    grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .loading-container {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+  }
+`;
+
+const StyledForm = styled(Form)`
+  margin-top: 40px;
+  .ant-form-item {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #d9d9d9;
+    .ant-input,
+    .ant-input-affix-wrapper {
+      border: none;
+    }
+    .ant-input:focus,
+    .ant-input-focused,
+    .ant-input-affix-wrapper:focus,
+    .ant-input-affix-wrapper-focused {
+      box-shadow: none;
+    }
+  }
+  .not-border.ant-form-item {
+    border: none;
+  }
+`;
+
+const StyledHelper = styled.p`
+  font-size: 14px;
+  font-weight: 300;
+  color: #777777;
+  line-height: 20px;
+  margin: 4px 0 10px;
+`;
+
+const StyledButton = styled(Button)`
+  width: 100%;
+  height: 60px;
+  border: 2px solid #333333;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333333;
+  line-height: 22px;
+  margin-bottom: 16px;
+  &.black {
+    background: #333333;
+    color: #ffffff;
+    &:hover {
+      color: #ffffff;
+    }
+  }
+  &:hover {
+    color: #333333;
+    border-color: #333333;
+  }
+  &.ant-btn:hover,
+  &.ant-btn:focus {
+    border-color: #333333;
   }
 `;
 // gallery end
