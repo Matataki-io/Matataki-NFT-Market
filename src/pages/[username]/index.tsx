@@ -300,7 +300,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </>
         ) : null}
 
-        {nftListData.length > 0 ? (
+        {!isEmpty(nftListData) ? (
           <>
             <StyledItem>
               <StyledItemTitle>NFTs</StyledItemTitle>
@@ -318,7 +318,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </>
         ) : null}
 
-        {userInfo?.artworks.length > 0 ? (
+        {!isEmpty(userInfo?.artworks) ? (
           <>
             <StyledItem>
               <StyledItemTitle>Artworks</StyledItemTitle>
@@ -338,10 +338,12 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             </div>
             <div className='item'>
               <div className='cover'>
-                <img
-                  src={userInfo?.about.banner}
-                  alt={userInfo?.about.bannerDescription}
-                />
+                {userInfo?.about.banner ? (
+                  <img
+                    src={userInfo?.about.banner}
+                    alt={userInfo?.about.bannerDescription}
+                  />
+                ) : null}
               </div>
               <p className='gallery-name'>
                 {userInfo?.about.bannerDescription}
@@ -368,6 +370,17 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
       galleryForm.setFieldsValue({
         name: gallery?.name,
         intro: gallery?.intro,
+        presentations: gallery?.presentations,
+
+        aboutDescription: gallery?.about.description,
+        aboutBanner: gallery?.about.banner,
+        aboutBannerDescription: gallery?.about.bannerDescription,
+        aboutTelegram: gallery?.about.telegram,
+        aboutTwitter: gallery?.about.twitter,
+        aboutMedium: gallery?.about.medium,
+        aboutFacebook: gallery?.about.facebook,
+        aboutDiscord: gallery?.about.discord,
+        aboutEmail: gallery?.about.email,
       });
 
       setCoverUrl(gallery?.cover || '');
@@ -388,6 +401,33 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     console.log('Success:', values);
 
     values.cover = coverUrl;
+
+    if (values.presentations) {
+      values.presentations = [values.presentations];
+    }
+    let artworksList = [
+      values.artworks1,
+      values.artworks2,
+      values.artworks3,
+      values.artworks4,
+      values.artworks5,
+    ];
+    let artworksListFilter = artworksList.filter(i => !isEmpty(i));
+    if (!isEmpty(artworksListFilter)) {
+      values.artworks = artworksListFilter;
+    }
+
+    values.about = {
+      description: values.aboutDescription,
+      banner: values.aboutBanner,
+      bannerDescription: values.aboutBannerDescription,
+      telegram: values.aboutTelegram,
+      twitter: values.aboutTwitter,
+      medium: values.aboutMedium,
+      facebook: values.aboutFacebook,
+      discord: values.aboutDiscord,
+      email: values.aboutEmail,
+    };
 
     try {
       const res = await updateGallery(editingGalleryId, values);
@@ -504,7 +544,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </StyledTitle>
           <StyledHelper>Click to upload a new one</StyledHelper>
           <Upload onChange={onChangeCover} {...props} className='upload'>
-            <img width={'100%'} src={coverUrl}></img>
+            <img
+              width={140}
+              height={140}
+              style={{ objectFit: 'cover' }}
+              src={coverUrl}></img>
           </Upload>
           <StyledForm
             form={galleryForm}
@@ -524,6 +568,103 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
                 placeholder='The Gallery introduction'
                 autoComplete='off'
               />
+            </Form.Item>
+            <Form.Item
+              label='Presentations'
+              name='presentations'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter presentations' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='Artworks'
+              name='artworks1'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter artworks' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='Artworks'
+              name='artworks2'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter artworks' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='Artworks'
+              name='artworks3'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter artworks' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='Artworks'
+              name='artworks4'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter artworks' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='Artworks'
+              name='artworks5'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter artworks' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='aboutDescription'
+              name='aboutDescription'
+              rules={[{ required: false }]}>
+              <Input.TextArea
+                rows={6}
+                placeholder='Enter aboutDescription'
+                autoComplete='off'
+              />
+            </Form.Item>
+            <Form.Item
+              label='aboutBanner'
+              name='aboutBanner'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter aboutBanner' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='aboutBannerDescription'
+              name='aboutBannerDescription'
+              rules={[{ required: false }]}>
+              <Input
+                placeholder='Enter aboutBannerDescription'
+                autoComplete='off'
+              />
+            </Form.Item>
+            <Form.Item
+              label='aboutEmail'
+              name='aboutEmail'
+              rules={[{ required: false, type: 'email' }]}>
+              <Input placeholder='Enter aboutEmail' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='aboutTelegram'
+              name='aboutTelegram'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter aboutTelegram' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='aboutTwitter'
+              name='aboutTwitter'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter aboutTwitter' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='aboutMedium'
+              name='aboutMedium'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter aboutMedium' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='aboutFacebook'
+              name='aboutFacebook'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter aboutFacebook' autoComplete='off' />
+            </Form.Item>
+            <Form.Item
+              label='aboutDiscord'
+              name='aboutDiscord'
+              rules={[{ required: false }]}>
+              <Input placeholder='Enter aboutDiscord' autoComplete='off' />
             </Form.Item>
           </StyledForm>
         </Modal>

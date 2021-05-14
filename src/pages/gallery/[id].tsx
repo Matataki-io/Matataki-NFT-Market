@@ -32,7 +32,7 @@ import {
 } from '../../types/GalleryJoinRequest';
 import { Gallery } from '../../types/Gallery';
 import { isEmpty, cloneDeep } from 'lodash';
-import ArtworksCarousel from '../../components/ArtworksCarousel';
+import ArtworksCarousel from '../../components/ArtworksCarouselUser';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
@@ -217,6 +217,9 @@ const AGallery: React.FC = () => {
 
   const fetchJoinFn = useCallback(async () => {
     try {
+      if (isEmpty(gallery)) {
+        return;
+      }
       const res = await findGalleryJoinRequest({
         gallery: gallery,
         status: GalleryJoinRequestStatus.PENDING,
@@ -432,23 +435,14 @@ const AGallery: React.FC = () => {
         );
       },
     },
-    // {
-    //   title: '操作',
-    //   dataIndex: 'permitData',
-    //   key: 'actions',
-    //   render: (permit: any) =>
-    //     isWalletReady ? (
-    //       <Button onClick={() => sendPermit(permit)}>发布</Button>
-    //     ) : (
-    //       <Button onClick={() => wallet.connect('injected')}>连接钱包</Button>
-    //     ),
-    // },
   ];
 
   useEffect(() => {
     // noinspection JSIgnoredPromiseFromCall
-    fetchJoinFn();
-  }, []);
+    if (!isEmpty(gallery)) {
+      fetchJoinFn();
+    }
+  }, [gallery]);
 
   useEffect(() => {
     if (isOwner) {
@@ -518,12 +512,12 @@ const AGallery: React.FC = () => {
               </>
             ) : null}
 
-            {!isEmpty(media) ? (
+            {!isEmpty(gallery?.artworks) ? (
               <>
                 <StyledItem>
                   <StyledItemTitle>Artworks</StyledItemTitle>
                   <StyledArtworks>
-                    <ArtworksCarousel media={media} />
+                    <ArtworksCarousel data={gallery?.artworks} />
                   </StyledArtworks>
                 </StyledItem>
                 <StyledLine />
@@ -538,10 +532,12 @@ const AGallery: React.FC = () => {
                 </div>
                 <div className='item'>
                   <div className='cover'>
-                    <img
-                      src={gallery?.about.banner || ''}
-                      alt={gallery?.about.bannerDescription || ''}
-                    />
+                    {gallery?.about.banner ? (
+                      <img
+                        src={gallery?.about.banner || ''}
+                        alt={gallery?.about.bannerDescription || ''}
+                      />
+                    ) : null}
                   </div>
                   <p className='gallery-name'>
                     {gallery?.about.bannerDescription}
@@ -557,10 +553,10 @@ const AGallery: React.FC = () => {
                 </div>
               </StyledAbout>
             </StyledItem>
-            <StyledLine />
 
-            {!isEmpty(artistWord.length) ? (
+            {!isEmpty(artistWord) ? (
               <>
+                <StyledLine />
                 <StyledItem>
                   <StyledItemTitle>Contracted Artists</StyledItemTitle>
                   <StyledWord>
@@ -851,6 +847,7 @@ const StyledAbout = styled.div`
     line-height: 24px;
     padding: 0;
     margin: 40px 0 0 0;
+    word-break: break-word;
 
     &:nth-child(1) {
       margin-top: 0;
