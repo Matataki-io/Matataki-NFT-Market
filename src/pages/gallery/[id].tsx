@@ -83,6 +83,7 @@ const AGallery: React.FC = () => {
   const fetchIsPublished = useCallback(async () => {
     const list: MediaToScreen[] = publishNFTs;
     console.log('list', list);
+    // TODO: 这里复制过来的 ...
     const contentHashes = list.map(
       (i: MediaToScreen) => i.permitData.data.contentHash
     );
@@ -100,7 +101,6 @@ const AGallery: React.FC = () => {
     if (publishNFTs && publishNFTs.length > 0) fetchIsPublished();
     const refreshInterval = setInterval(fetchIsPublished, 1000 * 30);
     return () => clearInterval(refreshInterval);
-    // eslint-disable-next-line
   }, [publishNFTs, fetchIsPublished]);
 
   const { data: gallery, error: galleryError } = useSWR<Gallery, any>(
@@ -124,6 +124,35 @@ const AGallery: React.FC = () => {
       gallery.owner.username === userDataByWallet?.username,
     [gallery, userDataByWallet]
   );
+
+  const galleryAboutIconList = useMemo(() => {
+    return [
+      {
+        name: gallery?.about?.telegram,
+        icon: IconTelegram,
+      },
+      {
+        name: gallery?.about?.twitter,
+        icon: IconTwitter,
+      },
+      {
+        name: gallery?.about?.medium,
+        icon: IconMedium,
+      },
+      {
+        name: gallery?.about?.facebook,
+        icon: IconFacebook,
+      },
+      {
+        name: gallery?.about?.discord,
+        icon: IconDiscord,
+      },
+      {
+        name: gallery?.about?.email,
+        icon: IconEmail,
+      },
+    ];
+  }, [gallery]);
 
   // 是否申请加入画廊
   let isJoinApplied = useMemo(() => {
@@ -156,6 +185,36 @@ const AGallery: React.FC = () => {
     }
   }, [userDataByWallet, gallery]);
 
+  // nft list
+  const nftsList: any = useMemo(() => {
+    if (isEmpty(media)) {
+      return [];
+    }
+    return media?.map((i: Media) => {
+      return {
+        id: i.id,
+        type: 'image',
+        title: i.title,
+        description: i.description,
+        fields: {
+          low: { stringValue: i.tokenURI },
+          stream: { stringValue: i.tokenURI },
+          medium: { stringValue: i.tokenURI },
+          high: { stringValue: i.tokenURI },
+          thumbnail: { stringValue: i.tokenURI },
+        },
+        content: {
+          low: i.tokenURI,
+          stream: i.tokenURI,
+          medium: i.tokenURI,
+          high: i.tokenURI,
+          thumbnail: i.tokenURI,
+        },
+        owner: i.owner,
+      };
+    });
+  }, [media]);
+
   const fetchJoinFn = useCallback(async () => {
     try {
       const res = await findGalleryJoinRequest({
@@ -179,6 +238,7 @@ const AGallery: React.FC = () => {
         '/media/search',
         {
           gallery: gallery?.id,
+          relations: ['owner'],
         }
       );
       setMedia(data as any);
@@ -254,7 +314,11 @@ const AGallery: React.FC = () => {
   }, [id]);
 
   const sendPermit = useCallback(
-    async (permitToMint: MintAndTransferParameters, tags: TagType[]) => {
+    async (
+      permitToMint: MintAndTransferParameters,
+      tags: TagType[],
+      mtsId: number
+    ) => {
       // 防止误触
       if (isSendingTx) return;
       try {
@@ -278,6 +342,8 @@ const AGallery: React.FC = () => {
         const res = await PostMedia({
           txHash: receipt.transactionHash,
           tags: tags.map(t => t.name),
+          gallery: Number(id),
+          id: Number(mtsId),
         });
         console.log('res', res);
         message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
@@ -301,7 +367,7 @@ const AGallery: React.FC = () => {
       }
     },
     // eslint-disable-next-line
-    [isSendingTx, mediaContract],
+    [id, isSendingTx, mediaContract],
   );
 
   const publishNFTColumns = [
@@ -346,7 +412,11 @@ const AGallery: React.FC = () => {
       key: 'id',
       // eslint-disable-next-line react/display-name
       render: (id: number, mts: MediaToScreen) => {
-        if (isPublishedMap[id]) return '已发布 ✅';
+        if (mts.isPublished) {
+          return <Button disabled>已发布</Button>;
+        }
+
+        if (isPublishedMap[id]) return <Button disabled>已发布 ✅</Button>;
         if (!isWalletReady)
           return (
             <Button onClick={() => wallet.connect('injected')}>连接钱包</Button>
@@ -355,7 +425,7 @@ const AGallery: React.FC = () => {
           return `请切换到钱包 ${mts.publisher.address}`;
         return (
           <Button
-            onClick={() => sendPermit(mts.permitData, mts.tags)}
+            onClick={() => sendPermit(mts.permitData, mts.tags, mts.id)}
             disabled={isSendingTx}>
             发布
           </Button>
@@ -430,12 +500,12 @@ const AGallery: React.FC = () => {
               </>
             ) : null}
 
-            {!isEmpty([]) ? (
+            {!isEmpty(nftsList) ? (
               <>
                 <StyledItem>
                   <StyledItemTitle>NFTs</StyledItemTitle>
                   <StyledMediaCardContainer>
-                    {[].map((item: any, idx) => (
+                    {nftsList.map((item: any, idx: number) => (
                       <Link href={`/p/${item.id}`} key={`media-card-${idx}`}>
                         <a target='_blank'>
                           <NFTSimple {...item} />
@@ -476,42 +546,14 @@ const AGallery: React.FC = () => {
                   <p className='gallery-name'>
                     {gallery?.about.bannerDescription}
                   </p>
-                  {gallery?.about.telegram ? (
-                    <StyledAboutItem>
-                      <ReactSVG className='icon' src={IconTelegram} />
-                      <span>{gallery?.about.telegram}</span>
-                    </StyledAboutItem>
-                  ) : null}
-                  {gallery?.about.telegram ? (
-                    <StyledAboutItem>
-                      <ReactSVG className='icon' src={IconTwitter} />
-                      <span>{gallery?.about.twitter}</span>
-                    </StyledAboutItem>
-                  ) : null}
-                  {gallery?.about.telegram ? (
-                    <StyledAboutItem>
-                      <ReactSVG className='icon' src={IconMedium} />
-                      <span>{gallery?.about.medium}</span>
-                    </StyledAboutItem>
-                  ) : null}
-                  {gallery?.about.telegram ? (
-                    <StyledAboutItem>
-                      <ReactSVG className='icon' src={IconFacebook} />
-                      <span>{gallery?.about.facebook}</span>
-                    </StyledAboutItem>
-                  ) : null}
-                  {gallery?.about.telegram ? (
-                    <StyledAboutItem>
-                      <ReactSVG className='icon' src={IconDiscord} />
-                      <span>{gallery?.about.discord}</span>
-                    </StyledAboutItem>
-                  ) : null}
-                  {gallery?.about.telegram ? (
-                    <StyledAboutItem>
-                      <ReactSVG className='icon' src={IconEmail} />
-                      <span>{gallery?.about.email}</span>
-                    </StyledAboutItem>
-                  ) : null}
+                  {galleryAboutIconList.map((i: any) =>
+                    i.name ? (
+                      <StyledAboutItem>
+                        <ReactSVG className='icon' src={i.icon} />
+                        <span>{i.name}</span>
+                      </StyledAboutItem>
+                    ) : null
+                  )}
                 </div>
               </StyledAbout>
             </StyledItem>
