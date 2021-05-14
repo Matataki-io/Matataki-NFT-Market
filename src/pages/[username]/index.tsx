@@ -300,7 +300,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </>
         ) : null}
 
-        {nftListData.length > 0 ? (
+        {!isEmpty(nftListData) ? (
           <>
             <StyledItem>
               <StyledItemTitle>NFTs</StyledItemTitle>
@@ -318,7 +318,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           </>
         ) : null}
 
-        {userInfo?.artworks.length > 0 ? (
+        {!isEmpty(userInfo?.artworks) ? (
           <>
             <StyledItem>
               <StyledItemTitle>Artworks</StyledItemTitle>
@@ -338,10 +338,12 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             </div>
             <div className='item'>
               <div className='cover'>
-                <img
-                  src={userInfo?.about.banner}
-                  alt={userInfo?.about.bannerDescription}
-                />
+                {userInfo?.about.banner ? (
+                  <img
+                    src={userInfo?.about.banner}
+                    alt={userInfo?.about.bannerDescription}
+                  />
+                ) : null}
               </div>
               <p className='gallery-name'>
                 {userInfo?.about.bannerDescription}

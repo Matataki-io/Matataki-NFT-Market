@@ -217,6 +217,9 @@ const AGallery: React.FC = () => {
 
   const fetchJoinFn = useCallback(async () => {
     try {
+      if (isEmpty(gallery)) {
+        return;
+      }
       const res = await findGalleryJoinRequest({
         gallery: gallery,
         status: GalleryJoinRequestStatus.PENDING,
@@ -432,23 +435,14 @@ const AGallery: React.FC = () => {
         );
       },
     },
-    // {
-    //   title: '操作',
-    //   dataIndex: 'permitData',
-    //   key: 'actions',
-    //   render: (permit: any) =>
-    //     isWalletReady ? (
-    //       <Button onClick={() => sendPermit(permit)}>发布</Button>
-    //     ) : (
-    //       <Button onClick={() => wallet.connect('injected')}>连接钱包</Button>
-    //     ),
-    // },
   ];
 
   useEffect(() => {
     // noinspection JSIgnoredPromiseFromCall
-    fetchJoinFn();
-  }, []);
+    if (!isEmpty(gallery)) {
+      fetchJoinFn();
+    }
+  }, [gallery]);
 
   useEffect(() => {
     if (isOwner) {
@@ -538,10 +532,12 @@ const AGallery: React.FC = () => {
                 </div>
                 <div className='item'>
                   <div className='cover'>
-                    <img
-                      src={gallery?.about.banner || ''}
-                      alt={gallery?.about.bannerDescription || ''}
-                    />
+                    {gallery?.about.banner ? (
+                      <img
+                        src={gallery?.about.banner || ''}
+                        alt={gallery?.about.bannerDescription || ''}
+                      />
+                    ) : null}
                   </div>
                   <p className='gallery-name'>
                     {gallery?.about.bannerDescription}
@@ -559,7 +555,7 @@ const AGallery: React.FC = () => {
             </StyledItem>
             <StyledLine />
 
-            {!isEmpty(artistWord.length) ? (
+            {!isEmpty(artistWord) ? (
               <>
                 <StyledItem>
                   <StyledItemTitle>Contracted Artists</StyledItemTitle>
