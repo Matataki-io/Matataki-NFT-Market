@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import { Avatar, Button, List, message, Modal, Spin } from 'antd';
+import { Avatar, Button, List, message, Modal, Spin, Space } from 'antd';
 import { User } from '../../types/User.types';
 import { backendSWRFetcher } from '../../backend/media';
 import { BACKEND_CLIENT, UserRole } from '../../constant';
@@ -22,10 +22,13 @@ import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
 import { Media } from '../../types/Media.entity';
 import { GeneralResponse } from '../../types/Backend.types';
+import { useLogin } from '../../hooks/useLogin';
 
 const AGallery: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
+  const { userDataByWallet } = useLogin();
+
   const { data: gallery, error: galleryError } = useSWR<Gallery, any>(
     id ? `/gallery/${id}` : null,
     backendSWRFetcher
@@ -37,25 +40,66 @@ const AGallery: React.FC = () => {
   >(`/user/me`, backendSWRFetcher);
 
   const isOwner = useMemo(
-    () => gallery && me && gallery.owner.id === me.data.id,
-    [gallery, me]
+    () =>
+      gallery &&
+      gallery.owner.id === userDataByWallet?.id &&
+      gallery.owner.username === userDataByWallet?.username,
+    [gallery, userDataByWallet]
   );
 
   const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
 
-  useEffect(() => {
-    const fetch = async () => {
+  // 是否申请加入画廊
+  let isJoinApplied = useMemo(() => {
+    if (userDataByWallet) {
+      let join = requests.find((i: any) => {
+        return (
+          i.artist.username === userDataByWallet?.username &&
+          i.artist.id === userDataByWallet?.id
+        );
+      });
+      console.log('join', join);
+      return !!join;
+    } else {
+      return false;
+    }
+  }, [userDataByWallet, requests]);
+  // 是否加入画廊
+  let isJoin = useMemo(() => {
+    if (userDataByWallet) {
+      let join = gallery?.artists.find((i: any) => {
+        return (
+          i.username === userDataByWallet?.username &&
+          i.id === userDataByWallet?.id
+        );
+      });
+      console.log('join', join);
+      return !!join;
+    } else {
+      return false;
+    }
+  }, [userDataByWallet, gallery]);
+
+  const fetchJoinFn = useCallback(async () => {
+    try {
       const res = await findGalleryJoinRequest({
-        gallery,
+        gallery: gallery,
         status: GalleryJoinRequestStatus.PENDING,
       });
-      setRequests(res);
-    };
-    // noinspection JSIgnoredPromiseFromCall
-    if (isOwner) {
-      fetch();
+      console.log(res);
+      if (res.status === 200) {
+        setRequests(res.data);
+      } else {
+        throw new Error('fail');
+      }
+    } catch (e) {
+      message.error(e.toString());
     }
-  }, [gallery, me, isOwner]);
+  }, [gallery]);
+  useEffect(() => {
+    // noinspection JSIgnoredPromiseFromCall
+    fetchJoinFn();
+  }, []);
 
   const [media, setMedia] = useState<Media[]>();
 
@@ -71,19 +115,34 @@ const AGallery: React.FC = () => {
     })();
   }, [gallery]);
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  // 加入画廊
+  const joinGalleryFn = async () => {
+    try {
+      const res = await createGalleryJoinRequest(Number.parseInt(id as string));
+      if (res.status === 201) {
+        console.log(res);
+        message.success('已发送加入申请');
+      } else {
+        throw new Error('fail');
+      }
+    } catch (e) {
+      console.log('e', e);
+      message.error(e.toString());
+    }
+  };
 
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-  const handleOk = async () => {
-    const res = await createGalleryJoinRequest(Number.parseInt(id as string));
-    console.log(res);
-    message.success('Request succeeded ');
-    setIsModalVisible(false);
-  };
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  const handleJoin = async (id: number, status: boolean) => {
+    try {
+      const res = await updateGalleryJoinRequest(id, status);
+      if (res.status === 200) {
+        message.success('操作成功');
+        fetchJoinFn();
+      } else {
+        throw new Error('fail');
+      }
+    } catch (e) {
+      message.error(e.toString());
+    }
   };
 
   return (
@@ -103,6 +162,19 @@ const AGallery: React.FC = () => {
                   <p>{gallery.intro}</p>
                 </StyledHeadUserInfo>
               </StyledHeadUser>
+              <StyledHeadRight>
+                {userDataByWallet?.role === UserRole.Artist ? (
+                  isJoin ? (
+                    <Button disabled>Joined</Button>
+                  ) : isJoinApplied ? (
+                    <Button disabled>Already applied</Button>
+                  ) : (
+                    <Button type='primary' onClick={joinGalleryFn}>
+                      Join Gallery
+                    </Button>
+                  )
+                ) : null}
+              </StyledHeadRight>
             </StyledHead>
             <StyledLine />
             <StyledItem>
@@ -160,43 +232,48 @@ const AGallery: React.FC = () => {
                 />
               </StyledWord>
             </StyledItem>
-
-            {me?.data.role === UserRole.Artist && (
+            {isOwner ? (
               <>
-                <Button onClick={showModal}>Join Gallery</Button>
-                <Modal
-                  title='confirm'
-                  visible={isModalVisible}
-                  onOk={handleOk}
-                  onCancel={handleCancel}>
-                  Are you sure you want to join?
-                </Modal>
-              </>
-            )}
-            {!isEmpty(requests) && (
-              <div>
-                <h3>Join Requests:</h3>
-                <List
-                  size='small'
-                  dataSource={requests}
-                  renderItem={item => (
-                    <List.Item>
-                      {item.artist.username}
-                      <Button
-                        onClick={() => updateGalleryJoinRequest(item.id, true)}>
-                        Accept
-                      </Button>{' '}
-                      <Button
-                        onClick={() =>
-                          updateGalleryJoinRequest(item.id, false)
-                        }>
-                        Reject
-                      </Button>
-                    </List.Item>
+                <StyledLine />
+                <StyledItem>
+                  <StyledItemTitle>Manage application requests</StyledItemTitle>
+                  {!isEmpty(requests) ? (
+                    <StyledBox>
+                      {requests.map(item => (
+                        <StyledJoinItem key={item.id}>
+                          <Avatar src={item.artist.avatar}></Avatar>{' '}
+                          <Link href={`/${item.artist.username}`}>
+                            <a target='_blank'>
+                              {item.artist.nickname}({item.artist.username})
+                            </a>
+                          </Link>
+                          <Space style={{ margin: '0 0 0 20px' }}>
+                            <Button
+                              type='primary'
+                              onClick={() => {
+                                handleJoin(item.id, true);
+                              }}>
+                              Accept
+                            </Button>
+                            {/* TODO： 拒绝加入询问 */}
+                            <Button
+                              type='primary'
+                              danger
+                              onClick={() => {
+                                handleJoin(item.id, false);
+                              }}>
+                              Reject
+                            </Button>
+                          </Space>
+                        </StyledJoinItem>
+                      ))}
+                    </StyledBox>
+                  ) : (
+                    <div>Not applied...</div>
                   )}
-                />{' '}
-              </div>
-            )}
+                </StyledItem>
+              </>
+            ) : null}
           </>
         )}
       </Spin>
@@ -274,7 +351,11 @@ const StyledHeadUserInfo = styled.div`
     margin: 6px 0 0 0;
   }
 `;
-
+const StyledHeadRight = styled.div`
+  @media screen and (max-width: 678px) {
+    width: 100%;
+  }
+`;
 const StyledItemTitle = styled.h3`
   font-size: 32px;
   font-family: 'Playfair Display', serif;
@@ -387,6 +468,14 @@ const StyledAbout = styled.div`
     padding: 0;
     margin: 24px 0 0 0;
   }
+`;
+const StyledBox = styled.div`
+  display: block;
+  margin: 20px 0;
+`;
+const StyledJoinItem = styled.div`
+  display: block;
+  margin: 10px 0;
 `;
 const StyledWord = styled.div`
   display: block;

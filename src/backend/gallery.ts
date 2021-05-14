@@ -56,7 +56,7 @@ export async function updateGallery(
 }
 
 export async function createGalleryJoinRequest(gid: number) {
-  const { data } = await BACKEND_CLIENT.post(`/gallery/${gid}/request`);
+  const data = await BACKEND_CLIENT.post(`/gallery/${gid}/request`);
   return data;
 }
 
@@ -68,7 +68,7 @@ export async function findGalleryJoinRequest(
     status: GalleryJoinRequestStatus;
   }>
 ) {
-  const { data } = await BACKEND_CLIENT.post<GalleryJoinRequest[]>(
+  const data = await BACKEND_CLIENT.post<GalleryJoinRequest[]>(
     '/gallery/request/find',
     condition
   );
@@ -76,7 +76,7 @@ export async function findGalleryJoinRequest(
 }
 
 export async function updateGalleryJoinRequest(id: number, accept: boolean) {
-  const { data } = await BACKEND_CLIENT.patch<GalleryJoinRequest[]>(
+  const data = await BACKEND_CLIENT.patch<GalleryJoinRequest[]>(
     `/gallery/request/${id}`,
     { accept }
   );
