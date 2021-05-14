@@ -10,6 +10,7 @@ export const providers: {
   [ChainId.BSC_MAINNET]: new ethers.providers.JsonRpcProvider(
     'https://bsc-dataseed.binance.org/'
   ),
+  // @todo: 取消下方的注释，以启用主网的 Provider
   //   [ChainId.MAINNET]: new ethers.providers.AlchemyProvider(
   //     'homestead',
   //     process.env.NEXT_PUBLIC_ALCHEMY_APIKEY,
