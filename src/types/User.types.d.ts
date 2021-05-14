@@ -120,4 +120,5 @@ export interface MediaToScreen {
   tokenURI: string;
   permitData: MintAndTransferParameters;
   tags: Tag[];
+  isPublished: Boolean;
 }

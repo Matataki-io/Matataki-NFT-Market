@@ -225,6 +225,35 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     return list;
   }, [userInfo]);
 
+  const userAboutIconList = useMemo(() => {
+    return [
+      {
+        name: userInfo?.about?.telegram,
+        icon: IconTelegram,
+      },
+      {
+        name: userInfo?.about?.twitter,
+        icon: IconTwitter,
+      },
+      {
+        name: userInfo?.about?.medium,
+        icon: IconMedium,
+      },
+      {
+        name: userInfo?.about?.facebook,
+        icon: IconFacebook,
+      },
+      {
+        name: userInfo?.about?.discord,
+        icon: IconDiscord,
+      },
+      {
+        name: userInfo?.about?.email,
+        icon: IconEmail,
+      },
+    ];
+  }, [userInfo]);
+
   const collectionContainer = () => {
     return (
       <>
@@ -317,42 +346,14 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
               <p className='gallery-name'>
                 {userInfo?.about.bannerDescription}
               </p>
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconTelegram} />
-                  <span>{userInfo?.about.telegram}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconTwitter} />
-                  <span>{userInfo?.about.twitter}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconMedium} />
-                  <span>{userInfo?.about.medium}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconFacebook} />
-                  <span>{userInfo?.about.facebook}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconDiscord} />
-                  <span>{userInfo?.about.discord}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconEmail} />
-                  <span>{userInfo?.about.email}</span>
-                </StyledAboutItem>
-              ) : null}
+              {userAboutIconList.map((i: any) =>
+                i.name ? (
+                  <StyledAboutItem>
+                    <ReactSVG className='icon' src={i.icon} />
+                    <span>{i.name}</span>
+                  </StyledAboutItem>
+                ) : null
+              )}
             </div>
           </StyledAbout>
         </StyledItem>
