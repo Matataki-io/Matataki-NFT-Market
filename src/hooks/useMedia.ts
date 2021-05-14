@@ -17,7 +17,7 @@ export function useMedia() {
         currentProvider as ethers.providers.Provider
       );
     }
-  }, [signer]);
+  }, [isSignerReady, signer]);
 
   return media;
 }

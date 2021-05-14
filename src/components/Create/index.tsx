@@ -414,7 +414,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         message.success('正在创建...');
         const resMedia = await PostMedia({
           txHash: res.hash,
-          tags: tags,
+          tags: tags || [],
         });
         console.log('resMedia', resMedia);
         message.success('mint success...');
@@ -429,7 +429,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       console.log('e', e);
       message.error(e);
     }
-  }, [signer, mediaData, formPricingAndFees]);
+  }, [signer, mediaData, formPricingAndFees, isSignerReady, setIsCreate]);
 
   // mint到画廊
   const mintTokenToGallery = useCallback(async () => {
@@ -446,11 +446,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     } = mediaData.storage['MediaData'];
     let {
       price,
-      tags_,
+      tags,
       gallery: galleryId,
     } = formPricingAndFees.getFieldsValue();
     let creatorShare = Number(price);
-    let tags = tags_ || [];
 
     console.log(
       'info',
@@ -490,8 +489,9 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       title: nameAndDescription.name,
       description: nameAndDescription.description,
       tokenURI,
-      tags,
+      tags: tags || [],
       permitData: res,
+      gallery: galleryId,
     });
     // const resp = await mediaContract.mintAndTransferWithSig(
     //   wallet.account as string,
@@ -505,7 +505,15 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     // alert('txHash' + receipt.transactionHash);
     message.success('上传成功，等待画廊审核');
     setIsCreate(false);
-  }, [signer, mediaData, formPricingAndFees, galleryList]);
+  }, [
+    signer,
+    mediaData,
+    nameAndDescription,
+    isSignerReady,
+    setIsCreate,
+    formPricingAndFees,
+    galleryList,
+  ]);
 
   // price填写完成
   const onFinishPrice = async (values: any) => {

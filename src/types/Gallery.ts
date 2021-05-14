@@ -14,4 +14,6 @@ export type Gallery = {
   joinRequests: GalleryJoinRequest;
 
   about: About;
+  presentations?: string[];
+  artworks?: string[];
 };

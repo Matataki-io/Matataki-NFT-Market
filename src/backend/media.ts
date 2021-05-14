@@ -67,10 +67,18 @@ export function sendToPublisherForPreview(
     tokenURI: string;
     permitData: MintAndTransferParameters;
     tags: string[];
+    gallery: number;
   }
 ) {
   return backendClient.post<GeneralResponse<{ msg: string }>>(
     `/media/gasfreeCreate/${GalleryId}`,
     data
+  );
+}
+
+export function mediaGasfreeCreateForPublisher(params: { gid: number }) {
+  return backendClient.get<GeneralResponse<any>>(
+    `/media/gasfreeCreate/forPublisher`,
+    { params }
   );
 }
