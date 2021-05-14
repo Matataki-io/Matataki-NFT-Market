@@ -77,6 +77,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
   const [tagsList, setTagsList] = useState<Array<string>>([]);
 
+  // 获取用户信息
   useEffect(() => {
     const fetchUserInfoData = async () => {
       if (typeof username !== 'string') return;
@@ -103,7 +104,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         return;
       }
     };
-
+    // 获取NFT信息
     const fetchNFTListData = async (userInfo: User) => {
       const uniNftId = new Set<number>();
       if (userInfo.createdMedia) {
@@ -158,7 +159,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
     fetchAll();
   }, [appUserInfo, userDataByWallet, username, router]);
-
+  // 获取用户tags
   useEffect(() => {
     const fetch = async () => {
       if (typeof username !== 'string') return;
@@ -169,6 +170,32 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     };
     fetch();
   }, [userInfo, username]);
+
+  const IconList = useMemo(() => {
+    let list = [
+      {
+        name: userInfo?.telegram,
+        icon: IconTelegram,
+      },
+      {
+        name: userInfo?.twitter,
+        icon: IconTwitter,
+      },
+      {
+        name: userInfo?.email,
+        icon: IconEmail,
+      },
+      {
+        name: userInfo?.medium,
+        icon: IconMedium,
+      },
+      {
+        name: userInfo?.facebook,
+        icon: IconFacebook,
+      },
+    ];
+    return list;
+  }, [userInfo]);
 
   const collectionContainer = () => {
     return (
@@ -308,120 +335,6 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const GalleryContainer = () => {
     return (
       <>
-        {userInfo?.presentations ? (
-          <>
-            <StyledItem>
-              <StyledItemTitle>Presentation</StyledItemTitle>
-              {/* <StyledVideo>
-                  <video
-                    src={
-                      'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
-                    }
-                    loop
-                    playsInline
-                    // autoPlay
-                    // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-                    className='media-video'
-                  />
-                </StyledVideo> */}
-              <StyledPresentation>
-                <Image
-                  src={
-                    userInfo?.presentations ? userInfo?.presentations[0] : ''
-                  }></Image>
-              </StyledPresentation>
-            </StyledItem>
-            <StyledLine />
-          </>
-        ) : null}
-
-        {nftListData.length > 0 ? (
-          <>
-            <StyledItem>
-              <StyledItemTitle>NFTs</StyledItemTitle>
-              <StyledMediaCardContainer>
-                {nftListData.map((item, index) => (
-                  <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
-                    <a target='_blank'>
-                      <NFTSimple {...item} />
-                    </a>
-                  </Link>
-                ))}
-              </StyledMediaCardContainer>
-            </StyledItem>
-            <StyledLine />
-          </>
-        ) : null}
-
-        {userInfo?.artworks.length > 0 ? (
-          <>
-            <StyledItem>
-              <StyledItemTitle>Artworks</StyledItemTitle>
-              <StyledArtworks>
-                <ArtworksCarousel data={userInfo?.artworks} />
-              </StyledArtworks>
-            </StyledItem>
-            <StyledLine />
-          </>
-        ) : null}
-        <StyledLine />
-        <StyledItem>
-          <StyledItemTitle>About</StyledItemTitle>
-          <StyledAbout>
-            <div className='item'>
-              <p className='text'>{userInfo?.about.description}</p>
-            </div>
-            <div className='item'>
-              <div className='cover'>
-                <img
-                  src={userInfo?.about.banner}
-                  alt={userInfo?.about.bannerDescription}
-                />
-              </div>
-              <p className='gallery-name'>
-                {userInfo?.about.bannerDescription}
-              </p>
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconTelegram} />
-                  <span>{userInfo?.about.telegram}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconTwitter} />
-                  <span>{userInfo?.about.twitter}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconMedium} />
-                  <span>{userInfo?.about.medium}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconFacebook} />
-                  <span>{userInfo?.about.facebook}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconDiscord} />
-                  <span>{userInfo?.about.discord}</span>
-                </StyledAboutItem>
-              ) : null}
-              {userInfo?.about.telegram ? (
-                <StyledAboutItem>
-                  <ReactSVG className='icon' src={IconEmail} />
-                  <span>{userInfo?.about.email}</span>
-                </StyledAboutItem>
-              ) : null}
-            </div>
-          </StyledAbout>
-        </StyledItem>
-
-        <StyledLine />
         <StyledItem>
           <StyledItemTitle>Contracted Artists</StyledItemTitle>
           <StyledWord>
@@ -460,51 +373,16 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         </StyledHeadUser>
         <StyledHeadRight>
           <StyledHeadIcon>
-            {userInfo?.telegram ? (
-              <CopyToClipboard
-                text={userInfo?.telegram}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.telegram ? (
-                  <ReactSVG className='icon' src={IconTelegram} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
-            {userInfo?.twitter ? (
-              <CopyToClipboard
-                text={userInfo?.twitter}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.twitter ? (
-                  <ReactSVG className='icon' src={IconTwitter} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
-            {userInfo?.email ? (
-              <CopyToClipboard
-                text={userInfo?.email}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.email ? (
-                  <ReactSVG className='icon' src={IconEmail} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
-            {userInfo?.medium ? (
-              <CopyToClipboard
-                text={userInfo?.medium}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.medium ? (
-                  <ReactSVG className='icon' src={IconMedium} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
-            {userInfo?.facebook ? (
-              <CopyToClipboard
-                text={userInfo?.facebook}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.facebook ? (
-                  <ReactSVG className='icon' src={IconFacebook} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
+            {IconList.map((i: any, idx: number) =>
+              i.name ? (
+                <CopyToClipboard
+                  key={idx}
+                  text={i.name}
+                  onCopy={() => message.info('复制成功！')}>
+                  {i.name ? <ReactSVG className='icon' src={i.icon} /> : null}
+                </CopyToClipboard>
+              ) : null
+            )}
           </StyledHeadIcon>
           {tagsList.length ? (
             <StyledHeadTags>
@@ -533,11 +411,18 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
       ) : userInfo?.role === 'SUPER_ADMIN' ? (
         collectionContainer()
       ) : (
-        <Spin />
+        <StyledWrapperLoading>
+          <Spin tip={'Loading...'} />
+        </StyledWrapperLoading>
       )}
     </StyledWrapper>
   );
 };
+
+const StyledWrapperLoading = styled.div`
+  text-align: center;
+  margin: 100px 0 0;
+`;
 
 const StyledWrapper = styled.div`
   flex: 1;
@@ -739,6 +624,8 @@ const StyledVideo = styled.div`
 const StyledPresentation = styled.div`
   margin: 64px 0 0;
   text-align: center;
+  width: 100%;
+  overflow: hidden;
   @media screen and (max-width: 678px) {
     margin: 20px 0 0;
   }
