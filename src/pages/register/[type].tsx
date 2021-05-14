@@ -10,7 +10,8 @@ import { Form, Input, Button, Checkbox, message } from 'antd';
 // 用户名校验
 const usernamePattern = /^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
 // 允许的类型
-const registerType = ['collector', 'artist', 'gallery'];
+// const registerType = ['collector', 'artist', 'gallery'];
+const registerType = ['collector'];
 
 const Register: React.FC<void> = () => {
   const wallet = useWallet();
@@ -21,11 +22,11 @@ const Register: React.FC<void> = () => {
   useEffect(() => {
     if (isRegistered) {
       message.info('已经注册过了');
-      // router.push('/');
+      router.push('/');
     }
     if (!registerType.includes(String(type))) {
       message.info('其他路由');
-      // router.push('/');
+      router.push('/');
     }
   }, [isRegistered, type]);
 
@@ -104,12 +105,12 @@ const Register: React.FC<void> = () => {
               CONNECT WALLET
             </StyledButton>
           )}
-          <p>
+          {/* <p>
             Already have an account?{' '}
             <Link href='/login'>
               <a>Login</a>
             </Link>
-          </p>
+          </p> */}
           {type === 'collector' ? (
             <p>
               Interested in becoming an artist? Begin by applying{' '}
