@@ -32,7 +32,7 @@ import {
 } from '../../types/GalleryJoinRequest';
 import { Gallery } from '../../types/Gallery';
 import { isEmpty, cloneDeep } from 'lodash';
-import ArtworksCarousel from '../../components/ArtworksCarousel';
+import ArtworksCarousel from '../../components/ArtworksCarouselUser';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
@@ -512,12 +512,12 @@ const AGallery: React.FC = () => {
               </>
             ) : null}
 
-            {!isEmpty(media) ? (
+            {!isEmpty(gallery?.artworks) ? (
               <>
                 <StyledItem>
                   <StyledItemTitle>Artworks</StyledItemTitle>
                   <StyledArtworks>
-                    <ArtworksCarousel media={media} />
+                    <ArtworksCarousel data={gallery?.artworks} />
                   </StyledArtworks>
                 </StyledItem>
                 <StyledLine />
@@ -553,10 +553,10 @@ const AGallery: React.FC = () => {
                 </div>
               </StyledAbout>
             </StyledItem>
-            <StyledLine />
 
             {!isEmpty(artistWord) ? (
               <>
+                <StyledLine />
                 <StyledItem>
                   <StyledItemTitle>Contracted Artists</StyledItemTitle>
                   <StyledWord>
@@ -847,6 +847,7 @@ const StyledAbout = styled.div`
     line-height: 24px;
     padding: 0;
     margin: 40px 0 0 0;
+    word-break: break-word;
 
     &:nth-child(1) {
       margin-top: 0;
