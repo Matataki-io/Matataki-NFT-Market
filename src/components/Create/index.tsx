@@ -491,6 +491,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       tokenURI,
       tags: tags || [],
       permitData: res,
+      gallery: galleryId,
     });
     // const resp = await mediaContract.mintAndTransferWithSig(
     //   wallet.account as string,

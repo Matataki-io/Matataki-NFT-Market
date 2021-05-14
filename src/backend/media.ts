@@ -67,6 +67,7 @@ export function sendToPublisherForPreview(
     tokenURI: string;
     permitData: MintAndTransferParameters;
     tags: string[];
+    gallery: number;
   }
 ) {
   return backendClient.post<GeneralResponse<{ msg: string }>>(

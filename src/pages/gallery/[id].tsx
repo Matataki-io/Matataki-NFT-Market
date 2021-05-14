@@ -76,28 +76,32 @@ const AGallery: React.FC = () => {
     { setTrue: toggleSendTx, setFalse: sendTxFinished },
   ] = useBoolean(false);
   const [media, setMedia] = useState<Media[]>();
+  const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
+  // 艺术家上传到画廊的NFTs
+  const [publishNFTs, setPublishNFTs] = useState<any[]>([]);
 
   const fetchIsPublished = useCallback(async () => {
-    const list: MediaToScreen[] = media;
+    const list: MediaToScreen[] = publishNFTs;
+    console.log('list', list);
     const contentHashes = list.map(
       (i: MediaToScreen) => i.permitData.data.contentHash
     );
     const status = await mediaContract['isContentUploaded(bytes32[])'](
       contentHashes
     );
-    const aMap = {};
+    const aMap: any = {};
     list.forEach((mts, idx) => {
       aMap[mts.id] = status[idx];
     });
     updatePublishedMap(aMap);
-  }, [media, mediaContract]);
+  }, [publishNFTs, mediaContract]);
 
   useEffect(() => {
-    if (media && media.length > 0) fetchIsPublished();
+    if (publishNFTs && publishNFTs.length > 0) fetchIsPublished();
     const refreshInterval = setInterval(fetchIsPublished, 1000 * 30);
     return () => clearInterval(refreshInterval);
     // eslint-disable-next-line
-  }, [media, fetchIsPublished]);
+  }, [publishNFTs, fetchIsPublished]);
 
   const { data: gallery, error: galleryError } = useSWR<Gallery, any>(
     id ? `/gallery/${id}` : null,
@@ -120,10 +124,6 @@ const AGallery: React.FC = () => {
       gallery.owner.username === userDataByWallet?.username,
     [gallery, userDataByWallet]
   );
-
-  const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
-  // 艺术家上传到画廊的NFTs
-  const [publishNFTs, setPublishNFTs] = useState<any[]>([]);
 
   // 是否申请加入画廊
   let isJoinApplied = useMemo(() => {
