@@ -60,7 +60,7 @@ export async function PostMedia({
 }
 
 export function sendToPublisherForPreview(
-  publisherUid: number,
+  GalleryId: number,
   data: {
     title: string;
     description: string;
@@ -70,7 +70,7 @@ export function sendToPublisherForPreview(
   }
 ) {
   return backendClient.post<GeneralResponse<{ msg: string }>>(
-    `/media/gasfreeCreate/${publisherUid}`,
+    `/media/gasfreeCreate/${GalleryId}`,
     data
   );
 }
