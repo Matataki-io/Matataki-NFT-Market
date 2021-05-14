@@ -517,7 +517,7 @@ const AGallery: React.FC = () => {
                 <StyledItem>
                   <StyledItemTitle>Artworks</StyledItemTitle>
                   <StyledArtworks>
-                    <ArtworksCarousel data={gallery?.artworks} />
+                    <ArtworksCarousel data={gallery?.artworks || []} />
                   </StyledArtworks>
                 </StyledItem>
                 <StyledLine />
