@@ -340,8 +340,6 @@ const Register: React.FC<void> = () => {
           ? 'Collector - Edit Profile'
           : userDataByWallet?.role === 'ARTIST'
           ? 'Artist - Edit Profile'
-          : userDataByWallet?.role === 'GALLERY'
-          ? 'Gallery - Edit Profile'
           : ''}
       </StyledTitle>
       <StyledAvatarItem>

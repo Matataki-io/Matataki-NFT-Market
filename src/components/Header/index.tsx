@@ -143,16 +143,13 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         {
           // do not just `ts-ignore`, use expression to do typesafe check~
           // need to have user data
-          userDataByWallet &&
-            // at least owned a gallery
-            (userDataByWallet.ownedGalleries.length > 0 ||
-              // or is a super admin
-              userDataByWallet.role === UserRole.SuperAdmin) && (
-              <Link
-                href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
-                Management
-              </Link>
-            )
+          // if user is super admin
+          userDataByWallet && userDataByWallet.role === UserRole.SuperAdmin && (
+            <Link
+              href={`${process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION}/auth?token=${accessToken}`}>
+              Management
+            </Link>
+          )
         }
       </StyledHeaderNav>
     );
