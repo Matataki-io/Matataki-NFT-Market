@@ -182,8 +182,8 @@ const Market: React.FC = () => {
           <h3>SORT BY</h3>
           <StyledHeadContainer className='filter'>
             <Radio.Group onChange={onSort} value={sort}>
-              <Radio value={SortBy.ASCE}>Creat Date - Ascending</Radio>
-              <Radio value={SortBy.DECE}>Creat Date - Descending</Radio>
+              <Radio value={SortBy.DECE}>New</Radio>
+              <Radio value={SortBy.ASCE}>Create</Radio>
             </Radio.Group>
           </StyledHeadContainer>
         </div>

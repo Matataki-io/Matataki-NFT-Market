@@ -28,7 +28,7 @@ const CommunityId: React.FC = () => {
       }
     };
     fetchPost();
-  }, [router]);
+  }, [router, id]);
 
   return (
     <>
@@ -60,10 +60,6 @@ const CommunityId: React.FC = () => {
           <StyledTime>
             {moment(article?.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
           </StyledTime>
-          {/* <StyledUser>
-            <Avatar></Avatar>
-            <span className='username'>{article?.author}</span>
-          </StyledUser> */}
           <StyledLine></StyledLine>
           <StyledMd>
             {article?.content ? (
