@@ -397,11 +397,7 @@ const Register: React.FC<void> = () => {
                 onChange={onChangePresentations}
                 listType={'picture-card'}>
                 {presentationsSrc ? (
-                  <Image
-                    className='cover'
-                    src={presentationsSrc}
-                    alt={'cover'}
-                  />
+                  <img className='cover' src={presentationsSrc} alt={'cover'} />
                 ) : (
                   uploadButton
                 )}
@@ -718,7 +714,7 @@ const StyledArtworksItem = styled.div`
     right: 0;
     top: 0;
     font-size: 20px;
-    color: #ffffff;
+    color: #222;
   }
 `;
 const StyledFormPresentationsUpload = styled(Upload)`
