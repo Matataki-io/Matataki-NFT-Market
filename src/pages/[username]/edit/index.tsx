@@ -210,7 +210,7 @@ const Register: React.FC<void> = () => {
         message.success('更新成功');
         // router.push(`/${username}`);
       } else {
-        message.error('更新失败');
+        throw new Error('更新失败');
       }
     } catch (e) {
       message.error(e.toString());
@@ -507,7 +507,7 @@ const Register: React.FC<void> = () => {
               onChange={onChangeBanner}
               listType={'picture-card'}>
               {formImage() ? (
-                <Image className='banner' src={formImage()} />
+                <img className='banner' src={formImage()} />
               ) : (
                 uploadButton
               )}

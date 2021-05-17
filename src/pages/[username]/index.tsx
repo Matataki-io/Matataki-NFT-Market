@@ -330,9 +330,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             </StyledItem>
             <StyledLine />
           </>
-        ) : (
-          <Empty />
-        )}
+        ) : null}
 
         <StyledItem>
           <StyledItemTitle>About</StyledItemTitle>
