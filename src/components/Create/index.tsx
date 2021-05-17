@@ -197,20 +197,16 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         console.log(info.file, info.fileList);
       }
       if (status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully.`);
+
+        let url = info.file.response.data.MediaData.tokenURI;
         let storage = info.file.response.data;
-        let { contentHash, tokenURI: url } = storage.MediaData;
+
         setMediaLoading(false);
-        isMediaContentExisted(contentHash).then(isExist => {
-          if (isExist) {
-            message.error(`media content hash is exist!`);
-          } else {
-            message.success(`${info.file.name} file uploaded successfully.`);
-            setMediaDataFn({
-              url,
-              type: mediaType,
-              storage: storage,
-            });
-          }
+        setMediaDataFn({
+          url,
+          type: mediaType,
+          storage: storage,
         });
       } else if (status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
@@ -436,7 +432,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       }
     } catch (e) {
       console.log('e', e);
-      message.error(e);
+      message.error(e.toString());
     }
   }, [signer, mediaData, formPricingAndFees, isSignerReady, setIsCreate]);
 
