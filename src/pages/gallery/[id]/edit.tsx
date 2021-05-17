@@ -53,7 +53,7 @@ const Edit: React.FC<void> = () => {
     if (!me) message.info('waiting fetch user info');
     else {
       if (id) {
-        await updateGallery(id as any, value);
+        await updateGallery(id as any, value as any);
         message.success('Edit gallery success');
         await router.push(`/gallery/${id}`);
       }
