@@ -364,8 +364,35 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const onFinishFailedInfo = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+  // 校验媒体是否存在
+  const checkMedia = async (hash: string) => {
+    try {
+      const res: any = await isMediaContentExisted({
+        contentHash: `0x${hash}`,
+      });
+      console.log('res', res);
+      if (res.status === 200 && res.data.code === 200) {
+        return res.data.data.isExist;
+      } else {
+        throw new Error('fail');
+      }
+    } catch (e) {
+      console.log(e.toString());
+      return false;
+    }
+  };
+
   // 媒体上传 continue
-  const onFinishUpload = () => {
+  const onFinishUpload = async () => {
+    console.log('mediaData', mediaData.storage);
+    let mediaExisted = await checkMedia(
+      mediaData['storage']['MediaData'].contentHash || ''
+    );
+    if (mediaExisted) {
+      message.info('media 已存在');
+      return;
+    }
+
     if (mediaData['storage']) {
       setStep(2);
     } else {
