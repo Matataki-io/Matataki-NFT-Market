@@ -7,6 +7,10 @@ import {
 } from '../types/GalleryJoinRequest';
 import { User } from '../types/User.types';
 
+export async function getGalleryId(id: number): Promise<Gallery> {
+  return await BACKEND_CLIENT.get(`/gallery/${id}`);
+}
+
 export async function getGallery(params: PaginationProps): Promise<Gallery[]> {
   const { data } = await BACKEND_CLIENT.get<GeneralResponse<Gallery[]>>(
     `/gallery`,
@@ -38,16 +42,7 @@ export async function createGallery(gallery: {
   return data;
 }
 
-export async function updateGallery(
-  id: number,
-  gallery: {
-    name: string;
-    cover: string;
-    intro: string;
-    artists: User[];
-    owner: User;
-  }
-) {
+export async function updateGallery(id: number, gallery: Gallery) {
   const { data } = await BACKEND_CLIENT.patch<GeneralResponse<Gallery>>(
     `/gallery/${id}`,
     gallery

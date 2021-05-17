@@ -438,11 +438,10 @@ const AGallery: React.FC = () => {
   ];
 
   useEffect(() => {
-    // noinspection JSIgnoredPromiseFromCall
     if (!isEmpty(gallery)) {
       fetchJoinFn();
     }
-  }, [gallery]);
+  }, [gallery, fetchJoinFn]);
 
   useEffect(() => {
     if (isOwner) {
@@ -474,6 +473,14 @@ const AGallery: React.FC = () => {
                       Join Gallery
                     </Button>
                   )
+                ) : null}
+                {userDataByWallet?.username === gallery.owner.username &&
+                userDataByWallet?.id === gallery.owner.id ? (
+                  <Link href={`/gallery/${id}/edit`}>
+                    <a>
+                      <Button type='primary'>Edit</Button>
+                    </a>
+                  </Link>
                 ) : null}
               </StyledHeadRight>
             </StyledHead>

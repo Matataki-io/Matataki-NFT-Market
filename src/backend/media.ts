@@ -82,14 +82,13 @@ export function sendToPublisherForPreview(
   );
 }
 
-export async function isMediaContentExisted(contentHash: string) {
-  const { data } = await client.get<
+export async function isMediaContentExisted(params: { contentHash: string }) {
+  return await client.get<
     GeneralResponse<{
       data: { isExist: boolean };
       code: number;
     }>
-  >(`/media/utils/isContentExisted?contentHash=${contentHash}`);
-  return (data.data as any).isExist;
+  >(`/media/utils/isContentExisted`, { params });
 }
 
 export function mediaGasfreeCreateForPublisher(params: { gid: number }) {

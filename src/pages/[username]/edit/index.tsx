@@ -63,12 +63,14 @@ const Register: React.FC<void> = () => {
 
   useEffect(() => {
     if (!isRegistered) {
-      // router.push('/');
+      message.info('Please complete registration first');
+      router.push('/');
     } else if (userDataByWallet?.username !== username) {
-      // router.push('/');
+      message.info("Can't modify other people's information");
+      router.push('/');
     }
     console.log('userDataByWallet', userDataByWallet);
-  }, [userDataByWallet, isRegistered, username]);
+  }, [userDataByWallet, isRegistered, username, router]);
 
   // 设置默认值
   useEffect(() => {
@@ -395,11 +397,7 @@ const Register: React.FC<void> = () => {
                 onChange={onChangePresentations}
                 listType={'picture-card'}>
                 {presentationsSrc ? (
-                  <Image
-                    className='cover'
-                    src={presentationsSrc}
-                    alt={'cover'}
-                  />
+                  <img className='cover' src={presentationsSrc} alt={'cover'} />
                 ) : (
                   uploadButton
                 )}
@@ -716,7 +714,7 @@ const StyledArtworksItem = styled.div`
     right: 0;
     top: 0;
     font-size: 20px;
-    color: #ffffff;
+    color: #222;
   }
 `;
 const StyledFormPresentationsUpload = styled(Upload)`
