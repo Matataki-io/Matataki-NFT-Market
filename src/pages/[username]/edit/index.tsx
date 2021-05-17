@@ -386,7 +386,7 @@ const Register: React.FC<void> = () => {
           rules={[{ required: true, message: 'Please input your bio!' }]}>
           <Input placeholder='Describe yourself by single sentence' />
         </Form.Item>
-        {userDataByWallet?.role === 'ARTIST' && (
+        {userDataByWallet?.role === 'ARTIST' ? (
           <>
             <StyledPhotoWrapper>
               <StyledFormTitle>Presentations</StyledFormTitle>
@@ -428,7 +428,7 @@ const Register: React.FC<void> = () => {
               </StyledFormArtworksUpload>
             </StyledPhotoWrapper>
           </>
-        )}
+        ) : null}
         <StyledFormTitle>Contact</StyledFormTitle>
         <Form.Item
           label=''
@@ -486,7 +486,7 @@ const Register: React.FC<void> = () => {
             </Row>
           </Checkbox.Group>
         </Form.Item>
-        {userDataByWallet?.role === UserRole.Artist && (
+        {userDataByWallet?.role === UserRole.Artist ? (
           <>
             <StyledFormTitle>About</StyledFormTitle>
             <Form.Item
@@ -572,7 +572,7 @@ const Register: React.FC<void> = () => {
               <Input placeholder='Enter discord' />
             </Form.Item>
           </>
-        )}
+        ) : null}
         {/* {userDataByWallet?.role === UserRole.Artist ? (
           <>
             <StyledFormTitle>Contracted Artists</StyledFormTitle>
