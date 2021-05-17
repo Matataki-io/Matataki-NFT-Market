@@ -35,6 +35,7 @@ const StyledTitle = styled.p`
   line-height: 28px;
   padding: 0;
   margin: 24px 0 16px;
+  word-break: break-word;
 `;
 const Styleddescription = styled.p`
   font-size: 14px;
@@ -43,6 +44,7 @@ const Styleddescription = styled.p`
   line-height: 20px;
   padding: 0;
   margin: 0;
+  word-break: break-word;
 `;
 const StyledActions = styled.div`
   margin: 24px 0 16px;
