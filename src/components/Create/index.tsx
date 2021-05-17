@@ -8,7 +8,11 @@ import React, {
 import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
-import { PostMedia, sendToPublisherForPreview } from '../../backend/media';
+import {
+  isMediaContentExisted,
+  PostMedia,
+  sendToPublisherForPreview,
+} from '../../backend/media';
 import { getGallery } from '../../backend/gallery';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
@@ -197,6 +201,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
         let url = info.file.response.data.MediaData.tokenURI;
         let storage = info.file.response.data;
+
         setMediaLoading(false);
         setMediaDataFn({
           url,
@@ -427,7 +432,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       }
     } catch (e) {
       console.log('e', e);
-      message.error(e);
+      message.error(e.toString());
     }
   }, [signer, mediaData, formPricingAndFees, isSignerReady, setIsCreate]);
 
@@ -534,7 +539,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const [visiblePop, setVisiblePop] = useState(false);
 
   // upload media back pop confirm
-  function popconfirmFn() {
+  function popConfirmFn() {
     setVisiblePop(false);
     setMediaData({} as any);
     setStep(0);
@@ -546,10 +551,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     if (!visible) {
       return;
     }
-    // Determining condition before show the popconfirm.
+    // Determining condition before show the popConfirmFn.
     console.log('!isEmpty(mediaData)', !isEmpty(mediaData));
     if (isEmpty(mediaData)) {
-      popconfirmFn(); // next step
+      popConfirmFn(); // next step
     } else {
       setVisiblePop(visible); // show the popconfirm
     }
@@ -666,7 +671,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                 Are you sure you want to return to the previous step?
               </span>
             )}
-            onConfirm={popconfirmFn}
+            onConfirm={popConfirmFn}
             onCancel={() => {
               setVisiblePop(false);
             }}
@@ -803,7 +808,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           <StyledContainerGridCol start='7' end='12'>
             <StyledSubtitle>Preview</StyledSubtitle>
             <div style={{ width: '100%', minHeight: '113%' }}>
-              <NFT {...mediaData}></NFT>
+              <NFT {...mediaData} />
             </div>
           </StyledContainerGridCol>
         </StyledContainerGrid>

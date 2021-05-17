@@ -13,6 +13,7 @@ import {
   List,
   Spin,
   Input,
+  Empty,
 } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -293,7 +294,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
                 <Image
                   src={
                     userInfo?.presentations ? userInfo?.presentations[0] : ''
-                  }></Image>
+                  }
+                />
               </StyledPresentation>
             </StyledItem>
             <StyledLine />

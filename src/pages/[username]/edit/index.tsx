@@ -320,7 +320,7 @@ const Register: React.FC<void> = () => {
   const uploadButton = (
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload Cover</div>
+      <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
 
@@ -344,7 +344,7 @@ const Register: React.FC<void> = () => {
       </StyledTitle>
       <StyledAvatarItem>
         <Upload onChange={onChangeAvatar} {...props} className='upload'>
-          <Avatar size={125} icon={<UserOutlined />} src={avatarUrl}></Avatar>
+          <Avatar size={125} icon={<UserOutlined />} src={avatarUrl} />
         </Upload>
       </StyledAvatarItem>
 
@@ -395,7 +395,11 @@ const Register: React.FC<void> = () => {
                 onChange={onChangePresentations}
                 listType={'picture-card'}>
                 {presentationsSrc ? (
-                  <img className='cover' src={presentationsSrc} />
+                  <Image
+                    className='cover'
+                    src={presentationsSrc}
+                    alt={'cover'}
+                  />
                 ) : (
                   uploadButton
                 )}
@@ -406,7 +410,7 @@ const Register: React.FC<void> = () => {
               <StyledArtworks>
                 {artworksFileList.map((i: string, idx: number) => (
                   <StyledArtworksItem key={idx}>
-                    <Image width={120} src={i}></Image>
+                    <Image width={120} src={i} />
                     <CloseOutlined
                       className='icon'
                       onClick={() => onRemoveArtworks(idx)}

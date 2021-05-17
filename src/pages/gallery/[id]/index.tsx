@@ -12,51 +12,51 @@ import {
   Image,
   Table,
 } from 'antd';
-import { User } from '../../types/User.types';
+import { User } from '../../../types/User.types';
 import {
   backendSWRFetcher,
   mediaGasfreeCreateForPublisher,
   PostMedia,
-} from '../../backend/media';
-import { BACKEND_CLIENT, UserRole } from '../../constant';
-import NFTSimple from '../../components/NFTSimple';
+} from '../../../backend/media';
+import { BACKEND_CLIENT, UserRole } from '../../../constant';
+import NFTSimple from '../../../components/NFTSimple';
 import {
   createGalleryJoinRequest,
   findGalleryJoinRequest,
   updateGalleryJoinRequest,
   updateGallery,
-} from '../../backend/gallery';
+} from '../../../backend/gallery';
 import {
   GalleryJoinRequest,
   GalleryJoinRequestStatus,
-} from '../../types/GalleryJoinRequest';
-import { Gallery } from '../../types/Gallery';
+} from '../../../types/GalleryJoinRequest';
+import { Gallery } from '../../../types/Gallery';
 import { isEmpty, cloneDeep } from 'lodash';
-import ArtworksCarousel from '../../components/ArtworksCarouselUser';
+import ArtworksCarousel from '../../../components/ArtworksCarouselUser';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
-import { Media } from '../../types/Media.entity';
-import { GeneralResponse } from '../../types/Backend.types';
-import { useLogin } from '../../hooks/useLogin';
-import { wordItem } from '../../utils/index';
+import { Media } from '../../../types/Media.entity';
+import { GeneralResponse } from '../../../types/Backend.types';
+import { useLogin } from '../../../hooks/useLogin';
+import { wordItem } from '../../../utils/index';
 import { ReactSVG } from 'react-svg';
 import { useWallet } from 'use-wallet';
 import { useBoolean } from 'ahooks';
-import { useMedia } from '../../hooks/useMedia';
+import { useMedia } from '../../../hooks/useMedia';
 
-import IconTelegram from '../../assets/icons/telegram.svg';
-import IconEmail from '../../assets/icons/email1.svg';
-import IconMedium from '../../assets/icons/medium.svg';
-import IconTwitter from '../../assets/icons/twitter.svg';
-import IconDiscord from '../../assets/icons/discord.svg';
-import IconFacebook from '../../assets/icons/facebook.svg';
+import IconTelegram from '../../../assets/icons/telegram.svg';
+import IconEmail from '../../../assets/icons/email1.svg';
+import IconMedium from '../../../assets/icons/medium.svg';
+import IconTwitter from '../../../assets/icons/twitter.svg';
+import IconDiscord from '../../../assets/icons/discord.svg';
+import IconFacebook from '../../../assets/icons/facebook.svg';
 
 import type {
   MediaToScreen,
   MintAndTransferParameters,
-} from '../../types/User.types';
-import { Tag as TagType } from '../../types/Tag';
+} from '../../../types/User.types';
+import { Tag as TagType } from '../../../types/Tag';
 
 const AGallery: React.FC = () => {
   const wallet = useWallet();
