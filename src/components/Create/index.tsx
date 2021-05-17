@@ -50,6 +50,7 @@ import { NFTProps } from '../../../next-env';
 import { searchTags, getTags } from '../../backend/tag';
 import { User } from '../../types/User.types';
 import { Tag as TagTypes } from '../../types/Tag';
+import { getUserRelation } from '../../backend/user';
 
 import {
   NFTTempImage,
@@ -110,20 +111,23 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
   useEffect(() => {
     const fetch = async () => {
+      if (isEmpty(userDataByWallet) || isEmpty(userDataByWallet?.username)) {
+        return;
+      }
       try {
-        // TODO: 后续改为滚动分页 + 下拉查询
-        const data: any = await getGallery({
-          page: 1,
-          limit: 9999,
-        });
+        // 获取用户加入的画廊
+        const data: any = await getUserRelation(
+          userDataByWallet?.username || '',
+          'belongsTo'
+        );
         console.log('data', data);
-        setGalleryList(data.items);
+        setGalleryList(data.belongsTo);
       } catch (e) {
         console.log(`e: ${e.toString()}`);
       }
     };
     fetch();
-  }, []);
+  }, [userDataByWallet]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -774,12 +778,12 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               <Form.Item label='Gallery' name='gallery'>
                 <Select placeholder='Select a gallery'>
                   {galleryList.map((i, idx: number) => (
-                    <Option key={`${idx}-${i.owner.address}`} value={i.id}>
+                    <Option key={`${idx}`} value={i.id}>
                       <span>
                         <Avatar
                           size={20}
                           icon={<UserOutlined />}
-                          src={i.owner.avatar}
+                          src={i.cover}
                         />{' '}
                         <span>{i.name}</span>
                       </span>
