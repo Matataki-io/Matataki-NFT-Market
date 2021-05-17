@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Gallery } from '../../types/Gallery';
 
-const GalleryCard: React.FC<Gallery> = ({ name, cover, intro }) => {
+const GalleryCard: React.FC<Gallery> = ({ name, cover, intro, children }) => {
   return (
     <StyledWrapper>
       <StyledCover>
@@ -10,6 +10,7 @@ const GalleryCard: React.FC<Gallery> = ({ name, cover, intro }) => {
       </StyledCover>
       <StyledTitle>{name}</StyledTitle>
       {intro && <Styleddescription>{intro}</Styleddescription>}
+      <StyledActions>{children}</StyledActions>
     </StyledWrapper>
   );
 };
@@ -42,5 +43,8 @@ const Styleddescription = styled.p`
   line-height: 20px;
   padding: 0;
   margin: 0;
+`;
+const StyledActions = styled.div`
+  margin: 24px 0 16px;
 `;
 export default GalleryCard;

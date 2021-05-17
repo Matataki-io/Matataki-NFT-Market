@@ -48,29 +48,36 @@ export async function getMediaMetadata(url: string): Promise<MediaMetadata> {
 export async function PostMedia({
   txHash,
   tags,
+  gallery,
+  id,
 }: {
   txHash: string;
   tags: string[];
+  gallery?: number;
+  id?: number;
 }): Promise<any> {
   // bad habit to `any` bro
   return await backendClient.post('/media', {
     txHash,
     tags,
+    gallery,
+    id,
   });
 }
 
 export function sendToPublisherForPreview(
-  publisherUid: number,
+  GalleryId: number,
   data: {
     title: string;
     description: string;
     tokenURI: string;
     permitData: MintAndTransferParameters;
     tags: string[];
+    gallery: number;
   }
 ) {
   return backendClient.post<GeneralResponse<{ msg: string }>>(
-    `/media/gasfreeCreate/${publisherUid}`,
+    `/media/gasfreeCreate/${GalleryId}`,
     data
   );
 }
@@ -83,4 +90,11 @@ export async function isMediaContentExisted(contentHash: string) {
     }>
   >(`/media/utils/isContentExisted?contentHash=${contentHash}`);
   return (data.data as any).isExist;
+}
+
+export function mediaGasfreeCreateForPublisher(params: { gid: number }) {
+  return backendClient.get<GeneralResponse<any>>(
+    `/media/gasfreeCreate/forPublisher`,
+    { params }
+  );
 }

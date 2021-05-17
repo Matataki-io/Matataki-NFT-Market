@@ -88,3 +88,37 @@ export interface User {
   presentations?: string[];
   artworks?: string[];
 }
+
+export type MintAndTransferParameters = {
+  creator: string;
+  data: {
+    tokenURI: string;
+    metadataURI: string;
+    contentHash: string;
+    metadataHash: string;
+  };
+  bidShares: {
+    prevOwner: { value: BigNumberish };
+    creator: { value: BigNumberish };
+    owner: { value: BigNumberish };
+  };
+  to: string;
+  sig: {
+    deadline: BigNumberish;
+    v: BigNumberish;
+    r: string;
+    s: string;
+  };
+};
+
+export interface MediaToScreen {
+  id: number;
+  creator: User;
+  publisher: User;
+  title: string;
+  description: string;
+  tokenURI: string;
+  permitData: MintAndTransferParameters;
+  tags: Tag[];
+  isPublished: Boolean;
+}
