@@ -11,6 +11,7 @@ import { Media, MediaMetadata } from '../types/Media.entity';
 import { getMediaList, getMediaMetadata } from '../backend/media';
 import { useMarketPrices } from '../hooks/useMarketPrices';
 import { getTags } from '../backend/tag';
+import { Tag as TagType } from '../types/Tag';
 const { Option } = Select;
 
 type PaginationMeta = PaginationResult['meta'];
@@ -34,7 +35,7 @@ const Market: React.FC = () => {
   const { priceBook, isLoading: isPriceBookLoading } = useMarketPrices(nftIds);
 
   const [fullNFTList, setFullNFTList] = useState<Array<NFTProps>>([]);
-  const [departmentTags, setDepartmentTags] = useState<Array<JSX.Element>>([]);
+  const [tagList, setTagList] = useState<Array<TagType>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [sort, setSort] = useState<SortBy>(SortBy.DECE);
@@ -92,6 +93,10 @@ const Market: React.FC = () => {
         setFullNFTList(fullNFTList.concat(realNftList));
         setPaginationMeta(mediaList.meta);
       }
+      if (mediaList.meta.currentPage >= mediaList.meta.totalPages) {
+        setHasMore(false);
+      }
+
       let _page = page;
       setPage(++_page);
     } catch (e) {
@@ -100,15 +105,22 @@ const Market: React.FC = () => {
   };
 
   // fetch department tags
-  getTags().then(res => {
-    setDepartmentTags(
-      res.data.map(tag => (
-        <Option value={tag.name} key={tag.name}>
-          {tag.name}
-        </Option>
-      ))
-    );
-  });
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res: any = await getTags();
+        console.log('res11111', res);
+        if (res.status === 200) {
+          setTagList(res.data);
+        } else {
+          throw new Error('fail');
+        }
+      } catch (e) {
+        console.log(e.toString());
+      }
+    };
+    fetch();
+  }, []);
 
   const onListDepartment = (checkedList: any[]) => {
     if (!checkedList.length) {
@@ -156,8 +168,13 @@ const Market: React.FC = () => {
               allowClear
               style={{ width: '400px' }}
               placeholder='Select tag to filter media'
+              disabled
               onChange={onListDepartment}>
-              {departmentTags}
+              {tagList.map((i: TagType, idx: number) => (
+                <Option value={i.name} key={`${idx}-${i.name}`}>
+                  {i.name}
+                </Option>
+              ))}
             </Select>
           </StyledHeadContainer>
         </div>
