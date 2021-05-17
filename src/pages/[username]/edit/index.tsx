@@ -63,12 +63,14 @@ const Register: React.FC<void> = () => {
 
   useEffect(() => {
     if (!isRegistered) {
-      // router.push('/');
+      message.info('Please complete registration first');
+      router.push('/');
     } else if (userDataByWallet?.username !== username) {
-      // router.push('/');
+      message.info("Can't modify other people's information");
+      router.push('/');
     }
     console.log('userDataByWallet', userDataByWallet);
-  }, [userDataByWallet, isRegistered, username]);
+  }, [userDataByWallet, isRegistered, username, router]);
 
   // 设置默认值
   useEffect(() => {
