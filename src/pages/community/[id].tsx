@@ -50,7 +50,11 @@ const CommunityId: React.FC = () => {
           </Head>
 
           {article?.cover ? (
-            <Image width={200} src={article?.cover}></Image>
+            <Image
+              width={'100%'}
+              height={400}
+              style={{ objectFit: 'cover' }}
+              src={article?.cover}></Image>
           ) : null}
           <StyledTitle>{article?.title}</StyledTitle>
           <StyledTime>
