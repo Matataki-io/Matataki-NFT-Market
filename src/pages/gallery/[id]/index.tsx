@@ -312,7 +312,7 @@ const AGallery: React.FC = () => {
         throw new Error('fail');
       }
     } catch (e) {
-      message.error(e.toString());
+      console.log(e.toString());
     }
   }, [id]);
 

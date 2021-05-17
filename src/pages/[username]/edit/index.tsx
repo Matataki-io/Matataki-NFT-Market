@@ -62,14 +62,16 @@ const Register: React.FC<void> = () => {
   const [artworksFileList, setArtworksFileList] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!isRegistered) {
-      message.info('Please complete registration first');
-      router.push('/');
-    } else if (userDataByWallet?.username !== username) {
-      message.info("Can't modify other people's information");
-      router.push('/');
+    if (!isEmpty(userDataByWallet) && !isEmpty(username)) {
+      if (!isRegistered) {
+        message.info('Please complete registration first');
+        router.push('/');
+      } else if (userDataByWallet?.username !== username) {
+        message.info("Can't modify other people's information");
+        router.push('/');
+      }
+      console.log('userDataByWallet', userDataByWallet);
     }
-    console.log('userDataByWallet', userDataByWallet);
   }, [userDataByWallet, isRegistered, username, router]);
 
   // 设置默认值

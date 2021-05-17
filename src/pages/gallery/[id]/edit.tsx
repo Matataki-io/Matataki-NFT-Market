@@ -46,10 +46,10 @@ const GalleryEdit: React.FC<void> = () => {
   const [artworksFileList, setArtworksFileList] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!isEmpty(gallery)) {
+    if (!isEmpty(gallery) && !isEmpty(userDataByWallet)) {
       if (
-        userDataByWallet?.username !== gallery.username &&
-        userDataByWallet?.id !== gallery.id
+        userDataByWallet?.username !== gallery.owner.username &&
+        Number(userDataByWallet?.id) !== Number(gallery.owner.id)
       ) {
         message.info(
           'Modifying other people’s gallery information is not allowed'
@@ -64,6 +64,9 @@ const GalleryEdit: React.FC<void> = () => {
   // fetch gallery by id
   const fetchGallery = useCallback(async () => {
     try {
+      if (!id) {
+        return;
+      }
       const res: any = await getGalleryId(Number(id));
       if (res.status === 200) {
         console.log('res', res.data);
