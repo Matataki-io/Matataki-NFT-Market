@@ -97,3 +97,7 @@ export function mediaGasfreeCreateForPublisher(params: { gid: number }) {
     { params }
   );
 }
+
+export function mediaSearch(data: { gallery: number; relations: string[] }) {
+  return backendClient.post<GeneralResponse<Media[]>>(`/media/search`, data);
+}
