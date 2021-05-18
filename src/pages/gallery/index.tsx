@@ -34,6 +34,10 @@ const GalleryIndex: React.FC = () => {
         <StyledWrapperLoading>
           <Spin tip='Loading...'></Spin>
         </StyledWrapperLoading>
+      ) : isEmpty(data.items) ? (
+        <StyledWrapperLoading>
+          <p>Not Result...</p>
+        </StyledWrapperLoading>
       ) : (
         <>
           <StyledGallery>
