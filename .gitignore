@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+# this is auto generated
+public/sitemap.xml
+public/robots.txt
+
 # testing
 /coverage
 
