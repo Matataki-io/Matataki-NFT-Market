@@ -451,248 +451,254 @@ const AGallery: React.FC = () => {
 
   return (
     <StyledWrapper>
-      <Spin size='large' spinning={!gallery}>
-        {gallery && (
-          <>
-            <StyledHead>
-              <StyledHeadUser>
-                <Avatar icon={<UserOutlined />} src={gallery.cover} size={66} />
-                <StyledHeadUserInfo>
-                  <h1>{gallery.name}</h1>
-                  <p>{gallery.intro}</p>
-                </StyledHeadUserInfo>
-              </StyledHeadUser>
-              <StyledHeadRight>
-                {userDataByWallet?.role === UserRole.Artist ? (
-                  isJoin ? (
-                    <Button disabled>Joined</Button>
-                  ) : isJoinApplied ? (
-                    <Button disabled>Already applied</Button>
-                  ) : (
-                    <Button type='primary' onClick={joinGalleryFn}>
-                      Join Gallery
-                    </Button>
-                  )
-                ) : null}
-                {userDataByWallet?.username === gallery.owner.username &&
-                userDataByWallet?.id === gallery.owner.id ? (
-                  <Link href={`/gallery/${id}/edit`}>
-                    <a>
-                      <Button type='primary'>Edit</Button>
-                    </a>
-                  </Link>
-                ) : null}
-              </StyledHeadRight>
-            </StyledHead>
-            <StyledLine />
+      {isEmpty(gallery) ? (
+        <StyledWrapperLoading>
+          <Spin tip='Loading...'></Spin>
+        </StyledWrapperLoading>
+      ) : (
+        <>
+          <StyledHead>
+            <StyledHeadUser>
+              <Avatar icon={<UserOutlined />} src={gallery?.cover} size={66} />
+              <StyledHeadUserInfo>
+                <h1>{gallery?.name}</h1>
+                <p>{gallery?.intro}</p>
+              </StyledHeadUserInfo>
+            </StyledHeadUser>
+            <StyledHeadRight>
+              {userDataByWallet?.role === UserRole.Artist ? (
+                isJoin ? (
+                  <Button disabled>Joined</Button>
+                ) : isJoinApplied ? (
+                  <Button disabled>Already applied</Button>
+                ) : (
+                  <Button type='primary' onClick={joinGalleryFn}>
+                    Join Gallery
+                  </Button>
+                )
+              ) : null}
+              {isOwner ? (
+                <Link href={`/gallery/${id}/edit`}>
+                  <a>
+                    <Button type='primary'>Edit</Button>
+                  </a>
+                </Link>
+              ) : null}
+            </StyledHeadRight>
+          </StyledHead>
+          <StyledLine />
 
-            {gallery?.presentations ? (
-              <>
-                <StyledItem>
-                  <StyledItemTitle>Presentation</StyledItemTitle>
-                  <StyledPresentation>
-                    <Image
-                      src={
-                        gallery?.presentations ? gallery?.presentations[0] : ''
-                      }></Image>
-                  </StyledPresentation>
-                </StyledItem>
-                <StyledLine />
-              </>
-            ) : null}
+          {gallery?.presentations ? (
+            <>
+              <StyledItem>
+                <StyledItemTitle>Presentation</StyledItemTitle>
+                <StyledPresentation>
+                  <Image
+                    src={
+                      gallery?.presentations ? gallery?.presentations[0] : ''
+                    }></Image>
+                </StyledPresentation>
+              </StyledItem>
+              <StyledLine />
+            </>
+          ) : null}
 
-            {!isEmpty(nftsList) ? (
-              <>
-                <StyledItem>
-                  <StyledItemTitle>NFTs</StyledItemTitle>
-                  <StyledMediaCardContainer>
-                    {nftsList.map((item: any, idx: number) => (
-                      <Link href={`/p/${item.id}`} key={`media-card-${idx}`}>
-                        <a target='_blank'>
-                          <NFTSimple {...item} />
-                        </a>
-                      </Link>
-                    ))}
-                  </StyledMediaCardContainer>
-                </StyledItem>
-                <StyledLine />
-              </>
-            ) : null}
+          {!isEmpty(nftsList) ? (
+            <>
+              <StyledItem>
+                <StyledItemTitle>NFTs</StyledItemTitle>
+                <StyledMediaCardContainer>
+                  {nftsList.map((item: any, idx: number) => (
+                    <Link href={`/p/${item.id}`} key={`media-card-${idx}`}>
+                      <a target='_blank'>
+                        <NFTSimple {...item} />
+                      </a>
+                    </Link>
+                  ))}
+                </StyledMediaCardContainer>
+              </StyledItem>
+              <StyledLine />
+            </>
+          ) : null}
 
-            {!isEmpty(gallery?.artworks) ? (
-              <>
-                <StyledItem>
-                  <StyledItemTitle>Artworks</StyledItemTitle>
-                  <StyledArtworks>
-                    <ArtworksCarousel data={gallery?.artworks || []} />
-                  </StyledArtworks>
-                </StyledItem>
-                <StyledLine />
-              </>
-            ) : null}
+          {!isEmpty(gallery?.artworks) ? (
+            <>
+              <StyledItem>
+                <StyledItemTitle>Artworks</StyledItemTitle>
+                <StyledArtworks>
+                  <ArtworksCarousel data={gallery?.artworks || []} />
+                </StyledArtworks>
+              </StyledItem>
+              <StyledLine />
+            </>
+          ) : null}
 
-            <StyledItem>
-              <StyledItemTitle>About</StyledItemTitle>
-              <StyledAbout>
-                <div className='item'>
-                  <p className='text'>{gallery?.about.description}</p>
+          <StyledItem>
+            <StyledItemTitle>About</StyledItemTitle>
+            <StyledAbout>
+              <div className='item'>
+                <p className='text'>{gallery?.about.description}</p>
+              </div>
+              <div className='item'>
+                <div className='cover'>
+                  {gallery?.about.banner ? (
+                    <img
+                      src={gallery?.about.banner || ''}
+                      alt={gallery?.about.bannerDescription || ''}
+                    />
+                  ) : null}
                 </div>
-                <div className='item'>
-                  <div className='cover'>
-                    {gallery?.about.banner ? (
-                      <img
-                        src={gallery?.about.banner || ''}
-                        alt={gallery?.about.bannerDescription || ''}
-                      />
-                    ) : null}
-                  </div>
-                  <p className='gallery-name'>
-                    {gallery?.about.bannerDescription}
-                  </p>
-                  {galleryAboutIconList.map((i: any) =>
-                    i.name ? (
-                      <StyledAboutItem>
-                        <ReactSVG className='icon' src={i.icon} />
-                        <span>{i.name}</span>
-                      </StyledAboutItem>
-                    ) : null
-                  )}
-                </div>
-              </StyledAbout>
-            </StyledItem>
+                <p className='gallery-name'>
+                  {gallery?.about.bannerDescription}
+                </p>
+                {galleryAboutIconList.map((i: any) =>
+                  i.name ? (
+                    <StyledAboutItem>
+                      <ReactSVG className='icon' src={i.icon} />
+                      <span>{i.name}</span>
+                    </StyledAboutItem>
+                  ) : null
+                )}
+              </div>
+            </StyledAbout>
+          </StyledItem>
 
-            {!isEmpty(artistWord) ? (
-              <>
-                <StyledLine />
-                <StyledItem>
-                  <StyledItemTitle>Contracted Artists</StyledItemTitle>
-                  <StyledWord>
-                    {Object.keys(artistWord).map((key, idx) => (
-                      <ul key={idx} className='item'>
-                        <li>
-                          <h3>{key.toLocaleUpperCase()}</h3>
-                        </li>
-                        {artistWord[key].map(
-                          (
-                            i: { username: string; nickname: string },
-                            idx: number
-                          ) => (
-                            <li key={idx}>
-                              <Link href={`/${i.username}`}>
-                                <a>
-                                  {i.username}({i.nickname})
-                                </a>
-                              </Link>
-                            </li>
-                          )
-                        )}
-                      </ul>
+          {!isEmpty(artistWord) ? (
+            <>
+              <StyledLine />
+              <StyledItem>
+                <StyledItemTitle>Contracted Artists</StyledItemTitle>
+                <StyledWord>
+                  {Object.keys(artistWord).map((key, idx) => (
+                    <ul key={idx} className='item'>
+                      <li>
+                        <h3>{key.toLocaleUpperCase()}</h3>
+                      </li>
+                      {artistWord[key].map(
+                        (
+                          i: { username: string; nickname: string },
+                          idx: number
+                        ) => (
+                          <li key={idx}>
+                            <Link href={`/${i.username}`}>
+                              <a>
+                                {i.username}({i.nickname})
+                              </a>
+                            </Link>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  ))}
+                </StyledWord>
+              </StyledItem>
+              <StyledLine />
+            </>
+          ) : null}
+
+          {isOwner ? (
+            <>
+              <StyledItem>
+                <StyledItemTitle>Manage application requests</StyledItemTitle>
+                {!isEmpty(requests) ? (
+                  <StyledBox>
+                    {requests.map(item => (
+                      <StyledJoinItem key={item.id}>
+                        <Avatar src={item.artist.avatar}></Avatar>{' '}
+                        <Link href={`/${item.artist.username}`}>
+                          <a target='_blank'>
+                            {item.artist.nickname}({item.artist.username})
+                          </a>
+                        </Link>
+                        <Space style={{ margin: '0 0 0 20px' }}>
+                          <Button
+                            type='primary'
+                            onClick={() => {
+                              handleJoin(item.id, true);
+                            }}>
+                            Accept
+                          </Button>
+                          {/* TODO： 拒绝加入询问 */}
+                          <Button
+                            type='primary'
+                            danger
+                            onClick={() => {
+                              handleJoin(item.id, false);
+                            }}>
+                            Reject
+                          </Button>
+                        </Space>
+                      </StyledJoinItem>
                     ))}
-                  </StyledWord>
-                </StyledItem>
-                <StyledLine />
-              </>
-            ) : null}
+                  </StyledBox>
+                ) : (
+                  <StyledNot>Not...</StyledNot>
+                )}
+              </StyledItem>
+              <StyledLine />
 
-            {isOwner ? (
-              <>
-                <StyledItem>
-                  <StyledItemTitle>Manage application requests</StyledItemTitle>
-                  {!isEmpty(requests) ? (
-                    <StyledBox>
-                      {requests.map(item => (
-                        <StyledJoinItem key={item.id}>
-                          <Avatar src={item.artist.avatar}></Avatar>{' '}
-                          <Link href={`/${item.artist.username}`}>
-                            <a target='_blank'>
-                              {item.artist.nickname}({item.artist.username})
-                            </a>
-                          </Link>
-                          <Space style={{ margin: '0 0 0 20px' }}>
-                            <Button
-                              type='primary'
-                              onClick={() => {
-                                handleJoin(item.id, true);
-                              }}>
-                              Accept
-                            </Button>
-                            {/* TODO： 拒绝加入询问 */}
-                            <Button
-                              type='primary'
-                              danger
-                              onClick={() => {
-                                handleJoin(item.id, false);
-                              }}>
-                              Reject
-                            </Button>
-                          </Space>
-                        </StyledJoinItem>
-                      ))}
-                    </StyledBox>
-                  ) : (
-                    <StyledNot>Not...</StyledNot>
-                  )}
-                </StyledItem>
-                <StyledLine />
+              <StyledItem>
+                <StyledItemTitle>Manage artists</StyledItemTitle>
+                {!isEmpty(gallery?.artists) ? (
+                  <StyledBox>
+                    {gallery?.artists.map((item, idx: number) => (
+                      <StyledJoinItem key={item.id}>
+                        <Avatar src={item.avatar}></Avatar>{' '}
+                        <Link href={`/${item.username}`}>
+                          <a target='_blank'>
+                            {item.nickname}({item.username})
+                          </a>
+                        </Link>
+                        <Space style={{ margin: '0 0 0 20px' }}>
+                          {/* TODO： 拒绝加入询问 */}
+                          <Button
+                            type='primary'
+                            danger
+                            onClick={() => {
+                              handleRemoveArtist(idx);
+                            }}>
+                            Remove
+                          </Button>
+                        </Space>
+                      </StyledJoinItem>
+                    ))}
+                  </StyledBox>
+                ) : (
+                  <StyledNot>Not...</StyledNot>
+                )}
+              </StyledItem>
 
-                <StyledItem>
-                  <StyledItemTitle>Manage artists</StyledItemTitle>
-                  {!isEmpty(gallery.artists) ? (
-                    <StyledBox>
-                      {gallery.artists.map((item, idx: number) => (
-                        <StyledJoinItem key={item.id}>
-                          <Avatar src={item.avatar}></Avatar>{' '}
-                          <Link href={`/${item.username}`}>
-                            <a target='_blank'>
-                              {item.nickname}({item.username})
-                            </a>
-                          </Link>
-                          <Space style={{ margin: '0 0 0 20px' }}>
-                            {/* TODO： 拒绝加入询问 */}
-                            <Button
-                              type='primary'
-                              danger
-                              onClick={() => {
-                                handleRemoveArtist(idx);
-                              }}>
-                              Remove
-                            </Button>
-                          </Space>
-                        </StyledJoinItem>
-                      ))}
-                    </StyledBox>
-                  ) : (
-                    <StyledNot>Not...</StyledNot>
-                  )}
-                </StyledItem>
-
-                <StyledLine />
-                <StyledItem>
-                  <StyledItemTitle>Manage NFTs</StyledItemTitle>
-                  {!isEmpty(publishNFTs) ? (
-                    <StyledBox>
-                      <Table
-                        dataSource={publishNFTs}
-                        columns={publishNFTColumns}
-                        pagination={{
-                          position: ['bottomCenter'],
-                        }}
-                      />
-                    </StyledBox>
-                  ) : (
-                    <StyledNot>Not...</StyledNot>
-                  )}
-                </StyledItem>
-              </>
-            ) : null}
-          </>
-        )}
-      </Spin>
+              <StyledLine />
+              <StyledItem>
+                <StyledItemTitle>Manage NFTs</StyledItemTitle>
+                {!isEmpty(publishNFTs) ? (
+                  <StyledBox>
+                    <Table
+                      dataSource={publishNFTs}
+                      columns={publishNFTColumns}
+                      pagination={{
+                        position: ['bottomCenter'],
+                      }}
+                    />
+                  </StyledBox>
+                ) : (
+                  <StyledNot>Not...</StyledNot>
+                )}
+              </StyledItem>
+            </>
+          ) : null}
+        </>
+      )}
     </StyledWrapper>
   );
 };
 
 export default AGallery;
+
+const StyledWrapperLoading = styled.div`
+  text-align: center;
+  margin: 100px 0 0;
+`;
 
 const StyledNot = styled.div`
   margin: 40px 0;

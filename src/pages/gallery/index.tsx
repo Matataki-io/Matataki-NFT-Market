@@ -60,10 +60,12 @@ const GalleryIndex: React.FC = () => {
     </StyledWrapper>
   );
 };
+
 const StyledWrapperLoading = styled.div`
   text-align: center;
   margin: 100px 0 0;
 `;
+
 const StyledWrapper = styled.div`
   flex: 1;
 
