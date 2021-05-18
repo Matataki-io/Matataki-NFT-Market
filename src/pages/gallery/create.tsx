@@ -9,6 +9,7 @@ import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
 import { User } from '../../types/User.types';
 import { Page, Text } from '@geist-ui/react';
+import styled from 'styled-components';
 
 const GalleryCreate: React.FC = () => {
   const [cover, setCover] = useState('');
@@ -40,11 +41,11 @@ const GalleryCreate: React.FC = () => {
       if (!isJpgOrPng) {
         message.error('You can only upload JPG/PNG file!');
       }
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
+      const isLtMB = file.size / 1024 / 1024 < 8;
+      if (!isLtMB) {
         message.error('Image must smaller than 2MB!');
       }
-      return isJpgOrPng && isLt2M;
+      return isJpgOrPng && isLtMB;
     },
   };
   const router = useRouter();
@@ -70,10 +71,15 @@ const GalleryCreate: React.FC = () => {
   function onFinishFailed() {}
 
   return (
-    <Page>
-      <Text h1>Create Gallery</Text>
-      <Text>You must be the Super Admin to create a gallery</Text>
-      <Form onFinish={onFinish} onFinishFailed={onFinishFailed}>
+    <StyledWrapper>
+      <StyledTitle>Create Gallery</StyledTitle>
+      <StyledSubtitle>
+        You must be the Super Admin to create a gallery
+      </StyledSubtitle>
+      <StyledForm
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        layout='vertical'>
         <Form.Item
           label='Name'
           name='name'
@@ -98,15 +104,55 @@ const GalleryCreate: React.FC = () => {
             <Image src={cover} />
           </Upload>
         </Form.Item>
-
         <Form.Item>
-          <Button type='primary' htmlType='submit'>
-            Submit
+          <Button type='primary' htmlType='submit' style={{ width: '100%' }}>
+            Create
           </Button>
         </Form.Item>
-      </Form>
-    </Page>
+      </StyledForm>
+    </StyledWrapper>
   );
 };
+
+const StyledWrapper = styled.div`
+  flex: 1;
+
+  max-width: 520px;
+  padding: 48px 20px 256px;
+  box-sizing: border-box;
+
+  margin: 0px auto;
+  width: 100%;
+
+  @media screen and (max-width: 768px) {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+`;
+
+const StyledTitle = styled.h1`
+  font-size: 40px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  color: #333333;
+  line-height: 1.2;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  @media screen and (max-width: 768px) {
+    font-size: 30px;
+  }
+`;
+const StyledSubtitle = styled.p`
+  text-align: center;
+  font-size: 14px;
+  padding: 0;
+  margin: 10px 0;
+  font-weight: 400;
+`;
+
+const StyledForm = styled(Form)`
+  margin-top: 40px;
+`;
 
 export default GalleryCreate;
