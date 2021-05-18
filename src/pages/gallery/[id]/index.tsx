@@ -11,12 +11,14 @@ import {
   Space,
   Image,
   Table,
+  Popconfirm,
 } from 'antd';
 import { User } from '../../../types/User.types';
 import {
   backendSWRFetcher,
   mediaGasfreeCreateForPublisher,
   PostMedia,
+  mediaSearch,
 } from '../../../backend/media';
 import { BACKEND_CLIENT, UserRole } from '../../../constant';
 import NFTSimple from '../../../components/NFTSimple';
@@ -75,7 +77,7 @@ const AGallery: React.FC = () => {
     isSendingTx,
     { setTrue: toggleSendTx, setFalse: sendTxFinished },
   ] = useBoolean(false);
-  const [media, setMedia] = useState<Media[]>();
+  const [media, setMedia] = useState<Media[]>([]);
   const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
   // 艺术家上传到画廊的NFTs
   const [publishNFTs, setPublishNFTs] = useState<any[]>([]);
@@ -235,18 +237,30 @@ const AGallery: React.FC = () => {
     }
   }, [gallery]);
 
-  useEffect(() => {
-    (async () => {
-      const { data } = await BACKEND_CLIENT.post<GeneralResponse<Media[]>>(
-        '/media/search',
-        {
-          gallery: gallery?.id,
-          relations: ['owner'],
-        }
-      );
-      setMedia(data as any);
-    })();
+  const fetchMediaSearch = useCallback(async () => {
+    if (isEmpty(gallery)) {
+      return;
+    }
+    try {
+      const res = await mediaSearch({
+        gallery: Number(gallery?.id),
+        relations: ['owner'],
+      });
+      if (res.status === 200) {
+        setMedia(res.data as any);
+      } else {
+        throw new Error('fail');
+      }
+    } catch (e) {
+      console.log(e.toString());
+    }
   }, [gallery]);
+
+  useEffect(() => {
+    if (!isEmpty(gallery)) {
+      fetchMediaSearch();
+    }
+  }, [gallery, fetchMediaSearch]);
 
   // 加入画廊
   const joinGalleryFn = async () => {
@@ -255,6 +269,7 @@ const AGallery: React.FC = () => {
       if (res.status === 201) {
         console.log(res);
         message.success('已发送加入申请');
+        fetchJoinFn();
       } else {
         throw new Error('fail');
       }
@@ -270,6 +285,10 @@ const AGallery: React.FC = () => {
       if (res.status === 200) {
         message.success('操作成功');
         fetchJoinFn();
+        if (status) {
+          // true 才获取最新数据
+          triggerReloadGallery();
+        }
       } else {
         throw new Error('fail');
       }
@@ -351,6 +370,7 @@ const AGallery: React.FC = () => {
         console.log('res', res);
         message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
         fetchIsPublished();
+        await fetchMediaSearch();
       } catch (walletErr) {
         console.error('sendPermit::error: ', walletErr);
         mediaContract.callStatic
@@ -618,15 +638,15 @@ const AGallery: React.FC = () => {
                             }}>
                             Accept
                           </Button>
-                          {/* TODO： 拒绝加入询问 */}
-                          <Button
-                            type='primary'
-                            danger
-                            onClick={() => {
-                              handleJoin(item.id, false);
-                            }}>
-                            Reject
-                          </Button>
+                          <Popconfirm
+                            title='Are you sure to reject?'
+                            onConfirm={() => handleJoin(item.id, false)}
+                            okText='Yes'
+                            cancelText='No'>
+                            <Button type='primary' danger>
+                              Reject
+                            </Button>
+                          </Popconfirm>
                         </Space>
                       </StyledJoinItem>
                     ))}
@@ -650,15 +670,15 @@ const AGallery: React.FC = () => {
                           </a>
                         </Link>
                         <Space style={{ margin: '0 0 0 20px' }}>
-                          {/* TODO： 拒绝加入询问 */}
-                          <Button
-                            type='primary'
-                            danger
-                            onClick={() => {
-                              handleRemoveArtist(idx);
-                            }}>
-                            Remove
-                          </Button>
+                          <Popconfirm
+                            title='Are you sure to remove?'
+                            onConfirm={() => handleRemoveArtist(idx)}
+                            okText='Yes'
+                            cancelText='No'>
+                            <Button type='primary' danger>
+                              Remove
+                            </Button>
+                          </Popconfirm>
                         </Space>
                       </StyledJoinItem>
                     ))}
