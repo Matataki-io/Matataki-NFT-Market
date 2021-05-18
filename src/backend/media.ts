@@ -24,12 +24,14 @@ export async function getHotMediaList(take = 10): Promise<Array<Media>> {
 
 export async function getMediaList(
   page = 1,
-  limit = 9
+  limit = 9,
+  order = 'DESC'
 ): Promise<PaginationResult<Media>> {
   const { data } = await backendClient.get<PaginationResult<Media>>('/media', {
     params: {
       page,
       limit,
+      order,
     },
   });
   return data;
