@@ -315,7 +315,7 @@ const Register: React.FC<void> = () => {
       }
       const isLtMB = file.size / 1024 / 1024 < 8;
       if (!isLtMB) {
-        message.error('Image must smaller than 2MB!');
+        message.error('Image must smaller than 8MB!');
       }
       return isJpgOrPng && isLtMB;
     },
