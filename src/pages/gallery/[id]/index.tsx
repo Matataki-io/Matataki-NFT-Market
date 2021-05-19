@@ -12,6 +12,7 @@ import {
   Image,
   Table,
   Popconfirm,
+  notification,
 } from 'antd';
 import { User } from '../../../types/User.types';
 import {
@@ -84,8 +85,6 @@ const AGallery: React.FC = () => {
 
   const fetchIsPublished = useCallback(async () => {
     const list: MediaToScreen[] = publishNFTs;
-    console.log('list', list);
-    // TODO: 这里复制过来的 ...
     const contentHashes = list.map(
       (i: MediaToScreen) => i.permitData.data.contentHash
     );
@@ -109,11 +108,6 @@ const AGallery: React.FC = () => {
     id ? `/gallery/${id}` : null,
     backendSWRFetcher
   );
-
-  const { data: me, error: meError } = useSWR<
-    { data: User; status: number },
-    any
-  >(`/user/me`, backendSWRFetcher);
 
   const triggerReloadGallery = useCallback(() => mutate(`/gallery/${id}`), [
     id,
@@ -319,6 +313,7 @@ const AGallery: React.FC = () => {
     return wordItem(gallery?.artists);
   }, [gallery]);
 
+  // fetch publish nfts
   const fetchPublishNFTs = useCallback(async () => {
     try {
       const res = await mediaGasfreeCreateForPublisher({
@@ -334,6 +329,23 @@ const AGallery: React.FC = () => {
       console.log(e.toString());
     }
   }, [id]);
+
+  const openNotification = ({
+    description,
+    duration = 4.5,
+    key = '',
+  }: {
+    description: string;
+    duration?: number | null;
+    key?: string;
+  }) => {
+    notification.open({
+      message: 'Notification Title',
+      description: description,
+      duration: duration,
+      key: key,
+    });
+  };
 
   const sendPermit = useCallback(
     async (
@@ -355,11 +367,24 @@ const AGallery: React.FC = () => {
         );
         // console.info('resp', resp)
         // await new Promise((res) => setTimeout(res, 1000 * 15))
-        message.info(`NFT 发布已上传到区块链，等待节点反馈`);
+        const keyOne = `open${Date.now()}`;
+        openNotification({
+          description:
+            'NFT 发布已上传到区块链，等待节点反馈。不要离开页面或者刷新！',
+          duration: null,
+          key: keyOne,
+        });
         // const txResp = await currentProvider?.getTransaction(resp.hash);
         // const receipt = await currentProvider?.getTransactionReceipt(resp.hash);
         const receipt = await resp.wait(1);
+
+        notification.close(keyOne);
         console.info('receipt', receipt);
+        openNotification({
+          description: `正在同步数据。不要离开页面或者刷新！${
+            receipt.transactionHash ? 'hash:' + receipt.transactionHash : ''
+          }`,
+        });
         // send txhash to backend
         const res = await PostMedia({
           txHash: receipt.transactionHash,
@@ -371,6 +396,7 @@ const AGallery: React.FC = () => {
         message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
         fetchIsPublished();
         await fetchMediaSearch();
+        await fetchPublishNFTs();
       } catch (walletErr) {
         console.error('sendPermit::error: ', walletErr);
         mediaContract.callStatic
@@ -389,8 +415,16 @@ const AGallery: React.FC = () => {
         sendTxFinished();
       }
     },
-    // eslint-disable-next-line
-    [id, isSendingTx, mediaContract],
+    [
+      id,
+      isSendingTx,
+      mediaContract,
+      fetchMediaSearch,
+      sendTxFinished,
+      fetchIsPublished,
+      toggleSendTx,
+      fetchPublishNFTs,
+    ]
   );
 
   const publishNFTColumns = [
