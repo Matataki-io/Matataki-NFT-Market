@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-
 import CommunityCard from '../../components/CommunityCard';
 import { Article } from '../../types/Article';
-import { getArticles } from '../../backend/article';
-import { PaginationResult } from '../../types/PaginationResult';
 import { isEmpty } from 'lodash';
 import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
-import { Pagination } from 'antd';
+import { Pagination, Spin } from 'antd';
 
 const Community: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(1);
@@ -20,11 +17,21 @@ const Community: React.FC = () => {
   );
 
   if (!data && !error) {
-    return <div>Loading...</div>;
+    return (
+      <StyledWrapper>
+        <StyledWrapperLoading>
+          <Spin tip='Loading...'></Spin>
+        </StyledWrapperLoading>
+      </StyledWrapper>
+    );
   }
 
   if (error) {
-    return <div className='error'>发生了错误 {error}</div>;
+    return (
+      <StyledWrapper>
+        <StyledWrapperLoading>Please refresh the page...</StyledWrapperLoading>
+      </StyledWrapper>
+    );
   }
 
   return (
@@ -51,6 +58,11 @@ const Community: React.FC = () => {
     </StyledWrapper>
   );
 };
+
+const StyledWrapperLoading = styled.div`
+  text-align: center;
+  margin: 100px 0 0;
+`;
 
 const StyledWrapper = styled.div`
   flex: 1;

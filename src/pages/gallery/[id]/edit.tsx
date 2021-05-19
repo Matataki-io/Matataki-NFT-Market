@@ -172,10 +172,7 @@ const GalleryEdit: React.FC<void> = () => {
       return;
     }
     try {
-      const res: any = await updateGallery(
-        Number(userDataByWallet?.id),
-        profile
-      );
+      const res: any = await updateGallery(Number(id), profile);
       console.log('res', res);
       if (res.code === 200) {
         message.success('更新成功');
