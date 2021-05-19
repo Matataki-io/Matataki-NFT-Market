@@ -438,12 +438,12 @@ const AGallery: React.FC = () => {
 
   const publishNFTColumns = [
     {
-      title: '#',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
     },
     {
-      title: '封面',
+      title: 'Cover',
       dataIndex: 'tokenURI',
       key: 'tokenURI',
       // eslint-disable-next-line react/display-name
@@ -452,19 +452,19 @@ const AGallery: React.FC = () => {
       ),
     },
     {
-      title: '标题',
+      title: 'Title',
       dataIndex: 'title',
       key: 'title',
     },
     {
-      title: '描述',
+      title: 'Description',
       dataIndex: 'description',
       key: 'description',
     },
     {
-      title: '艺术家',
+      title: 'Creator',
       dataIndex: 'creator',
-      key: 'creator',
+      key: 'id',
       // eslint-disable-next-line react/display-name
       render: (creator: User) => (
         <div className='user-card'>
@@ -473,7 +473,7 @@ const AGallery: React.FC = () => {
       ),
     },
     {
-      title: '状态和操作',
+      title: 'Status and operation',
       dataIndex: 'id',
       key: 'id',
       // eslint-disable-next-line react/display-name
@@ -531,24 +531,26 @@ const AGallery: React.FC = () => {
               </StyledHeadUserInfo>
             </StyledHeadUser>
             <StyledHeadRight>
-              {userDataByWallet?.role === UserRole.Artist ? (
-                isJoin ? (
-                  <Button disabled>Joined</Button>
-                ) : isJoinApplied ? (
-                  <Button disabled>Already applied</Button>
-                ) : (
-                  <Button type='primary' onClick={joinGalleryFn}>
-                    Join Gallery
-                  </Button>
-                )
-              ) : null}
-              {isOwner ? (
-                <Link href={`/gallery/${id}/edit`}>
-                  <a>
-                    <Button type='primary'>Edit</Button>
-                  </a>
-                </Link>
-              ) : null}
+              <Space>
+                {userDataByWallet?.role === UserRole.Artist ? (
+                  isJoin ? (
+                    <Button disabled>Joined</Button>
+                  ) : isJoinApplied ? (
+                    <Button disabled>Already applied</Button>
+                  ) : (
+                    <Button type='primary' onClick={joinGalleryFn}>
+                      Join Gallery
+                    </Button>
+                  )
+                ) : null}
+                {isOwner ? (
+                  <Link href={`/gallery/${id}/edit`}>
+                    <a>
+                      <Button type='primary'>Edit</Button>
+                    </a>
+                  </Link>
+                ) : null}
+              </Space>
             </StyledHeadRight>
           </StyledHead>
           <StyledLine />
@@ -616,9 +618,9 @@ const AGallery: React.FC = () => {
                 <p className='gallery-name'>
                   {gallery?.about.bannerDescription}
                 </p>
-                {galleryAboutIconList.map((i: any) =>
+                {galleryAboutIconList.map((i: any, idx: number) =>
                   i.name ? (
-                    <StyledAboutItem>
+                    <StyledAboutItem key={idx}>
                       <ReactSVG className='icon' src={i.icon} />
                       <span>{i.name}</span>
                     </StyledAboutItem>
