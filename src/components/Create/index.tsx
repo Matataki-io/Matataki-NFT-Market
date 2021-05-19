@@ -488,7 +488,12 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           tags: tags || [],
         });
         console.log('resMedia', resMedia);
-        message.success('mint success...');
+
+        if (resMedia.status === 201) {
+          message.success('mint success...');
+        } else {
+          throw new Error('mint fail');
+        }
 
         setIsCreate(false);
 

@@ -397,11 +397,15 @@ const AGallery: React.FC = () => {
           gallery: Number(id),
           id: Number(mtsId),
         });
-        console.log('res', res);
-        message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
-        fetchIsPublished();
-        await fetchMediaSearch();
-        await fetchPublishNFTs();
+        if (res.status == 201) {
+          console.log('res', res);
+          message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
+          fetchIsPublished();
+          await fetchMediaSearch();
+          await fetchPublishNFTs();
+        } else {
+          throw new Error('publish fail');
+        }
       } catch (walletErr) {
         console.error('sendPermit::error: ', walletErr);
         mediaContract.callStatic
