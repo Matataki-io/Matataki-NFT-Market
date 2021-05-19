@@ -1,163 +1,225 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Checkbox, Radio, Spin, message } from 'antd';
+import { Checkbox, Radio, Spin, message, Select, Pagination } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
-
 import NFT from '../components/NFT';
 import { NFTProps } from '../../next-env';
 import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
-import { getMediaList, getMediaMetadata } from '../backend/media';
+import {
+  getMediaList,
+  getMediaMetadata,
+  backendSWRFetcher,
+} from '../backend/media';
 import { useMarketPrices } from '../hooks/useMarketPrices';
+import { getTags } from '../backend/tag';
+import { Tag as TagType } from '../types/Tag';
+import useSWR from 'swr';
+import { isEmpty } from 'lodash';
 
-type PaginationMeta = PaginationResult['meta'];
+const { Option } = Select;
+
 type MediaWithMetadata = Media & {
   metadata: MediaMetadata;
 };
 
+enum SortBy {
+  ASC = 'ASC',
+  DESC = 'DESC',
+}
+
 const Market: React.FC = () => {
-  // 更多 NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
+
   const nftIds = useMemo(
     () => NFTList.map(i => (i.id === undefined ? null : i.id)),
     [NFTList]
   );
   const { priceBook, isLoading: isPriceBookLoading } = useMarketPrices(nftIds);
-
+  const [tagList, setTagList] = useState<Array<TagType>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [page, setPage] = useState<number>(1);
-  const [paginationMeta, setPaginationMeta] = useState<PaginationMeta>({
-    totalItems: 0,
-    itemCount: 0,
-    itemsPerPage: 0,
-    totalPages: 0,
-    currentPage: 0,
-  });
+  const [sort, setSort] = useState<SortBy>(SortBy.DESC);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+  const [currentTag, setCurrentTag] = useState<string[]>([]);
+  const { data: mediaList, error } = useSWR(
+    `/media?page=${page}&limit=${limit}&order=${sort}${
+      !isEmpty(currentTag) ? '&tags=' + currentTag : ''
+    }`,
+    backendSWRFetcher
+  );
 
   // 获取NFT数据
-  const fetchNFTData = async () => {
+  const fetchNFTData = useCallback(async () => {
     try {
-      const mediaList = await getMediaList(page, 12);
       console.log('mediaList', mediaList);
       if (mediaList.items.length) {
-        const getMediaWithMetaList = mediaList.items.map(async item => {
-          const metadata = await getMediaMetadata(item.metadataURI);
-          return {
-            ...item,
-            metadata,
-          };
-        });
-        const mediaWithMetaList: MediaWithMetadata[] = await Promise.all(
-          getMediaWithMetaList
-        );
-        const realNftList: NFTProps[] = mediaWithMetaList.map(media => {
-          return {
-            id: media.id,
-            type: media.metadata.mimeType.split('/')[0],
-            title: media.metadata.name,
-            fields: {
-              low: { stringValue: media.tokenURI },
-              stream: { stringValue: media.tokenURI },
-              medium: { stringValue: media.tokenURI },
-              high: { stringValue: media.tokenURI },
-              thumbnail: { stringValue: media.tokenURI },
-            },
-            content: {
-              low: media.tokenURI,
-              stream: media.tokenURI,
-              medium: media.tokenURI,
-              high: media.tokenURI,
-              thumbnail: media.tokenURI,
-            },
-            owner: media.owner,
-            creator: media.creator,
-          };
-        });
+        setLoading(true);
+        try {
+          const getMediaWithMetaList = mediaList.items.map(
+            async (item: Media) => {
+              const metadata = await getMediaMetadata(item.metadataURI);
+              return {
+                ...item,
+                metadata,
+              };
+            }
+          );
+          const mediaWithMetaList: MediaWithMetadata[] = await Promise.all(
+            getMediaWithMetaList
+          );
+          const realNftList: NFTProps[] = mediaWithMetaList.map(media => {
+            return {
+              id: media.id,
+              type: media.metadata.mimeType.split('/')[0],
+              title: media.metadata.name,
+              fields: {
+                low: { stringValue: media.tokenURI },
+                stream: { stringValue: media.tokenURI },
+                medium: { stringValue: media.tokenURI },
+                high: { stringValue: media.tokenURI },
+                thumbnail: { stringValue: media.tokenURI },
+              },
+              content: {
+                low: media.tokenURI,
+                stream: media.tokenURI,
+                medium: media.tokenURI,
+                high: media.tokenURI,
+                thumbnail: media.tokenURI,
+              },
+              owner: media.owner,
+              creator: media.creator,
+              tags: media.tags,
+            };
+          });
 
-        setNFTList(NFTList.concat(realNftList));
-        setPaginationMeta(mediaList.meta);
+          setNFTList(realNftList);
+        } catch (e) {
+          console.log('e', e.toString());
+          setNFTList([]);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setNFTList([]);
       }
-      let _page = page;
-      setPage(++_page);
     } catch (e) {
       message.error(`数据获取失败${e.toString()}`);
+      setNFTList([]);
     }
+  }, [mediaList]);
+
+  useEffect(() => {
+    if (!isEmpty(mediaList)) {
+      fetchNFTData();
+    } else {
+      setNFTList([]);
+    }
+  }, [mediaList, fetchNFTData]);
+
+  // fetch department tags
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res: any = await getTags();
+        if (res.status === 200) {
+          setTagList(res.data);
+        } else {
+          throw new Error('fail');
+        }
+      } catch (e) {
+        console.log(e.toString());
+      }
+    };
+    fetch();
+  }, []);
+
+  const handleTagSelect = (value: string) => {
+    // console.log('value', value);
+    setCurrentTag([value]);
   };
 
-  // 处理滚动Load
-  const handleInfiniteOnLoad = async () => {
-    setLoading(true);
-    // 第一页不判断
-    if (page !== 1 && paginationMeta.currentPage >= paginationMeta.totalPages) {
-      setLoading(false);
-      setHasMore(false);
-      return;
-    }
-    await fetchNFTData();
-    setLoading(false);
-  };
+  if (!isEmpty(error)) {
+    return (
+      <StyledWrapper>
+        <StyledWrapperLoading>Please refresh the page...</StyledWrapperLoading>
+      </StyledWrapper>
+    );
+  }
+
   return (
     <StyledWrapper>
       <StyledHeadTitle>Market Place</StyledHeadTitle>
       <StyledHead>
         <div>
           <h3>DEPARTMENT</h3>
-          <StyledHeadContainer className='checkbox'>
-            <div>
-              <Checkbox disabled>Digital Art</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>Art Installation</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>3D Art</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>Conceptual Art</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>Photograph</Checkbox>
-            </div>
-            <div>
-              <Checkbox disabled>Graphic Art</Checkbox>
-            </div>
+          <StyledHeadContainer className='filter'>
+            <Select
+              allowClear
+              style={{ width: '400px' }}
+              placeholder='Select tag to filter media'
+              onSelect={handleTagSelect}
+              onClear={() => setCurrentTag([])}>
+              {tagList.map((i: TagType, idx: number) => (
+                <Option value={i.name} key={`${idx}-${i.name}`}>
+                  {i.name}
+                </Option>
+              ))}
+            </Select>
           </StyledHeadContainer>
         </div>
         <div>
           <h3>SORT BY</h3>
-          <StyledHeadContainer className='radio'>
-            <Radio disabled>Creat Date - Ascending</Radio>
-            <Radio disabled>Creat Date - Descending</Radio>
+          <StyledHeadContainer className='filter'>
+            <Radio.Group onChange={e => setSort(e.target.value)} value={sort}>
+              <Radio value={SortBy.DESC}>New</Radio>
+              <Radio value={SortBy.ASC}>Create</Radio>
+            </Radio.Group>
           </StyledHeadContainer>
         </div>
       </StyledHead>
       <StyledLine></StyledLine>
-      <InfiniteScroll
-        pageStart={0}
-        loadMore={handleInfiniteOnLoad}
-        hasMore={!loading && hasMore}>
-        <StyledNfts>
-          {NFTList.map((i, idx) => (
-            // 这里有报错
-            // Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
-            <Link href={`/p/${i.id}`} key={idx}>
-              <a target='_blank'>
-                <NFT {...i} currentAsk={priceBook[i.id as number]}></NFT>
-              </a>
-            </Link>
-          ))}
-          {loading && hasMore && (
-            <div className='loading-container'>
-              <Spin />
-            </div>
-          )}
-        </StyledNfts>
-      </InfiniteScroll>
+      {isEmpty(mediaList) ? ( // 如果在加载
+        <StyledWrapperLoading>
+          <Spin tip='Loading...'></Spin>
+        </StyledWrapperLoading>
+      ) : isEmpty(NFTList) && !loading ? ( // 如果空数据并且loading完成
+        <StyledWrapperLoading>
+          <p>Not Result...</p>
+        </StyledWrapperLoading>
+      ) : (
+        <>
+          <StyledNfts>
+            {NFTList.map((i, idx) => (
+              <Link href={`/p/${i.id}`} key={`${idx}-${i.id}`}>
+                <a target='_blank'>
+                  <NFT {...i} currentAsk={priceBook[i.id as number]}></NFT>
+                </a>
+              </Link>
+            ))}
+          </StyledNfts>
+          <div style={{ textAlign: 'center' }}>
+            <Pagination
+              pageSize={limit}
+              current={page}
+              total={mediaList?.meta.totalItems || 0}
+              onChange={page => {
+                setPage(page);
+              }}
+            />
+          </div>
+        </>
+      )}
     </StyledWrapper>
   );
 };
+
+const StyledWrapperLoading = styled.div`
+  text-align: center;
+  margin: 100px 0 0;
+`;
 
 const StyledWrapper = styled.div`
   flex: 1;
@@ -204,17 +266,7 @@ const StyledHead = styled.div`
 `;
 const StyledHeadContainer = styled.div`
   margin: 24px 0 0 0;
-  &.checkbox {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-row-gap: 24px;
-    grid-column-gap: 60px;
-    @media screen and (max-width: 768px) {
-      display: flex;
-      flex-wrap: wrap;
-    }
-  }
-  &.radio {
+  &.filter {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     grid-row-gap: 24px;

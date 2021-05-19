@@ -1,7 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Avatar, Button, List, message, Spin, Tag } from 'antd';
+import {
+  Tag,
+  Form,
+  Modal,
+  Image,
+  Upload,
+  Avatar,
+  Button,
+  message,
+  List,
+  Spin,
+  Input,
+  Empty,
+} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
@@ -21,14 +34,17 @@ import {
 } from '../../backend/media';
 import { User } from '../../types/User.types';
 import { BidLog } from '../../types/Bid';
-import ArtworksCarousel from '../../components/ArtworksCarousel';
+import ArtworksCarousel from '../../components/ArtworksCarouselUser';
 
 import IconTelegram from '../../assets/icons/telegram.svg';
-import IconTwitter from '../../assets/icons/twitter.svg';
 import IconEmail from '../../assets/icons/email1.svg';
 import IconMedium from '../../assets/icons/medium.svg';
+import IconTwitter from '../../assets/icons/twitter.svg';
+import IconDiscord from '../../assets/icons/discord.svg';
 import IconFacebook from '../../assets/icons/facebook.svg';
 import useSWR from 'swr';
+import GalleryCard from '../../components/GalleryCard';
+import { Gallery } from '../../types/Gallery';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -36,12 +52,12 @@ interface Props {
 
 const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const router = useRouter();
+  const [galleryForm] = Form.useForm();
   const { username } = router.query;
-  const [userInfo, setUserInfo] = useState<UserInfoState>({
+  const [userInfo, setUserInfo] = useState<User | any>({
     avatar: '',
     nickname: '',
     username: '',
-    role: undefined,
     telegram: '',
     twitter: '',
     email: '',
@@ -58,25 +74,24 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const [bidsList, setBidsList] = useState<Array<BidLog>>([]);
   const { userDataByWallet } = useLogin();
   // show bid cancel modal
-  const [isModalVisibleBidsCancel, setIsModalVisibleBidsCancel] = useState(
-    false
-  );
+  const [
+    isModalVisibleBidsCancel,
+    setIsModalVisibleBidsCancel,
+  ] = useState<boolean>(false);
+
   // click bid idx
   const [currentBidsIdx, setCurrentBidsIdx] = useState<number>(0);
+
   const keyMessage = 'fetchUser';
 
-  const { data: contractedArtists, error: artistsError } = useSWR<User[], any>(
-    userDataByWallet ? `/user/${userDataByWallet.id}/owned-artists` : null,
-    backendSWRFetcher
-  );
-
-  const { data: ownedGalleries, error: galleryError } = useSWR<User, any>(
+  const { data: galleryOwner, error: galleryError } = useSWR<User, any>(
     username ? `/user/@${username}/ownedGalleries` : null,
     backendSWRFetcher
   );
 
   const [tagsList, setTagsList] = useState<Array<string>>([]);
 
+  // 获取用户信息
   useEffect(() => {
     const fetchUserInfoData = async () => {
       if (typeof username !== 'string') return;
@@ -103,11 +118,11 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         return;
       }
     };
-
+    // 获取NFT信息
     const fetchNFTListData = async (userInfo: User) => {
       const uniNftId = new Set<number>();
       if (userInfo.createdMedia) {
-        userInfo.createdMedia.map(item => uniNftId.add(item));
+        userInfo.createdMedia.map((item: any) => uniNftId.add(item));
       }
       if (userInfo.ownedMedia) {
         userInfo.ownedMedia.map(item => uniNftId.add(item));
@@ -124,6 +139,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             id: media.id,
             type: metadata.mimeType.split('/')[0],
             title: metadata.name,
+            description: metadata.description,
             fields: {
               low: { stringValue: media.tokenURI },
               stream: { stringValue: media.tokenURI },
@@ -140,6 +156,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             },
             owner: media.owner,
             creator: media.creator,
+            tags: media.tags,
           };
         }
       );
@@ -156,7 +173,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
     fetchAll();
   }, [appUserInfo, userDataByWallet, username, router]);
-
+  // 获取用户tags
   useEffect(() => {
     const fetch = async () => {
       if (typeof username !== 'string') return;
@@ -167,6 +184,61 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     };
     fetch();
   }, [userInfo, username]);
+
+  const IconList = useMemo(() => {
+    let list = [
+      {
+        name: userInfo?.telegram,
+        icon: IconTelegram,
+      },
+      {
+        name: userInfo?.twitter,
+        icon: IconTwitter,
+      },
+      {
+        name: userInfo?.email,
+        icon: IconEmail,
+      },
+      {
+        name: userInfo?.medium,
+        icon: IconMedium,
+      },
+      {
+        name: userInfo?.facebook,
+        icon: IconFacebook,
+      },
+    ];
+    return list;
+  }, [userInfo]);
+
+  const userAboutIconList = useMemo(() => {
+    return [
+      {
+        name: userInfo?.about?.telegram,
+        icon: IconTelegram,
+      },
+      {
+        name: userInfo?.about?.twitter,
+        icon: IconTwitter,
+      },
+      {
+        name: userInfo?.about?.medium,
+        icon: IconMedium,
+      },
+      {
+        name: userInfo?.about?.facebook,
+        icon: IconFacebook,
+      },
+      {
+        name: userInfo?.about?.discord,
+        icon: IconDiscord,
+      },
+      {
+        name: userInfo?.about?.email,
+        icon: IconEmail,
+      },
+    ];
+  }, [userInfo]);
 
   const collectionContainer = () => {
     return (
@@ -187,92 +259,90 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const ArtworksContainer = () => {
     return (
       <>
-        <StyledItem>
-          <StyledItemTitle>Presentation</StyledItemTitle>
-          <StyledVideo>
-            <video
-              src={
-                'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
-              }
-              loop
-              playsInline
-              // autoPlay
-              // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-              className='media-video'
-            />
-          </StyledVideo>
-        </StyledItem>
-        <StyledLine />
-        <StyledItem>
-          <StyledItemTitle>Artworks</StyledItemTitle>
-          <StyledArtworks>
-            <ArtworksCarousel />
-          </StyledArtworks>
-        </StyledItem>
+        {!isEmpty(userInfo?.presentations) ? (
+          <>
+            <StyledItem>
+              <StyledItemTitle>Presentation</StyledItemTitle>
+              {/* <StyledVideo>
+                  <video
+                    src={
+                      'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
+                    }
+                    loop
+                    playsInline
+                    // autoPlay
+                    // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
+                    className='media-video'
+                  />
+                </StyledVideo> */}
+              <StyledPresentation>
+                <Image
+                  src={
+                    userInfo?.presentations ? userInfo?.presentations[0] : ''
+                  }
+                />
+              </StyledPresentation>
+            </StyledItem>
+            <StyledLine />
+          </>
+        ) : null}
 
-        <StyledLine />
+        {!isEmpty(nftListData) ? (
+          <>
+            <StyledItem>
+              <StyledItemTitle>NFTs</StyledItemTitle>
+              <StyledMediaCardContainer>
+                {nftListData.map((item, index) => (
+                  <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+                    <a target='_blank'>
+                      <NFTSimple {...item} />
+                    </a>
+                  </Link>
+                ))}
+              </StyledMediaCardContainer>
+            </StyledItem>
+            <StyledLine />
+          </>
+        ) : null}
+
+        {!isEmpty(userInfo?.artworks) ? (
+          <>
+            <StyledItem>
+              <StyledItemTitle>Artworks</StyledItemTitle>
+              <StyledArtworks>
+                <ArtworksCarousel data={userInfo?.artworks} />
+              </StyledArtworks>
+            </StyledItem>
+            <StyledLine />
+          </>
+        ) : null}
+
         <StyledItem>
           <StyledItemTitle>About</StyledItemTitle>
           <StyledAbout>
             <div className='item'>
-              <p className='text'>
-                Since Kukje Gallery opened at the center of Seoul in 1982, it
-                has been committed to presenting the work of the most current
-                and significant Korean and international contemporary artists.
-                The Gallery has established itself as a leading venue for
-                showing works by major international artists such as Damien
-                Hirst, Eva Hesse, Jean-Michel Basquiat, Joan Mitchell, Cy
-                Twombly, Ed Ruscha, Joseph Beuys, Anselm Kiefer, Louise
-                Bourgeois, Jenny Holzer, Candida Hofer, Bill Viola, Anish
-                Kapoor, etc. The exhibitions provided the foremost rare
-                opportunity for the Korean art audiences to encounter the works
-                of world-renowned contemporary artists without going abroad.
-              </p>
-              <p className='text'>
-                Recognizing the importance of promoting Korean artists abroad,
-                Kukje Gallery participates annually in major art fairs such as
-                Art Basel, Art Basel Miami Beach and The Armory Show. The
-                Gallery first presented the most significant artworks by Korean
-                artists alongside more recognizable works of high caliber by
-                international artists. Consequently, the Korean artists as well
-                as the Gallery have been successfully gaining wide exposure and
-                receiving much attention from the non-Korean collectors. The
-                Gallery has also been promoting Korean artists to non-commercial
-                venues, using its solid network of museum curators and critics
-                worldwide. Many of Korean artists who have been presented by
-                Kukje Gallery have gone on to participate in international
-                biennials and major art museum exhibitions.
-              </p>
-              <p className='text'>
-                Kukje Gallery has an unmatched reputation in Korea for having
-                introduced many of the most critically acclaimed international
-                artists, and for supporting the most promising Korean artists.
-                The Gallery continues to play a key role in developing the
-                domestic art market and promoting Korean artists; as well as
-                drawing the national audience’s attention to the currently
-                international art world.
-              </p>
+              <p className='text'>{userInfo?.about.description}</p>
             </div>
             <div className='item'>
               <div className='cover'>
-                <img
-                  src='https://placeimg.com/540/184/nature?t=1617247698083'
-                  alt=''
-                />
+                {userInfo?.about.banner ? (
+                  <img
+                    src={userInfo?.about.banner}
+                    alt={userInfo?.about.bannerDescription}
+                  />
+                ) : null}
               </div>
-              <p className='gallery-name'>K1 Gallery</p>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconTelegram} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconTwitter} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconEmail} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
+              <p className='gallery-name'>
+                {userInfo?.about.bannerDescription}
+              </p>
+              {userAboutIconList.map((i: any) =>
+                i.name ? (
+                  <StyledAboutItem>
+                    <ReactSVG className='icon' src={i.icon} />
+                    <span>{i.name}</span>
+                  </StyledAboutItem>
+                ) : null
+              )}
             </div>
           </StyledAbout>
         </StyledItem>
@@ -280,117 +350,24 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     );
   };
 
-  const GalleryContainer = () => {
+  const galleryContainer = () => {
     return (
       <>
         <StyledItem>
-          <StyledItemTitle>Presentation</StyledItemTitle>
-          <StyledVideo>
-            <video
-              src={
-                'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
-              }
-              loop
-              playsInline
-              // autoPlay
-              // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-              className='media-video'
-            />
-          </StyledVideo>
+          <StyledItemTitle>My Gallery</StyledItemTitle>
+          <StyledGallery>
+            {galleryOwner?.ownedGalleries.map(
+              (gallery: Gallery, index: number) => (
+                <Link key={index} href={`/gallery/${gallery.id}`}>
+                  <a target='_blank'>
+                    <GalleryCard {...gallery}></GalleryCard>
+                  </a>
+                </Link>
+              )
+            )}
+          </StyledGallery>
         </StyledItem>
         <StyledLine />
-        <StyledItem>
-          <StyledItemTitle>Artworks</StyledItemTitle>
-          <StyledArtworks>
-            <ArtworksCarousel />
-          </StyledArtworks>
-        </StyledItem>
-
-        <StyledLine />
-        <StyledItem>
-          <StyledItemTitle>About</StyledItemTitle>
-          <StyledAbout>
-            <div className='item'>
-              <p className='text'>
-                Since Kukje Gallery opened at the center of Seoul in 1982, it
-                has been committed to presenting the work of the most current
-                and significant Korean and international contemporary artists.
-                The Gallery has established itself as a leading venue for
-                showing works by major international artists such as Damien
-                Hirst, Eva Hesse, Jean-Michel Basquiat, Joan Mitchell, Cy
-                Twombly, Ed Ruscha, Joseph Beuys, Anselm Kiefer, Louise
-                Bourgeois, Jenny Holzer, Candida Hofer, Bill Viola, Anish
-                Kapoor, etc. The exhibitions provided the foremost rare
-                opportunity for the Korean art audiences to encounter the works
-                of world-renowned contemporary artists without going abroad.
-              </p>
-              <p className='text'>
-                Recognizing the importance of promoting Korean artists abroad,
-                Kukje Gallery participates annually in major art fairs such as
-                Art Basel, Art Basel Miami Beach and The Armory Show. The
-                Gallery first presented the most significant artworks by Korean
-                artists alongside more recognizable works of high caliber by
-                international artists. Consequently, the Korean artists as well
-                as the Gallery have been successfully gaining wide exposure and
-                receiving much attention from the non-Korean collectors. The
-                Gallery has also been promoting Korean artists to non-commercial
-                venues, using its solid network of museum curators and critics
-                worldwide. Many of Korean artists who have been presented by
-                Kukje Gallery have gone on to participate in international
-                biennials and major art museum exhibitions.
-              </p>
-              <p className='text'>
-                Kukje Gallery has an unmatched reputation in Korea for having
-                introduced many of the most critically acclaimed international
-                artists, and for supporting the most promising Korean artists.
-                The Gallery continues to play a key role in developing the
-                domestic art market and promoting Korean artists; as well as
-                drawing the national audience’s attention to the currently
-                international art world.
-              </p>
-            </div>
-            <div className='item'>
-              <div className='cover'>
-                <img
-                  src='https://placeimg.com/540/184/nature?t=1617247698083'
-                  alt=''
-                />
-              </div>
-              <p className='gallery-name'>K1 Gallery</p>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconTelegram} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconTwitter} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
-              <StyledAboutItem>
-                <ReactSVG className='icon' src={IconEmail} />
-                <span>@K1Gallery</span>
-              </StyledAboutItem>
-            </div>
-          </StyledAbout>
-        </StyledItem>
-
-        <StyledLine />
-        <StyledItem>
-          <StyledItemTitle>Contracted Artists</StyledItemTitle>
-          <StyledWord>
-            <List
-              dataSource={contractedArtists}
-              renderItem={artist => (
-                <List.Item>
-                  <Link href={`/${artist.username}`}>
-                    <a>
-                      {artist.username}({artist.nickname})
-                    </a>
-                  </Link>
-                </List.Item>
-              )}
-            />
-          </StyledWord>
-        </StyledItem>
       </>
     );
   };
@@ -412,51 +389,16 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         </StyledHeadUser>
         <StyledHeadRight>
           <StyledHeadIcon>
-            {userInfo?.telegram ? (
-              <CopyToClipboard
-                text={userInfo?.telegram}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.telegram ? (
-                  <ReactSVG className='icon' src={IconTelegram} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
-            {userInfo?.twitter ? (
-              <CopyToClipboard
-                text={userInfo?.twitter}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.twitter ? (
-                  <ReactSVG className='icon' src={IconTwitter} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
-            {userInfo?.email ? (
-              <CopyToClipboard
-                text={userInfo?.email}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.email ? (
-                  <ReactSVG className='icon' src={IconEmail} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
-            {userInfo?.medium ? (
-              <CopyToClipboard
-                text={userInfo?.medium}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.medium ? (
-                  <ReactSVG className='icon' src={IconMedium} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
-            {userInfo?.facebook ? (
-              <CopyToClipboard
-                text={userInfo?.facebook}
-                onCopy={() => message.info('复制成功！')}>
-                {userInfo?.facebook ? (
-                  <ReactSVG className='icon' src={IconFacebook} />
-                ) : null}
-              </CopyToClipboard>
-            ) : null}
+            {IconList.map((i: any, idx: number) =>
+              i.name ? (
+                <CopyToClipboard
+                  key={idx}
+                  text={i.name}
+                  onCopy={() => message.info('复制成功！')}>
+                  {i.name ? <ReactSVG className='icon' src={i.icon} /> : null}
+                </CopyToClipboard>
+              ) : null
+            )}
           </StyledHeadIcon>
           {tagsList.length ? (
             <StyledHeadTags>
@@ -477,7 +419,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         </StyledHeadRight>
       </StyledHead>
       <StyledLine />
-      {/*{!isEmpty(ownedGalleries?.ownedGalleries) && <GalleryContainer />}*/}
+      {!isEmpty(galleryOwner?.ownedGalleries) && galleryContainer()}
       {userInfo?.role === 'COLLECTOR' ? (
         collectionContainer()
       ) : userInfo?.role === 'ARTIST' ? (
@@ -485,11 +427,18 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
       ) : userInfo?.role === 'SUPER_ADMIN' ? (
         collectionContainer()
       ) : (
-        <Spin />
+        <StyledWrapperLoading>
+          <Spin tip={'Loading...'} />
+        </StyledWrapperLoading>
       )}
     </StyledWrapper>
   );
 };
+
+const StyledWrapperLoading = styled.div`
+  text-align: center;
+  margin: 100px 0 0;
+`;
 
 const StyledWrapper = styled.div`
   flex: 1;
@@ -688,6 +637,15 @@ const StyledVideo = styled.div`
     height: 240px;
   }
 `;
+const StyledPresentation = styled.div`
+  margin: 64px 0 0;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  @media screen and (max-width: 678px) {
+    margin: 20px 0 0;
+  }
+`;
 const StyledArtworks = styled.div`
   margin-top: 64px;
 
@@ -736,10 +694,9 @@ const StyledAbout = styled.div`
     font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
-    line-height: 24px;
     padding: 0;
     margin: 40px 0 0 0;
-
+    word-break: break-word;
     &:nth-child(1) {
       margin-top: 0;
     }
@@ -770,7 +727,7 @@ const StyledAbout = styled.div`
   }
 `;
 const StyledAboutItem = styled.div`
-  margin-top: 24px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
 
@@ -792,8 +749,7 @@ const StyledAboutItem = styled.div`
 
   span {
     font-size: 16px;
-    font-family: 'Playfair Display', serif;
-    font-weight: 500;
+    font-weight: 400;
     color: #333333;
     line-height: 19px;
     margin-left: 6px;
@@ -848,6 +804,93 @@ const StyledWord = styled.div`
         margin: 0;
       }
     }
+  }
+`;
+
+const StyledGallery = styled.div`
+  width: 100%;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(4, minmax(0px, 1fr));
+  gap: 48px 24px;
+  margin: 48px auto 0;
+  min-height: 320px;
+
+  & > a {
+    width: 100%;
+  }
+
+  @media screen and (max-width: 1366px) {
+    grid-template-columns: repeat(3, minmax(0px, 1fr));
+  }
+  @media screen and (max-width: 1140px) {
+    grid-template-columns: repeat(2, minmax(0px, 1fr));
+  }
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .loading-container {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+  }
+`;
+
+const StyledForm = styled(Form)`
+  margin-top: 40px;
+  .ant-form-item {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #d9d9d9;
+    .ant-input,
+    .ant-input-affix-wrapper {
+      border: none;
+    }
+    .ant-input:focus,
+    .ant-input-focused,
+    .ant-input-affix-wrapper:focus,
+    .ant-input-affix-wrapper-focused {
+      box-shadow: none;
+    }
+  }
+  .not-border.ant-form-item {
+    border: none;
+  }
+`;
+
+const StyledHelper = styled.p`
+  font-size: 14px;
+  font-weight: 300;
+  color: #777777;
+  line-height: 20px;
+  margin: 4px 0 10px;
+`;
+
+const StyledButton = styled(Button)`
+  width: 100%;
+  height: 60px;
+  border: 2px solid #333333;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333333;
+  line-height: 22px;
+  margin-bottom: 16px;
+  &.black {
+    background: #333333;
+    color: #ffffff;
+    &:hover {
+      color: #ffffff;
+    }
+  }
+  &:hover {
+    color: #333333;
+    border-color: #333333;
+  }
+  &.ant-btn:hover,
+  &.ant-btn:focus {
+    border-color: #333333;
   }
 `;
 // gallery end

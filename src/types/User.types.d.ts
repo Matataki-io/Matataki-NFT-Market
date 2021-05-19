@@ -3,6 +3,7 @@ import { UserRole } from '../constant';
 import { Tag } from './Tag';
 import { Gallery } from './Gallery';
 import { GalleryJoinRequest } from './GalleryJoinRequest';
+import { Media } from './Media.entity';
 
 export type MatatakiUserStat = {
   id: number;
@@ -41,7 +42,8 @@ export interface User {
   avatar: string;
   nickname: string;
   bio: string;
-  createdMedia: number[];
+  // topArtist 使用 Media[]， 其他用 number[]
+  createdMedia: number[] | Media[];
   ownedMedia: number[];
   /**
    * 是否为推荐的艺术家 (Featured artist)
@@ -72,4 +74,51 @@ export interface User {
   medium: string;
   facebook: string;
   tags: Array<Tag>;
+  about: {
+    description: string;
+    banner: string;
+    bannerDescription: string;
+    telegram: string;
+    twitter: string;
+    medium: string;
+    facebook: string;
+    discord: string;
+    email: string;
+  };
+  presentations?: string[];
+  artworks?: string[];
+}
+
+export type MintAndTransferParameters = {
+  creator: string;
+  data: {
+    tokenURI: string;
+    metadataURI: string;
+    contentHash: string;
+    metadataHash: string;
+  };
+  bidShares: {
+    prevOwner: { value: BigNumberish };
+    creator: { value: BigNumberish };
+    owner: { value: BigNumberish };
+  };
+  to: string;
+  sig: {
+    deadline: BigNumberish;
+    v: BigNumberish;
+    r: string;
+    s: string;
+  };
+};
+
+export interface MediaToScreen {
+  id: number;
+  creator: User;
+  publisher: User;
+  title: string;
+  description: string;
+  tokenURI: string;
+  permitData: MintAndTransferParameters;
+  tags: Tag[];
+  isPublished: Boolean;
 }

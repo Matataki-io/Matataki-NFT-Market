@@ -8,7 +8,11 @@ import React, {
 import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
-import { PostMedia, sendToPublisherForPreview } from '../../backend/media';
+import {
+  isMediaContentExisted,
+  PostMedia,
+  sendToPublisherForPreview,
+} from '../../backend/media';
 import { getGallery } from '../../backend/gallery';
 import ButtonCustom from '../Button';
 import NFT from '../NFTCreate';
@@ -46,6 +50,7 @@ import { NFTProps } from '../../../next-env';
 import { searchTags, getTags } from '../../backend/tag';
 import { User } from '../../types/User.types';
 import { Tag as TagTypes } from '../../types/Tag';
+import { getUserRelation } from '../../backend/user';
 
 import {
   NFTTempImage,
@@ -106,20 +111,23 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
   useEffect(() => {
     const fetch = async () => {
+      if (isEmpty(userDataByWallet) || isEmpty(userDataByWallet?.username)) {
+        return;
+      }
       try {
-        // TODO: 后续改为滚动分页 + 下拉查询
-        const data: any = await getGallery({
-          page: 1,
-          limit: 9999,
-        });
+        // 获取用户加入的画廊
+        const data: any = await getUserRelation(
+          userDataByWallet?.username || '',
+          'belongsTo'
+        );
         console.log('data', data);
-        setGalleryList(data.items);
+        setGalleryList(data.belongsTo);
       } catch (e) {
         console.log(`e: ${e.toString()}`);
       }
     };
     fetch();
-  }, []);
+  }, [userDataByWallet]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -197,6 +205,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
         let url = info.file.response.data.MediaData.tokenURI;
         let storage = info.file.response.data;
+
         setMediaLoading(false);
         setMediaDataFn({
           url,
@@ -359,8 +368,35 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const onFinishFailedInfo = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+  // 校验媒体是否存在
+  const checkMedia = async (hash: string) => {
+    try {
+      const res: any = await isMediaContentExisted({
+        contentHash: `0x${hash}`,
+      });
+      console.log('res', res);
+      if (res.status === 200 && res.data.code === 200) {
+        return res.data.data.isExist;
+      } else {
+        throw new Error('fail');
+      }
+    } catch (e) {
+      console.log(e.toString());
+      return false;
+    }
+  };
+
   // 媒体上传 continue
-  const onFinishUpload = () => {
+  const onFinishUpload = async () => {
+    console.log('mediaData', mediaData.storage);
+    let mediaExisted = await checkMedia(
+      mediaData['storage']['MediaData'].contentHash || ''
+    );
+    if (mediaExisted) {
+      message.info('media 已存在');
+      return;
+    }
+
     if (mediaData['storage']) {
       setStep(2);
     } else {
@@ -414,7 +450,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         message.success('正在创建...');
         const resMedia = await PostMedia({
           txHash: res.hash,
-          tags: tags,
+          tags: tags || [],
         });
         console.log('resMedia', resMedia);
         message.success('mint success...');
@@ -427,9 +463,9 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       }
     } catch (e) {
       console.log('e', e);
-      message.error(e);
+      message.error(e.toString());
     }
-  }, [signer, mediaData, formPricingAndFees]);
+  }, [signer, mediaData, formPricingAndFees, isSignerReady, setIsCreate]);
 
   // mint到画廊
   const mintTokenToGallery = useCallback(async () => {
@@ -446,11 +482,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     } = mediaData.storage['MediaData'];
     let {
       price,
-      tags_,
+      tags,
       gallery: galleryId,
     } = formPricingAndFees.getFieldsValue();
     let creatorShare = Number(price);
-    let tags = tags_ || [];
 
     console.log(
       'info',
@@ -490,8 +525,9 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       title: nameAndDescription.name,
       description: nameAndDescription.description,
       tokenURI,
-      tags,
+      tags: tags || [],
       permitData: res,
+      gallery: galleryId,
     });
     // const resp = await mediaContract.mintAndTransferWithSig(
     //   wallet.account as string,
@@ -505,7 +541,15 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     // alert('txHash' + receipt.transactionHash);
     message.success('上传成功，等待画廊审核');
     setIsCreate(false);
-  }, [signer, mediaData, formPricingAndFees, galleryList]);
+  }, [
+    signer,
+    mediaData,
+    nameAndDescription,
+    isSignerReady,
+    setIsCreate,
+    formPricingAndFees,
+    galleryList,
+  ]);
 
   // price填写完成
   const onFinishPrice = async (values: any) => {
@@ -526,7 +570,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const [visiblePop, setVisiblePop] = useState(false);
 
   // upload media back pop confirm
-  function popconfirmFn() {
+  function popConfirmFn() {
     setVisiblePop(false);
     setMediaData({} as any);
     setStep(0);
@@ -538,10 +582,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     if (!visible) {
       return;
     }
-    // Determining condition before show the popconfirm.
+    // Determining condition before show the popConfirmFn.
     console.log('!isEmpty(mediaData)', !isEmpty(mediaData));
     if (isEmpty(mediaData)) {
-      popconfirmFn(); // next step
+      popConfirmFn(); // next step
     } else {
       setVisiblePop(visible); // show the popconfirm
     }
@@ -658,7 +702,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                 Are you sure you want to return to the previous step?
               </span>
             )}
-            onConfirm={popconfirmFn}
+            onConfirm={popConfirmFn}
             onCancel={() => {
               setVisiblePop(false);
             }}
@@ -734,12 +778,12 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
               <Form.Item label='Gallery' name='gallery'>
                 <Select placeholder='Select a gallery'>
                   {galleryList.map((i, idx: number) => (
-                    <Option key={`${idx}-${i.owner.address}`} value={i.id}>
+                    <Option key={`${idx}`} value={i.id}>
                       <span>
                         <Avatar
                           size={20}
                           icon={<UserOutlined />}
-                          src={i.owner.avatar}
+                          src={i.cover}
                         />{' '}
                         <span>{i.name}</span>
                       </span>
@@ -795,7 +839,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           <StyledContainerGridCol start='7' end='12'>
             <StyledSubtitle>Preview</StyledSubtitle>
             <div style={{ width: '100%', minHeight: '113%' }}>
-              <NFT {...mediaData}></NFT>
+              <NFT {...mediaData} />
             </div>
           </StyledContainerGridCol>
         </StyledContainerGrid>

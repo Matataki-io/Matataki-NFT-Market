@@ -6,56 +6,69 @@ import GalleryCard from '../../components/GalleryCard';
 import type { Gallery } from '../../types/Gallery';
 import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
-import { Button, Spin } from 'antd';
-import { UserRole } from '../../constant';
-import { Card, Text } from '@geist-ui/react';
+import { Spin, Pagination } from 'antd';
+import { isEmpty } from 'lodash';
 
 const GalleryIndex: React.FC = () => {
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(12);
   const { data, error } = useSWR(
     `/gallery?page=${page}&limit=${limit}`,
     backendSWRFetcher
   );
-  const { data: me, error: meError } = useSWR('/user/me', backendSWRFetcher);
+
+  if (!isEmpty(error)) {
+    return (
+      <StyledWrapper>
+        <StyledWrapperLoading>Please refresh the page...</StyledWrapperLoading>
+      </StyledWrapper>
+    );
+  }
 
   return (
     <StyledWrapper>
-      <Spin size={'large'} spinning={!data}>
-        {data && (
-          <>
-            <StyledHead>
-              <StyledHeadTitle>Gallery List</StyledHeadTitle>
-            </StyledHead>
-            {me?.data.role === UserRole.SuperAdmin && (
-              <Card>
-                <Text h1>超级管理员面板</Text>
-                <Link href='/gallery/create'>
-                  <Button color='dark'>创建画廊</Button>
-                </Link>
-                <Link
-                  href={
-                    process.env.NEXT_PUBLIC_MANAGEMENT_LOCATION + '/gallery'
-                  }>
-                  <Button>管理画廊</Button>
-                </Link>
-              </Card>
-            )}
-            <StyledGallery>
-              {data.items.map((gallery: Gallery, idx: number) => (
-                <Link key={`${gallery.id}`} href={`/gallery/${gallery.id}`}>
-                  <a>
-                    <GalleryCard {...gallery} />
-                  </a>
-                </Link>
-              ))}
-            </StyledGallery>
-          </>
-        )}
-      </Spin>
+      <StyledHead>
+        <StyledHeadTitle>Gallery List</StyledHeadTitle>
+      </StyledHead>
+      {isEmpty(data) ? (
+        <StyledWrapperLoading>
+          <Spin tip='Loading...'></Spin>
+        </StyledWrapperLoading>
+      ) : isEmpty(data.items) ? (
+        <StyledWrapperLoading>
+          <p>Not Result...</p>
+        </StyledWrapperLoading>
+      ) : (
+        <>
+          <StyledGallery>
+            {data.items.map((gallery: Gallery, idx: number) => (
+              <Link key={`${gallery.id}`} href={`/gallery/${gallery.id}`}>
+                <a>
+                  <GalleryCard {...gallery} />
+                </a>
+              </Link>
+            ))}
+          </StyledGallery>
+          <div style={{ textAlign: 'center' }}>
+            <Pagination
+              pageSize={limit}
+              current={page}
+              total={data?.meta.totalItems || 0}
+              onChange={page => {
+                setPage(page);
+              }}
+            />
+          </div>
+        </>
+      )}
     </StyledWrapper>
   );
 };
+
+const StyledWrapperLoading = styled.div`
+  text-align: center;
+  margin: 100px 0 0;
+`;
 
 const StyledWrapper = styled.div`
   flex: 1;

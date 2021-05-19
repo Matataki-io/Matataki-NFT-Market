@@ -1,4 +1,5 @@
 import { User } from './User.types';
+import { Tag } from './Tag';
 
 export interface Media {
   id: number;
@@ -14,6 +15,7 @@ export interface Media {
 
   contentHash: string;
   metadataHash: string;
+  tags: Tag[];
 
   creationTx: string;
   title?: string; // user/@username/bids

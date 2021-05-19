@@ -17,7 +17,7 @@ import {
   getMediaMetadata,
   getMediaList,
 } from '../backend/media';
-import { getArticles } from '../backend/article';
+import { getArticles, getArticlesRecommed } from '../backend/article';
 import { listUsersArtist, userTopArtist } from '../backend/user';
 import { User } from '../types/User.types';
 import { Article } from '../types/Article';
@@ -67,6 +67,7 @@ const Home: React.FC<void> = () => {
         title: i.title,
         owner: i.owner,
         creator: i.creator,
+        tags: i.tags,
       }));
       setNFTList(list);
     } catch (e) {
@@ -88,13 +89,10 @@ const Home: React.FC<void> = () => {
   };
   const fetchArticle = async () => {
     try {
-      const res: any = await getArticles({
-        page: 1,
-        limit: 4,
-      });
+      const res: any = await getArticlesRecommed();
       console.log('getArticles', res);
       if (res.status === 200) {
-        setArticleList(res.data.items);
+        setArticleList(res.data);
       } else {
         throw new Error('faild');
       }
@@ -106,7 +104,6 @@ const Home: React.FC<void> = () => {
   useEffect(() => {
     fetchBanner();
     fetchNFTData();
-    // fetchUserArtist();
     fetchUserTopArtist();
     fetchArticle();
   }, []);
@@ -153,13 +150,10 @@ const Home: React.FC<void> = () => {
           </Link>
         </StyledModuleHead>
         <StyledCreators>
-          {creatorsList.map((i, idx) => (
+          {creatorsList.map((i: any, idx: number) => (
             <Link href={`/${i.username}`} key={idx}>
               <a target='_blank'>
-                <Creators
-                  bc={i.avatar}
-                  avatar={i.avatar}
-                  username={i.nickname || i.username}></Creators>
+                <Creators {...i}></Creators>
               </a>
             </Link>
           ))}

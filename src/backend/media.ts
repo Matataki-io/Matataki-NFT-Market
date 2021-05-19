@@ -1,5 +1,5 @@
 import { Media, MediaMetadata } from '../types/Media.entity';
-import { backendClient } from './client';
+import client, { backendClient } from './client';
 import { PaginationResult } from '../types/PaginationResult';
 import axios from 'axios';
 import { Ask } from '../types/Ask';
@@ -24,12 +24,14 @@ export async function getHotMediaList(take = 10): Promise<Array<Media>> {
 
 export async function getMediaList(
   page = 1,
-  limit = 9
+  limit = 9,
+  order = 'DESC'
 ): Promise<PaginationResult<Media>> {
   const { data } = await backendClient.get<PaginationResult<Media>>('/media', {
     params: {
       page,
       limit,
+      order,
     },
   });
   return data;
@@ -48,29 +50,56 @@ export async function getMediaMetadata(url: string): Promise<MediaMetadata> {
 export async function PostMedia({
   txHash,
   tags,
+  gallery,
+  id,
 }: {
   txHash: string;
   tags: string[];
+  gallery?: number;
+  id?: number;
 }): Promise<any> {
   // bad habit to `any` bro
   return await backendClient.post('/media', {
     txHash,
     tags,
+    gallery,
+    id,
   });
 }
 
 export function sendToPublisherForPreview(
-  publisherUid: number,
+  GalleryId: number,
   data: {
     title: string;
     description: string;
     tokenURI: string;
     permitData: MintAndTransferParameters;
     tags: string[];
+    gallery: number;
   }
 ) {
   return backendClient.post<GeneralResponse<{ msg: string }>>(
-    `/media/gasfreeCreate/${publisherUid}`,
+    `/media/gasfreeCreate/${GalleryId}`,
     data
   );
+}
+
+export async function isMediaContentExisted(params: { contentHash: string }) {
+  return await client.get<
+    GeneralResponse<{
+      data: { isExist: boolean };
+      code: number;
+    }>
+  >(`/media/utils/isContentExisted`, { params });
+}
+
+export function mediaGasfreeCreateForPublisher(params: { gid: number }) {
+  return backendClient.get<GeneralResponse<any>>(
+    `/media/gasfreeCreate/forPublisher`,
+    { params }
+  );
+}
+
+export function mediaSearch(data: { gallery: number; relations: string[] }) {
+  return backendClient.post<GeneralResponse<Media[]>>(`/media/search`, data);
 }

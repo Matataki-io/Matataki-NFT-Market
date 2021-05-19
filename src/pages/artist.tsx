@@ -8,8 +8,9 @@ import {
   userFeaturedArtistInBanner,
   userFeaturedArtist,
 } from '../backend/user';
-import { User } from '../types/User.types.d';
 import { isEmpty } from 'lodash';
+import { User } from '../types/User.types.d';
+import { wordItem } from '../utils/index';
 
 const Artist: React.FC = () => {
   const [artistList, setArtistList] = useState<User[][]>([]);
@@ -54,32 +55,7 @@ const Artist: React.FC = () => {
   };
 
   const artistWord = useMemo(() => {
-    let list: any = {};
-    for (let i = 10; i < 36; i++) {
-      //   console.log(i.toString(36))
-      list[i.toString(36)] = [];
-    }
-    list['#'] = [];
-
-    artistWordList.forEach(i => {
-      let key = i.username.substr(0, 1).toLocaleLowerCase();
-      if (list[key]) {
-        list[key].push(i);
-      } else {
-        list['#'].push(i);
-      }
-    });
-
-    for (const key in list) {
-      if (Object.prototype.hasOwnProperty.call(list, key)) {
-        const element = list[key];
-        if (isEmpty(element)) {
-          delete list[key];
-        }
-      }
-    }
-
-    return list;
+    return wordItem(artistWordList);
   }, [artistWordList]);
 
   useEffect(() => {
@@ -120,7 +96,7 @@ const Artist: React.FC = () => {
           ))}
         </Carousel>
       </StyledBanner>
-      <StyledLine></StyledLine>
+      <StyledLine />
       <StyledWord>
         {Object.keys(artistWord).map((key, idx) => (
           <ul key={idx} className='item'>
