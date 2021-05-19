@@ -54,11 +54,7 @@ const GalleryCreate: React.FC = () => {
     backendSWRFetcher
   );
 
-  async function onFinish(value: {
-    name: string;
-    intro: string;
-    cover: string;
-  }) {
+  async function onFinish(value: any) {
     console.log(value);
     if (!me) message.info('waiting fetch user info');
     else {
