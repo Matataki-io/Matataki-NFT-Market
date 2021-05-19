@@ -13,6 +13,8 @@ import {
   Table,
   Popconfirm,
   notification,
+  Input,
+  Select,
 } from 'antd';
 import { User } from '../../../types/User.types';
 import {
@@ -60,6 +62,9 @@ import type {
   MintAndTransferParameters,
 } from '../../../types/User.types';
 import { Tag as TagType } from '../../../types/Tag';
+import PublishFixTool from '../../../components/PublishFixTool';
+
+const { Option } = Select;
 
 const AGallery: React.FC = () => {
   const wallet = useWallet();
@@ -473,7 +478,9 @@ const AGallery: React.FC = () => {
           return <Button disabled>已发布</Button>;
         }
 
-        if (isPublishedMap[id]) return <Button disabled>已发布 ✅</Button>;
+        if (isPublishedMap[id]) {
+          return <Button disabled>已发布 ✅</Button>;
+        }
         if (!isWalletReady)
           return (
             <Button onClick={() => wallet.connect('injected')}>连接钱包</Button>
@@ -734,6 +741,9 @@ const AGallery: React.FC = () => {
                         position: ['bottomCenter'],
                       }}
                     />
+                    <PublishFixTool
+                      data={publishNFTs}
+                      galleryId={Number(id)}></PublishFixTool>
                   </StyledBox>
                 ) : (
                   <StyledNot>Not...</StyledNot>

@@ -65,6 +65,8 @@ import { isEmpty } from 'lodash';
 import { Gallery } from '../../types/Gallery';
 import { OptionsType } from 'rc-select/lib/interface';
 
+import CreateFixTool from '../CreateFixTool';
+
 // 非负整数
 const creatorShare = /^\d+$/;
 
@@ -868,6 +870,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
             ) : (
               ''
             )}
+            <CreateFixTool tags={tagsList}></CreateFixTool>
           </StyledContainerGridCol>
           <StyledContainerGridCol start='7' end='12'>
             <StyledSubtitle>Preview</StyledSubtitle>
