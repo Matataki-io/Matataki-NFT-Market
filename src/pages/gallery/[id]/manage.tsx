@@ -12,6 +12,7 @@ import { useLogin } from '../../../hooks/useLogin';
 import { getGalleryId } from '../../../backend/gallery';
 import { Gallery } from '../../../types/Gallery';
 import { Button } from '@geist-ui/react';
+import JoinRequest from '../../../components/GalleryManagement/JoinRequest';
 
 const ManageGallery: React.FC<void> = () => {
   const [formProfile] = Form.useForm();
@@ -75,7 +76,7 @@ const ManageGallery: React.FC<void> = () => {
       <StyledSubtitle>正在管理画廊：{gallery.name}</StyledSubtitle>
       <Tabs defaultActiveKey='artistManagement' centered>
         <Tabs.TabPane tab='加入申请' key='joinReqeust'>
-          加入申请
+          <JoinRequest />
         </Tabs.TabPane>
         <Tabs.TabPane tab='艺术家管理' key='artistManagement'>
           艺术家管理
