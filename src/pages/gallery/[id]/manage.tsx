@@ -13,6 +13,8 @@ import { getGalleryId } from '../../../backend/gallery';
 import { Gallery } from '../../../types/Gallery';
 import { Button } from '@geist-ui/react';
 import JoinRequest from '../../../components/GalleryManagement/JoinRequest';
+import ArtistManagement from '../../../components/GalleryManagement/ArtistManagement';
+import MediaManagement from '../../../components/GalleryManagement/MediaManagement';
 
 const ManageGallery: React.FC<void> = () => {
   const [formProfile] = Form.useForm();
@@ -75,14 +77,14 @@ const ManageGallery: React.FC<void> = () => {
       <StyledTitle>Gallery Management</StyledTitle>
       <StyledSubtitle>正在管理画廊：{gallery.name}</StyledSubtitle>
       <Tabs defaultActiveKey='artistManagement' centered>
-        <Tabs.TabPane tab='加入申请' key='joinReqeust'>
+        <Tabs.TabPane tab='Join Request' key='joinReqeust'>
           <JoinRequest />
         </Tabs.TabPane>
-        <Tabs.TabPane tab='艺术家管理' key='artistManagement'>
-          艺术家管理
+        <Tabs.TabPane tab='Artist Management' key='artistManagement'>
+          <ArtistManagement />
         </Tabs.TabPane>
-        <Tabs.TabPane tab='NFT管理' key='nftManagement'>
-          NFT管理
+        <Tabs.TabPane tab='Media Management' key='mediaManagement'>
+          <MediaManagement />
         </Tabs.TabPane>
       </Tabs>
     </StyledWrapper>
