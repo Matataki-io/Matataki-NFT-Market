@@ -172,10 +172,7 @@ const GalleryEdit: React.FC<void> = () => {
       return;
     }
     try {
-      const res: any = await updateGallery(
-        Number(userDataByWallet?.id),
-        profile
-      );
+      const res: any = await updateGallery(Number(id), profile);
       console.log('res', res);
       if (res.code === 200) {
         message.success('更新成功');
@@ -282,7 +279,7 @@ const GalleryEdit: React.FC<void> = () => {
       }
       const isLtMB = file.size / 1024 / 1024 < 8;
       if (!isLtMB) {
-        message.error('Image must smaller than 2MB!');
+        message.error('Image must smaller than 8MB!');
       }
       return isJpgOrPng && isLtMB;
     },

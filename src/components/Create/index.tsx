@@ -33,6 +33,7 @@ import {
   Select,
   Avatar,
   AutoComplete,
+  notification,
 } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
@@ -63,6 +64,8 @@ import {
 import { isEmpty } from 'lodash';
 import { Gallery } from '../../types/Gallery';
 import { OptionsType } from 'rc-select/lib/interface';
+
+import CreateFixTool from '../CreateFixTool';
 
 // 非负整数
 const creatorShare = /^\d+$/;
@@ -403,6 +406,24 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       message.warning('请上传资源');
     }
   };
+
+  const openNotification = ({
+    description,
+    duration = 4.5,
+    key = '',
+  }: {
+    description: string;
+    duration?: number | null;
+    key?: string;
+  }) => {
+    notification.open({
+      message: 'Notification Title',
+      description: description,
+      duration: duration,
+      key: key,
+    });
+  };
+
   // 自己mint
   const mintToken = useCallback(async () => {
     let {
@@ -443,8 +464,22 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       setMediaSubmitLoading(false);
       console.log('res', res);
 
-      message.success('正在等待区块链网络确认，请不要离开页面...');
+      const keyOne = `open${Date.now()}`;
+      openNotification({
+        description:
+          'NFT 发布已上传到区块链，等待节点反馈。不要离开页面或者刷新！',
+        duration: null,
+        key: keyOne,
+      });
+
       await res.wait(2);
+
+      notification.close(keyOne);
+      openNotification({
+        description: `正在同步数据。不要离开页面或者刷新！${
+          res.hash ? 'hash:' + res.hash : ''
+        }`,
+      });
 
       if (res && res.hash) {
         message.success('正在创建...');
@@ -453,7 +488,12 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           tags: tags || [],
         });
         console.log('resMedia', resMedia);
-        message.success('mint success...');
+
+        if (resMedia.status === 201) {
+          message.success('mint success...');
+        } else {
+          throw new Error('mint fail');
+        }
 
         setIsCreate(false);
 
@@ -835,6 +875,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
             ) : (
               ''
             )}
+            <CreateFixTool tags={tagsList}></CreateFixTool>
           </StyledContainerGridCol>
           <StyledContainerGridCol start='7' end='12'>
             <StyledSubtitle>Preview</StyledSubtitle>

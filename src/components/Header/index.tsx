@@ -190,11 +190,11 @@ const HeaderComponents: React.FC<HeaderProps> = ({
           </Button>
         ) : null}
 
-        {userDataByWallet?.role === UserRole.SuperAdmin && (
+        {/* {userDataByWallet?.role === UserRole.SuperAdmin && (
           <Link href='/gallery/create'>
             <Button color='dark'>Create Gallery</Button>
           </Link>
-        )}
+        )} */}
 
         {Number(networkVersion) !== Number(currentChainId) &&
         networkVersion !== ''

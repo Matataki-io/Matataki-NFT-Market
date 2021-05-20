@@ -8,18 +8,20 @@ import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
 import { User } from '../../types/User.types';
-import { Page, Text } from '@geist-ui/react';
 import styled from 'styled-components';
 
 const GalleryCreate: React.FC = () => {
   const [cover, setCover] = useState('');
+
   const normFile = (e: any) => {
     if (e.file.status === 'done') {
-      const url = e.file.response.data.url;
-      setCover(url);
-      return url;
+      const { response } = e.file;
+      if (response.code === 200) {
+        return response.data.url;
+      }
     }
   };
+
   // noinspection DuplicatedCode
   const props: UploadProps = {
     accept: 'image/jpeg, image/png',
@@ -43,7 +45,7 @@ const GalleryCreate: React.FC = () => {
       }
       const isLtMB = file.size / 1024 / 1024 < 8;
       if (!isLtMB) {
-        message.error('Image must smaller than 2MB!');
+        message.error('Image must smaller than 8MB!');
       }
       return isJpgOrPng && isLtMB;
     },
@@ -64,7 +66,9 @@ const GalleryCreate: React.FC = () => {
     }
   }
 
-  function onFinishFailed() {}
+  function onFinishFailed(values: any) {
+    console.log('fail valuel', values);
+  }
 
   return (
     <StyledWrapper>

@@ -12,6 +12,9 @@ import {
   Image,
   Table,
   Popconfirm,
+  notification,
+  Input,
+  Select,
 } from 'antd';
 import { User } from '../../../types/User.types';
 import {
@@ -59,6 +62,9 @@ import type {
   MintAndTransferParameters,
 } from '../../../types/User.types';
 import { Tag as TagType } from '../../../types/Tag';
+import PublishFixTool from '../../../components/PublishFixTool';
+
+const { Option } = Select;
 
 const AGallery: React.FC = () => {
   const wallet = useWallet();
@@ -84,8 +90,6 @@ const AGallery: React.FC = () => {
 
   const fetchIsPublished = useCallback(async () => {
     const list: MediaToScreen[] = publishNFTs;
-    console.log('list', list);
-    // TODO: 这里复制过来的 ...
     const contentHashes = list.map(
       (i: MediaToScreen) => i.permitData.data.contentHash
     );
@@ -109,11 +113,6 @@ const AGallery: React.FC = () => {
     id ? `/gallery/${id}` : null,
     backendSWRFetcher
   );
-
-  const { data: me, error: meError } = useSWR<
-    { data: User; status: number },
-    any
-  >(`/user/me`, backendSWRFetcher);
 
   const triggerReloadGallery = useCallback(() => mutate(`/gallery/${id}`), [
     id,
@@ -320,6 +319,7 @@ const AGallery: React.FC = () => {
     return wordItem(gallery?.artists);
   }, [gallery]);
 
+  // fetch publish nfts
   const fetchPublishNFTs = useCallback(async () => {
     try {
       const res = await mediaGasfreeCreateForPublisher({
@@ -335,6 +335,23 @@ const AGallery: React.FC = () => {
       console.log(e.toString());
     }
   }, [id]);
+
+  const openNotification = ({
+    description,
+    duration = 4.5,
+    key = '',
+  }: {
+    description: string;
+    duration?: number | null;
+    key?: string;
+  }) => {
+    notification.open({
+      message: 'Notification Title',
+      description: description,
+      duration: duration,
+      key: key,
+    });
+  };
 
   const sendPermit = useCallback(
     async (
@@ -356,11 +373,24 @@ const AGallery: React.FC = () => {
         );
         // console.info('resp', resp)
         // await new Promise((res) => setTimeout(res, 1000 * 15))
-        message.info(`NFT 发布已上传到区块链，等待节点反馈`);
+        const keyOne = `open${Date.now()}`;
+        openNotification({
+          description:
+            'NFT 发布已上传到区块链，等待节点反馈。不要离开页面或者刷新！',
+          duration: null,
+          key: keyOne,
+        });
         // const txResp = await currentProvider?.getTransaction(resp.hash);
         // const receipt = await currentProvider?.getTransactionReceipt(resp.hash);
         const receipt = await resp.wait(1);
+
+        notification.close(keyOne);
         console.info('receipt', receipt);
+        openNotification({
+          description: `正在同步数据。不要离开页面或者刷新！${
+            receipt.transactionHash ? 'hash:' + receipt.transactionHash : ''
+          }`,
+        });
         // send txhash to backend
         const res = await PostMedia({
           txHash: receipt.transactionHash,
@@ -368,10 +398,15 @@ const AGallery: React.FC = () => {
           gallery: Number(id),
           id: Number(mtsId),
         });
-        console.log('res', res);
-        message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
-        fetchIsPublished();
-        await fetchMediaSearch();
+        if (res.status == 201) {
+          console.log('res', res);
+          message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
+          fetchIsPublished();
+          await fetchMediaSearch();
+          await fetchPublishNFTs();
+        } else {
+          throw new Error('publish fail');
+        }
       } catch (walletErr) {
         console.error('sendPermit::error: ', walletErr);
         mediaContract.callStatic
@@ -390,18 +425,26 @@ const AGallery: React.FC = () => {
         sendTxFinished();
       }
     },
-    // eslint-disable-next-line
-    [id, isSendingTx, mediaContract],
+    [
+      id,
+      isSendingTx,
+      mediaContract,
+      fetchMediaSearch,
+      sendTxFinished,
+      fetchIsPublished,
+      toggleSendTx,
+      fetchPublishNFTs,
+    ]
   );
 
   const publishNFTColumns = [
     {
-      title: '#',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
     },
     {
-      title: '封面',
+      title: 'Cover',
       dataIndex: 'tokenURI',
       key: 'tokenURI',
       // eslint-disable-next-line react/display-name
@@ -410,19 +453,19 @@ const AGallery: React.FC = () => {
       ),
     },
     {
-      title: '标题',
+      title: 'Title',
       dataIndex: 'title',
       key: 'title',
     },
     {
-      title: '描述',
+      title: 'Description',
       dataIndex: 'description',
       key: 'description',
     },
     {
-      title: '艺术家',
+      title: 'Creator',
       dataIndex: 'creator',
-      key: 'creator',
+      key: 'id',
       // eslint-disable-next-line react/display-name
       render: (creator: User) => (
         <div className='user-card'>
@@ -431,7 +474,7 @@ const AGallery: React.FC = () => {
       ),
     },
     {
-      title: '状态和操作',
+      title: 'Status and operation',
       dataIndex: 'id',
       key: 'id',
       // eslint-disable-next-line react/display-name
@@ -440,7 +483,9 @@ const AGallery: React.FC = () => {
           return <Button disabled>已发布</Button>;
         }
 
-        if (isPublishedMap[id]) return <Button disabled>已发布 ✅</Button>;
+        if (isPublishedMap[id]) {
+          return <Button disabled>已发布 ✅</Button>;
+        }
         if (!isWalletReady)
           return (
             <Button onClick={() => wallet.connect('injected')}>连接钱包</Button>
@@ -487,31 +532,33 @@ const AGallery: React.FC = () => {
               </StyledHeadUserInfo>
             </StyledHeadUser>
             <StyledHeadRight>
-              {userDataByWallet?.role === UserRole.Artist ? (
-                isJoin ? (
-                  <Button disabled>Joined</Button>
-                ) : isJoinApplied ? (
-                  <Button disabled>Already applied</Button>
-                ) : (
-                  <Button type='primary' onClick={joinGalleryFn}>
-                    Join Gallery
-                  </Button>
-                )
-              ) : null}
-              {isOwner ? (
-                <Link href={`/gallery/${id}/edit`}>
-                  <a>
-                    <Button>Edit</Button>
-                  </a>
-                </Link>
-              ) : null}
-              {isOwner ? (
+              <Space>
+                {userDataByWallet?.role === UserRole.Artist ? (
+                  isJoin ? (
+                    <Button disabled>Joined</Button>
+                  ) : isJoinApplied ? (
+                    <Button disabled>Already applied</Button>
+                  ) : (
+                    <Button type='primary' onClick={joinGalleryFn}>
+                      Join Gallery
+                    </Button>
+                  )
+                ) : null}
+                {isOwner ? (
+                  <Link href={`/gallery/${id}/edit`}>
+                    <a>
+                      <Button type='primary'>Edit</Button>
+                    </a>
+                  </Link>
+                ) : null}
+                {isOwner ? (
                 <Link href={`/gallery/${id}/manage`}>
                   <a>
                     <Button type='primary'>Manage</Button>
                   </a>
                 </Link>
               ) : null}
+              </Space>
             </StyledHeadRight>
           </StyledHead>
           <StyledLine />
@@ -579,9 +626,9 @@ const AGallery: React.FC = () => {
                 <p className='gallery-name'>
                   {gallery?.about.bannerDescription}
                 </p>
-                {galleryAboutIconList.map((i: any) =>
+                {galleryAboutIconList.map((i: any, idx: number) =>
                   i.name ? (
-                    <StyledAboutItem>
+                    <StyledAboutItem key={idx}>
                       <ReactSVG className='icon' src={i.icon} />
                       <span>{i.name}</span>
                     </StyledAboutItem>
