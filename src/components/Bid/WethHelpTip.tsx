@@ -25,40 +25,63 @@ export function WETHHelpTip({
     bidPrice,
     balance,
   ]);
-  if (
-    !currency ||
-    currentWETH !== utils.getAddress(currency) ||
-    balance.gte(bidPrice)
-  ) {
-    return <></>;
-  }
+
+  const showWETHHelp = useMemo(() => {
+    return (
+      !currency ||
+      currentWETH !== utils.getAddress(currency) ||
+      balance.gte(bidPrice)
+    );
+  }, [balance, bidPrice, currency]);
+
+  // if (
+  //   !currency ||
+  //   currentWETH !== utils.getAddress(currency) ||
+  //   balance.gte(bidPrice)
+  // ) {
+  //   return <></>;
+  // }
   return (
-    <GreyCard>
-      <Paragraph>
-        WETH (Wrapped ETH) selected, You may need to upgrade your ETH to WETH in
-        order to set bid
-      </Paragraph>
-      <Paragraph>ETH Balance: {utils.formatEther(ethBalance)} ETH</Paragraph>
-      <Button
-        onClick={() => depositToWETH(bidPrice)}
-        disabled={!isEnoughEth(bidPrice)}>
-        Upgrade {utils.formatEther(bidPrice)} ETH
-      </Button>
-      <Button onClick={() => depositToWETH(diff)} disabled={!isEnoughEth(diff)}>
-        Upgrade {utils.formatEther(diff)} ETH to add up the price
-      </Button>
-      {balance.gt(0) && (
-        <Button onClick={() => withdrawBacktoETH(balance)}>
-          Downgrade All WETH back to ETH
-        </Button>
+    <>
+      {showWETHHelp ? null : (
+        <GreyCard>
+          <Paragraph>
+            WETH (Wrapped ETH) selected, You may need to upgrade your ETH to
+            WETH in order to set bid
+          </Paragraph>
+          <Paragraph>
+            ETH Balance: {utils.formatEther(ethBalance)} ETH
+          </Paragraph>
+          <StyledItem>
+            <Button
+              onClick={() => depositToWETH(bidPrice)}
+              disabled={!isEnoughEth(bidPrice)}>
+              Upgrade {utils.formatEther(bidPrice)} ETH
+            </Button>
+          </StyledItem>
+          <StyledItem>
+            <Button
+              onClick={() => depositToWETH(diff)}
+              disabled={!isEnoughEth(diff)}>
+              Upgrade {utils.formatEther(diff)} ETH to add up the price
+            </Button>
+          </StyledItem>
+          <StyledItem>
+            {balance.gt(0) && (
+              <Button onClick={() => withdrawBacktoETH(balance)}>
+                Downgrade All WETH back to ETH
+              </Button>
+            )}
+          </StyledItem>
+        </GreyCard>
       )}
-    </GreyCard>
+    </>
   );
 }
 
 const GreyCard = styled.div`
   box-sizing: border-box;
-  margin: 0;
+  margin: 10px 0 0 0;
   min-width: 0;
   padding: 20px 20px;
   width: 100%;
@@ -79,5 +102,13 @@ const GreyCard = styled.div`
     font-size: 16px;
     padding: 0;
     margin: 10px 0 0 0;
+  }
+`;
+
+const StyledItem = styled.div`
+  margin: 4px 0;
+
+  & > button {
+    width: 100%;
   }
 `;
