@@ -1,55 +1,28 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import useSWR, { mutate } from 'swr';
-import {
-  Avatar,
-  Button,
-  List,
-  message,
-  Modal,
-  Spin,
-  Space,
-  Image,
-  Table,
-  Popconfirm,
-  notification,
-  Input,
-  Select,
-} from 'antd';
-import { User } from '../../../types/User.types';
-import {
-  backendSWRFetcher,
-  mediaGasfreeCreateForPublisher,
-  PostMedia,
-  mediaSearch,
-} from '../../../backend/media';
-import { BACKEND_CLIENT, UserRole } from '../../../constant';
+import useSWR from 'swr';
+import { Avatar, Button, message, Spin, Space, Image } from 'antd';
+import { backendSWRFetcher, mediaSearch } from '../../../backend/media';
+import { UserRole } from '../../../constant';
 import NFTSimple from '../../../components/NFTSimple';
 import {
   createGalleryJoinRequest,
   findGalleryJoinRequest,
-  updateGalleryJoinRequest,
-  updateGallery,
 } from '../../../backend/gallery';
 import {
   GalleryJoinRequest,
   GalleryJoinRequestStatus,
 } from '../../../types/GalleryJoinRequest';
 import { Gallery } from '../../../types/Gallery';
-import { isEmpty, cloneDeep } from 'lodash';
+import { isEmpty } from 'lodash';
 import ArtworksCarousel from '../../../components/ArtworksCarouselUser';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { UserOutlined } from '@ant-design/icons';
 import { Media } from '../../../types/Media.entity';
-import { GeneralResponse } from '../../../types/Backend.types';
 import { useLogin } from '../../../hooks/useLogin';
 import { wordItem } from '../../../utils/index';
 import { ReactSVG } from 'react-svg';
-import { useWallet } from 'use-wallet';
-import { useBoolean } from 'ahooks';
-import { useMedia } from '../../../hooks/useMedia';
-
 import IconTelegram from '../../../assets/icons/telegram.svg';
 import IconEmail from '../../../assets/icons/email1.svg';
 import IconMedium from '../../../assets/icons/medium.svg';
@@ -57,66 +30,16 @@ import IconTwitter from '../../../assets/icons/twitter.svg';
 import IconDiscord from '../../../assets/icons/discord.svg';
 import IconFacebook from '../../../assets/icons/facebook.svg';
 
-import type {
-  MediaToScreen,
-  MintAndTransferParameters,
-} from '../../../types/User.types';
-import { Tag as TagType } from '../../../types/Tag';
-import PublishFixTool from '../../../components/PublishFixTool';
-
-const { Option } = Select;
-
 const AGallery: React.FC = () => {
-  const wallet = useWallet();
-  const mediaContract = useMedia();
-
   const router = useRouter();
   const { id } = router.query;
   const { userDataByWallet } = useLogin();
-  const [isPublishedMap, updatePublishedMap] = useState<
-    Record<number, boolean>
-  >({});
-  const isWalletReady = useMemo(() => wallet.status === 'connected', [
-    wallet.status,
-  ]);
-  const [
-    isSendingTx,
-    { setTrue: toggleSendTx, setFalse: sendTxFinished },
-  ] = useBoolean(false);
   const [media, setMedia] = useState<Media[]>([]);
   const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
-  // 艺术家上传到画廊的NFTs
-  const [publishNFTs, setPublishNFTs] = useState<any[]>([]);
-
-  const fetchIsPublished = useCallback(async () => {
-    const list: MediaToScreen[] = publishNFTs;
-    const contentHashes = list.map(
-      (i: MediaToScreen) => i.permitData.data.contentHash
-    );
-    const status = await mediaContract['isContentUploaded(bytes32[])'](
-      contentHashes
-    );
-    const aMap: any = {};
-    list.forEach((mts, idx) => {
-      aMap[mts.id] = status[idx];
-    });
-    updatePublishedMap(aMap);
-  }, [publishNFTs, mediaContract]);
-
-  useEffect(() => {
-    if (publishNFTs && publishNFTs.length > 0) fetchIsPublished();
-    const refreshInterval = setInterval(fetchIsPublished, 1000 * 30);
-    return () => clearInterval(refreshInterval);
-  }, [publishNFTs, fetchIsPublished]);
-
   const { data: gallery, error: galleryError } = useSWR<Gallery, any>(
     id ? `/gallery/${id}` : null,
     backendSWRFetcher
   );
-
-  const triggerReloadGallery = useCallback(() => mutate(`/gallery/${id}`), [
-    id,
-  ]);
 
   const isOwner = useMemo(
     () =>
@@ -279,241 +202,15 @@ const AGallery: React.FC = () => {
     }
   };
 
-  const handleJoin = async (id: number, status: boolean) => {
-    try {
-      const res = await updateGalleryJoinRequest(id, status);
-      if (res.status === 200) {
-        message.success('操作成功');
-        fetchJoinFn();
-        if (status) {
-          // true 才获取最新数据
-          triggerReloadGallery();
-        }
-      } else {
-        throw new Error('fail');
-      }
-    } catch (e) {
-      message.error(e.toString());
-    }
-  };
-
-  const handleRemoveArtist = async (idx: number) => {
-    try {
-      let list: User[] = cloneDeep(gallery?.artists) || [];
-      list?.splice(idx, 1);
-      const res: any = await updateGallery(Number(id), {
-        artists: list,
-      } as any);
-      if (res.code === 200) {
-        message.success('操作成功');
-        triggerReloadGallery();
-      } else {
-        throw new Error('fail');
-      }
-    } catch (e) {
-      message.error(e.toString());
-    }
-  };
-
   const artistWord = useMemo(() => {
     return wordItem(gallery?.artists);
   }, [gallery]);
-
-  // fetch publish nfts
-  const fetchPublishNFTs = useCallback(async () => {
-    try {
-      const res = await mediaGasfreeCreateForPublisher({
-        gid: Number(id),
-      });
-      console.log(res);
-      if (res.status === 200 && res.data.code === 200) {
-        setPublishNFTs(res.data.data);
-      } else {
-        throw new Error('fail');
-      }
-    } catch (e) {
-      console.log(e.toString());
-    }
-  }, [id]);
-
-  const openNotification = ({
-    description,
-    duration = 4.5,
-    key = '',
-  }: {
-    description: string;
-    duration?: number | null;
-    key?: string;
-  }) => {
-    notification.open({
-      message: 'Notification Title',
-      description: description,
-      duration: duration,
-      key: key,
-    });
-  };
-
-  const sendPermit = useCallback(
-    async (
-      permitToMint: MintAndTransferParameters,
-      tags: TagType[],
-      mtsId: number
-    ) => {
-      // 防止误触
-      if (isSendingTx) return;
-      try {
-        // isSendingTx will be true
-        toggleSendTx();
-        const resp = await mediaContract.mintAndTransferWithSig(
-          permitToMint.creator,
-          permitToMint.data,
-          permitToMint.bidShares,
-          permitToMint.to,
-          permitToMint.sig
-        );
-        // console.info('resp', resp)
-        // await new Promise((res) => setTimeout(res, 1000 * 15))
-        const keyOne = `open${Date.now()}`;
-        openNotification({
-          description:
-            'NFT 发布已上传到区块链，等待节点反馈。不要离开页面或者刷新！',
-          duration: null,
-          key: keyOne,
-        });
-        // const txResp = await currentProvider?.getTransaction(resp.hash);
-        // const receipt = await currentProvider?.getTransactionReceipt(resp.hash);
-        const receipt = await resp.wait(1);
-
-        notification.close(keyOne);
-        console.info('receipt', receipt);
-        openNotification({
-          description: `正在同步数据。不要离开页面或者刷新！${
-            receipt.transactionHash ? 'hash:' + receipt.transactionHash : ''
-          }`,
-        });
-        // send txhash to backend
-        const res = await PostMedia({
-          txHash: receipt.transactionHash,
-          tags: tags.map(t => t.name),
-          gallery: Number(id),
-          id: Number(mtsId),
-        });
-        if (res.status == 201) {
-          console.log('res', res);
-          message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
-          fetchIsPublished();
-          await fetchMediaSearch();
-          await fetchPublishNFTs();
-        } else {
-          throw new Error('publish fail');
-        }
-      } catch (walletErr) {
-        console.error('sendPermit::error: ', walletErr);
-        mediaContract.callStatic
-          .mintAndTransferWithSig(
-            permitToMint.creator,
-            permitToMint.data,
-            permitToMint.bidShares,
-            permitToMint.to,
-            permitToMint.sig
-          )
-          .catch(callError => {
-            message.error(`合约拒绝发布，理由：${callError.reason}`);
-          });
-      } finally {
-        // isSendingTx will be false, no matter what
-        sendTxFinished();
-      }
-    },
-    [
-      id,
-      isSendingTx,
-      mediaContract,
-      fetchMediaSearch,
-      sendTxFinished,
-      fetchIsPublished,
-      toggleSendTx,
-      fetchPublishNFTs,
-    ]
-  );
-
-  const publishNFTColumns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Cover',
-      dataIndex: 'tokenURI',
-      key: 'tokenURI',
-      // eslint-disable-next-line react/display-name
-      render: (c: string) => (
-        <Image width={80} height={80} style={{ objectFit: 'cover' }} src={c} />
-      ),
-    },
-    {
-      title: 'Title',
-      dataIndex: 'title',
-      key: 'title',
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: 'Creator',
-      dataIndex: 'creator',
-      key: 'id',
-      // eslint-disable-next-line react/display-name
-      render: (creator: User) => (
-        <div className='user-card'>
-          <Avatar src={creator.avatar} /> {creator.nickname}({creator.username})
-        </div>
-      ),
-    },
-    {
-      title: 'Status and operation',
-      dataIndex: 'id',
-      key: 'id',
-      // eslint-disable-next-line react/display-name
-      render: (id: number, mts: MediaToScreen) => {
-        if (mts.isPublished) {
-          return <Button disabled>已发布</Button>;
-        }
-
-        if (isPublishedMap[id]) {
-          return <Button disabled>已发布 ✅</Button>;
-        }
-        if (!isWalletReady)
-          return (
-            <Button onClick={() => wallet.connect('injected')}>连接钱包</Button>
-          );
-        if (isWalletReady && mts.publisher.address !== wallet.account)
-          return `请切换到钱包 ${mts.publisher.address}`;
-        return (
-          <Button
-            onClick={() => sendPermit(mts.permitData, mts.tags, mts.id)}
-            disabled={isSendingTx}>
-            发布
-          </Button>
-        );
-      },
-    },
-  ];
 
   useEffect(() => {
     if (!isEmpty(gallery)) {
       fetchJoinFn();
     }
   }, [gallery, fetchJoinFn]);
-
-  useEffect(() => {
-    if (isOwner) {
-      fetchPublishNFTs();
-    }
-  }, [isOwner, fetchPublishNFTs]);
 
   return (
     <StyledWrapper>
@@ -552,12 +249,12 @@ const AGallery: React.FC = () => {
                   </Link>
                 ) : null}
                 {isOwner ? (
-                <Link href={`/gallery/${id}/manage`}>
-                  <a>
-                    <Button type='primary'>Manage</Button>
-                  </a>
-                </Link>
-              ) : null}
+                  <Link href={`/gallery/${id}/manage`}>
+                    <a>
+                      <Button type='primary'>Manage</Button>
+                    </a>
+                  </Link>
+                ) : null}
               </Space>
             </StyledHeadRight>
           </StyledHead>
@@ -667,7 +364,7 @@ const AGallery: React.FC = () => {
                   ))}
                 </StyledWord>
               </StyledItem>
-              <StyledLine />
+              {/* <StyledLine /> */}
             </>
           ) : null}
         </>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import useSWR, { mutate } from 'swr';
 import { Avatar, Button, message, Space, Popconfirm } from 'antd';
@@ -9,8 +9,6 @@ import { Gallery } from '../../types/Gallery';
 import { cloneDeep } from 'lodash';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useLogin } from '../../hooks/useLogin';
-import { useMedia } from '../../hooks/useMedia';
 
 const ArtistManagement: React.FC = () => {
   const router = useRouter();
