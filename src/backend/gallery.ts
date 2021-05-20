@@ -7,7 +7,7 @@ import {
 } from '../types/GalleryJoinRequest';
 import { User } from '../types/User.types';
 
-export async function getGalleryId(id: number): Promise<Gallery> {
+export async function getGalleryId(id: number) {
   return await BACKEND_CLIENT.get(`/gallery/${id}`);
 }
 
