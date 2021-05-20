@@ -122,8 +122,9 @@ const AGallery: React.FC = () => {
   const isOwner = useMemo(
     () =>
       gallery &&
-      gallery.owner.id === userDataByWallet?.id &&
-      gallery.owner.username === userDataByWallet?.username,
+      userDataByWallet &&
+      gallery.owner.id === userDataByWallet.id &&
+      gallery.owner.username === userDataByWallet.username,
     [gallery, userDataByWallet]
   );
 
