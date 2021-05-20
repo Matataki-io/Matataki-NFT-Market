@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import { currentWETH } from '../../constant/contracts';
 import { useEthBalance } from '../../hooks/useEthBalance';
 import { useWETH } from '../../hooks/useWETH';
-import { Button, Text } from '@geist-ui/react';
+import { Button, Typography } from 'antd';
+
+const { Paragraph } = Typography;
 
 type WethHelpTipParams = {
   currency: string;
@@ -27,29 +29,26 @@ export function WETHHelpTip({
     !currency ||
     currentWETH !== utils.getAddress(currency) ||
     balance.gte(bidPrice)
-  )
+  ) {
     return <></>;
+  }
   return (
     <GreyCard>
-      <Text>
+      <Paragraph>
         WETH (Wrapped ETH) selected, You may need to upgrade your ETH to WETH in
         order to set bid
-      </Text>
-      <Text>ETH Balance: {utils.formatEther(ethBalance)} ETH</Text>
+      </Paragraph>
+      <Paragraph>ETH Balance: {utils.formatEther(ethBalance)} ETH</Paragraph>
       <Button
-        type='secondary'
         onClick={() => depositToWETH(bidPrice)}
         disabled={!isEnoughEth(bidPrice)}>
         Upgrade {utils.formatEther(bidPrice)} ETH
       </Button>
-      <Button
-        type='secondary'
-        onClick={() => depositToWETH(diff)}
-        disabled={!isEnoughEth(diff)}>
+      <Button onClick={() => depositToWETH(diff)} disabled={!isEnoughEth(diff)}>
         Upgrade {utils.formatEther(diff)} ETH to add up the price
       </Button>
       {balance.gt(0) && (
-        <Button type='error' onClick={() => withdrawBacktoETH(balance)}>
+        <Button onClick={() => withdrawBacktoETH(balance)}>
           Downgrade All WETH back to ETH
         </Button>
       )}

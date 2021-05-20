@@ -104,8 +104,10 @@ export default function Bids() {
 
         notification.close(keyOne);
         openNotification({
-          description: `Please check on EtherScan, txHash:${
-            receipt.transactionHash ? 'txHash:' + receipt.transactionHash : ''
+          description: `Please check on EtherScan. ${
+            receipt.transactionHash
+              ? 'transactionHash:' + receipt.transactionHash
+              : ''
           }`,
         });
       } catch (e) {
@@ -137,8 +139,10 @@ export default function Bids() {
 
       notification.close(keyOne);
       openNotification({
-        description: `Please check on EtherScan, txHash:${
-          receipt.transactionHash ? 'txHash:' + receipt.transactionHash : ''
+        description: `Please check on EtherScan.${
+          receipt.transactionHash
+            ? 'transactionHash:' + receipt.transactionHash
+            : ''
         }`,
       });
     } catch (e) {
