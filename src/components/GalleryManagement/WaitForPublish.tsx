@@ -1,23 +1,15 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import useSWR, { mutate } from 'swr';
+import useSWR from 'swr';
 import { Avatar, Button, message, Image, Table } from 'antd';
 import { User } from '../../types/User.types';
 import {
   backendSWRFetcher,
   mediaGasfreeCreateForPublisher,
   PostMedia,
-  mediaSearch,
 } from '../../backend/media';
-import { findGalleryJoinRequest } from '../../backend/gallery';
-import {
-  GalleryJoinRequest,
-  GalleryJoinRequestStatus,
-} from '../../types/GalleryJoinRequest';
 import { Gallery } from '../../types/Gallery';
-import { isEmpty } from 'lodash';
 import styled from 'styled-components';
-import { Media } from '../../types/Media.entity';
 import { useLogin } from '../../hooks/useLogin';
 import { useWallet } from 'use-wallet';
 import { useBoolean } from 'ahooks';
@@ -29,7 +21,7 @@ import type {
 } from '../../types/User.types';
 import { Tag as TagType } from '../../types/Tag';
 
-const AGallery: React.FC = () => {
+const WaitForPublish: React.FC = () => {
   const wallet = useWallet();
   const mediaContract = useMedia();
 
@@ -46,8 +38,6 @@ const AGallery: React.FC = () => {
     isSendingTx,
     { setTrue: toggleSendTx, setFalse: sendTxFinished },
   ] = useBoolean(false);
-  const [media, setMedia] = useState<Media[]>([]);
-  const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
   // 艺术家上传到画廊的NFTs
   const [publishNFTs, setPublishNFTs] = useState<any[]>([]);
 
@@ -84,10 +74,6 @@ const AGallery: React.FC = () => {
     any
   >(`/user/me`, backendSWRFetcher);
 
-  const triggerReloadGallery = useCallback(() => mutate(`/gallery/${id}`), [
-    id,
-  ]);
-
   const isOwner = useMemo(
     () =>
       gallery &&
@@ -101,51 +87,6 @@ const AGallery: React.FC = () => {
   // 是否加入画廊
 
   // nft list
-
-  const fetchJoinFn = useCallback(async () => {
-    try {
-      if (isEmpty(gallery)) {
-        return;
-      }
-      const res = await findGalleryJoinRequest({
-        gallery: gallery,
-        status: GalleryJoinRequestStatus.PENDING,
-      });
-      console.log(res);
-      if (res.status === 200) {
-        setRequests(res.data);
-      } else {
-        throw new Error('fail');
-      }
-    } catch (e) {
-      message.error(e.toString());
-    }
-  }, [gallery]);
-
-  const fetchMediaSearch = useCallback(async () => {
-    if (isEmpty(gallery)) {
-      return;
-    }
-    try {
-      const res = await mediaSearch({
-        gallery: Number(gallery?.id),
-        relations: ['owner'],
-      });
-      if (res.status === 200) {
-        setMedia(res.data as any);
-      } else {
-        throw new Error('fail');
-      }
-    } catch (e) {
-      console.log(e.toString());
-    }
-  }, [gallery]);
-
-  useEffect(() => {
-    if (!isEmpty(gallery)) {
-      fetchMediaSearch();
-    }
-  }, [gallery, fetchMediaSearch]);
 
   // 加入画廊
 
@@ -200,7 +141,6 @@ const AGallery: React.FC = () => {
         console.log('res', res);
         message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
         fetchIsPublished();
-        await fetchMediaSearch();
       } catch (walletErr) {
         console.error('sendPermit::error: ', walletErr);
         mediaContract.callStatic
@@ -288,12 +228,6 @@ const AGallery: React.FC = () => {
   ];
 
   useEffect(() => {
-    if (!isEmpty(gallery)) {
-      fetchJoinFn();
-    }
-  }, [gallery, fetchJoinFn]);
-
-  useEffect(() => {
     if (isOwner) {
       fetchPublishNFTs();
     }
@@ -317,30 +251,7 @@ const AGallery: React.FC = () => {
   );
 };
 
-export default AGallery;
-
-const StyledNot = styled.div`
-  margin: 40px 0;
-`;
-
-const StyledItemTitle = styled.h3`
-  font-size: 32px;
-  font-family: 'Playfair Display', serif;
-  font-weight: 500;
-  color: #333333;
-  line-height: 1.2;
-  padding: 0;
-  margin: 0;
-  @media screen and (max-width: 678px) {
-    font-size: 20px;
-  }
-`;
-const StyledItem = styled.div`
-  margin: 24px 0 64px;
-  @media screen and (max-width: 678px) {
-    margin: 20px 0;
-  }
-`;
+export default WaitForPublish;
 
 const StyledBox = styled.div`
   display: block;

@@ -14,7 +14,7 @@ import { Gallery } from '../../../types/Gallery';
 import { Button } from '@geist-ui/react';
 import JoinRequest from '../../../components/GalleryManagement/JoinRequest';
 import ArtistManagement from '../../../components/GalleryManagement/ArtistManagement';
-import MediaManagement from '../../../components/GalleryManagement/MediaManagement';
+import WaitForPublish from '../../../components/GalleryManagement/WaitForPublish';
 
 const ManageGallery: React.FC<void> = () => {
   const [formProfile] = Form.useForm();
@@ -83,8 +83,8 @@ const ManageGallery: React.FC<void> = () => {
         <Tabs.TabPane tab='Artist Management' key='artistManagement'>
           <ArtistManagement />
         </Tabs.TabPane>
-        <Tabs.TabPane tab='Media Management' key='mediaManagement'>
-          <MediaManagement />
+        <Tabs.TabPane tab='Waiting for Publish' key='waitForPublish'>
+          <WaitForPublish />
         </Tabs.TabPane>
       </Tabs>
     </StyledWrapper>
