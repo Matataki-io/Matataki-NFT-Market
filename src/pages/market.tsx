@@ -200,7 +200,7 @@ const Market: React.FC = () => {
               </Link>
             ))}
           </StyledNfts>
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
             <Pagination
               pageSize={limit}
               current={page}
