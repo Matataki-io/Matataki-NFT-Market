@@ -1,24 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { Form, message, Upload, Tabs } from 'antd';
-
-import { ArrowLeft } from '@geist-ui/react-icons';
-
+import { message, Tabs } from 'antd';
 import { useRouter } from 'next/router';
-import { useWallet } from 'use-wallet';
 import { isEmpty } from 'lodash';
-
 import { useLogin } from '../../../hooks/useLogin';
 import { getGalleryId } from '../../../backend/gallery';
 import { Gallery } from '../../../types/Gallery';
-import { Button } from '@geist-ui/react';
 import JoinRequest from '../../../components/GalleryManagement/JoinRequest';
 import ArtistManagement from '../../../components/GalleryManagement/ArtistManagement';
 import WaitForPublish from '../../../components/GalleryManagement/WaitForPublish';
 
 const ManageGallery: React.FC<void> = () => {
-  const [formProfile] = Form.useForm();
-
   const router = useRouter();
   const { id } = router.query;
   const [gallery, setGallery] = useState<Gallery | null>(null);
@@ -71,11 +63,8 @@ const ManageGallery: React.FC<void> = () => {
 
   return (
     <StyledWrapper>
-      <Button onClick={() => router.back()} icon={<ArrowLeft />}>
-        Go Back
-      </Button>
       <StyledTitle>Gallery Management</StyledTitle>
-      <StyledSubtitle>正在管理画廊：{gallery.name}</StyledSubtitle>
+      <StyledSubtitle>{gallery.name}</StyledSubtitle>
       <Tabs defaultActiveKey='artistManagement' centered>
         <Tabs.TabPane tab='Join Request' key='joinReqeust'>
           <JoinRequest />
@@ -94,7 +83,7 @@ const ManageGallery: React.FC<void> = () => {
 const StyledWrapper = styled.div`
   flex: 1;
 
-  max-width: 720px;
+  max-width: 1200px;
   padding: 48px 20px 256px;
   box-sizing: border-box;
 
@@ -128,7 +117,7 @@ const StyledSubtitle = styled.h2`
   color: #333333;
   line-height: 1.2;
   padding: 0;
-  margin: 0;
+  margin: 20px 0;
   text-align: center;
   @media screen and (max-width: 768px) {
     font-size: 30px;

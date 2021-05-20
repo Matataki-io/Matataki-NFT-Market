@@ -1,15 +1,15 @@
 import React, { useState, CSSProperties, useEffect } from 'react';
-import {
-  Button,
-  ButtonDropdown,
-  Grid,
-  Input,
-  Select,
-  Text,
-} from '@geist-ui/react';
-import ArrowLeft from '@geist-ui/react-icons/arrowLeft';
+import { Grid, Select } from '@geist-ui/react';
 import { useRouter } from 'next/router';
-import { InputNumber, Spin } from 'antd';
+import {
+  InputNumber,
+  Spin,
+  Button,
+  Typography,
+  message,
+  notification,
+} from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { isEmpty } from 'lodash';
 import { currentSupportedTokens as tokens } from '../../../constant/contracts';
@@ -31,6 +31,8 @@ import { ZERO_ADDRESS } from '../../../constant';
 import { useMyBid } from '../../../hooks/useMyBid';
 import { useBoolean } from 'ahooks';
 import { WETHHelpTip } from '../../../components/Bid/WethHelpTip';
+
+const { Paragraph, Title } = Typography;
 
 export default function BidPage() {
   const router = useRouter();
@@ -66,9 +68,29 @@ export default function BidPage() {
     },
   });
 
+  const openNotification = ({
+    description,
+    duration = 4.5,
+    key = '',
+  }: {
+    description: string;
+    duration?: number | null;
+    key?: string;
+  }) => {
+    notification.open({
+      message: 'Notification Title',
+      description: description,
+      duration: duration,
+      key: key,
+    });
+  };
+
   const [isSigning, signingActions] = useBoolean(false);
   async function setBid() {
-    if (!wallet.account) throw new Error('Wallet have to be connected');
+    if (!wallet.account) {
+      message.warning('Wallet have to be connected');
+      return;
+    }
     const bidData = constructBid(
       currency,
       amount,
@@ -80,15 +102,32 @@ export default function BidPage() {
     try {
       signingActions.setTrue();
       const tx = await mediaContract.setBid(id as string, bidData);
+
+      const keyOne = `open${Date.now()}`;
+      openNotification({
+        description:
+          'Setting bids... Wait for the contract confirmation, please do not refresh or leave the page.',
+        duration: null,
+        key: keyOne,
+      });
+
       const receipt = await tx.wait();
-      alert(`出价成功，TxHash: ${receipt.transactionHash}`);
+
+      notification.close(keyOne);
+      openNotification({
+        description: `Successful bid.${
+          receipt.transactionHash
+            ? 'transactionHash:' + receipt.transactionHash
+            : ''
+        }`,
+      });
     } catch (error) {
       mediaContract.callStatic
         .setBid(id as string, bidData)
         .catch(callError => {
           console.error('callError', callError);
           console.error('reason', callError.reason);
-          alert('Error happened: ' + callError.reason);
+          message.info('Error happened: ' + callError.reason);
         });
     } finally {
       signingActions.setFalse();
@@ -126,17 +165,19 @@ export default function BidPage() {
   if (isMeTheOwner) {
     return (
       <StyledPermissions>
-        <Text h3>Sorry, but...</Text>
-        <Text>
+        <Title level={3}>Sorry, but...</Title>
+        <Paragraph>
           We detected that you are the owner. Which in this case that you cannot
           set a bid on your token.
-        </Text>
+        </Paragraph>
         <ActionsBox>
-          <StyledBackBtn icon={<ArrowLeft />} onClick={() => router.back()}>
+          <StyledBackBtn
+            icon={<ArrowLeftOutlined />}
+            onClick={() => router.back()}>
             Go Back
           </StyledBackBtn>
           <Link href={`/p/${id}/ask`}>
-            <Button type='secondary'>Set Ask instead</Button>
+            <Button>Set Ask instead</Button>
           </Link>
         </ActionsBox>
       </StyledPermissions>
@@ -187,16 +228,16 @@ export default function BidPage() {
                 {utils.formatUnits(myBid.amount, getDecimalOf(myBid.currency))}
                 {' ' + getSymbolOf(myBid.currency)}
               </p>
-              <p>
+              <Paragraph>
                 You will get the refund of the previous bid, if you put on a new
                 bid now.
-              </p>
+              </Paragraph>
               <Button onClick={() => removeBid()}>Remove Current Bid</Button>
             </GreyCard>
           )}
 
           <StyledBidsItem>
-            <Text h3>Your bid</Text>
+            <Title level={3}>Your bid</Title>
             <StyledBidsInput>
               <Select
                 placeholder='Bidding Currency'
@@ -247,11 +288,11 @@ export default function BidPage() {
           </StyledBidsItem>
 
           <StyledBidsItem>
-            <Text h3>Resale Fee</Text>
-            <Text>
+            <Title level={3}>Resale Fee</Title>
+            <Paragraph>
               If you re-sell this piece, the person you&apos;re buying it from
               now will earn this percentage as a reward for selling it to you.
-            </Text>
+            </Paragraph>
             <InputNumber
               defaultValue={0}
               style={FullWidth}
@@ -264,15 +305,11 @@ export default function BidPage() {
 
           <ActionsBox>
             <StyledBackBtn
-              icon={<ArrowLeft />}
-              onClick={() => router.back()}
-              size='large'
-              auto></StyledBackBtn>
+              icon={<ArrowLeftOutlined />}
+              onClick={() => router.back()}></StyledBackBtn>
             {wallet.status === 'connected' ? (
               isEnough(amount) ? (
                 <Button
-                  type='secondary'
-                  size='large'
                   style={FullWidth}
                   disabled={currency === '' || BigNumber.from(amount).lte(0)}
                   loading={isSigning}
@@ -281,8 +318,6 @@ export default function BidPage() {
                 </Button>
               ) : (
                 <Button
-                  type='secondary'
-                  size='large'
                   loading={isUnlocking}
                   style={FullWidth}
                   onClick={() => approve()}>
@@ -291,8 +326,6 @@ export default function BidPage() {
               )
             ) : (
               <Button
-                type='secondary'
-                size='large'
                 style={FullWidth}
                 onClick={() => wallet.connect('injected')}>
                 Connect Wallet
@@ -379,4 +412,5 @@ const StyledBidsInput = styled.div`
 
 const StyledBackBtn = styled(Button)`
   margin-right: 10px;
+  width: 80px;
 `;

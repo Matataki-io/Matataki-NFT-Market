@@ -16,7 +16,6 @@ import { Gallery } from '../../types/Gallery';
 import { isEmpty } from 'lodash';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { useLogin } from '../../hooks/useLogin';
 
 const JoinRequest: React.FC = () => {
   const router = useRouter();

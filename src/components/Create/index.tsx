@@ -477,7 +477,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       notification.close(keyOne);
       openNotification({
         description: `正在同步数据。不要离开页面或者刷新！${
-          res.hash ? 'hash:' + res.hash : ''
+          res.hash ? 'transactionHash:' + res.hash : ''
         }`,
       });
 

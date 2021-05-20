@@ -1,15 +1,8 @@
 import React, { useState, CSSProperties, useEffect } from 'react';
-import {
-  Button,
-  ButtonDropdown,
-  Grid,
-  Input,
-  Select,
-  Text,
-} from '@geist-ui/react';
-import ArrowLeft from '@geist-ui/react-icons/arrowLeft';
+import { Grid, Input, Select, Text } from '@geist-ui/react';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
-import { InputNumber, Spin } from 'antd';
+import { InputNumber, Spin, Button, message, notification } from 'antd';
 import { isEmpty } from 'lodash';
 import { ArtView } from '../../../components/Bid/ArtView';
 import styled from 'styled-components';
@@ -51,19 +44,56 @@ export default function AskPage() {
 
   const [isSigning, signingActions] = useBoolean(false);
 
+  const openNotification = ({
+    description,
+    duration = 4.5,
+    key = '',
+  }: {
+    description: string;
+    duration?: number | null;
+    key?: string;
+  }) => {
+    notification.open({
+      message: 'Notification Title',
+      description: description,
+      duration: duration,
+      key: key,
+    });
+  };
+
   async function setAsk() {
-    if (!wallet.account) throw new Error('Wallet have to be connected');
+    if (!wallet.account) {
+      message.info('Wallet have to be connected');
+      return;
+    }
     signingActions.setTrue();
     const theAsk = constructAsk(currency, amount);
     try {
       const tx = await mediaContract.setAsk(id as string, theAsk);
+
+      const keyOne = `open${Date.now()}`;
+      openNotification({
+        description:
+          'Ask... Wait for the contract confirmation, please do not refresh or leave the page.',
+        duration: null,
+        key: keyOne,
+      });
+
       const receipt = await tx.wait();
-      alert(`问价成功，TxHash: ${receipt.transactionHash}`);
+
+      notification.close(keyOne);
+      openNotification({
+        description: `Successful ask.${
+          receipt.transactionHash
+            ? 'transactionHash:' + receipt.transactionHash
+            : ''
+        }`,
+      });
     } catch (error) {
       mediaContract.callStatic.setAsk(id as string, theAsk).catch(callError => {
         console.error('callError', callError);
         console.error('reason', callError.reason);
-        alert('Error happened: ' + callError.reason);
+        message.info('Error happened: ' + callError.reason);
       });
     } finally {
       signingActions.setFalse();
@@ -108,11 +138,13 @@ export default function AskPage() {
           cannot set a ask on this token.
         </Text>
         <ActionsBox>
-          <StyledBackBtn icon={<ArrowLeft />} onClick={() => router.back()}>
+          <StyledBackBtn
+            icon={<ArrowLeftOutlined />}
+            onClick={() => router.back()}>
             Go Back
           </StyledBackBtn>
           <Link href={`/p/${id}/bid`}>
-            <Button type='secondary'>Set Bid instead</Button>
+            <Button>Set Bid instead</Button>
           </Link>
         </ActionsBox>
       </StyledPermissions>
@@ -185,14 +217,10 @@ export default function AskPage() {
 
           <ActionsBox>
             <StyledBackBtn
-              icon={<ArrowLeft />}
-              onClick={() => router.back()}
-              size='large'
-              auto></StyledBackBtn>
+              icon={<ArrowLeftOutlined />}
+              onClick={() => router.back()}></StyledBackBtn>
             {wallet.status === 'connected' ? (
               <Button
-                type='secondary'
-                size='large'
                 style={FullWidth}
                 loading={isSigning}
                 onClick={() => setAsk()}>
@@ -200,8 +228,6 @@ export default function AskPage() {
               </Button>
             ) : (
               <Button
-                type='secondary'
-                size='large'
                 style={FullWidth}
                 onClick={() => wallet.connect('injected')}>
                 Connect Wallet
@@ -245,13 +271,16 @@ const GreyCard = styled.div`
     font-weight: bold;
     font-size: 16px;
     padding: 0;
-    margin: 10px 0 0 0;
+    margin: 10px 0;
   }
 `;
 
 const BiddingBox = styled.div`
-  max-width: 470px;
+  width: 500px;
   margin: auto;
+  @media screen and (max-width: 1000px) {
+    width: 100%;
+  }
 `;
 
 const ActionsBox = styled.div`
@@ -265,6 +294,7 @@ const FullWidth: CSSProperties = {
 
 const StyledBackBtn = styled(Button)`
   margin-right: 10px;
+  width: 80px;
 `;
 
 const StyledWrapper = styled(Grid.Container)`

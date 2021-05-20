@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import { Avatar, Button, message, Image, Table } from 'antd';
+import { Avatar, Button, message, Image, Table, notification } from 'antd';
 import { User } from '../../types/User.types';
 import {
   backendSWRFetcher,
@@ -20,6 +20,8 @@ import type {
   MintAndTransferParameters,
 } from '../../types/User.types';
 import { Tag as TagType } from '../../types/Tag';
+
+import PublishFixTool from '../PublishFixTool';
 
 const WaitForPublish: React.FC = () => {
   const wallet = useWallet();
@@ -43,8 +45,6 @@ const WaitForPublish: React.FC = () => {
 
   const fetchIsPublished = useCallback(async () => {
     const list: MediaToScreen[] = publishNFTs;
-    console.log('list', list);
-    // TODO: 这里复制过来的 ...
     const contentHashes = list.map(
       (i: MediaToScreen) => i.permitData.data.contentHash
     );
@@ -83,13 +83,6 @@ const WaitForPublish: React.FC = () => {
     [gallery, userDataByWallet]
   );
 
-  // 是否申请加入画廊
-  // 是否加入画廊
-
-  // nft list
-
-  // 加入画廊
-
   const fetchPublishNFTs = useCallback(async () => {
     try {
       const res = await mediaGasfreeCreateForPublisher({
@@ -105,6 +98,23 @@ const WaitForPublish: React.FC = () => {
       console.log(e.toString());
     }
   }, [id]);
+
+  const openNotification = ({
+    description,
+    duration = 4.5,
+    key = '',
+  }: {
+    description: string;
+    duration?: number | null;
+    key?: string;
+  }) => {
+    notification.open({
+      message: 'Notification Title',
+      description: description,
+      duration: duration,
+      key: key,
+    });
+  };
 
   const sendPermit = useCallback(
     async (
@@ -126,11 +136,24 @@ const WaitForPublish: React.FC = () => {
         );
         // console.info('resp', resp)
         // await new Promise((res) => setTimeout(res, 1000 * 15))
-        message.info(`NFT 发布已上传到区块链，等待节点反馈`);
+        const keyOne = `open${Date.now()}`;
+        openNotification({
+          description:
+            'NFT 发布已上传到区块链，等待节点反馈。不要离开页面或者刷新！',
+          duration: null,
+          key: keyOne,
+        });
         // const txResp = await currentProvider?.getTransaction(resp.hash);
         // const receipt = await currentProvider?.getTransactionReceipt(resp.hash);
         const receipt = await resp.wait(1);
+
+        notification.close(keyOne);
         console.info('receipt', receipt);
+        openNotification({
+          description: `正在同步数据。不要离开页面或者刷新！${
+            receipt.transactionHash ? 'hash:' + receipt.transactionHash : ''
+          }`,
+        });
         // send txhash to backend
         const res = await PostMedia({
           txHash: receipt.transactionHash,
@@ -138,9 +161,14 @@ const WaitForPublish: React.FC = () => {
           gallery: Number(id),
           id: Number(mtsId),
         });
-        console.log('res', res);
-        message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
-        fetchIsPublished();
+        if (res.status == 201) {
+          console.log('res', res);
+          message.success(`发布成功, Tx Hash: ${receipt.transactionHash}`);
+          fetchIsPublished();
+          await fetchPublishNFTs();
+        } else {
+          throw new Error('publish fail');
+        }
       } catch (walletErr) {
         console.error('sendPermit::error: ', walletErr);
         mediaContract.callStatic
@@ -159,18 +187,25 @@ const WaitForPublish: React.FC = () => {
         sendTxFinished();
       }
     },
-    // eslint-disable-next-line
-    [id, isSendingTx, mediaContract],
+    [
+      id,
+      isSendingTx,
+      mediaContract,
+      sendTxFinished,
+      fetchIsPublished,
+      toggleSendTx,
+      fetchPublishNFTs,
+    ]
   );
 
   const publishNFTColumns = [
     {
-      title: '#',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
     },
     {
-      title: '封面',
+      title: 'Cover',
       dataIndex: 'tokenURI',
       key: 'tokenURI',
       // eslint-disable-next-line react/display-name
@@ -179,19 +214,19 @@ const WaitForPublish: React.FC = () => {
       ),
     },
     {
-      title: '标题',
+      title: 'Title',
       dataIndex: 'title',
       key: 'title',
     },
     {
-      title: '描述',
+      title: 'Description',
       dataIndex: 'description',
       key: 'description',
     },
     {
-      title: '艺术家',
+      title: 'Creator',
       dataIndex: 'creator',
-      key: 'creator',
+      key: 'id',
       // eslint-disable-next-line react/display-name
       render: (creator: User) => (
         <div className='user-card'>
@@ -200,7 +235,7 @@ const WaitForPublish: React.FC = () => {
       ),
     },
     {
-      title: '状态和操作',
+      title: 'Status and operation',
       dataIndex: 'id',
       key: 'id',
       // eslint-disable-next-line react/display-name
@@ -209,7 +244,9 @@ const WaitForPublish: React.FC = () => {
           return <Button disabled>已发布</Button>;
         }
 
-        if (isPublishedMap[id]) return <Button disabled>已发布 ✅</Button>;
+        if (isPublishedMap[id]) {
+          return <Button disabled>已发布 ✅</Button>;
+        }
         if (!isWalletReady)
           return (
             <Button onClick={() => wallet.connect('injected')}>连接钱包</Button>
@@ -247,6 +284,9 @@ const WaitForPublish: React.FC = () => {
           position: ['bottomCenter'],
         }}
       />
+      <PublishFixTool
+        data={publishNFTs}
+        galleryId={Number(id)}></PublishFixTool>
     </StyledBox>
   );
 };
