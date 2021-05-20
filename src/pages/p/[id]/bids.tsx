@@ -58,23 +58,6 @@ export default function Bids() {
     getBidsDetail(bidderList);
   }, [id, data, getBidsDetail]);
 
-  const media = useMedia();
-  const { isMeTheOwner } = useMediaToken(id as string);
-  const acceptBid = useCallback(
-    async (bid: Bid) => {
-      if (!id) return;
-      const tx = await media.acceptBid(id as string, {
-        ...bid,
-        sellOnShare: bid.sellOnShare,
-      });
-      const receipt = await tx.wait();
-      message.info(
-        `Please check on EtherScan, txHash: ${receipt.transactionHash}`
-      );
-    },
-    [id, media]
-  );
-
   const openNotification = ({
     description,
     duration = 4.5,
@@ -91,6 +74,46 @@ export default function Bids() {
       key: key,
     });
   };
+
+  const media = useMedia();
+  const { isMeTheOwner } = useMediaToken(id as string);
+  const acceptBid = useCallback(
+    async (bid: Bid) => {
+      if (!id) {
+        message.warning('not id');
+        return;
+      }
+
+      try {
+        const tx = await media.acceptBid(id as string, {
+          ...bid,
+          sellOnShare: bid.sellOnShare,
+        });
+
+        const keyOne = `open${Date.now()}`;
+        openNotification({
+          description:
+            'Accepting bid... Wait for the contract confirmation, please do not refresh or leave the page.',
+          duration: null,
+          key: keyOne,
+        });
+
+        const receipt = await tx.wait();
+
+        await triggerReloadBids();
+
+        notification.close(keyOne);
+        openNotification({
+          description: `Please check on EtherScan, txHash:${
+            receipt.transactionHash ? 'txHash:' + receipt.transactionHash : ''
+          }`,
+        });
+      } catch (e) {
+        console.log(e.toString());
+      }
+    },
+    [id, media, triggerReloadBids]
+  );
 
   const removeBid = useCallback(async () => {
     if (!id) {
@@ -132,7 +155,7 @@ export default function Bids() {
             href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${log.bidder}`}
             target='_blank'
             rel='noopener noreferrer'>
-            {shortedWalletAccount(log.bidder || '')}
+            {log.bidder || ''}
           </a>
         );
       };
@@ -144,7 +167,7 @@ export default function Bids() {
       const acceptBidBtn = () => {
         if (wallet.status !== 'connected')
           return (
-            <Button onClick={() => wallet.connect('injected')}>
+            <Button size='small' onClick={() => wallet.connect('injected')}>
               Connect Wallet
             </Button>
           );
@@ -182,7 +205,7 @@ export default function Bids() {
             href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${log.bidder}`}
             target='_blank'
             rel='noopener noreferrer'>
-            {shortedWalletAccount(log.bidder || '')}
+            {log.bidder || ''}
           </a>
         );
       };
