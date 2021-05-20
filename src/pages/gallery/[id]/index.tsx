@@ -121,8 +121,9 @@ const AGallery: React.FC = () => {
   const isOwner = useMemo(
     () =>
       gallery &&
-      gallery.owner.id === userDataByWallet?.id &&
-      gallery.owner.username === userDataByWallet?.username,
+      userDataByWallet &&
+      gallery.owner.id === userDataByWallet.id &&
+      gallery.owner.username === userDataByWallet.username,
     [gallery, userDataByWallet]
   );
 
@@ -550,6 +551,13 @@ const AGallery: React.FC = () => {
                     </a>
                   </Link>
                 ) : null}
+                {isOwner ? (
+                <Link href={`/gallery/${id}/manage`}>
+                  <a>
+                    <Button type='primary'>Manage</Button>
+                  </a>
+                </Link>
+              ) : null}
               </Space>
             </StyledHeadRight>
           </StyledHead>
@@ -660,101 +668,6 @@ const AGallery: React.FC = () => {
                 </StyledWord>
               </StyledItem>
               <StyledLine />
-            </>
-          ) : null}
-
-          {isOwner ? (
-            <>
-              <StyledItem>
-                <StyledItemTitle>Manage application requests</StyledItemTitle>
-                {!isEmpty(requests) ? (
-                  <StyledBox>
-                    {requests.map(item => (
-                      <StyledJoinItem key={item.id}>
-                        <Avatar src={item.artist.avatar}></Avatar>{' '}
-                        <Link href={`/${item.artist.username}`}>
-                          <a target='_blank'>
-                            {item.artist.nickname}({item.artist.username})
-                          </a>
-                        </Link>
-                        <Space style={{ margin: '0 0 0 20px' }}>
-                          <Button
-                            type='primary'
-                            onClick={() => {
-                              handleJoin(item.id, true);
-                            }}>
-                            Accept
-                          </Button>
-                          <Popconfirm
-                            title='Are you sure to reject?'
-                            onConfirm={() => handleJoin(item.id, false)}
-                            okText='Yes'
-                            cancelText='No'>
-                            <Button type='primary' danger>
-                              Reject
-                            </Button>
-                          </Popconfirm>
-                        </Space>
-                      </StyledJoinItem>
-                    ))}
-                  </StyledBox>
-                ) : (
-                  <StyledNot>Not...</StyledNot>
-                )}
-              </StyledItem>
-              <StyledLine />
-
-              <StyledItem>
-                <StyledItemTitle>Manage artists</StyledItemTitle>
-                {!isEmpty(gallery?.artists) ? (
-                  <StyledBox>
-                    {gallery?.artists.map((item, idx: number) => (
-                      <StyledJoinItem key={item.id}>
-                        <Avatar src={item.avatar}></Avatar>{' '}
-                        <Link href={`/${item.username}`}>
-                          <a target='_blank'>
-                            {item.nickname}({item.username})
-                          </a>
-                        </Link>
-                        <Space style={{ margin: '0 0 0 20px' }}>
-                          <Popconfirm
-                            title='Are you sure to remove?'
-                            onConfirm={() => handleRemoveArtist(idx)}
-                            okText='Yes'
-                            cancelText='No'>
-                            <Button type='primary' danger>
-                              Remove
-                            </Button>
-                          </Popconfirm>
-                        </Space>
-                      </StyledJoinItem>
-                    ))}
-                  </StyledBox>
-                ) : (
-                  <StyledNot>Not...</StyledNot>
-                )}
-              </StyledItem>
-
-              <StyledLine />
-              <StyledItem>
-                <StyledItemTitle>Manage NFTs</StyledItemTitle>
-                {!isEmpty(publishNFTs) ? (
-                  <StyledBox>
-                    <Table
-                      dataSource={publishNFTs}
-                      columns={publishNFTColumns}
-                      pagination={{
-                        position: ['bottomCenter'],
-                      }}
-                    />
-                    <PublishFixTool
-                      data={publishNFTs}
-                      galleryId={Number(id)}></PublishFixTool>
-                  </StyledBox>
-                ) : (
-                  <StyledNot>Not...</StyledNot>
-                )}
-              </StyledItem>
             </>
           ) : null}
         </>

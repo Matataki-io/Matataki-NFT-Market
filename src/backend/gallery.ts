@@ -7,7 +7,7 @@ import {
 } from '../types/GalleryJoinRequest';
 import { User } from '../types/User.types';
 
-export async function getGalleryId(id: number): Promise<Gallery> {
+export async function getGalleryId(id: number) {
   return await BACKEND_CLIENT.get(`/gallery/${id}`);
 }
 
@@ -58,9 +58,9 @@ export async function createGalleryJoinRequest(gid: number) {
 export async function findGalleryJoinRequest(
   condition: Partial<{
     id: number;
-    artist: User;
-    gallery: Gallery;
-    status: GalleryJoinRequestStatus;
+    artist: Partial<User>;
+    gallery: Partial<Gallery>;
+    status: Partial<GalleryJoinRequestStatus>;
   }>
 ) {
   const data = await BACKEND_CLIENT.post<GalleryJoinRequest[]>(
