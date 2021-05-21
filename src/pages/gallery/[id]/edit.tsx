@@ -15,7 +15,6 @@ import { isEmpty } from 'lodash';
 import { useLogin } from '../../../hooks/useLogin';
 import { storageUploadFile } from '../../../backend/storage';
 import { diffData } from '../../../utils';
-import { Tag } from '../../../types/Tag';
 import { Gallery } from '../../../types/Gallery';
 import { getGalleryId, updateGallery } from '../../../backend/gallery';
 
@@ -202,11 +201,19 @@ const GalleryEdit: React.FC<void> = () => {
     }
     if (info.file.status === 'done') {
       message.success(`${info.file.name} file uploaded successfully`);
-      const { url } = info.file.response.data;
-      const values = formProfile.getFieldsValue();
-      values.aboutBanner = url;
+      // const { url } = info.file.response.data;
+      // const values = formProfile.getFieldsValue();
+      // values.aboutBanner = url;
 
-      formProfile.setFieldsValue(values);
+      // formProfile.setFieldsValue(values);
+
+      const { response } = info.file;
+      if (response.code === 200) {
+        //
+      } else {
+        message.warning('upload fail');
+      }
+
       setLoading(false);
     } else if (info.file.status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
@@ -292,6 +299,16 @@ const GalleryEdit: React.FC<void> = () => {
     }
     return false;
   }, [formProfile]);
+
+  // 返回 about banner
+  const normFileAboutBanner = (e: any) => {
+    if (e.file.status === 'done') {
+      const { response } = e.file;
+      if (response.code === 200) {
+        return response.data.url;
+      }
+    }
+  };
 
   return (
     <StyledWrapper>
@@ -380,21 +397,22 @@ const GalleryEdit: React.FC<void> = () => {
             showCount
           />
         </Form.Item>
-        <StyledFormAboutBannerUpload
-          {...props}
-          onChange={onChangeAboutBanner}
-          listType={'picture-card'}>
-          {formImage() ? (
-            <img className='banner' src={formImage()} />
-          ) : (
-            uploadButton
-          )}
-        </StyledFormAboutBannerUpload>
         <Form.Item
           label=''
           name='aboutBanner'
-          rules={[{ required: false, message: 'Please input banner!' }]}>
-          <Input placeholder='Enter banner' />
+          rules={[{ required: false, message: 'Please input banner!' }]}
+          style={{ borderBottom: 'none' }}
+          getValueFromEvent={normFileAboutBanner}>
+          <StyledFormAboutBannerUpload
+            {...props}
+            onChange={onChangeAboutBanner}
+            listType={'picture-card'}>
+            {formImage() ? (
+              <img className='banner' src={formImage()} />
+            ) : (
+              uploadButton
+            )}
+          </StyledFormAboutBannerUpload>
         </Form.Item>
         <Form.Item
           label=''
