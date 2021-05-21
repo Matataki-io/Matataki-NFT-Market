@@ -294,7 +294,7 @@ const FullWidth: CSSProperties = {
 
 const StyledBackBtn = styled(Button)`
   margin-right: 10px;
-  width: 80px;
+  min-width: 80px;
 `;
 
 const StyledWrapper = styled(Grid.Container)`

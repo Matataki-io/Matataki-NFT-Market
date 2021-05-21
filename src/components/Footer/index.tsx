@@ -1,20 +1,12 @@
 import React from 'react';
-import { Button, Tooltip } from '@geist-ui/react';
 import styled from 'styled-components';
-import Link from 'next/link';
 import { ReactSVG } from 'react-svg';
+// import { Button, Tooltip } from 'antd';
 
 import IconGithub from '../../assets/icons/github.svg';
 import IconTelegram from '../../assets/icons/telegram.svg';
 import IconDiscord from '../../assets/icons/discord.svg';
 import IconTwitter from '../../assets/icons/twitter.svg';
-
-// const MockItem = () => <div className="footer-nav-bar">
-//   <Text h4>Support</Text>
-//   <a href="#">About</a>
-//   <a href="#">Suggestion</a>
-//   <a href="#">FAQ</a>
-// </div>
 
 const StyledFooter = styled.div`
   background: #f1f1f1;
@@ -148,24 +140,19 @@ export default function Footer() {
             © 2021 {process.env.NEXT_PUBLIC_APP_NAME} All Rights Reserved{' '}
           </span>
           <div className='i18n-switch'>
-            <Tooltip
-              text={
+            {/* <Tooltip
+              color='#fff'
+              title={
                 <>
                   <div style={{ display: 'flex' }}>
-                    <Button auto size='small'>
-                      中文
-                    </Button>
-                    <Button auto size='small'>
-                      日本语
-                    </Button>
-                    <Button auto size='small'>
-                      English
-                    </Button>
+                    <Button size='small'>中文</Button>
+                    <Button size='small'>日本语</Button>
+                    <Button size='small'>English</Button>
                   </div>
                 </>
               }>
               <span className='language'>English</span>
-            </Tooltip>
+            </Tooltip> */}
           </div>
         </StyledFooterItem>
       </StyledFooterWrapper>

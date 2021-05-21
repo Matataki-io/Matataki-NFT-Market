@@ -200,11 +200,12 @@ const Market: React.FC = () => {
               </Link>
             ))}
           </StyledNfts>
-          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <div style={{ textAlign: 'center', marginTop: '40px' }}>
             <Pagination
               pageSize={limit}
               current={page}
               total={mediaList?.meta.totalItems || 0}
+              showSizeChanger={false}
               onChange={page => {
                 setPage(page);
               }}

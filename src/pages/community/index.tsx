@@ -52,6 +52,7 @@ const Community: React.FC = () => {
           <Pagination
             defaultCurrent={pageIndex}
             onChange={(page, pageSize) => setPageIndex(page)}
+            showSizeChanger={false}
             total={data.meta.totalItems}></Pagination>
         </StyledPagination>
       </StyledItem>

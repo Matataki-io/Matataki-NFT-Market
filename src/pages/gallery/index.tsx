@@ -54,6 +54,7 @@ const GalleryIndex: React.FC = () => {
               pageSize={limit}
               current={page}
               total={data?.meta.totalItems || 0}
+              showSizeChanger={false}
               onChange={page => {
                 setPage(page);
               }}

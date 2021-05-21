@@ -1,7 +1,9 @@
-import { Button, Text } from '@geist-ui/react';
 import React, { useState } from 'react';
 import { useWallet } from 'use-wallet';
 import { useSigner } from '../../hooks/useSigner';
+import { Button, Typography } from 'antd';
+
+const { Paragraph } = Typography;
 
 export default function TestSignerHook() {
   const wallet = useWallet();
@@ -21,14 +23,14 @@ export default function TestSignerHook() {
   if (!isSignerReady(signer))
     return (
       <div className='no-signer'>
-        <Text>No Signer</Text>
+        <Paragraph>No Signer</Paragraph>
         <Button onClick={() => wallet.connect('injected')}>Connect</Button>
       </div>
     );
 
   return (
     <div className='signer-exist'>
-      <Text>{res}</Text>
+      <Paragraph>{res}</Paragraph>
       <Button onClick={() => signMsg()}>Sign</Button>
     </div>
   );
