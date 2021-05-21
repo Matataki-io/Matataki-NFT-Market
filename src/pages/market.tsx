@@ -1,17 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Checkbox, Radio, Spin, message, Select, Pagination } from 'antd';
-import InfiniteScroll from 'react-infinite-scroller';
+import { Radio, Spin, message, Select, Pagination } from 'antd';
 import NFT from '../components/NFT';
 import { NFTProps } from '../../next-env';
-import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
-import {
-  getMediaList,
-  getMediaMetadata,
-  backendSWRFetcher,
-} from '../backend/media';
+import { getMediaMetadata, backendSWRFetcher } from '../backend/media';
 import { useMarketPrices } from '../hooks/useMarketPrices';
 import { getTags } from '../backend/tag';
 import { Tag as TagType } from '../types/Tag';
@@ -30,6 +24,7 @@ enum SortBy {
 }
 
 const Market: React.FC = () => {
+  // nft list
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
 
   const nftIds = useMemo(
@@ -39,7 +34,6 @@ const Market: React.FC = () => {
   const { priceBook, isLoading: isPriceBookLoading } = useMarketPrices(nftIds);
   const [tagList, setTagList] = useState<Array<TagType>>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [hasMore, setHasMore] = useState<boolean>(true);
   const [sort, setSort] = useState<SortBy>(SortBy.DESC);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(12);

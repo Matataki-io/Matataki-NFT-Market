@@ -23,6 +23,7 @@ const ArtistManagement: React.FC = () => {
     id,
   ]);
 
+  // remove artist
   const handleRemoveArtist = async (idx: number) => {
     try {
       let list: User[] = cloneDeep(gallery?.artists) || [];

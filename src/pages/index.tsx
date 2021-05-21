@@ -2,39 +2,30 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useMount } from 'ahooks';
-import { Spin, message } from 'antd';
+import { message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-
 import Creators from '../components/Creators';
 import About from '../components/About';
 import NFT from '../components/NFTSimple';
 import { NFTProps } from '../../next-env';
 import BannerComponents from '../components/Banner';
-import { PaginationResult } from '../types/PaginationResult';
 import { Media, MediaMetadata } from '../types/Media.entity';
-import {
-  getHotMediaList,
-  getMediaMetadata,
-  getMediaList,
-} from '../backend/media';
-import { getArticles, getArticlesRecommed } from '../backend/article';
-import { listUsersArtist, userTopArtist } from '../backend/user';
+import { getMediaList } from '../backend/media';
+import { getArticlesRecommed } from '../backend/article';
+import { userTopArtist } from '../backend/user';
 import { User } from '../types/User.types';
 import { Article } from '../types/Article';
 import { getBanners } from '../backend/bannner';
 import { Banner } from '../types/banner';
 
-type PaginationMeta = PaginationResult['meta'];
-
-type MediaWithMetadata = Media & {
-  metadata: MediaMetadata;
-};
-
 const Home: React.FC<void> = () => {
+  // Banner
   const [BannerData, setBannerData] = useState<Array<Banner>>([]);
-  // 更多 NFT
+  // NFT
   const [NFTList, setNFTList] = useState<Array<NFTProps>>([]);
+  // creators
   const [creatorsList, setCreatorsList] = useState<Array<User>>([]);
+  // article list
   const [articleList, setArticleList] = useState<Array<Article>>([]);
 
   // 获取Banner
@@ -87,10 +78,11 @@ const Home: React.FC<void> = () => {
       message.error(`数据获取失败${e.toString()}`);
     }
   };
+  // fetch article
   const fetchArticle = async () => {
     try {
       const res: any = await getArticlesRecommed();
-      console.log('getArticles', res);
+      // console.log('getArticlesRecommed', res);
       if (res.status === 200) {
         setArticleList(res.data);
       } else {

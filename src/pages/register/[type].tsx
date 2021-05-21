@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useWallet } from 'use-wallet';
 import { useLogin } from '../../hooks/useLogin';
 
-import { Form, Input, Button, Checkbox, message } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 
 // 用户名校验
 const usernamePattern = /^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
@@ -28,8 +28,9 @@ const Register: React.FC<void> = () => {
       message.info('其他路由');
       router.push('/');
     }
-  }, [isRegistered, type]);
+  }, [isRegistered, router, type]);
 
+  // register finish
   const onFinish = async (values: any) => {
     console.log('Success:', values);
     let { username } = values;
@@ -46,6 +47,7 @@ const Register: React.FC<void> = () => {
     }
   };
 
+  // register finish failed
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };

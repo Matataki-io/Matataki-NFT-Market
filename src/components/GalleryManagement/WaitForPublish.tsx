@@ -43,6 +43,7 @@ const WaitForPublish: React.FC = () => {
   // 艺术家上传到画廊的NFTs
   const [publishNFTs, setPublishNFTs] = useState<any[]>([]);
 
+  // fetch is published
   const fetchIsPublished = useCallback(async () => {
     const list: MediaToScreen[] = publishNFTs;
     const contentHashes = list.map(
@@ -69,11 +70,6 @@ const WaitForPublish: React.FC = () => {
     backendSWRFetcher
   );
 
-  const { data: me, error: meError } = useSWR<
-    { data: User; status: number },
-    any
-  >(`/user/me`, backendSWRFetcher);
-
   const isOwner = useMemo(
     () =>
       gallery &&
@@ -83,6 +79,7 @@ const WaitForPublish: React.FC = () => {
     [gallery, userDataByWallet]
   );
 
+  // fetch publish nfts
   const fetchPublishNFTs = useCallback(async () => {
     try {
       const res = await mediaGasfreeCreateForPublisher({
@@ -116,6 +113,7 @@ const WaitForPublish: React.FC = () => {
     });
   };
 
+  // publish nft
   const sendPermit = useCallback(
     async (
       permitToMint: MintAndTransferParameters,
@@ -240,10 +238,12 @@ const WaitForPublish: React.FC = () => {
       key: 'id',
       // eslint-disable-next-line react/display-name
       render: (id: number, mts: MediaToScreen) => {
+        // 数据库已经处理好了
         if (mts.isPublished) {
           return <Button disabled>已发布</Button>;
         }
 
+        // 链上已经处理好了
         if (isPublishedMap[id]) {
           return <Button disabled>已发布 ✅</Button>;
         }

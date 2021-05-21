@@ -1,25 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import {
-  Avatar,
-  Form,
-  Input,
-  Button,
-  message,
-  Upload,
-  Checkbox,
-  Row,
-  Col,
-  Image,
-} from 'antd';
+import { Avatar, Form, Input, Button, message, Upload, Image } from 'antd';
 import { UploadProps } from 'antd/lib/upload/interface';
 import { useRouter } from 'next/router';
 import { useWallet } from 'use-wallet';
 import {
   UserOutlined,
   PlusOutlined,
-  MinusCircleOutlined,
-  CheckCircleOutlined,
   LoadingOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
@@ -28,7 +15,6 @@ import { isEmpty } from 'lodash';
 import { useLogin } from '../../../hooks/useLogin';
 import { storageUploadFile } from '../../../backend/storage';
 import { diffData } from '../../../utils';
-import { Tag } from '../../../types/Tag';
 import { Gallery } from '../../../types/Gallery';
 import { getGalleryId, updateGallery } from '../../../backend/gallery';
 
@@ -110,6 +96,7 @@ const GalleryEdit: React.FC<void> = () => {
     }
   }, [gallery, formProfile]);
 
+  // edit fininsh
   const onFinish = async (values: any) => {
     console.log('Success:', values);
     let {
@@ -184,7 +171,7 @@ const GalleryEdit: React.FC<void> = () => {
       message.error(e.toString());
     }
   };
-
+  // edit finish failed
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
@@ -205,7 +192,8 @@ const GalleryEdit: React.FC<void> = () => {
       setLoading(false);
     }
   };
-  const onChangeBanner = (info: any) => {
+  // about banner upload
+  const onChangeAboutBanner = (info: any) => {
     console.log('info', info);
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
@@ -213,17 +201,26 @@ const GalleryEdit: React.FC<void> = () => {
     }
     if (info.file.status === 'done') {
       message.success(`${info.file.name} file uploaded successfully`);
-      const { url } = info.file.response.data;
-      const values = formProfile.getFieldsValue();
-      values.aboutBanner = url;
+      // const { url } = info.file.response.data;
+      // const values = formProfile.getFieldsValue();
+      // values.aboutBanner = url;
 
-      formProfile.setFieldsValue(values);
+      // formProfile.setFieldsValue(values);
+
+      const { response } = info.file;
+      if (response.code === 200) {
+        //
+      } else {
+        message.warning('upload fail');
+      }
+
       setLoading(false);
     } else if (info.file.status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
       setLoading(false);
     }
   };
+  // presentations upload
   const onChangePresentations = (info: any) => {
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
@@ -239,6 +236,7 @@ const GalleryEdit: React.FC<void> = () => {
       setLoading(false);
     }
   };
+  // artworks upload
   const onChangeArtworks = (info: any) => {
     console.log('info', info);
     if (info.file.status !== 'uploading') {
@@ -257,6 +255,7 @@ const GalleryEdit: React.FC<void> = () => {
       setLoading(false);
     }
   };
+  // remove artworks
   const onRemoveArtworks = (idx: number) => {
     let _artworksFileList = artworksFileList.slice(0);
     _artworksFileList.splice(idx, 1);
@@ -292,6 +291,7 @@ const GalleryEdit: React.FC<void> = () => {
     </div>
   );
 
+  // 获取 about banner
   const formImage = useCallback(() => {
     const values = formProfile.getFieldsValue();
     if (values.aboutBanner) {
@@ -299,6 +299,16 @@ const GalleryEdit: React.FC<void> = () => {
     }
     return false;
   }, [formProfile]);
+
+  // 返回 about banner
+  const normFileAboutBanner = (e: any) => {
+    if (e.file.status === 'done') {
+      const { response } = e.file;
+      if (response.code === 200) {
+        return response.data.url;
+      }
+    }
+  };
 
   return (
     <StyledWrapper>
@@ -387,21 +397,22 @@ const GalleryEdit: React.FC<void> = () => {
             showCount
           />
         </Form.Item>
-        <StyledFormAboutBannerUpload
-          {...props}
-          onChange={onChangeBanner}
-          listType={'picture-card'}>
-          {formImage() ? (
-            <img className='banner' src={formImage()} />
-          ) : (
-            uploadButton
-          )}
-        </StyledFormAboutBannerUpload>
         <Form.Item
           label=''
           name='aboutBanner'
-          rules={[{ required: false, message: 'Please input banner!' }]}>
-          <Input placeholder='Enter banner' />
+          rules={[{ required: false, message: 'Please input banner!' }]}
+          style={{ borderBottom: 'none' }}
+          getValueFromEvent={normFileAboutBanner}>
+          <StyledFormAboutBannerUpload
+            {...props}
+            onChange={onChangeAboutBanner}
+            listType={'picture-card'}>
+            {formImage() ? (
+              <img className='banner' src={formImage()} />
+            ) : (
+              uploadButton
+            )}
+          </StyledFormAboutBannerUpload>
         </Form.Item>
         <Form.Item
           label=''

@@ -4,18 +4,19 @@ import Link from 'next/link';
 import { Carousel, message } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {
-  listUsersArtist,
   userFeaturedArtistInBanner,
   userFeaturedArtist,
 } from '../backend/user';
-import { isEmpty } from 'lodash';
 import { User } from '../types/User.types.d';
 import { wordItem } from '../utils/index';
 
 const Artist: React.FC = () => {
+  // featured artist bannner
   const [artistList, setArtistList] = useState<User[][]>([]);
+  /// featured artist
   const [artistWordList, setArtistWordList] = useState<Array<User>>([]);
 
+  // 获取 Featured Artists Banner 并且处理数据
   const userFeaturedArtistInBannerFn = async () => {
     try {
       const res = await userFeaturedArtistInBanner();
@@ -40,6 +41,7 @@ const Artist: React.FC = () => {
       message.error(`数据获取失败${e.toString()}`);
     }
   };
+  // 获取 Featured Artists 数据
   const userFeaturedArtistFn = async () => {
     try {
       const res = await userFeaturedArtist();
@@ -54,6 +56,7 @@ const Artist: React.FC = () => {
     }
   };
 
+  // 处理数据格式
   const artistWord = useMemo(() => {
     return wordItem(artistWordList);
   }, [artistWordList]);
