@@ -412,5 +412,5 @@ const StyledBidsInput = styled.div`
 
 const StyledBackBtn = styled(Button)`
   margin-right: 10px;
-  width: 80px;
+  min-width: 80px;
 `;

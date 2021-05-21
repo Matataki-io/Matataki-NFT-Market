@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { Button } from '@geist-ui/react';
 import moment from 'moment';
-import { Avatar } from 'antd';
+import { Avatar, Button } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import AudioRender from '../AudioRender';

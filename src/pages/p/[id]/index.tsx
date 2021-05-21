@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 
-import { Button, Grid, Image, Link, Text, User } from '@geist-ui/react';
+import { Link, Text } from '@geist-ui/react';
 import { message, Tag, Spin } from 'antd';
 import { getTokenOnScan } from '../../../utils/token';
 import { GetStaticPropsContext, GetStaticPropsResult, NextPage } from 'next';
@@ -9,7 +9,6 @@ import { ParsedUrlQuery } from 'querystring';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-
 import {
   getMediaById,
   getHotMediaList,
