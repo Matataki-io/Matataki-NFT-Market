@@ -36,6 +36,7 @@ const AGallery: React.FC = () => {
   const { userDataByWallet } = useLogin();
   const [media, setMedia] = useState<Media[]>([]);
   const [requests, setRequests] = useState<GalleryJoinRequest[]>([]);
+
   const { data: gallery, error: galleryError } = useSWR<Gallery, any>(
     id ? `/gallery/${id}` : null,
     backendSWRFetcher
@@ -50,6 +51,7 @@ const AGallery: React.FC = () => {
     [gallery, userDataByWallet]
   );
 
+  // about icon list
   const galleryAboutIconList = useMemo(() => {
     return [
       {
@@ -140,6 +142,7 @@ const AGallery: React.FC = () => {
     });
   }, [media]);
 
+  // fetch join gallery liist
   const fetchJoinFn = useCallback(async () => {
     try {
       if (isEmpty(gallery)) {
@@ -160,6 +163,7 @@ const AGallery: React.FC = () => {
     }
   }, [gallery]);
 
+  // fetch gallery media nft
   const fetchMediaSearch = useCallback(async () => {
     if (isEmpty(gallery)) {
       return;
@@ -202,6 +206,7 @@ const AGallery: React.FC = () => {
     }
   };
 
+  // 处理艺术家分组
   const artistWord = useMemo(() => {
     return wordItem(gallery?.artists);
   }, [gallery]);
@@ -260,7 +265,7 @@ const AGallery: React.FC = () => {
           </StyledHead>
           <StyledLine />
 
-          {gallery?.presentations ? (
+          {!isEmpty(gallery?.presentations) ? (
             <>
               <StyledItem>
                 <StyledItemTitle>Presentation</StyledItemTitle>
@@ -380,10 +385,6 @@ const StyledWrapperLoading = styled.div`
   margin: 100px 0 0;
 `;
 
-const StyledNot = styled.div`
-  margin: 40px 0;
-`;
-
 const StyledWrapper = styled.div`
   flex: 1;
 
@@ -475,20 +476,20 @@ const StyledItem = styled.div`
     margin: 20px 0;
   }
 `;
-const StyledVideo = styled.div`
-  margin: 64px 0 0;
-  height: 810px;
+// const StyledVideo = styled.div`
+//   margin: 64px 0 0;
+//   height: 810px;
 
-  .media-video {
-    width: 100%;
-    height: 100%;
-  }
+//   .media-video {
+//     width: 100%;
+//     height: 100%;
+//   }
 
-  @media screen and (max-width: 678px) {
-    margin: 20px 0 0;
-    height: 240px;
-  }
-`;
+//   @media screen and (max-width: 678px) {
+//     margin: 20px 0 0;
+//     height: 240px;
+//   }
+// `;
 const StyledArtworks = styled.div`
   margin-top: 64px;
 
@@ -571,14 +572,7 @@ const StyledAbout = styled.div`
     margin: 24px 0 0 0;
   }
 `;
-const StyledBox = styled.div`
-  display: block;
-  margin: 20px 0;
-`;
-const StyledJoinItem = styled.div`
-  display: block;
-  margin: 10px 0;
-`;
+
 const StyledWord = styled.div`
   display: block;
   column-count: 4;

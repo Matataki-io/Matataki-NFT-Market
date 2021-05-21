@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-
 import GalleryCard from '../../components/GalleryCard';
 import type { Gallery } from '../../types/Gallery';
 import useSWR from 'swr';
@@ -41,7 +40,7 @@ const GalleryIndex: React.FC = () => {
       ) : (
         <>
           <StyledGallery>
-            {data.items.map((gallery: Gallery, idx: number) => (
+            {data.items.map((gallery: Gallery) => (
               <Link key={`${gallery.id}`} href={`/gallery/${gallery.id}`}>
                 <a>
                   <GalleryCard {...gallery} />
@@ -49,7 +48,7 @@ const GalleryIndex: React.FC = () => {
               </Link>
             ))}
           </StyledGallery>
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: 'center', marginTop: 40 }}>
             <Pagination
               pageSize={limit}
               current={page}

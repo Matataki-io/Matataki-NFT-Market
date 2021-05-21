@@ -1,25 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import {
-  Avatar,
-  Form,
-  Input,
-  Button,
-  message,
-  Upload,
-  Checkbox,
-  Row,
-  Col,
-  Image,
-} from 'antd';
+import { Avatar, Form, Input, Button, message, Upload, Image } from 'antd';
 import { UploadProps } from 'antd/lib/upload/interface';
 import { useRouter } from 'next/router';
 import { useWallet } from 'use-wallet';
 import {
   UserOutlined,
   PlusOutlined,
-  MinusCircleOutlined,
-  CheckCircleOutlined,
   LoadingOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
@@ -110,6 +97,7 @@ const GalleryEdit: React.FC<void> = () => {
     }
   }, [gallery, formProfile]);
 
+  // edit fininsh
   const onFinish = async (values: any) => {
     console.log('Success:', values);
     let {
@@ -184,7 +172,7 @@ const GalleryEdit: React.FC<void> = () => {
       message.error(e.toString());
     }
   };
-
+  // edit finish failed
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
@@ -205,7 +193,8 @@ const GalleryEdit: React.FC<void> = () => {
       setLoading(false);
     }
   };
-  const onChangeBanner = (info: any) => {
+  // about banner upload
+  const onChangeAboutBanner = (info: any) => {
     console.log('info', info);
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
@@ -224,6 +213,7 @@ const GalleryEdit: React.FC<void> = () => {
       setLoading(false);
     }
   };
+  // presentations upload
   const onChangePresentations = (info: any) => {
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
@@ -239,6 +229,7 @@ const GalleryEdit: React.FC<void> = () => {
       setLoading(false);
     }
   };
+  // artworks upload
   const onChangeArtworks = (info: any) => {
     console.log('info', info);
     if (info.file.status !== 'uploading') {
@@ -257,6 +248,7 @@ const GalleryEdit: React.FC<void> = () => {
       setLoading(false);
     }
   };
+  // remove artworks
   const onRemoveArtworks = (idx: number) => {
     let _artworksFileList = artworksFileList.slice(0);
     _artworksFileList.splice(idx, 1);
@@ -292,6 +284,7 @@ const GalleryEdit: React.FC<void> = () => {
     </div>
   );
 
+  // 获取 about banner
   const formImage = useCallback(() => {
     const values = formProfile.getFieldsValue();
     if (values.aboutBanner) {
@@ -389,7 +382,7 @@ const GalleryEdit: React.FC<void> = () => {
         </Form.Item>
         <StyledFormAboutBannerUpload
           {...props}
-          onChange={onChangeBanner}
+          onChange={onChangeAboutBanner}
           listType={'picture-card'}>
           {formImage() ? (
             <img className='banner' src={formImage()} />
