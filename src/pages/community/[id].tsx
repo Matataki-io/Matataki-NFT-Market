@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Avatar, message, Image, Pagination } from 'antd';
+import { message, Image } from 'antd';
 import ReactMarkdown from 'react-markdown';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -12,6 +12,7 @@ const CommunityId: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
   const [article, setArticle] = useState<Article>();
+
   useEffect(() => {
     const fetchPost = async () => {
       try {

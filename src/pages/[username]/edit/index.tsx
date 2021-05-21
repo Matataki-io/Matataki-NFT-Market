@@ -18,8 +18,6 @@ import { useWallet } from 'use-wallet';
 import {
   UserOutlined,
   PlusOutlined,
-  MinusCircleOutlined,
-  CheckCircleOutlined,
   LoadingOutlined,
   CloseOutlined,
 } from '@ant-design/icons';
@@ -35,8 +33,6 @@ import { UserRole } from '../../../constant';
 
 // 用户名校验
 const usernamePattern = /^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
-// 允许的类型
-const registerType = ['collector', 'artist', 'gallery'];
 
 interface UserProps {
   nickname?: string;
@@ -110,11 +106,12 @@ const Register: React.FC<void> = () => {
     }
   }, [isRegistered, userDataByWallet, formProfile]);
 
+  // fetch tags
   useEffect(() => {
     const fetch = async () => {
       try {
         const res: any = await getTags();
-        console.log('res', res);
+        // console.log('res', res);
         if (res.status === 200) {
           setTagsList(res.data);
         }
@@ -125,6 +122,7 @@ const Register: React.FC<void> = () => {
     fetch();
   }, []);
 
+  // edit fininsh
   const onFinish = async (values: any) => {
     console.log('Success:', values);
     let {
@@ -221,6 +219,7 @@ const Register: React.FC<void> = () => {
     }
   };
 
+  // edit finish failed
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
@@ -241,7 +240,8 @@ const Register: React.FC<void> = () => {
       setLoading(false);
     }
   };
-  const onChangeBanner = (info: any) => {
+  // about banner upload
+  const onChangeAboutBanner = (info: any) => {
     console.log('info', info);
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
@@ -249,17 +249,26 @@ const Register: React.FC<void> = () => {
     }
     if (info.file.status === 'done') {
       message.success(`${info.file.name} file uploaded successfully`);
-      const { url } = info.file.response.data;
-      const values = formProfile.getFieldsValue();
-      values.aboutBanner = url;
+      // const { url } = info.file.response.data;
+      // const values = formProfile.getFieldsValue();
+      // values.aboutBanner = url;
 
-      formProfile.setFieldsValue(values);
+      // formProfile.setFieldsValue(values);
+
+      const { response } = info.file;
+      if (response.code === 200) {
+        //
+      } else {
+        message.warning('upload fail');
+      }
+
       setLoading(false);
     } else if (info.file.status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
       setLoading(false);
     }
   };
+  // presentations upload
   const onChangePresentations = (info: any) => {
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
@@ -275,6 +284,7 @@ const Register: React.FC<void> = () => {
       setLoading(false);
     }
   };
+  // artworks upload
   const onChangeArtworks = (info: any) => {
     console.log('info', info);
     if (info.file.status !== 'uploading') {
@@ -293,6 +303,7 @@ const Register: React.FC<void> = () => {
       setLoading(false);
     }
   };
+  // remove artworks
   const onRemoveArtworks = (idx: number) => {
     let _artworksFileList = artworksFileList.slice(0);
     _artworksFileList.splice(idx, 1);
@@ -327,7 +338,7 @@ const Register: React.FC<void> = () => {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
-
+  // 获取 about banner
   const formImage = useCallback(() => {
     const values = formProfile.getFieldsValue();
     if (values.aboutBanner) {
@@ -335,6 +346,16 @@ const Register: React.FC<void> = () => {
     }
     return false;
   }, [formProfile]);
+
+  // 返回 about banner
+  const normFileAboutBanner = (e: any) => {
+    if (e.file.status === 'done') {
+      const { response } = e.file;
+      if (response.code === 200) {
+        return response.data.url;
+      }
+    }
+  };
 
   return (
     <StyledWrapper>
@@ -502,21 +523,22 @@ const Register: React.FC<void> = () => {
                 showCount
               />
             </Form.Item>
-            <StyledFormAboutBannerUpload
-              {...props}
-              onChange={onChangeBanner}
-              listType={'picture-card'}>
-              {formImage() ? (
-                <img className='banner' src={formImage()} />
-              ) : (
-                uploadButton
-              )}
-            </StyledFormAboutBannerUpload>
             <Form.Item
               label=''
               name='aboutBanner'
-              rules={[{ required: false, message: 'Please input banner!' }]}>
-              <Input placeholder='Enter banner' />
+              rules={[{ required: false, message: 'Please input banner!' }]}
+              style={{ borderBottom: 'none' }}
+              getValueFromEvent={normFileAboutBanner}>
+              <StyledFormAboutBannerUpload
+                {...props}
+                onChange={onChangeAboutBanner}
+                listType={'picture-card'}>
+                {formImage() ? (
+                  <img className='banner' src={formImage()} />
+                ) : (
+                  uploadButton
+                )}
+              </StyledFormAboutBannerUpload>
             </Form.Item>
             <Form.Item
               label=''
@@ -573,23 +595,6 @@ const Register: React.FC<void> = () => {
             </Form.Item>
           </>
         ) : null}
-        {/* {userDataByWallet?.role === UserRole.Artist ? (
-          <>
-            <StyledFormTitle>Contracted Artists</StyledFormTitle>
-            <Form.Item
-              label=''
-              name='medium'
-              rules={[{ required: false, message: 'Please input username!' }]}>
-              <Input disabled placeholder='Enter username' />
-            </Form.Item>
-            <Form.Item
-              label=''
-              name='medium'
-              rules={[{ required: false, message: 'Please input username!' }]}>
-              <Input disabled placeholder='Enter username' />
-            </Form.Item>
-          </>
-        ) : null} */}
         <StyledItemWrapper>
           <StyledButton className='black' htmlType='submit'>
             SAVE

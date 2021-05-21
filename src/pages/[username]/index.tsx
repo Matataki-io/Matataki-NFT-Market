@@ -1,25 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import {
-  Tag,
-  Form,
-  Modal,
-  Image,
-  Upload,
-  Avatar,
-  Button,
-  message,
-  List,
-  Spin,
-  Input,
-  Empty,
-} from 'antd';
+import { Tag, Form, Image, Avatar, Button, message, Spin } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { isEmpty } from 'lodash';
 import { ReactSVG } from 'react-svg';
-import { UserInfoState } from '../../store/userInfoSlice';
 import { useAppSelector } from '../../hooks/redux';
 import { NFTProps } from '../../../next-env';
 import NFTSimple from '../../components/NFTSimple';
@@ -52,7 +38,6 @@ interface Props {
 
 const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const router = useRouter();
-  const [galleryForm] = Form.useForm();
   const { username } = router.query;
   const [userInfo, setUserInfo] = useState<User | any>({
     avatar: '',
@@ -178,13 +163,14 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     const fetch = async () => {
       if (typeof username !== 'string') return;
       const data = await getUserTags(username);
-      console.log('getUserTags', data);
+      // console.log('getUserTags', data);
       const list = data.tags.map(i => i.name);
       setTagsList(list);
     };
     fetch();
   }, [userInfo, username]);
 
+  // user info icon list
   const IconList = useMemo(() => {
     let list = [
       {
@@ -211,6 +197,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     return list;
   }, [userInfo]);
 
+  // user about icon list
   const userAboutIconList = useMemo(() => {
     return [
       {
@@ -245,8 +232,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
       <>
         <StyledTitle>Collection</StyledTitle>
         <StyledMediaCardContainer>
-          {nftListData.map((item, index) => (
-            <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+          {nftListData.map(item => (
+            <Link href={`/p/${item.id}`} key={`media-card-${item.id}`}>
               <a target='_blank'>
                 <NFTSimple {...item} />
               </a>
@@ -263,18 +250,6 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           <>
             <StyledItem>
               <StyledItemTitle>Presentation</StyledItemTitle>
-              {/* <StyledVideo>
-                  <video
-                    src={
-                      'https://ipfs.fleek.co/ipfs/QmUDqKPSgRaGNjjDnJ89wWecpFzMGaiPcHZ76FsuepAD5Y'
-                    }
-                    loop
-                    playsInline
-                    // autoPlay
-                    // poster={'https://placeimg.com/1440/810/nature?t=1617247698083'}
-                    className='media-video'
-                  />
-                </StyledVideo> */}
               <StyledPresentation>
                 <Image
                   src={
@@ -292,8 +267,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             <StyledItem>
               <StyledItemTitle>NFTs</StyledItemTitle>
               <StyledMediaCardContainer>
-                {nftListData.map((item, index) => (
-                  <Link href={`/p/${item.id}`} key={`media-card-${index}`}>
+                {nftListData.map(item => (
+                  <Link href={`/p/${item.id}`} key={`media-card-${item.id}`}>
                     <a target='_blank'>
                       <NFTSimple {...item} />
                     </a>
@@ -356,15 +331,13 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         <StyledItem>
           <StyledItemTitle>My Gallery</StyledItemTitle>
           <StyledGallery>
-            {galleryOwner?.ownedGalleries.map(
-              (gallery: Gallery, index: number) => (
-                <Link key={index} href={`/gallery/${gallery.id}`}>
-                  <a target='_blank'>
-                    <GalleryCard {...gallery}></GalleryCard>
-                  </a>
-                </Link>
-              )
-            )}
+            {galleryOwner?.ownedGalleries.map((gallery: Gallery) => (
+              <Link key={gallery.id} href={`/gallery/${gallery.id}`}>
+                <a target='_blank'>
+                  <GalleryCard {...gallery}></GalleryCard>
+                </a>
+              </Link>
+            ))}
           </StyledGallery>
         </StyledItem>
         <StyledLine />

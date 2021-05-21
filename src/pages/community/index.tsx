@@ -12,7 +12,7 @@ const Community: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageLimit, setPageLimit] = useState(10);
   const { data, error } = useSWR(
-    `/article?page=${pageIndex}&limit=10`,
+    `/article?page=${pageIndex}&limit=${pageLimit}`,
     backendSWRFetcher
   );
 

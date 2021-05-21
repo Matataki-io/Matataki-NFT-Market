@@ -33,6 +33,7 @@ const JoinRequest: React.FC = () => {
     id,
   ]);
 
+  // fetch join list
   const fetchJoinFn = useCallback(async () => {
     try {
       if (!gallery) {
@@ -54,7 +55,6 @@ const JoinRequest: React.FC = () => {
   }, [gallery]);
 
   // 加入画廊
-
   const handleJoin = async (id: number, status: boolean) => {
     try {
       const res = await updateGalleryJoinRequest(id, status);
