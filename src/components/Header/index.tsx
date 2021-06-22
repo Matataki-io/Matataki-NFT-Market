@@ -225,7 +225,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             <StyledHeaderLeft>
               <Link href='/'>
                 <StyledHeaderLogo>
-                  <h1>Maven NFT</h1>
+                  <h1>MTTK NFT</h1>
                 </StyledHeaderLogo>
               </Link>
               {isMobile ? null : (
