@@ -8,6 +8,13 @@ const backendClient = axios.create({
   withCredentials: false,
 });
 
+export const matatakiApiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_MATATAKI_API,
+  timeout: 1000 * 60,
+  headers: {},
+  withCredentials: false,
+});
+
 const mockClient = axios.create({
   baseURL: 'http://localhost:4000/api',
   timeout: 1000 * 60,
