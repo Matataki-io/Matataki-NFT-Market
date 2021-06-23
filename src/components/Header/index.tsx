@@ -87,7 +87,6 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   // 链接钱包
   const connectWallet = useCallback(async () => {
     await wallet.connect('injected');
-    setConnect(true);
   }, [wallet]);
 
   useMount(() => {
@@ -99,15 +98,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   // 链接钱包，并且没有注册显示信息框
   useEffect(() => {
     if (connect && wallet.status === 'connected') {
-      // 如果正在查询数据停止
-      if (registeredLoading) return;
-      // 查询完是否注册
-      if (isRegistered) {
-        if (!getCookie('token')) loginWithSignature();
-      } else {
-        router.push('/register/collector');
-      }
-      setConnect(false);
+      //
     }
   }, [
     wallet.status,
@@ -140,7 +131,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         <Link href='/community'>
           <a>Community</a>
         </Link>
-        {
+        {/* {
           // do not just `ts-ignore`, use expression to do typesafe check~
           // need to have user data
           // if user is super admin
@@ -150,7 +141,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               Management
             </Link>
           )
-        }
+        } */}
       </StyledHeaderNav>
     );
   };
@@ -166,7 +157,11 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             {isRegistered ? (
               <UserDropdown>
                 <StyledHeaderUserdorpdownContainer>
-                  <Button color='gray'>{`@${userDataByWallet?.username}`}</Button>
+                  <Button color='gray'>{`@${
+                    userDataByWallet?.nickname ||
+                    userDataByWallet?.username ||
+                    shortedAccount
+                  }`}</Button>
                 </StyledHeaderUserdorpdownContainer>
               </UserDropdown>
             ) : (

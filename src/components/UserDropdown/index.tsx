@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Menu, Dropdown, Avatar, message } from 'antd';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import styles from './index.module.scss';
 import { ReactSVG } from 'react-svg';
 import { useWallet } from 'use-wallet';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { removeCookie } from '../../utils/cookie';
+import { shortedWalletAccount } from '../../utils/index';
 import { useLogin } from '../../hooks/useLogin';
 
 import IconShare from '../../assets/icons/share.svg';
@@ -23,28 +23,34 @@ interface Props {
 
 const UserDropdown: React.FC<Props> = ({ children }) => {
   const wallet = useWallet();
-  const router = useRouter();
   const { userDataByWallet } = useLogin();
 
   const disconnect = () => {
-    removeCookie('token');
+    // removeCookie('token');
     wallet.reset();
   };
+
+  // user avatar
+  const avatarMemo: string = useMemo(() => {
+    return userDataByWallet.avatar
+      ? `${process.env.NEXT_PUBLIC_SSIMG}${userDataByWallet.avatar}`
+      : '';
+  }, [userDataByWallet]);
 
   const menu = () => {
     return (
       <Menu>
         <Menu.Item>
-          <Link href={`/${userDataByWallet?.username}`}>
+          <Link href={`/${wallet.account}`}>
             <a>
               <StyledItem>
-                <Avatar
-                  size={40}
-                  icon={<UserOutlined />}
-                  src={userDataByWallet?.avatar}
-                />
+                <Avatar size={40} icon={<UserOutlined />} src={avatarMemo} />
                 <StyledItemUser>
-                  <div>{userDataByWallet?.username}</div>
+                  <div>
+                    {userDataByWallet?.nickname ||
+                      userDataByWallet?.username ||
+                      shortedWalletAccount(wallet.account)}
+                  </div>
                   <div>See Profile</div>
                 </StyledItemUser>
               </StyledItem>
@@ -62,7 +68,7 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
             </StyledItem>
           </a>
         </Menu.Item>
-        {/* <Menu.Item>
+        <Menu.Item>
           <CopyToClipboard
             text={`Invite a Creator：${window.location.href}`}
             onCopy={() => message.info('复制成功，立即分享！')}>
@@ -82,7 +88,7 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
               Help & Support
             </StyledItem>
           </a>
-        </Menu.Item> */}
+        </Menu.Item>
         {wallet.status === 'connected' ? (
           <Menu.Item>
             <StyledItem onClick={() => disconnect()}>
