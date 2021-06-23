@@ -2,7 +2,7 @@ import { Button } from '@geist-ui/react';
 import React, { useCallback, useState, useEffect } from 'react';
 
 import { useWallet } from 'use-wallet';
-import { MatatakiApi } from '../../backend/matatakiApi';
+import { getProfileByWallet } from '../../backend/matatakiApi';
 import { MatatakiUserProfile } from '../../types/MatatakiType';
 
 export default function GetProfilePage() {
@@ -11,7 +11,7 @@ export default function GetProfilePage() {
 
   const getProfile = useCallback(
     async (account: string) => {
-      const result = await MatatakiApi.getProfileByWallet(account);
+      const result = await getProfileByWallet(account);
       setProfile(result);
     },
     [setProfile]

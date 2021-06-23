@@ -10,6 +10,7 @@ import { useAppSelector } from '../../hooks/redux';
 import { NFTProps } from '../../../next-env';
 import NFTSimple from '../../components/NFTSimple';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useWallet } from 'use-wallet';
 
 import { useLogin } from '../../hooks/useLogin';
 import { getUser, getUserTags } from '../../backend/user';
@@ -20,6 +21,7 @@ import {
 } from '../../backend/media';
 import { User } from '../../types/User.types';
 import { BidLog } from '../../types/Bid';
+import { MatatakiUserProfile } from '../../types/MatatakiType';
 import ArtworksCarousel from '../../components/ArtworksCarouselUser';
 
 import IconTelegram from '../../assets/icons/telegram.svg';
@@ -31,24 +33,24 @@ import IconFacebook from '../../assets/icons/facebook.svg';
 import useSWR from 'swr';
 import GalleryCard from '../../components/GalleryCard';
 import { Gallery } from '../../types/Gallery';
+import { shortedWalletAccount } from '../../utils/index';
+import { getProfileByWallet } from '../../backend/matatakiApi';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
 }
 
 const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
+  const wallet = useWallet();
+
   const router = useRouter();
   const { username } = router.query;
-  const [userInfo, setUserInfo] = useState<User | any>({
+  const [userInfo, setUserInfo] = useState<MatatakiUserProfile>({
     avatar: '',
     nickname: '',
+    siteLink: '',
     username: '',
-    telegram: '',
-    twitter: '',
-    email: '',
-    medium: '',
-    facebook: '',
-  });
+  } as MatatakiUserProfile);
   const [isVerifiedUser, setIsVerifiedUser] = useState(false);
   const [isMyself, setIsMyself] = useState(false);
   const appUserInfo = useAppSelector(state => state.userInfo);
@@ -69,21 +71,28 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
 
   const keyMessage = 'fetchUser';
 
-  const { data: galleryOwner, error: galleryError } = useSWR<User, any>(
-    username ? `/user/@${username}/ownedGalleries` : null,
-    backendSWRFetcher
-  );
+  // const { data: galleryOwner, error: galleryError } = useSWR<User, any>(
+  //   username ? `/user/@${username}/ownedGalleries` : null,
+  //   backendSWRFetcher
+  // );
 
   const [tagsList, setTagsList] = useState<Array<string>>([]);
+
+  // user avatar
+  const avatarMemo: string = useMemo(() => {
+    return userInfo.avatar
+      ? `${process.env.NEXT_PUBLIC_SSIMG}${userInfo.avatar}`
+      : '';
+  }, [userInfo]);
 
   // 获取用户信息
   useEffect(() => {
     const fetchUserInfoData = async () => {
       if (typeof username !== 'string') return;
       try {
-        const userInfo = await getUser(username as string);
+        const userInfo = await getProfileByWallet(username as string);
         console.log('userInfo', userInfo);
-        if (userDataByWallet && userDataByWallet.username === username) {
+        if (userDataByWallet && wallet.account === username) {
           setIsMyself(true);
         }
         setUserInfo(userInfo);
@@ -152,7 +161,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     const fetchAll = async () => {
       const userInfo = await fetchUserInfoData();
       if (!isEmpty(userInfo)) {
-        await fetchNFTListData(userInfo!);
+        // await fetchNFTListData(userInfo!);
       }
     };
 
@@ -167,65 +176,65 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
       const list = data.tags.map(i => i.name);
       setTagsList(list);
     };
-    fetch();
+    // fetch();
   }, [userInfo, username]);
 
   // user info icon list
-  const IconList = useMemo(() => {
-    let list = [
-      {
-        name: userInfo?.telegram,
-        icon: IconTelegram,
-      },
-      {
-        name: userInfo?.twitter,
-        icon: IconTwitter,
-      },
-      {
-        name: userInfo?.email,
-        icon: IconEmail,
-      },
-      {
-        name: userInfo?.medium,
-        icon: IconMedium,
-      },
-      {
-        name: userInfo?.facebook,
-        icon: IconFacebook,
-      },
-    ];
-    return list;
-  }, [userInfo]);
+  // const IconList = useMemo(() => {
+  //   let list = [
+  //     {
+  //       name: userInfo?.telegram,
+  //       icon: IconTelegram,
+  //     },
+  //     {
+  //       name: userInfo?.twitter,
+  //       icon: IconTwitter,
+  //     },
+  //     {
+  //       name: userInfo?.email,
+  //       icon: IconEmail,
+  //     },
+  //     {
+  //       name: userInfo?.medium,
+  //       icon: IconMedium,
+  //     },
+  //     {
+  //       name: userInfo?.facebook,
+  //       icon: IconFacebook,
+  //     },
+  //   ];
+  //   return list;
+  // }, [userInfo]);
 
   // user about icon list
-  const userAboutIconList = useMemo(() => {
-    return [
-      {
-        name: userInfo?.about?.telegram,
-        icon: IconTelegram,
-      },
-      {
-        name: userInfo?.about?.twitter,
-        icon: IconTwitter,
-      },
-      {
-        name: userInfo?.about?.medium,
-        icon: IconMedium,
-      },
-      {
-        name: userInfo?.about?.facebook,
-        icon: IconFacebook,
-      },
-      {
-        name: userInfo?.about?.discord,
-        icon: IconDiscord,
-      },
-      {
-        name: userInfo?.about?.email,
-        icon: IconEmail,
-      },
-    ];
-  }, [userInfo]);
+  // const userAboutIconList = useMemo(() => {
+  //   return [
+  //     {
+  //       name: userInfo?.about?.telegram,
+  //       icon: IconTelegram,
+  //     },
+  //     {
+  //       name: userInfo?.about?.twitter,
+  //       icon: IconTwitter,
+  //     },
+  //     {
+  //       name: userInfo?.about?.medium,
+  //       icon: IconMedium,
+  //     },
+  //     {
+  //       name: userInfo?.about?.facebook,
+  //       icon: IconFacebook,
+  //     },
+  //     {
+  //       name: userInfo?.about?.discord,
+  //       icon: IconDiscord,
+  //     },
+  //     {
+  //       name: userInfo?.about?.email,
+  //       icon: IconEmail,
+  //     },
+  //   ];
+  // }, [userInfo]);
 
   const collectionContainer = () => {
     return (
@@ -310,7 +319,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
               <p className='gallery-name'>
                 {userInfo?.about.bannerDescription}
               </p>
-              {userAboutIconList.map((i: any) =>
+              {[].map((i: any) =>
                 i.name ? (
                   <StyledAboutItem>
                     <ReactSVG className='icon' src={i.icon} />
@@ -331,7 +340,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         <StyledItem>
           <StyledItemTitle>My Gallery</StyledItemTitle>
           <StyledGallery>
-            {galleryOwner?.ownedGalleries.map((gallery: Gallery) => (
+            {[].map((gallery: Gallery) => (
               <Link key={gallery.id} href={`/gallery/${gallery.id}`}>
                 <a target='_blank'>
                   <GalleryCard {...gallery}></GalleryCard>
@@ -348,21 +357,22 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     <StyledWrapper>
       <StyledHead>
         <StyledHeadUser>
-          <Avatar icon={<UserOutlined />} src={userInfo.avatar} size={66} />
+          <div style={{ textAlign: 'center' }}>
+            <Avatar icon={<UserOutlined />} src={avatarMemo} size={100} />
+          </div>
+
           <StyledHeadUserInfo>
-            {userInfo.nickname || userInfo.username ? (
-              <>
-                <h1>
-                  {userInfo.nickname}({userInfo.username})
-                </h1>
-                <p>{userInfo.bio || 'Not...'}</p>
-              </>
-            ) : null}
+            <h1>
+              {userInfo?.nickname ||
+                userInfo?.username ||
+                shortedWalletAccount(wallet.account)}
+            </h1>
+            <p>{userInfo.introduction || 'Not...'}</p>
           </StyledHeadUserInfo>
         </StyledHeadUser>
         <StyledHeadRight>
-          <StyledHeadIcon>
-            {IconList.map((i: any, idx: number) =>
+          {/* <StyledHeadIcon>
+            {[].map((i: any, idx: number) =>
               i.name ? (
                 <CopyToClipboard
                   key={idx}
@@ -379,20 +389,20 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
                 <Tag key={idx}>{i}</Tag>
               ))}
             </StyledHeadTags>
-          ) : null}
+          ) : null} */}
           {isMyself ? (
             <StyledHeadEdit>
-              <Button
-                onClick={() => router.push(`/${username}/edit`)}
-                size='small'>
-                EDIT PROFILE
-              </Button>
+              <Link href={`${process.env.NEXT_PUBLIC_MATATAKI}/setting`}>
+                <a target='_blank'>
+                  <Button>Edit</Button>
+                </a>
+              </Link>
             </StyledHeadEdit>
           ) : null}
         </StyledHeadRight>
       </StyledHead>
       <StyledLine />
-      {!isEmpty(galleryOwner?.ownedGalleries) && galleryContainer()}
+      {!isEmpty([]) && galleryContainer()}
       {userInfo?.role === 'COLLECTOR' ? (
         collectionContainer()
       ) : userInfo?.role === 'ARTIST' ? (
@@ -443,39 +453,18 @@ const StyledTitle = styled.div`
   margin: 24px 0 0 0;
 `;
 const StyledHead = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
   padding: 48px 0;
 `;
-const StyledHeadUser = styled.div`
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  @media screen and (max-width: 678px) {
-    justify-content: center;
-    flex-direction: column;
-    width: 100%;
-  }
-`;
+const StyledHeadUser = styled.div``;
 const StyledHeadUserInfo = styled.div`
-  margin: 0 0 0 15px;
-  position: relative;
-  top: 10px;
-  @media screen and (max-width: 678px) {
-    margin: 10px 0;
-    top: 0;
-    text-align: center;
-  }
-
   h1 {
     font-size: 34px;
     font-weight: bold;
     color: #333333;
-    line-height: 1;
+    line-height: 1.2;
     padding: 0;
-    margin: 0;
+    margin: 20px 0;
+    text-align: center;
     @media screen and (max-width: 678px) {
       font-size: 20px;
     }
@@ -487,7 +476,10 @@ const StyledHeadUserInfo = styled.div`
     color: #333333;
     line-height: 1.2;
     padding: 0;
-    margin: 6px 0 0 0;
+    max-width: 800px;
+    text-align: center;
+    margin: 0 auto;
+    word-break: keep-all;
   }
 `;
 const StyledHeadRight = styled.div`
