@@ -17,7 +17,7 @@ const backendClient = axios.create({
 });
 
 export const matatakiApiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_MATATAKI_API,
+  baseURL: '/api/matataki/',
   timeout: 1000 * 60,
   withCredentials: false,
   headers: { 'Cache-Control': 'no-cache' },
