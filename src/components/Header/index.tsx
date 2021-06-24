@@ -83,10 +83,11 @@ const HeaderComponents: React.FC<HeaderProps> = ({
       wallet.connect('injected'); // 自动链接 不用签名
     }
     console.log(userDataByWallet);
-  }, [wallet]);
+  }, [wallet, userDataByWallet]);
   // 链接钱包
   const connectWallet = useCallback(async () => {
     await wallet.connect('injected');
+    setConnect(true);
   }, [wallet]);
 
   useMount(() => {
@@ -98,7 +99,14 @@ const HeaderComponents: React.FC<HeaderProps> = ({
   // 链接钱包，并且没有注册显示信息框
   useEffect(() => {
     if (connect && wallet.status === 'connected') {
-      //
+      // 如果正在查询数据停止
+      if (registeredLoading) return;
+
+      if (!getCookie('token')) {
+        loginWithSignature();
+      }
+
+      setConnect(false);
     }
   }, [
     wallet.status,
