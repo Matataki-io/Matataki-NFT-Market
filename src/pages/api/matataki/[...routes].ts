@@ -33,26 +33,32 @@ export default async function handler(
   const url = '/' + (routes as string[]).join('/');
   console.info('url', url);
   let response: AxiosResponse;
+  const buildHeaders: Record<string, any> = {};
+  if (proxyReq.headers['x-access-token']) {
+    buildHeaders['x-access-token'] = proxyReq.headers['x-access-token'];
+  }
+
+  console.info('proxyReq.headers: ', proxyReq.headers.host);
   try {
     if (['GET', 'HEAD', 'DELETE'].includes(method)) {
       // Works with GET / HEAD / DELETE
       const lowerCased = method.toLowerCase() as 'get' | 'head' | 'delete';
       response = await matatakiApiClient[lowerCased](url, {
-        // this caused SSL error
-        // headers: proxyReq.headers,
+        headers: buildHeaders,
         data: proxyReq.body,
       });
     } else {
       // Works with PATCH / POST / PUT
       const lowerCased = method.toLowerCase() as 'patch' | 'post' | 'put';
       response = await matatakiApiClient[lowerCased](url, proxyReq.body, {
-        // headers: proxyReq.headers,
+        headers: buildHeaders,
       });
     }
     // await for the result
     // console.info('request', request);
     // const response = await request;
   } catch (error) {
+    console.error('error: ', error);
     if (axios.isAxiosError(error)) {
       return proxyRes
         .status(error.response?.status || 400)
