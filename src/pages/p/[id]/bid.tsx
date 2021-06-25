@@ -84,7 +84,9 @@ export default function BidPage() {
   );
 
   // my bid token profile
-  const { tokenProfile: tokenMyBidProfile } = useERC20(myBid?.currency);
+  const { tokenProfile: tokenMyBidProfile } = useERC20(
+    myBid ? myBid?.currency : ''
+  );
 
   // 处理 选择 Token 事件
   const handlerSelectCurrentToken = (token: StandardTokenProfile) => {
