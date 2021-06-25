@@ -77,8 +77,7 @@ const TokenListSelectComponents = ({
         {tokenListCurrent.map((i, idx: number) => (
           <StyledItemLi
             key={`${i.address}`}
-            onClick={e => {
-              e.stopPropagation();
+            onClick={() => {
               handleItemClick(i);
             }}>
             <Avatar
