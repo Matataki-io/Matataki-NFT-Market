@@ -382,10 +382,8 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
           ) : null}
           {isMyself ? (
             <StyledHeadEdit>
-              <Button
-                onClick={() => router.push(`/${username}/edit`)}
-                size='small'>
-                EDIT PROFILE
+              <Button onClick={() => router.push(`/${username}/edit`)}>
+                Edit
               </Button>
             </StyledHeadEdit>
           ) : null}
