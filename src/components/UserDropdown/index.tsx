@@ -62,7 +62,7 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
             </StyledItem>
           </a>
         </Menu.Item>
-        {/* <Menu.Item>
+        <Menu.Item>
           <CopyToClipboard
             text={`Invite a Creator：${window.location.href}`}
             onCopy={() => message.info('复制成功，立即分享！')}>
@@ -82,7 +82,7 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
               Help & Support
             </StyledItem>
           </a>
-        </Menu.Item> */}
+        </Menu.Item>
         {wallet.status === 'connected' ? (
           <Menu.Item>
             <StyledItem onClick={() => disconnect()}>

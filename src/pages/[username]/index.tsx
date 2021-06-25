@@ -488,6 +488,7 @@ const StyledHeadUserInfo = styled.div`
     line-height: 1.2;
     padding: 0;
     margin: 6px 0 0 0;
+    max-width: 600px;
   }
 `;
 const StyledHeadRight = styled.div`
