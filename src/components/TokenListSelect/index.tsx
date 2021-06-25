@@ -75,7 +75,12 @@ const TokenListSelectComponents = ({
           ''
         )}
         {tokenListCurrent.map((i, idx: number) => (
-          <StyledItemLi key={`${i.address}`} onClick={() => handleItemClick(i)}>
+          <StyledItemLi
+            key={`${i.address}`}
+            onClick={e => {
+              e.stopPropagation();
+              handleItemClick(i);
+            }}>
             <Avatar
               size={24}
               icon={<UserOutlined />}
@@ -91,7 +96,9 @@ const TokenListSelectComponents = ({
 
                 <CopyToClipboard
                   text={i.address}
-                  onCopy={() => message.info('复制成功')}>
+                  onCopy={() => {
+                    message.info('复制成功');
+                  }}>
                   <CopyOutlined />
                 </CopyToClipboard>
               </StyledItemAddress>
