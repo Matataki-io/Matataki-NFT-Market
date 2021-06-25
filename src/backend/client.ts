@@ -26,6 +26,15 @@ export const matatakiApiClient = axios.create({
   ),
 });
 
+export const apiClient = axios.create({
+  timeout: 1000 * 60,
+  withCredentials: false,
+  headers: { 'Cache-Control': 'no-cache' },
+  adapter: throttleAdapterEnhancer(
+    cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, options)
+  ),
+});
+
 // Just copy from matataki-fe
 backendClient.interceptors.request.use(
   config => {

@@ -1,8 +1,19 @@
 import React, { useState, CSSProperties, useEffect } from 'react';
-import { Grid, Input, Select, Text } from '@geist-ui/react';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Grid } from '@geist-ui/react';
 import { useRouter } from 'next/router';
-import { InputNumber, Spin, Button, message, notification } from 'antd';
+import {
+  InputNumber,
+  Spin,
+  Button,
+  message,
+  notification,
+  Avatar,
+  Row,
+  Col,
+  Space,
+  Typography,
+} from 'antd';
+import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import { isEmpty } from 'lodash';
 import { ArtView } from '../../../components/Bid/ArtView';
 import styled from 'styled-components';
@@ -19,6 +30,11 @@ import NFTPreview from '../../../components/NFTPreview/index';
 import { getMediaById, getMediaMetadata } from '../../../backend/media';
 import { ZERO_ADDRESS } from '../../../constant';
 import { useBoolean } from 'ahooks';
+import TokenListComponents from '../../../components/TokenListSelect';
+import { StandardTokenProfile } from '../../../types/TokenList';
+import { useERC20 } from '../../../hooks/useERC20';
+
+const { Title, Text } = Typography;
 
 export default function AskPage() {
   const router = useRouter();
@@ -28,10 +44,14 @@ export default function AskPage() {
     Number(id)
   );
   const mediaContract = useMedia();
-  const handler = (val: string | string[]) => {
-    setCurrency(val as string);
-  };
   const [currency, setCurrency] = useState<string>('');
+  const [currentToken, setCurrentToken] = useState<StandardTokenProfile>(
+    {} as StandardTokenProfile
+  );
+
+  // modal 显示/隐藏
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const [amount, setAmount] = useState('0');
   const [mediaData, setMediaData] = useState<{ [key: string]: any }>({
     media: {
@@ -43,6 +63,18 @@ export default function AskPage() {
   });
 
   const [isSigning, signingActions] = useBoolean(false);
+
+  // ask token profile
+  const { tokenProfile: tokenAskProfile } = useERC20(
+    profile.currentAsk.currency
+  );
+
+  // 处理 选择 Token 事件
+  const handlerSelectCurrentToken = (token: StandardTokenProfile) => {
+    console.log('token', token);
+    setCurrency(token.address);
+    setCurrentToken(token);
+  };
 
   const openNotification = ({
     description,
@@ -132,7 +164,7 @@ export default function AskPage() {
   if (!isMeTheOwner && wallet.status === 'connected') {
     return (
       <StyledPermissions>
-        <Text h3>Sorry, but...</Text>
+        <Title level={3}>Sorry, but...</Title>
         <Text>
           We detected that you are not the owner. Which in this case that you
           cannot set a ask on this token.
@@ -168,7 +200,7 @@ export default function AskPage() {
       </Grid>
       <Grid xs={24} md={12}>
         <BiddingBox>
-          <Text h3>Your ask</Text>
+          <Title level={3}>Your ask</Title>
 
           {isAskExist && (
             <GreyCard>
@@ -176,44 +208,52 @@ export default function AskPage() {
               <p className='value'>
                 {utils.formatUnits(
                   profile.currentAsk.amount,
-                  getDecimalOf(profile.currentAsk.currency)
-                )}
-                {' ' + getSymbolOf(profile.currentAsk.currency)}
+                  tokenAskProfile.decimals
+                )}{' '}
+                {tokenAskProfile?.symbol}({tokenAskProfile?.name})
               </p>
               <Button onClick={() => removeAsk()}>Remove Ask</Button>
             </GreyCard>
           )}
 
-          <StyledBidsInput>
-            <Select
-              placeholder='Bidding Currency'
-              onChange={handler}
-              width='100%'
-              className='select-token'>
-              {Object.keys(tokens!).map(symbol => (
-                <Select.Option value={tokens![symbol]} key={symbol}>
-                  {symbol}
-                </Select.Option>
-              ))}
-            </Select>
-            <InputNumber<string>
-              placeholder='0.00'
-              className='input-token'
-              value={amount}
-              onChange={setAmount}
-              style={FullWidth}
-              formatter={value =>
-                utils.formatUnits(value as string, getDecimalOf(currency))
-              }
-              parser={value =>
-                utils
-                  .parseUnits(value as string, getDecimalOf(currency))
-                  .toString()
-              }
-              stringMode
-              min='0'
-            />
-          </StyledBidsInput>
+          <Row>
+            <Col span={12}>
+              <Space>
+                {!isEmpty(currentToken) ? (
+                  <>
+                    <Avatar
+                      size={30}
+                      icon={<UserOutlined />}
+                      src={currentToken.logoURI}
+                    />
+                    <Text strong>{currentToken.symbol}</Text>
+                  </>
+                ) : (
+                  ''
+                )}
+                <Button onClick={() => setIsModalVisible(true)}>Select</Button>
+              </Space>
+            </Col>
+            <Col span={12}>
+              <InputNumber<string>
+                placeholder='0.00'
+                className='input-token'
+                value={amount}
+                onChange={setAmount}
+                style={FullWidth}
+                formatter={value =>
+                  utils.formatUnits(value as string, getDecimalOf(currency))
+                }
+                parser={value =>
+                  utils
+                    .parseUnits(value as string, getDecimalOf(currency))
+                    .toString()
+                }
+                stringMode
+                min='0'
+              />
+            </Col>
+          </Row>
 
           <ActionsBox>
             <StyledBackBtn
@@ -236,6 +276,10 @@ export default function AskPage() {
           </ActionsBox>
         </BiddingBox>
       </Grid>
+      <TokenListComponents
+        setCurrentToken={handlerSelectCurrentToken}
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}></TokenListComponents>
     </StyledWrapper>
   );
 }
@@ -299,14 +343,4 @@ const StyledBackBtn = styled(Button)`
 
 const StyledWrapper = styled(Grid.Container)`
   flex: 1;
-`;
-
-const StyledBidsInput = styled.div`
-  display: flex;
-  .select-token {
-    margin-right: 5px;
-  }
-  .input-token {
-    margin-left: 5px;
-  }
 `;

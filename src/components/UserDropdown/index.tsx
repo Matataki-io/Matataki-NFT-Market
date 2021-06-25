@@ -1,15 +1,15 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Menu, Dropdown, Avatar, message } from 'antd';
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import styles from './index.module.scss';
 import { ReactSVG } from 'react-svg';
 import { useWallet } from 'use-wallet';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { removeCookie } from '../../utils/cookie';
-import { shortedWalletAccount } from '../../utils/index';
 import { useLogin } from '../../hooks/useLogin';
 
 import IconShare from '../../assets/icons/share.svg';
@@ -23,34 +23,28 @@ interface Props {
 
 const UserDropdown: React.FC<Props> = ({ children }) => {
   const wallet = useWallet();
+  const router = useRouter();
   const { userDataByWallet } = useLogin();
 
   const disconnect = () => {
-    // removeCookie('token');
+    removeCookie('token');
     wallet.reset();
   };
-
-  // user avatar
-  const avatarMemo: string = useMemo(() => {
-    return userDataByWallet.avatar
-      ? `${process.env.NEXT_PUBLIC_SSIMG}${userDataByWallet.avatar}`
-      : '';
-  }, [userDataByWallet]);
 
   const menu = () => {
     return (
       <Menu>
         <Menu.Item>
-          <Link href={`/${wallet.account}`}>
+          <Link href={`/${userDataByWallet?.username}`}>
             <a>
               <StyledItem>
-                <Avatar size={40} icon={<UserOutlined />} src={avatarMemo} />
+                <Avatar
+                  size={40}
+                  icon={<UserOutlined />}
+                  src={userDataByWallet?.avatar}
+                />
                 <StyledItemUser>
-                  <div>
-                    {userDataByWallet?.nickname ||
-                      userDataByWallet?.username ||
-                      shortedWalletAccount(wallet.account)}
-                  </div>
+                  <div>{userDataByWallet?.username}</div>
                   <div>See Profile</div>
                 </StyledItemUser>
               </StyledItem>

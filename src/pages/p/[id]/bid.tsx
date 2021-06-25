@@ -8,8 +8,12 @@ import {
   Typography,
   message,
   notification,
+  Row,
+  Col,
+  Avatar,
+  Space,
 } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { isEmpty } from 'lodash';
 import { currentSupportedTokens as tokens } from '../../../constant/contracts';
@@ -31,8 +35,10 @@ import { ZERO_ADDRESS } from '../../../constant';
 import { useMyBid } from '../../../hooks/useMyBid';
 import { useBoolean } from 'ahooks';
 import { WETHHelpTip } from '../../../components/Bid/WethHelpTip';
+import TokenListComponents from '../../../components/TokenListSelect';
+import { StandardTokenProfile } from '../../../types/TokenList';
 
-const { Paragraph, Title } = Typography;
+const { Paragraph, Title, Text } = Typography;
 
 export default function BidPage() {
   const router = useRouter();
@@ -40,10 +46,11 @@ export default function BidPage() {
   const { id } = router.query;
   const mediaContract = useMedia();
   const marketContract = useMarket();
-  const handler = (val: string | string[]) => {
-    setCurrency(val as string);
-  };
+
   const { profile, isMeTheOwner, isAskExist } = useMediaToken(Number(id));
+  const [currentToken, setCurrentToken] = useState<StandardTokenProfile>(
+    {} as StandardTokenProfile
+  );
   const [currency, setCurrency] = useState<string>('');
   const [amount, setAmount] = useState('0');
   const [sellOnShare, setSellOnShare] = useState(0);
@@ -67,6 +74,26 @@ export default function BidPage() {
       mimeType: '',
     },
   });
+
+  // modal 显示/隐藏
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
+  // bid token profile
+  const { tokenProfile: tokenBidProfile } = useERC20(
+    profile.currentAsk.currency
+  );
+
+  // my bid token profile
+  const { tokenProfile: tokenMyBidProfile } = useERC20(
+    myBid ? myBid?.currency : ''
+  );
+
+  // 处理 选择 Token 事件
+  const handlerSelectCurrentToken = (token: StandardTokenProfile) => {
+    console.log('token', token);
+    setCurrency(token.address);
+    setCurrentToken(token);
+  };
 
   const openNotification = ({
     description,
@@ -214,9 +241,9 @@ export default function BidPage() {
               <p className='value'>
                 {utils.formatUnits(
                   profile.currentAsk.amount,
-                  getDecimalOf(profile.currentAsk.currency)
-                )}
-                {' ' + getSymbolOf(profile.currentAsk.currency)}
+                  tokenBidProfile.decimals
+                )}{' '}
+                {tokenBidProfile?.symbol}({tokenBidProfile?.name})
               </p>
             </GreyCard>
           )}
@@ -225,8 +252,8 @@ export default function BidPage() {
             <GreyCard>
               <p className='title'>MY CURRENT BID</p>
               <p className='value'>
-                {utils.formatUnits(myBid.amount, getDecimalOf(myBid.currency))}
-                {' ' + getSymbolOf(myBid.currency)}
+                {utils.formatUnits(myBid.amount, tokenMyBidProfile.decimals)}{' '}
+                {tokenMyBidProfile?.symbol}({tokenMyBidProfile?.name})
               </p>
               <Paragraph>
                 You will get the refund of the previous bid, if you put on a new
@@ -238,36 +265,47 @@ export default function BidPage() {
 
           <StyledBidsItem>
             <Title level={3}>Your bid</Title>
-            <StyledBidsInput>
-              <Select
-                placeholder='Bidding Currency'
-                onChange={handler}
-                width='100%'
-                className='select-token'>
-                {Object.keys(tokens!).map(symbol => (
-                  <Select.Option value={tokens![symbol]} key={symbol}>
-                    {symbol}
-                  </Select.Option>
-                ))}
-              </Select>
-              <InputNumber<string>
-                placeholder='0.00'
-                className='input-token'
-                value={amount}
-                onChange={setAmount}
-                style={FullWidth}
-                formatter={value =>
-                  utils.formatUnits(value as string, tokenProfile.decimals)
-                }
-                parser={value =>
-                  utils
-                    .parseUnits(value as string, tokenProfile.decimals)
-                    .toString()
-                }
-                stringMode
-                min='0'
-              />
-            </StyledBidsInput>
+            <Row>
+              <Col span={12}>
+                <Space>
+                  {!isEmpty(currentToken) ? (
+                    <>
+                      <Avatar
+                        size={30}
+                        icon={<UserOutlined />}
+                        src={currentToken.logoURI}
+                      />
+                      <Text strong>{currentToken.symbol}</Text>
+                    </>
+                  ) : (
+                    ''
+                  )}
+                  <Button onClick={() => setIsModalVisible(true)}>
+                    Select
+                  </Button>
+                </Space>
+              </Col>
+
+              <Col span={12}>
+                <InputNumber<string>
+                  placeholder='0.00'
+                  className='input-token'
+                  value={amount}
+                  onChange={setAmount}
+                  style={FullWidth}
+                  formatter={value =>
+                    utils.formatUnits(value as string, tokenProfile.decimals)
+                  }
+                  parser={value =>
+                    utils
+                      .parseUnits(value as string, tokenProfile.decimals)
+                      .toString()
+                  }
+                  stringMode
+                  min='0'
+                />
+              </Col>
+            </Row>
             {currency && <p className='balance'>Balance: {formattedBalance}</p>}
             {/* 
               { 
@@ -334,6 +372,10 @@ export default function BidPage() {
           </ActionsBox>
         </BiddingBox>
       </Grid>
+      <TokenListComponents
+        setCurrentToken={handlerSelectCurrentToken}
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}></TokenListComponents>
     </StyledWrapper>
   );
 }
