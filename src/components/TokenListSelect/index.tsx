@@ -10,9 +10,17 @@ import { StandardTokenProfile } from '../../types/TokenList';
 import { isEmpty } from 'lodash';
 import { shortedWalletAccount } from '../../utils/index';
 
-const TokenListSelectComponents = () => {
-  // modal 显示/隐藏
-  const [isModalVisible, setIsModalVisible] = useState(false);
+interface Props {
+  setCurrentToken: (token: StandardTokenProfile) => void;
+  isModalVisible: boolean;
+  setIsModalVisible: (val: boolean) => void;
+}
+
+const TokenListSelectComponents = ({
+  setCurrentToken,
+  isModalVisible,
+  setIsModalVisible,
+}: Props) => {
   const [valueSelect, setValueSelect] = useState<'Unisave' | 'MatatakiBsc'>(
     'Unisave'
   ); // 同步于 TokenListURL key
@@ -23,15 +31,6 @@ const TokenListSelectComponents = () => {
     setSearchInputFn,
     isContractAddress,
   } = useTokenList();
-  const [currentToken, setCurrentToken] = useState<StandardTokenProfile>(
-    {} as StandardTokenProfile
-  );
-
-  console.log('tokenListCurrent', tokenListCurrent);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
 
   const handleOk = () => {
     setIsModalVisible(false);
@@ -120,45 +119,22 @@ const TokenListSelectComponents = () => {
   };
 
   return (
-    <StyledWrapper>
-      {!isEmpty(currentToken) ? (
-        <>
-          <Avatar
-            size={64}
-            icon={<UserOutlined />}
-            src={currentToken.logoURI}
-          />
-          <span>{currentToken.symbol}</span>
-        </>
-      ) : (
-        ''
-      )}
-
-      <Button type='primary' onClick={showModal}>
-        Select
-      </Button>
-      <Modal
-        title='Select Token'
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null}>
-        <Input
-          placeholder='Search name or paste address'
-          onChange={onChangeSearchInput}
-          allowClear
-        />
-        {Item()}
-        {tokenListSelect()}
-      </Modal>
-    </StyledWrapper>
+    <Modal
+      title='Select Token'
+      visible={isModalVisible}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      footer={null}>
+      <Input
+        placeholder='Search name or paste address'
+        onChange={onChangeSearchInput}
+        allowClear
+      />
+      {Item()}
+      {tokenListSelect()}
+    </Modal>
   );
 };
-
-const StyledWrapper = styled.div`
-  height: 1000px;
-  padding: 100px;
-`;
 
 // item start
 const StyledItem = styled.ul`
