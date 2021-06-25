@@ -83,7 +83,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
       wallet.connect('injected'); // 自动链接 不用签名
     }
     console.log(userDataByWallet);
-  }, [wallet, userDataByWallet]);
+  }, [wallet]);
   // 链接钱包
   const connectWallet = useCallback(async () => {
     await wallet.connect('injected');
@@ -101,11 +101,12 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     if (connect && wallet.status === 'connected') {
       // 如果正在查询数据停止
       if (registeredLoading) return;
-
-      if (!getCookie('token')) {
-        loginWithSignature();
+      // 查询完是否注册
+      if (isRegistered) {
+        if (!getCookie('token')) loginWithSignature();
+      } else {
+        router.push('/register/collector');
       }
-
       setConnect(false);
     }
   }, [
@@ -139,7 +140,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         <Link href='/community'>
           <a>Community</a>
         </Link>
-        {/* {
+        {
           // do not just `ts-ignore`, use expression to do typesafe check~
           // need to have user data
           // if user is super admin
@@ -149,7 +150,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               Management
             </Link>
           )
-        } */}
+        }
       </StyledHeaderNav>
     );
   };
@@ -165,11 +166,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             {isRegistered ? (
               <UserDropdown>
                 <StyledHeaderUserdorpdownContainer>
-                  <Button color='gray'>{`@${
-                    userDataByWallet?.nickname ||
-                    userDataByWallet?.username ||
-                    shortedAccount
-                  }`}</Button>
+                  <Button color='gray'>{`@${userDataByWallet?.username}`}</Button>
                 </StyledHeaderUserdorpdownContainer>
               </UserDropdown>
             ) : (
@@ -181,7 +178,13 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             Connect Wallet
           </Button>
         )}
-        {wallet.status === 'connected' ? (
+        {wallet.status === 'connected' &&
+        isRegistered &&
+        (userDataByWallet?.role
+          ? [UserRole.SuperAdmin, UserRole.Artist].includes(
+              userDataByWallet.role
+            )
+          : false) ? (
           <Button color='dark' onClick={() => setIsCreate(true)}>
             Create
           </Button>

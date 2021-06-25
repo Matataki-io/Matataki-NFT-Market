@@ -9,11 +9,8 @@ import {
   loginWithPermit,
   updateUser,
 } from '../backend/user';
-import { getProfileByWallet } from '../backend/matatakiApi';
 import { User } from '../types/User.types';
 import { getCookie } from '../utils/cookie';
-import { isEmpty } from 'lodash';
-import { MatatakiUserProfile } from '../types/MatatakiType';
 
 interface SignInPermit {
   signature: string;
@@ -25,7 +22,7 @@ export function useLogin() {
   const wallet = useWallet();
   const [caughtError, updateError] = useState<any>(null);
   const [accessToken, updateAccessToken] = useState<string | null>(null);
-  const [userDataByWallet, updateUserData] = useState<MatatakiUserProfile>({});
+  const [userDataByWallet, updateUserData] = useState<User | null>(null);
   const [registeredLoading, setRegisteredLoading] = useState<boolean>(false); // 查询注册 Loading
 
   useEffect(() => {
@@ -33,23 +30,19 @@ export function useLogin() {
       if (!wallet.account) return;
       setRegisteredLoading(true);
       try {
-        const user = await getProfileByWallet(wallet.account);
-        console.log('user', user);
-        if (!isEmpty(user)) {
+        const { isUserExist, user } = await checkIsWalletRegistered(
+          wallet.account
+        );
+        if (isUserExist) {
           updateUserData(user);
           const token = getCookie('token');
           if (token) {
             updateAccessToken(token);
           }
-        } else throw new Error('not user data');
+        } else updateUserData(null);
       } catch (e) {
-        console.error('e', e.toString());
-        updateUserData({
-          avatar: '',
-          nickname: '',
-          siteLink: '',
-          username: '',
-        } as MatatakiUserProfile);
+        console.error('e', e);
+        updateUserData(null);
       } finally {
         setRegisteredLoading(false);
       }
