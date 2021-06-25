@@ -32,6 +32,7 @@ import { ZERO_ADDRESS } from '../../../constant';
 import { useBoolean } from 'ahooks';
 import TokenListComponents from '../../../components/TokenListSelect';
 import { StandardTokenProfile } from '../../../types/TokenList';
+import { useERC20 } from '../../../hooks/useERC20';
 
 const { Title, Text } = Typography;
 
@@ -62,6 +63,11 @@ export default function AskPage() {
   });
 
   const [isSigning, signingActions] = useBoolean(false);
+
+  // ask token profile
+  const { tokenProfile: tokenAskProfile } = useERC20(
+    profile.currentAsk.currency
+  );
 
   // 处理 选择 Token 事件
   const handlerSelectCurrentToken = (token: StandardTokenProfile) => {
@@ -202,9 +208,9 @@ export default function AskPage() {
               <p className='value'>
                 {utils.formatUnits(
                   profile.currentAsk.amount,
-                  getDecimalOf(profile.currentAsk.currency)
-                )}
-                {' ' + getSymbolOf(profile.currentAsk.currency)}
+                  tokenAskProfile.decimals
+                )}{' '}
+                {tokenAskProfile?.symbol}({tokenAskProfile?.name})
               </p>
               <Button onClick={() => removeAsk()}>Remove Ask</Button>
             </GreyCard>
