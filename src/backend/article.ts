@@ -9,7 +9,10 @@ export function getArticles(params: PaginationProps) {
 export function getArticle(id: number) {
   return backendClient.get<GeneralResponse<Article>>(`/article/${id}`);
 }
-// 获取推荐文章
+/**
+ * 获取推荐文章
+ * @returns
+ */
 export function getArticlesRecommed() {
-  return backendClient.get<Article[]>(`/article/recommend`);
+  return backendClient.get<Article[]>(`/article/recommend`, { cache: true });
 }

@@ -116,19 +116,32 @@ export async function getUserRelation(username: string, relation: string) {
   );
   return data;
 }
-// top artist
+/**
+ * top artist
+ * @returns
+ */
 export async function userTopArtist() {
-  return await BACKEND_CLIENT.get<GeneralResponse<User[]>>('/user/topArtist');
+  return await BACKEND_CLIENT.get<GeneralResponse<User[]>>('/user/topArtist', {
+    cache: true,
+  });
 }
-// artist banner
+/**
+ * 推荐艺术家 Banner
+ * @returns
+ */
 export async function userFeaturedArtistInBanner() {
   return await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
-    '/user/featuredArtistInBanner'
+    '/user/featuredArtistInBanner',
+    { cache: true }
   );
 }
-// artist
+/**
+ * 推荐艺术家
+ * @returns
+ */
 export async function userFeaturedArtist() {
   return await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
-    '/user/featuredArtist'
+    '/user/featuredArtist',
+    { cache: true }
   );
 }

@@ -29,19 +29,20 @@ const Home: React.FC<void> = () => {
   const [articleList, setArticleList] = useState<Array<Article>>([]);
 
   // 获取Banner
-  const fetchBanner = async () => {
+  const fetchBanner = async (): Promise<void> => {
     try {
       const res = await getBanners();
       if (res.status === 200) {
         setBannerData(res.data);
+      } else {
+        throw new Error('faild');
       }
     } catch (e) {
       message.error(`数据获取失败${e.toString()}`);
     }
   };
-
   // 获取NFT数据
-  const fetchNFTData = async () => {
+  const fetchNFTData = async (): Promise<void> => {
     try {
       const mediaList = await getMediaList(1, 8);
       console.log('mediaList', mediaList);
@@ -66,7 +67,7 @@ const Home: React.FC<void> = () => {
     }
   };
   // 获取用户 艺术家数据
-  const fetchUserTopArtist = async () => {
+  const fetchUserTopArtist = async (): Promise<void> => {
     try {
       const res = await userTopArtist();
       if (res.status !== 200) {
@@ -79,10 +80,9 @@ const Home: React.FC<void> = () => {
     }
   };
   // fetch article
-  const fetchArticle = async () => {
+  const fetchArticle = async (): Promise<void> => {
     try {
-      const res: any = await getArticlesRecommed();
-      // console.log('getArticlesRecommed', res);
+      const res = await getArticlesRecommed();
       if (res.status === 200) {
         setArticleList(res.data);
       } else {

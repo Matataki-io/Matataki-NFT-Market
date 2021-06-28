@@ -22,6 +22,13 @@ export async function getHotMediaList(take = 10): Promise<Array<Media>> {
   return data;
 }
 
+/**
+ * 获取 media 列表
+ * @param page
+ * @param limit
+ * @param order
+ * @returns
+ */
 export async function getMediaList(
   page = 1,
   limit = 9,
@@ -33,6 +40,7 @@ export async function getMediaList(
       limit,
       order,
     },
+    cache: true,
   });
   return data;
 }

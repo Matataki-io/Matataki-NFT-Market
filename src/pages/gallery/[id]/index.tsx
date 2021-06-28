@@ -29,6 +29,9 @@ import IconMedium from '../../../assets/icons/medium.svg';
 import IconTwitter from '../../../assets/icons/twitter.svg';
 import IconDiscord from '../../../assets/icons/discord.svg';
 import IconFacebook from '../../../assets/icons/facebook.svg';
+import { WordItemState } from '../../../types/utiils.d';
+import { User } from '../../../types/User.types';
+import Word from '../../../components/Word';
 
 const AGallery: React.FC = () => {
   const router = useRouter();
@@ -207,8 +210,11 @@ const AGallery: React.FC = () => {
   };
 
   // 处理艺术家分组
-  const artistWord = useMemo(() => {
-    return wordItem(gallery?.artists);
+  const artistWord: WordItemState = useMemo(() => {
+    if (isEmpty(gallery)) {
+      return {} as WordItemState;
+    }
+    return wordItem(gallery!.artists);
   }, [gallery]);
 
   useEffect(() => {
@@ -345,29 +351,7 @@ const AGallery: React.FC = () => {
               <StyledLine />
               <StyledItem>
                 <StyledItemTitle>Contracted Artists</StyledItemTitle>
-                <StyledWord>
-                  {Object.keys(artistWord).map((key, idx) => (
-                    <ul key={idx} className='item'>
-                      <li>
-                        <h3>{key.toLocaleUpperCase()}</h3>
-                      </li>
-                      {artistWord[key].map(
-                        (
-                          i: { username: string; nickname: string },
-                          idx: number
-                        ) => (
-                          <li key={idx}>
-                            <Link href={`/${i.username}`}>
-                              <a>
-                                {i.username}({i.nickname})
-                              </a>
-                            </Link>
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  ))}
-                </StyledWord>
+                <Word list={artistWord}></Word>
               </StyledItem>
               {/* <StyledLine /> */}
             </>
@@ -570,55 +554,6 @@ const StyledAbout = styled.div`
     line-height: 28px;
     padding: 0;
     margin: 24px 0 0 0;
-  }
-`;
-
-const StyledWord = styled.div`
-  display: block;
-  column-count: 4;
-  margin-top: 16px;
-  column-gap: 20px;
-  @media screen and (max-width: 768px) {
-    column-count: 2;
-  }
-
-  .item {
-    /* 防止多列布局，分页媒体和多区域上下文中的意外中断 */
-    break-inside: avoid;
-    padding: 48px 0 0 0;
-    list-style: none;
-
-    li {
-      margin: 9px 0;
-      font-family: 'Playfair Display', serif;
-      font-weight: 500;
-      color: #333333;
-
-      a {
-        font-size: 16px;
-        line-height: 19px;
-        color: #333333;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-
-      &:nth-child(1) {
-        margin: 0;
-      }
-
-      &:nth-child(2) {
-        margin-top: 16px;
-      }
-
-      h3 {
-        font-size: 32px;
-        line-height: 39px;
-        padding: 0;
-        margin: 0;
-      }
-    }
   }
 `;
 
