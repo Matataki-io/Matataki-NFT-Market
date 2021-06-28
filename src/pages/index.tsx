@@ -33,7 +33,7 @@ const Home: React.FC<void> = () => {
     try {
       const res = await getBanners();
       if (res.status === 200) {
-        // setBannerData(res.data);
+        setBannerData(res.data);
       }
     } catch (e) {
       message.error(`数据获取失败${e.toString()}`);

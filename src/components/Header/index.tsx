@@ -140,7 +140,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         <Link href='/community'>
           <a>Community</a>
         </Link>
-        {
+        {/* {
           // do not just `ts-ignore`, use expression to do typesafe check~
           // need to have user data
           // if user is super admin
@@ -150,7 +150,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               Management
             </Link>
           )
-        }
+        } */}
       </StyledHeaderNav>
     );
   };
@@ -228,9 +228,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                   <h1>MTTK NFT</h1>
                 </StyledHeaderLogo>
               </Link>
-              {isMobile ? null : (
-                <StyledHeaderNav>{NavComponents()}</StyledHeaderNav>
-              )}
+              {isMobile ? null : NavComponents()}
             </StyledHeaderLeft>
             {/* <Search></Search> */}
 
@@ -328,6 +326,12 @@ const StyledHeaderNav = styled.nav`
     line-height: 22px;
     padding: 0;
     margin: 0 24px;
+  }
+  @media screen and (max-width: 1120px) {
+    margin-left: 10px;
+    a {
+      margin: 0 10px;
+    }
   }
 `;
 const StyledHeaderNavMobile = styled.nav`
