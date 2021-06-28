@@ -8,7 +8,7 @@ import {
 } from '../types/TokenList';
 import { utils } from 'ethers';
 import { currentChainId, ZERO_ADDRESS } from '../constant/index';
-import { useERC20 } from './useERC20';
+import { useERC20Single } from './useERC20Single';
 
 export enum TokenListURL {
   Unisave = 'https://unpkg.com/@lychees/default-token-list@1.1.10/build/uniscam-default.tokenlist.json',
@@ -45,7 +45,7 @@ export default function useTokenList() {
   const isContractAddress = useMemo(() => utils.isAddress(searchInput), [
     searchInput,
   ]);
-  const { tokenProfile } = useERC20(isContractAddress ? searchInput : '');
+  const { tokenProfile } = useERC20Single(isContractAddress ? searchInput : '');
 
   // 请求 token 列表
   const tokenListFetch = useCallback(async ({ url }: { url: string }) => {

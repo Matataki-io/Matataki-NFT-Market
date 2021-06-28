@@ -129,7 +129,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         console.log(`e: ${e.toString()}`);
       }
     };
-    // fetch();
+    fetch();
   }, [userDataByWallet]);
 
   useEffect(() => {

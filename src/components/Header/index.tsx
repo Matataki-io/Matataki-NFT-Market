@@ -54,6 +54,20 @@ const HeaderComponents: React.FC<HeaderProps> = ({
 
   const [visible, setVisible] = useState(false);
 
+  // 链接钱包
+  const connectWallet = useCallback(async () => {
+    await wallet.connect('injected');
+    setConnect(true);
+  }, [wallet]);
+
+  // nav 匹配
+  const matchNav = useCallback(
+    (name: string) => {
+      return router.route.includes(name);
+    },
+    [router]
+  );
+
   // TODO: 这里可能要改 暂时用来显示 network error
   useMount(() => {
     if (process.browser && (window as any).ethereum) {
@@ -83,11 +97,6 @@ const HeaderComponents: React.FC<HeaderProps> = ({
       wallet.connect('injected'); // 自动链接 不用签名
     }
     console.log(userDataByWallet);
-  }, [wallet]);
-  // 链接钱包
-  const connectWallet = useCallback(async () => {
-    await wallet.connect('injected');
-    setConnect(true);
   }, [wallet]);
 
   useMount(() => {
@@ -129,18 +138,26 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     return (
       <StyledHeaderNav>
         <Link href='/artist'>
-          <a>Featured Artists</a>
+          <StyledHeaderNavLink active={matchNav('artist')}>
+            Artists
+          </StyledHeaderNavLink>
         </Link>
         <Link href='/gallery'>
-          <a>Gallery List</a>
+          <StyledHeaderNavLink active={matchNav('gallery')}>
+            Gallery
+          </StyledHeaderNavLink>
         </Link>
         <Link href='/market'>
-          <a>Market Place</a>
+          <StyledHeaderNavLink active={matchNav('market')}>
+            Market
+          </StyledHeaderNavLink>
         </Link>
         <Link href='/community'>
-          <a>Community</a>
+          <StyledHeaderNavLink active={matchNav('community')}>
+            Community
+          </StyledHeaderNavLink>
         </Link>
-        {
+        {/* {
           // do not just `ts-ignore`, use expression to do typesafe check~
           // need to have user data
           // if user is super admin
@@ -150,7 +167,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               Management
             </Link>
           )
-        }
+        } */}
       </StyledHeaderNav>
     );
   };
@@ -228,9 +245,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                   <h1>MTTK NFT</h1>
                 </StyledHeaderLogo>
               </Link>
-              {isMobile ? null : (
-                <StyledHeaderNav>{NavComponents()}</StyledHeaderNav>
-              )}
+              {isMobile ? null : NavComponents()}
             </StyledHeaderLeft>
             {/* <Search></Search> */}
 
@@ -321,13 +336,22 @@ const StyledHeaderLogo = styled.a`
 `;
 const StyledHeaderNav = styled.nav`
   margin-left: 40px;
-  a {
-    font-size: 16px;
-    font-weight: 500;
+  @media screen and (max-width: 1120px) {
+    margin-left: 10px;
+  }
+`;
+const StyledHeaderNavLink = styled.a<{ active: boolean }>`
+  font-size: 16px;
+  font-weight: 500;
+  color: ${({ active }) => (active ? '#333333' : '#909090')};
+  line-height: 22px;
+  padding: 0;
+  margin: 0 20px;
+  &:hover {
     color: #333333;
-    line-height: 22px;
-    padding: 0;
-    margin: 0 24px;
+  }
+  @media screen and (max-width: 1120px) {
+    margin: 0 10px;
   }
 `;
 const StyledHeaderNavMobile = styled.nav`

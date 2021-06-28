@@ -21,6 +21,11 @@ export async function loginWithPermit(permit: SignInPermit) {
   return token;
 }
 
+/**
+ * 检查钱包注册
+ * @param wallet
+ * @returns
+ */
 export async function checkIsWalletRegistered(wallet: string) {
   const { data } = await BACKEND_CLIENT.get<{
     isUserExist: boolean;
@@ -92,6 +97,12 @@ export async function listUsersArtist() {
   );
   return data.data;
 }
+
+/**
+ * 获取用户信息
+ * @param username
+ * @returns
+ */
 export async function getUser(username: string) {
   const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}`);
   return data;
@@ -104,31 +115,54 @@ export async function getUserBids(username: string) {
   return data;
 }
 
-// 获取用户的Tags
+/**
+ * 获取用户的Tags
+ * @param username
+ * @returns
+ */
 export async function getUserTags(username: string) {
   const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}/tags`);
   return data;
 }
 
+/**
+ * 获取用户关系
+ * @param username
+ * @param relation
+ * @returns
+ */
 export async function getUserRelation(username: string, relation: string) {
   const { data } = await BACKEND_CLIENT.get<User>(
     `/user/@${username}/${relation}`
   );
   return data;
 }
-// top artist
+/**
+ * top artist
+ * @returns
+ */
 export async function userTopArtist() {
-  return await BACKEND_CLIENT.get<GeneralResponse<User[]>>('/user/topArtist');
+  return await BACKEND_CLIENT.get<GeneralResponse<User[]>>('/user/topArtist', {
+    cache: true,
+  });
 }
-// artist banner
+/**
+ * 推荐艺术家 Banner
+ * @returns
+ */
 export async function userFeaturedArtistInBanner() {
   return await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
-    '/user/featuredArtistInBanner'
+    '/user/featuredArtistInBanner',
+    { cache: true }
   );
 }
-// artist
+/**
+ * 推荐艺术家
+ * @returns
+ */
 export async function userFeaturedArtist() {
   return await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
-    '/user/featuredArtist'
+    '/user/featuredArtist',
+    { cache: true }
   );
 }

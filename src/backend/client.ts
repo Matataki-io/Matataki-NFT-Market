@@ -12,8 +12,11 @@ const options = {
 const backendClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
   timeout: 1000 * 60,
-  headers: {},
   withCredentials: false,
+  headers: { 'Cache-Control': 'no-cache' },
+  adapter: throttleAdapterEnhancer(
+    cacheAdapterEnhancer(axios.defaults.adapter as AxiosAdapter, options)
+  ),
 });
 
 export const matatakiApiClient = axios.create({
