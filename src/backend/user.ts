@@ -21,6 +21,11 @@ export async function loginWithPermit(permit: SignInPermit) {
   return token;
 }
 
+/**
+ * 检查钱包注册
+ * @param wallet
+ * @returns
+ */
 export async function checkIsWalletRegistered(wallet: string) {
   const { data } = await BACKEND_CLIENT.get<{
     isUserExist: boolean;
@@ -92,6 +97,12 @@ export async function listUsersArtist() {
   );
   return data.data;
 }
+
+/**
+ * 获取用户信息
+ * @param username
+ * @returns
+ */
 export async function getUser(username: string) {
   const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}`);
   return data;
@@ -104,7 +115,11 @@ export async function getUserBids(username: string) {
   return data;
 }
 
-// 获取用户的Tags
+/**
+ * 获取用户的Tags
+ * @param username
+ * @returns
+ */
 export async function getUserTags(username: string) {
   const { data } = await BACKEND_CLIENT.get<User>(`/user/@${username}/tags`);
   return data;

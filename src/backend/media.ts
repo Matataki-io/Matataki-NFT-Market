@@ -45,11 +45,21 @@ export async function getMediaList(
   return data;
 }
 
+/**
+ * 通过 ID 获取 Media 信息
+ * @param id
+ * @returns
+ */
 export async function getMediaById(id: string | number): Promise<Media> {
   const { data } = await backendClient.get<Media>(`/media/${id}`);
   return data;
 }
 
+/**
+ * 获取 Media meta 信息
+ * @param url
+ * @returns
+ */
 export async function getMediaMetadata(url: string): Promise<MediaMetadata> {
   const { data } = await axios.get<MediaMetadata>(url);
   return data;
@@ -75,6 +85,12 @@ export async function PostMedia({
   });
 }
 
+/**
+ * 发送 NFT 到画廊
+ * @param GalleryId
+ * @param data
+ * @returns
+ */
 export function sendToPublisherForPreview(
   GalleryId: number,
   data: {
@@ -92,6 +108,11 @@ export function sendToPublisherForPreview(
   );
 }
 
+/**
+ * 校验媒体是否存在
+ * @param params
+ * @returns
+ */
 export async function isMediaContentExisted(params: { contentHash: string }) {
   return await client.get<
     GeneralResponse<{
@@ -101,6 +122,11 @@ export async function isMediaContentExisted(params: { contentHash: string }) {
   >(`/media/utils/isContentExisted`, { params });
 }
 
+/**
+ * 获取画廊发布的 Media
+ * @param params
+ * @returns
+ */
 export function mediaGasfreeCreateForPublisher(params: { gid: number }) {
   return backendClient.get<GeneralResponse<any>>(
     `/media/gasfreeCreate/forPublisher`,
@@ -108,6 +134,11 @@ export function mediaGasfreeCreateForPublisher(params: { gid: number }) {
   );
 }
 
+/**
+ * 获取 media
+ * @param data
+ * @returns
+ */
 export function mediaSearch(data: { gallery: number; relations: string[] }) {
   return backendClient.post<GeneralResponse<Media[]>>(`/media/search`, data);
 }
