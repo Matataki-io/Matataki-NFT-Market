@@ -11,7 +11,7 @@ import { shortedWalletAccount } from '../../utils/index';
 import { BidActionType } from '../../types/Bid.d';
 import { MediaActionType } from '../../types/MediaLog.d';
 import { isBackendAsk } from '../../utils/TypeGuards';
-import { useERC20 } from '../../hooks/useERC20';
+import { useERC20Single } from '../../hooks/useERC20Single';
 import { Ask, AskActionType } from '../../types/Ask.d';
 import {
   BidLogWithUser,
@@ -29,7 +29,7 @@ interface Props {
 
 const TimeLineItem = ({ log, idx, timeline, creator }: Props) => {
   // token profile
-  const { tokenProfile } = useERC20(log ? (log as Ask).currency : '');
+  const { tokenProfile } = useERC20Single(log ? (log as Ask).currency : '');
 
   // 时间轴 时间
   const timelineDate = (timestamp: number) => {

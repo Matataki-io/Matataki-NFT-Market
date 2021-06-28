@@ -30,7 +30,7 @@ import NFTTimeline from '../../../components/NFTTimeline/index';
 import { Ask } from '../../../types/Ask';
 import { Tag as TagTypes } from '../../../types/Tag';
 import { BidLogWithUser, MediaLogWithUser } from '../../../types/TokenLog.dto';
-import { useERC20 } from '../../../hooks/useERC20';
+import { useERC20Single } from '../../../hooks/useERC20Single';
 
 type Props = {
   post?: {
@@ -61,7 +61,7 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
   const ipfsLink = post?.backendData.tokenURI;
 
   // token profile
-  const { tokenProfile } = useERC20(profile.currentAsk.currency);
+  const { tokenProfile } = useERC20Single(profile.currentAsk.currency);
 
   const { data: timeline, error } = useSWR<
     Array<Ask | MediaLogWithUser | BidLogWithUser>

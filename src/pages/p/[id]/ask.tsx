@@ -32,7 +32,7 @@ import { ZERO_ADDRESS } from '../../../constant';
 import { useBoolean } from 'ahooks';
 import TokenListComponents from '../../../components/TokenListSelect';
 import { StandardTokenProfile } from '../../../types/TokenList';
-import { useERC20 } from '../../../hooks/useERC20';
+import { useERC20Single } from '../../../hooks/useERC20Single';
 
 const { Title, Text } = Typography;
 
@@ -65,7 +65,7 @@ export default function AskPage() {
   const [isSigning, signingActions] = useBoolean(false);
 
   // ask token profile
-  const { tokenProfile: tokenAskProfile } = useERC20(
+  const { tokenProfile: tokenAskProfile } = useERC20Single(
     profile.currentAsk.currency
   );
 

@@ -9,7 +9,7 @@ import { NFTProps } from '../../../next-env';
 import { isAskExist } from '../../hooks/useMarketPrices';
 import { getDecimalOf, getSymbolOf } from '../../utils/tokens';
 import { utils } from 'ethers';
-import { useERC20 } from '../../hooks/useERC20';
+import { useERC20Single } from '../../hooks/useERC20Single';
 
 const NFTComponents: React.FC<NFTProps> = ({
   id,
@@ -23,7 +23,9 @@ const NFTComponents: React.FC<NFTProps> = ({
   tags,
 }) => {
   // token profile
-  const { tokenProfile } = useERC20(currentAsk ? currentAsk.currency : '');
+  const { tokenProfile } = useERC20Single(
+    currentAsk ? currentAsk.currency : ''
+  );
 
   // 价格显示
   const priceDisplay = useMemo(() => {

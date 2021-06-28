@@ -19,7 +19,7 @@ import { isEmpty } from 'lodash';
 import { currentSupportedTokens as tokens } from '../../../constant/contracts';
 // import { useMediaData } from '../../../hooks/useMediaData';
 import { useMedia } from '../../../hooks/useMedia';
-import { useERC20 } from '../../../hooks/useERC20';
+import { useERC20Single } from '../../../hooks/useERC20Single';
 import { constructBid } from '../../../utils/zdkUtils';
 import { useWallet } from 'use-wallet';
 import { BigNumber, utils } from 'ethers';
@@ -60,7 +60,7 @@ export default function BidPage() {
     isProfileLoading,
     tokenProfile,
     formattedBalance,
-  } = useERC20(currency);
+  } = useERC20Single(currency);
   // `transferFrom` happened at Market, so just approve Market
   const { isEnough, approve, isUnlocking } = useAllowance(
     tokenContrct,
@@ -79,12 +79,12 @@ export default function BidPage() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   // bid token profile
-  const { tokenProfile: tokenBidProfile } = useERC20(
+  const { tokenProfile: tokenBidProfile } = useERC20Single(
     profile.currentAsk.currency
   );
 
   // my bid token profile
-  const { tokenProfile: tokenMyBidProfile } = useERC20(
+  const { tokenProfile: tokenMyBidProfile } = useERC20Single(
     myBid ? myBid?.currency : ''
   );
 
