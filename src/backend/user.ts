@@ -110,6 +110,12 @@ export async function getUserTags(username: string) {
   return data;
 }
 
+/**
+ * 获取用户关系
+ * @param username
+ * @param relation
+ * @returns
+ */
 export async function getUserRelation(username: string, relation: string) {
   const { data } = await BACKEND_CLIENT.get<User>(
     `/user/@${username}/${relation}`
