@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Avatar, Button, Modal, Input, Radio, message } from 'antd';
 import { UserOutlined, CopyOutlined } from '@ant-design/icons';
+import { utils } from 'ethers';
 
 import useTokenList from '../../hooks/useTokenList';
 import { StandardTokenProfile } from '../../types/TokenList';
 import { isEmpty } from 'lodash';
-import { shortedWalletAccount } from '../../utils/index';
+import { shortedWalletAccount, balanceDecimal } from '../../utils/index';
+import { useBalances } from '../../hooks/useBalances';
 
 interface Props {
   setCurrentToken: (token: StandardTokenProfile) => void;
@@ -32,6 +34,13 @@ const TokenListSelectComponents = ({
     isContractAddress,
   } = useTokenList();
 
+  // token 列表 纯地址
+  const tokenListAddress = useMemo(() => {
+    return tokenListCurrent.map(i => i.address);
+  }, [tokenListCurrent]);
+
+  const { balanceOf } = useBalances(tokenListAddress);
+
   const handleOk = () => {
     setIsModalVisible(false);
   };
@@ -43,9 +52,7 @@ const TokenListSelectComponents = ({
   // token 列表选择
   const onChangeSelect = async (e: any) => {
     await setValueSelect(e.target.value);
-    console.log('e', e);
     await toggleTokenList(e.target.value);
-    console.log('valueSelect', valueSelect);
   };
 
   // token search input
@@ -102,6 +109,12 @@ const TokenListSelectComponents = ({
                 </CopyToClipboard>
               </StyledItemAddress>
             </StyledItemLiInfo>
+            <StyledItemBalance>
+              {balanceDecimal(
+                utils.formatUnits(balanceOf(i.address), i.decimals),
+                3
+              )}
+            </StyledItemBalance>
           </StyledItemLi>
         ))}
       </StyledItem>
@@ -163,6 +176,12 @@ const StyledItemLi = styled.li`
 `;
 const StyledItemLiInfo = styled.div`
   margin-left: 10px;
+`;
+
+const StyledItemBalance = styled.div`
+  margin-left: auto;
+  font-size: 14px;
+  color: #222;
 `;
 
 const StyledItemSymbol = styled.div`
