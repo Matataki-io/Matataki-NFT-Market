@@ -320,11 +320,11 @@ const GreyCard = styled.div`
 `;
 
 const BiddingBox = styled.div`
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
+  padding: 40px 20px;
   margin: auto;
-  @media screen and (max-width: 1000px) {
-    width: 100%;
-  }
+  box-sizing: border;
 `;
 
 const ActionsBox = styled.div`

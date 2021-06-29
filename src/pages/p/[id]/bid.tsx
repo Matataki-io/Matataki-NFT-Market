@@ -393,8 +393,11 @@ const StyledPermissions = styled.div`
 `;
 
 const BiddingBox = styled.div`
-  max-width: 470px;
+  width: 100%;
+  max-width: 500px;
+  padding: 40px 20px;
   margin: auto;
+  box-sizing: border;
 `;
 
 const GreyCard = styled.div`
