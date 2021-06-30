@@ -95,7 +95,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           content='Copyright © 2018-2021 ANDOROMEDA TECH.ltd'
         />
         <meta name='description' content={metaDescription} />
-        <meta name='keywords' content={metaDescription} />
+        <meta name='keywords' content={metaKeywords} />
         <meta name='twitter:card' property='twitter:card' content='summary' />
         <meta name='twitter:site' property='twitter:site' content={metaTitle} />
         <meta property='twitter:title' content={metaTitle} />
