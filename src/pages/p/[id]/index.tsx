@@ -116,22 +116,26 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
         <title>{metaTitle}</title>
         <meta name='description' content={metaDescription} />
         <meta name='twitter:site' property='twitter:site' content={metaTitle} />
-        <meta property='twitter:title' content={metaTitle} />
+        <meta
+          name='twitter:title'
+          property='twitter:title'
+          content={metaTitle}
+        />
         <meta
           name='twitter:image'
           property='twitter:image'
           content={metaImage}
         />
         <meta
-          name='description'
+          name='twitter:description'
           property='twitter:description'
           content={metaDescription}
         />
         <meta name='og:site_name' property='og:site_name' content={metaTitle} />
-        <meta property='og:title' content={metaTitle} />
+        <meta name='og:title' property='og:title' content={metaTitle} />
         <meta name='og:image' property='og:image' content={metaImage} />
         <meta
-          name='description'
+          name='og:description'
           property='og:description'
           content={metaDescription}
         />
