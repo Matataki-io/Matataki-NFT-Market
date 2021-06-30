@@ -64,8 +64,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     <Providers>
       <NextHead>
         <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
-        {/* TODO 有问题 */}
-        {comment}
         <link
           rel='apple-touch-icon'
           sizes='180x180'
@@ -127,6 +125,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           content={metaDescription}
         />
       </NextHead>
+      <div dangerouslySetInnerHTML={{ __html: comment }} />
       {isCreate ? <Create setIsCreate={setIsCreate}></Create> : ''}
       <Profile isProfile={isProfile} setIsProfile={setIsProfile}></Profile>
       <Header

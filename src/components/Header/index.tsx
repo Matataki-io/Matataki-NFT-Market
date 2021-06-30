@@ -8,7 +8,7 @@ import React, {
 import { useMount } from 'ahooks';
 import Link from 'next/link';
 import styled from 'styled-components';
-// import Logo from '../../assets/images/logo.png';
+import Logo from '../../assets/images/logo-nft.png';
 import Button from '../Button/index';
 import { useWallet } from 'use-wallet';
 import UserDropdown from '../UserDropdown';
@@ -242,7 +242,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             <StyledHeaderLeft>
               <Link href='/'>
                 <StyledHeaderLogo>
-                  <h1>MTTK NFT</h1>
+                  <img src={Logo} alt='Logo' />
                 </StyledHeaderLogo>
               </Link>
               {isMobile ? null : NavComponents()}
@@ -323,7 +323,7 @@ const StyledHeaderLogo = styled.a`
   display: flex;
   align-items: center;
   img {
-    height: 36px;
+    height: 40px;
   }
   h1 {
     padding: 0;
