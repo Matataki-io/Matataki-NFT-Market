@@ -88,6 +88,10 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name='msapplication-TileColor' content='#da532c' />
         <meta name='theme-color' content='#ffffff' />
 
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <meta name='mobile-web-app-capable' content='yes' />
+        <meta name='apple-mobile-web-app-title' content={metaTitle} />
+
         <meta name='robots' property='robots' content='index,follow' />
         <meta
           name='copyright'
@@ -118,9 +122,6 @@ function MyApp({ Component, pageProps }: AppProps) {
           property='og:description'
           content={metaDescription}
         />
-        <meta name='viewport' content='width=device-width, initial-scale=1' />
-        <meta name='mobile-web-app-capable' content='yes' />
-        <meta name='apple-mobile-web-app-title' content='MatatakiMD' />
       </NextHead>
       {isCreate ? <Create setIsCreate={setIsCreate}></Create> : ''}
       <Profile isProfile={isProfile} setIsProfile={setIsProfile}></Profile>

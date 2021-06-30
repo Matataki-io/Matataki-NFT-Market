@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
+import NextHead from 'next/head';
 
 import { Link, Text } from '@geist-ui/react';
 import { message, Tag, Spin } from 'antd';
@@ -102,8 +103,39 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
       </Page>
     );
   //   if (!data || !metadata) return <div>loading...</div>;
+
+  const metaTitle = metadata?.name || 'Matataki NFT';
+  const metaDescription = metadata.description || 'Matataki NFT 交易市场';
+  const metaImage =
+    backendData.tokenURI ||
+    'https://ssimg.frontenduse.top/article/2021/06/30/4cd78197b0ebf60abc5e54c04fee6770.png';
+
   return (
     <Page>
+      <NextHead>
+        <title>{metaTitle}</title>
+        <meta name='description' content={metaDescription} />
+        <meta name='twitter:site' property='twitter:site' content={metaTitle} />
+        <meta property='twitter:title' content={metaTitle} />
+        <meta
+          name='twitter:image'
+          property='twitter:image'
+          content={metaImage}
+        />
+        <meta
+          name='description'
+          property='twitter:description'
+          content={metaDescription}
+        />
+        <meta name='og:site_name' property='og:site_name' content={metaTitle} />
+        <meta property='og:title' content={metaTitle} />
+        <meta name='og:image' property='og:image' content={metaImage} />
+        <meta
+          name='description'
+          property='og:description'
+          content={metaDescription}
+        />
+      </NextHead>
       <StyledWrapper>
         <StyledContentWrapper>
           <StyledContentLeft>
