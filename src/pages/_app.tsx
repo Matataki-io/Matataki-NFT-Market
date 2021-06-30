@@ -44,11 +44,84 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   });
 
+  let comment = `
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js" integrity="sha256-g6iAfvZp+nDQ2TdTR/VVKJf3bGro4ub5fvWSWVRi2NE=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
+  <![endif]-->`;
+
+  const metaTitle = 'Matataki NFT';
+  const metaDescription = 'Matataki NFT 交易市场';
+  const metaKeywords =
+    'NFT、MTTK NFT、NFT Market、NFT 交易市场、Matataki、瞬MATATAKI、仙女座科技、小岛美奈子、岛娘';
+  const metaImage =
+    'https://ssimg.frontenduse.top/article/2021/06/30/4cd78197b0ebf60abc5e54c04fee6770.png';
+
   return (
     <Providers>
       <NextHead>
         <title>{process.env.NEXT_PUBLIC_APP_NAME}</title>
-        <link rel='icon' href='/favicon.ico' />
+        {/* TODO 有问题 */}
+        {comment}
+        <link
+          rel='apple-touch-icon'
+          sizes='180x180'
+          href='/apple-touch-icon.png'
+        />
+        <link
+          rel='icon'
+          type='image/png'
+          sizes='32x32'
+          href='/favicon-32x32.png'
+        />
+        <link
+          rel='icon'
+          type='image/png'
+          sizes='16x16'
+          href='/favicon-16x16.png'
+        />
+        <link rel='manifest' href='/site.webmanifest' />
+        <link rel='mask-icon' href='/safari-pinned-tab.svg' color='#5bbad5' />
+        <meta name='msapplication-TileColor' content='#da532c' />
+        <meta name='theme-color' content='#ffffff' />
+
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <meta name='mobile-web-app-capable' content='yes' />
+        <meta name='apple-mobile-web-app-title' content={metaTitle} />
+
+        <meta name='robots' property='robots' content='index,follow' />
+        <meta
+          name='copyright'
+          property='copyright'
+          content='Copyright © 2018-2021 ANDOROMEDA TECH.ltd'
+        />
+        <meta name='description' content={metaDescription} />
+        <meta name='keywords' content={metaKeywords} />
+        <meta name='twitter:card' property='twitter:card' content='summary' />
+        <meta name='twitter:site' property='twitter:site' content={metaTitle} />
+        <meta property='twitter:title' content={metaTitle} />
+        <meta
+          name='twitter:image'
+          property='twitter:image'
+          content={metaImage}
+        />
+        <meta
+          name='description'
+          property='twitter:description'
+          content={metaDescription}
+        />
+        <meta name='og:type' property='og:type' content='website' />
+        <meta name='og:site_name' property='og:site_name' content={metaTitle} />
+        <meta property='og:title' content={metaTitle} />
+        <meta name='og:image' property='og:image' content={metaImage} />
+        <meta
+          name='description'
+          property='og:description'
+          content={metaDescription}
+        />
       </NextHead>
       {isCreate ? <Create setIsCreate={setIsCreate}></Create> : ''}
       <Profile isProfile={isProfile} setIsProfile={setIsProfile}></Profile>

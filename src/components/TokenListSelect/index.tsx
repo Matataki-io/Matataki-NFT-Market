@@ -100,13 +100,15 @@ const TokenListSelectComponents = ({
               <StyledItemAddress>
                 {shortedWalletAccount(i.address)}
 
-                <CopyToClipboard
-                  text={i.address}
-                  onCopy={() => {
-                    message.info('复制成功');
-                  }}>
-                  <CopyOutlined />
-                </CopyToClipboard>
+                <StyledItemCopy onClick={e => e.stopPropagation()}>
+                  <CopyToClipboard
+                    text={i.address}
+                    onCopy={() => {
+                      message.info('复制成功');
+                    }}>
+                    <CopyOutlined />
+                  </CopyToClipboard>
+                </StyledItemCopy>
               </StyledItemAddress>
             </StyledItemLiInfo>
             <StyledItemBalance>
@@ -199,11 +201,10 @@ const StyledItemAddress = styled.div`
   font-size: 14px;
   font-size: 12px;
   color: #757575;
-  span {
-    margin-left: 4px;
-  }
 `;
-
+const StyledItemCopy = styled.span`
+  margin-left: 4px;
+`;
 const StyledItemSearchText = styled.p`
   font-size: 14px;
   color: #333;
