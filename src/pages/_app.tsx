@@ -12,6 +12,8 @@ import { removeCookie } from '../utils/cookie';
 
 import '../styles/globals.css';
 import 'antd/dist/antd.css';
+// Token list custom styles
+import '../styles/TokenList.scss';
 
 import Providers from '../providers';
 

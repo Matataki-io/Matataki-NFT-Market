@@ -1,0 +1,12 @@
+.custom-modal {
+  .ant-modal-content {
+    border-radius: 16px;
+  }
+  .ant-modal-header {
+    border-radius: 16px 16px 0 0;
+    border-bottom: 0;
+  }
+  .ant-modal-body {
+    padding: 0;
+  }
+}
