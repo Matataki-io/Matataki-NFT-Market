@@ -226,6 +226,7 @@ const StyledItemSearchText = styled.p`
   font-size: 14px;
   color: #333;
   margin: 6px 0;
+  padding: 0 20px;
 `;
 // item end
 

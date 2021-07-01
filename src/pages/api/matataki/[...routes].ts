@@ -30,6 +30,16 @@ export default async function handler(
     return proxyRes.status(405).json({ message: 'Not supported method' });
   }
 
+  // 增加 params 参数
+  // console.info('routes', routes, proxyReq.query);
+
+  let { chain } = proxyReq.query;
+  let params: any = {};
+
+  if (chain) {
+    params['chain'] = chain;
+  }
+
   const url = '/' + (routes as string[]).join('/');
   console.info('url', url);
   let response: AxiosResponse;
@@ -46,6 +56,7 @@ export default async function handler(
       response = await matatakiApiClient[lowerCased](url, {
         headers: buildHeaders,
         data: proxyReq.body,
+        params: params,
       });
     } else {
       // Works with PATCH / POST / PUT
