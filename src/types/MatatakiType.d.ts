@@ -12,3 +12,10 @@ export type MatatakiUserProfile = {
   status: number;
   siteLink: string;
 };
+
+export interface MatatakiGetInfoByAddress {
+  id: number;
+  chain: string;
+  tokenId: number;
+  contractAddress: string;
+}
