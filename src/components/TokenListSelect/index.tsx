@@ -24,7 +24,7 @@ const TokenListSelectComponents = ({
   setIsModalVisible,
 }: Props) => {
   const [valueSelect, setValueSelect] = useState<'Unisave' | 'MatatakiBsc'>(
-    'Unisave'
+    'MatatakiBsc'
   ); // 同步于 TokenListURL key
   const {
     tokenListCurrent,
