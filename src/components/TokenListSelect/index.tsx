@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
-
+import Link from 'next/link';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Avatar, Button, Modal, Input, Radio, message } from 'antd';
 import { UserOutlined, CopyOutlined } from '@ant-design/icons';
@@ -24,7 +24,7 @@ const TokenListSelectComponents = ({
   setIsModalVisible,
 }: Props) => {
   const [valueSelect, setValueSelect] = useState<'Unisave' | 'MatatakiBsc'>(
-    'Unisave'
+    'MatatakiBsc'
   ); // 同步于 TokenListURL key
   const {
     tokenListCurrent,
@@ -135,6 +135,11 @@ const TokenListSelectComponents = ({
             </Radio>
           ))}
         </Radio.Group>
+        <Link href='https://www.yuque.com/docs/share/3db97900-f730-4e77-b245-6b2f54ae0b3c'>
+          <a target='_blank' rel='noopener noreferrer'>
+            如何导出Fan票至 BSC ？
+          </a>
+        </Link>
       </StyledSelect>
     );
   };
@@ -145,31 +150,43 @@ const TokenListSelectComponents = ({
       visible={isModalVisible}
       onOk={handleOk}
       onCancel={handleCancel}
-      footer={null}>
-      <Input
-        placeholder='Search name or paste address'
-        onChange={onChangeSearchInput}
-        allowClear
-      />
+      footer={null}
+      width={420}
+      className='custom-modal'>
+      <StyledSearchWrapper>
+        <StyledSearch
+          placeholder='Search name or paste address'
+          onChange={onChangeSearchInput}
+          allowClear
+        />
+      </StyledSearchWrapper>
+
       {Item()}
       {tokenListSelect()}
     </Modal>
   );
 };
+const StyledSearchWrapper = styled.div`
+  margin: 10px 20px;
+`;
+const StyledSearch = styled(Input)`
+  padding: 14px 20px;
+  border-radius: 20px;
+`;
 
 // item start
 const StyledItem = styled.ul`
   padding: 0;
-  margin: 20px 10px;
+  margin: 20px 0;
   list-style: none;
-  max-height: 420px;
+  max-height: 476px;
   overflow: auto;
 `;
 
 const StyledItemLi = styled.li`
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 14px 20px;
   cursor: pointer;
   &:hover {
     background-color: #f3f3f3;
@@ -214,9 +231,12 @@ const StyledItemSearchText = styled.p`
 
 // token list select start
 const StyledSelect = styled.div`
-  margin: 40px 0 10px 0;
-  padding: 20px 10px 10px;
-  border-top: 1px solid #dfdfdf;
+  margin: 40px 0 0 0;
+  padding: 20px;
+  border-top: 1px solid rgb(247, 248, 250);
+  label {
+    margin: 6px 0;
+  }
 `;
 
 const StyledSelectName = styled.span`

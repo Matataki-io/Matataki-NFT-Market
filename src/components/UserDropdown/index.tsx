@@ -58,7 +58,7 @@ const UserDropdown: React.FC<Props> = ({ children }) => {
             href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${wallet.account}`}>
             <StyledItem>
               <ReactSVG className='icon' src={IconShare} />
-              View on Etherscan
+              View on {process.env.NEXT_PUBLIC_SCAN}
             </StyledItem>
           </a>
         </Menu.Item>

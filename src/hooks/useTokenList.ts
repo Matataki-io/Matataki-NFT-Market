@@ -64,7 +64,10 @@ export default function useTokenList() {
         setTokenList(list);
         if (!list.length) {
           // 临时 mock 数据 97
-          if (res.data.name === 'Unisave Matataki List') {
+          if (
+            res.data.name === 'Unisave Matataki List' &&
+            currentChainId === 97
+          ) {
             setTokenList([
               {
                 name: 'Bestswap Token',
@@ -98,7 +101,7 @@ export default function useTokenList() {
 
   // 执行一次 默认获取一次 token 列表
   useEffect(() => {
-    tokenListFetch({ url: TokenListURL.Unisave });
+    tokenListFetch({ url: TokenListURL.MatatakiBsc });
   }, []);
 
   // 当前 token 列表，筛选后

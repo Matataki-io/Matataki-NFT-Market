@@ -75,9 +75,13 @@ export async function PostMedia({
   tags: string[];
   gallery?: number;
   id?: number;
-}): Promise<any> {
+}) {
   // bad habit to `any` bro
-  return await backendClient.post('/media', {
+  return await backendClient.post<
+    GeneralResponse<{
+      tokenId: number;
+    }>
+  >('/media', {
     txHash,
     tags,
     gallery,

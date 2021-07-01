@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import styled, { css } from 'styled-components';
 import { useWallet } from 'use-wallet';
+import { useRouter } from 'next/router';
 import { useSigner } from '../../hooks/useSigner';
 import {
   isMediaContentExisted,
@@ -111,6 +112,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const [galleryList, setGalleryList] = useState<Gallery[]>([]);
   const [tagsList, setTagsList] = useState<TagTypes[]>([]);
   const mediaContract = useMedia();
+  const router = useRouter();
 
   useEffect(() => {
     const fetch = async () => {
@@ -411,16 +413,19 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     description,
     duration = 4.5,
     key = '',
+    icon,
   }: {
     description: string;
     duration?: number | null;
     key?: string;
+    icon?: any;
   }) => {
     notification.open({
       message: 'Notification Title',
       description: description,
       duration: duration,
       key: key,
+      icon: icon || <Spin />,
     });
   };
 
@@ -497,7 +502,12 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
 
         setIsCreate(false);
 
-        (window as any).location.reload();
+        // 如果没有 tokenId 一般不会这样
+        if (resMedia.data && ~resMedia.data.data.tokenId) {
+          router.push(`/p/${resMedia.data.data.tokenId}`);
+        } else {
+          router.push(`/market`);
+        }
       } else {
         throw new Error('not hash');
       }
@@ -505,7 +515,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
       console.log('e', e);
       message.error(e.toString());
     }
-  }, [signer, mediaData, formPricingAndFees, isSignerReady, setIsCreate]);
+  }, [
+    signer,
+    mediaData,
+    formPricingAndFees,
+    isSignerReady,
+    setIsCreate,
+    router,
+  ]);
 
   // mint到画廊
   const mintTokenToGallery = useCallback(async () => {
@@ -581,6 +598,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     // alert('txHash' + receipt.transactionHash);
     message.success('上传成功，等待画廊审核');
     setIsCreate(false);
+
+    router.push(`/market`);
   }, [
     signer,
     mediaData,
@@ -589,6 +608,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     setIsCreate,
     formPricingAndFees,
     galleryList,
+    router,
   ]);
 
   // price填写完成
@@ -862,8 +882,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   return (
     <StyledWrapper>
       <StyledContainer>
-        <StyledTitle>Create Artworks</StyledTitle>
-
+        {/* <StyledTitle>Create Artworks</StyledTitle> */}
         <StyledContainerGrid>
           <StyledContainerGridCol start='0' end='6'>
             {step === 0 ? (
@@ -929,7 +948,7 @@ const StyledHead = styled.div`
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
-  padding: 48px 0 0 0;
+  padding: 40px 0 0 0;
   margin: 0px auto;
   width: 100%;
   max-width: calc(1246px);
@@ -958,13 +977,13 @@ const StyledContainerGridCol = styled.div<{ start?: string; end?: string }>`
 const StyledTitle = styled.h2`
   font-size: 30px;
   font-weight: 500;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   margin-top: 0;
   color: #000;
 `;
 const StyledSubtitle = styled.h4`
   font-weight: 500;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
   font-size: 20px;
   margin-top: 0px;
   color: #000;

@@ -17,7 +17,7 @@ const ProofOfAuthenticity: React.FC<ProofOfAuthenticityProps> = ({
       <Container>
         <Link href={scanLink} passHref>
           <LinkButton role='button' target='_blank' rel='noreferer noopener'>
-            Etherscan
+            {process.env.NEXT_PUBLIC_SCAN}
           </LinkButton>
         </Link>
         <Link href={ipfsLink} passHref>
