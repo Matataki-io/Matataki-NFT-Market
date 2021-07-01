@@ -862,8 +862,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   return (
     <StyledWrapper>
       <StyledContainer>
-        <StyledTitle>Create Artworks</StyledTitle>
-
+        {/* <StyledTitle>Create Artworks</StyledTitle> */}
         <StyledContainerGrid>
           <StyledContainerGridCol start='0' end='6'>
             {step === 0 ? (
@@ -929,7 +928,7 @@ const StyledHead = styled.div`
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
-  padding: 48px 0 0 0;
+  padding: 40px 0 0 0;
   margin: 0px auto;
   width: 100%;
   max-width: calc(1246px);
@@ -958,13 +957,13 @@ const StyledContainerGridCol = styled.div<{ start?: string; end?: string }>`
 const StyledTitle = styled.h2`
   font-size: 30px;
   font-weight: 500;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   margin-top: 0;
   color: #000;
 `;
 const StyledSubtitle = styled.h4`
   font-weight: 500;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
   font-size: 20px;
   margin-top: 0px;
   color: #000;
