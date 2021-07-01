@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
-
+import Link from 'next/link';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Avatar, Button, Modal, Input, Radio, message } from 'antd';
 import { UserOutlined, CopyOutlined } from '@ant-design/icons';
@@ -135,6 +135,11 @@ const TokenListSelectComponents = ({
             </Radio>
           ))}
         </Radio.Group>
+        <Link href='https://www.yuque.com/docs/share/3db97900-f730-4e77-b245-6b2f54ae0b3c'>
+          <a target='_blank' rel='noopener noreferrer'>
+            如何导出Fan票至 BSC ？
+          </a>
+        </Link>
       </StyledSelect>
     );
   };
