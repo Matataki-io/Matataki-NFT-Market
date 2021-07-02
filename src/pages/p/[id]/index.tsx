@@ -32,9 +32,7 @@ import { Ask } from '../../../types/Ask';
 import { Tag as TagTypes } from '../../../types/Tag';
 import { BidLogWithUser, MediaLogWithUser } from '../../../types/TokenLog.dto';
 import { useERC20Single } from '../../../hooks/useERC20Single';
-import { getInfoByAddress } from '../../../backend/matatakiApi';
-import { ZERO_ADDRESS } from '../../../constant/index';
-import { MatatakiGetInfoByAddress } from '../../../types/MatatakiType.d';
+import useTokenInMatataki from '../../../hooks/useTokenInMatataki';
 import { isEmpty } from 'lodash';
 
 type Props = {
@@ -67,14 +65,12 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
 
   // token profile
   const { tokenProfile } = useERC20Single(profile.currentAsk.currency);
+  // token profile in matataki
+  const { tokenMatataki } = useTokenInMatataki(profile.currentAsk.currency);
 
   const { data: timeline, error } = useSWR<
     Array<Ask | MediaLogWithUser | BidLogWithUser>
   >(`/media/${id}/logs`, backendSWRFetcher);
-  // token info in matataki
-  const [tokenMatataki, setTokenMatataki] = useState<MatatakiGetInfoByAddress>(
-    {} as MatatakiGetInfoByAddress
-  );
 
   const copyText = useMemo(() => {
     if (process.browser) {
@@ -83,20 +79,6 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
       return metadata?.name;
     }
   }, [metadata]);
-
-  // token 信息 in matataki
-  const tokenProfileInfoMatataki = async (address: string) => {
-    if (!address) return;
-    if (address === ZERO_ADDRESS) return;
-    try {
-      const res = await getInfoByAddress({ address: address, chain: 'bsc' });
-      if (res.code === 0 && res.data.length) {
-        setTokenMatataki(res.data[0]);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   // token current price
   const price = () => {
@@ -107,10 +89,6 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
       </>
     );
   };
-
-  useEffect(() => {
-    tokenProfileInfoMatataki(profile.currentAsk.currency);
-  }, [profile]);
 
   if (isFallback) {
     return (

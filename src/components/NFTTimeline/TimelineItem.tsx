@@ -4,6 +4,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { utils } from 'ethers';
 import Link from 'next/link';
 import { Timeline } from 'antd';
+import styled from 'styled-components';
 
 import { getDecimalOf, getSymbolOf } from '../../utils/tokens';
 import { ZERO_ADDRESS } from '../../constant';
@@ -12,6 +13,7 @@ import { BidActionType } from '../../types/Bid.d';
 import { MediaActionType } from '../../types/MediaLog.d';
 import { isBackendAsk } from '../../utils/TypeGuards';
 import { useERC20Single } from '../../hooks/useERC20Single';
+import useTokenInMatataki from '../../hooks/useTokenInMatataki';
 import { Ask, AskActionType } from '../../types/Ask.d';
 import {
   BidLogWithUser,
@@ -19,6 +21,7 @@ import {
   isBidLogWithUser,
   isMediaLogWithUser,
 } from '../../types/TokenLog.dto';
+import { isEmpty } from 'lodash';
 
 interface Props {
   log: Ask | MediaLogWithUser | BidLogWithUser;
@@ -30,6 +33,10 @@ interface Props {
 const TimeLineItem = ({ log, idx, timeline, creator }: Props) => {
   // token profile
   const { tokenProfile } = useERC20Single(log ? (log as Ask).currency : '');
+  // token profile in matataki
+  const { tokenMatataki } = useTokenInMatataki(
+    log ? (log as Ask).currency : ''
+  );
 
   // 时间轴 时间
   const timelineDate = (timestamp: number) => {
@@ -65,6 +72,33 @@ const TimeLineItem = ({ log, idx, timeline, creator }: Props) => {
       }
     }
 
+    // token current price
+    const price = () => {
+      return (
+        <StyledToken>
+          {utils.formatUnits(log.amount, decimal)} {symbol}
+        </StyledToken>
+      );
+    };
+
+    // price dom
+    const priceDom = () => {
+      return (
+        <>
+          {isEmpty(tokenMatataki) ? (
+            price()
+          ) : (
+            <Link
+              href={`${process.env.NEXT_PUBLIC_MATATAKI}/token/${tokenMatataki.tokenId}`}>
+              <a target='_blank' rel='noopener noreferrer'>
+                {price()}
+              </a>
+            </Link>
+          )}
+        </>
+      );
+    };
+
     if (isBackendAsk(log)) {
       if (log.type === AskActionType.AskCreated) {
         return (
@@ -79,7 +113,7 @@ const TimeLineItem = ({ log, idx, timeline, creator }: Props) => {
             ) : (
               'Owner'
             )}{' '}
-            Ask for {utils.formatUnits(log.amount, decimal)} {symbol}
+            Ask for {priceDom()}
           </p>
         );
       }
@@ -89,7 +123,6 @@ const TimeLineItem = ({ log, idx, timeline, creator }: Props) => {
       const bidderDisplayName = log.matchedBidder
         ? '@' + log.matchedBidder.username
         : shortedWalletAccount(log.bidder);
-      const thePrice = `${utils.formatUnits(log.amount, decimal)} ${symbol}`;
       if (log.status === BidActionType.BidFinalized) {
         return (
           <p className='logs'>
@@ -101,7 +134,7 @@ const TimeLineItem = ({ log, idx, timeline, creator }: Props) => {
               }>
               {bidderDisplayName}
             </a>{' '}
-            buy with {thePrice}
+            buy with {priceDom()}
           </p>
         );
       }
@@ -137,4 +170,7 @@ const TimeLineItem = ({ log, idx, timeline, creator }: Props) => {
   );
 };
 
+const StyledToken = styled.span`
+  font-weight: bold;
+`;
 export default TimeLineItem;

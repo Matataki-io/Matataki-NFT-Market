@@ -7,6 +7,7 @@ import { Decimal } from '../utils/Decimal';
 import { useMarket } from './useMarket';
 import { useMedia } from './useMedia';
 import { useMulticall } from './useMulticall';
+import useRefCallback from './useRefCallback';
 
 export function useMediaToken(id: BigNumberish) {
   const { account } = useWallet();
@@ -33,7 +34,7 @@ export function useMediaToken(id: BigNumberish) {
     [profile]
   );
 
-  const getDetailOf = useCallback(async () => {
+  const getDetailOf = useRefCallback(async () => {
     if (Number(id) === NaN) {
       return;
     }
@@ -112,7 +113,13 @@ export function useMediaToken(id: BigNumberish) {
     //   );
     //   setAllApprove(isApproveForAll);
     // }
-  }, [mediaContract, account, id, aggerateQuery]);
+  }, [
+    mediaContract,
+    id,
+    aggerateQuery,
+    marketContract.address,
+    marketContract.interface,
+  ]);
 
   useEffect(() => {
     if (id) {

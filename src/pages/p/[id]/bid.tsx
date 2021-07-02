@@ -1,6 +1,7 @@
-import React, { useState, CSSProperties, useEffect } from 'react';
+import React, { useState, CSSProperties, useEffect, useCallback } from 'react';
 import { Grid, Select } from '@geist-ui/react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import {
   InputNumber,
   Spin,
@@ -27,12 +28,12 @@ import { BigNumber, utils } from 'ethers';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import { useAllowance } from '../../../hooks/useAllowance';
 import { useMarket } from '../../../hooks/useMarket';
-import Link from 'next/link';
+import { useMyBid } from '../../../hooks/useMyBid';
+import useTokenInMatataki from '../../../hooks/useTokenInMatataki';
 import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
 import NFTPreview from '../../../components/NFTPreview/index';
 import { getMediaById, getMediaMetadata } from '../../../backend/media';
 import { ZERO_ADDRESS } from '../../../constant';
-import { useMyBid } from '../../../hooks/useMyBid';
 import { useBoolean } from 'ahooks';
 import { WETHHelpTip } from '../../../components/Bid/WethHelpTip';
 import TokenListComponents from '../../../components/TokenListSelect';
@@ -87,6 +88,70 @@ export default function BidPage() {
   const { tokenProfile: tokenMyBidProfile } = useERC20Single(
     myBid ? myBid?.currency : ''
   );
+
+  // token profile in matataki （current ask）
+  const { tokenMatataki } = useTokenInMatataki(profile.currentAsk.currency);
+
+  // token profile in matataki （bid)
+  const { tokenMatataki: tokenMatatakiBid } = useTokenInMatataki(
+    myBid ? myBid?.currency : ''
+  );
+
+  // token current price
+  const price = useCallback(({ amount, token }) => {
+    return (
+      <>
+        {utils.formatUnits(amount, token.decimals)} {token?.symbol}(
+        {token?.name})
+      </>
+    );
+  }, []);
+
+  // price dom
+  const priceDom = useCallback(() => {
+    return (
+      <>
+        {isEmpty(tokenMatataki) ? (
+          price({ amount: profile.currentAsk.amount, token: tokenBidProfile })
+        ) : (
+          <Link
+            href={`${process.env.NEXT_PUBLIC_MATATAKI}/token/${tokenMatataki.tokenId}`}>
+            <a target='_blank' rel='noopener noreferrer'>
+              {price({
+                amount: profile.currentAsk.amount,
+                token: tokenBidProfile,
+              })}
+            </a>
+          </Link>
+        )}
+      </>
+    );
+  }, [tokenMatataki, price, profile.currentAsk.amount, tokenBidProfile]);
+
+  // price dom (bid)
+  const priceDomBid = useCallback(() => {
+    if (!myBid) {
+      return;
+    }
+
+    return (
+      <>
+        {isEmpty(tokenMatatakiBid) ? (
+          price({ amount: myBid.amount, token: tokenMyBidProfile })
+        ) : (
+          <Link
+            href={`${process.env.NEXT_PUBLIC_MATATAKI}/token/${tokenMatatakiBid.tokenId}`}>
+            <a target='_blank' rel='noopener noreferrer'>
+              {price({
+                amount: myBid.amount,
+                token: tokenMyBidProfile,
+              })}
+            </a>
+          </Link>
+        )}
+      </>
+    );
+  }, [tokenMatatakiBid, price, myBid, tokenMyBidProfile]);
 
   // 处理 选择 Token 事件
   const handlerSelectCurrentToken = (token: StandardTokenProfile) => {
@@ -238,23 +303,14 @@ export default function BidPage() {
           {isAskExist && (
             <GreyCard>
               <p className='title'>CURRENT ASK</p>
-              <p className='value'>
-                {utils.formatUnits(
-                  profile.currentAsk.amount,
-                  tokenBidProfile.decimals
-                )}{' '}
-                {tokenBidProfile?.symbol}({tokenBidProfile?.name})
-              </p>
+              <p className='value'>{priceDom()}</p>
             </GreyCard>
           )}
 
           {myBid && myBid.currency !== ZERO_ADDRESS && (
             <GreyCard>
               <p className='title'>MY CURRENT BID</p>
-              <p className='value'>
-                {utils.formatUnits(myBid.amount, tokenMyBidProfile.decimals)}{' '}
-                {tokenMyBidProfile?.symbol}({tokenMyBidProfile?.name})
-              </p>
+              <p className='value'>{priceDomBid()}</p>
               <Paragraph>
                 You will get the refund of the previous bid, if you put on a new
                 bid now.
@@ -294,11 +350,14 @@ export default function BidPage() {
                   onChange={setAmount}
                   style={FullWidth}
                   formatter={value =>
-                    utils.formatUnits(value as string, tokenProfile.decimals)
+                    utils.formatUnits(
+                      value as string,
+                      tokenProfile.decimals || 18
+                    )
                   }
                   parser={value =>
                     utils
-                      .parseUnits(value as string, tokenProfile.decimals)
+                      .parseUnits(value as string, tokenProfile.decimals || 18)
                       .toString()
                   }
                   stringMode
@@ -423,6 +482,9 @@ const GreyCard = styled.div`
     font-size: 16px;
     padding: 0;
     margin: 10px 0 0 0;
+    a {
+      color: #000;
+    }
   }
 `;
 

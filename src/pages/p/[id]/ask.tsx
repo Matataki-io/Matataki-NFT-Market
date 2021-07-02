@@ -1,4 +1,4 @@
-import React, { useState, CSSProperties, useEffect } from 'react';
+import React, { useState, CSSProperties, useEffect, useCallback } from 'react';
 import { Grid } from '@geist-ui/react';
 import { useRouter } from 'next/router';
 import {
@@ -22,7 +22,7 @@ import { currentSupportedTokens as tokens } from '../../../constant/contracts';
 import { useMedia } from '../../../hooks/useMedia';
 import { constructAsk } from '../../../utils/zdkUtils';
 import { useWallet } from 'use-wallet';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import Link from 'next/link';
 import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
@@ -33,6 +33,7 @@ import { useBoolean } from 'ahooks';
 import TokenListComponents from '../../../components/TokenListSelect';
 import { StandardTokenProfile } from '../../../types/TokenList';
 import { useERC20Single } from '../../../hooks/useERC20Single';
+import useTokenInMatataki from '../../../hooks/useTokenInMatataki';
 
 const { Title, Text } = Typography;
 
@@ -68,6 +69,8 @@ export default function AskPage() {
   const { tokenProfile: tokenAskProfile } = useERC20Single(
     profile.currentAsk.currency
   );
+  // token profile in matataki
+  const { tokenMatataki } = useTokenInMatataki(profile.currentAsk.currency);
 
   // 处理 选择 Token 事件
   const handlerSelectCurrentToken = (token: StandardTokenProfile) => {
@@ -80,16 +83,19 @@ export default function AskPage() {
     description,
     duration = 4.5,
     key = '',
+    icon,
   }: {
     description: string;
     duration?: number | null;
     key?: string;
+    icon?: any;
   }) => {
     notification.open({
       message: 'Notification Title',
       description: description,
       duration: duration,
       key: key,
+      icon: icon || <Spin />,
     });
   };
 
@@ -98,6 +104,7 @@ export default function AskPage() {
       message.info('Wallet have to be connected');
       return;
     }
+
     signingActions.setTrue();
     const theAsk = constructAsk(currency, amount);
     try {
@@ -154,6 +161,37 @@ export default function AskPage() {
     id && getMediaByIdFn(String(id));
   }, [id]);
 
+  // token current price
+  const price = useCallback(({ amount, token }) => {
+    return (
+      <>
+        {utils.formatUnits(amount, token.decimals)} {token?.symbol}(
+        {token?.name})
+      </>
+    );
+  }, []);
+
+  // price dom
+  const priceDom = useCallback(() => {
+    return (
+      <>
+        {isEmpty(tokenMatataki) ? (
+          price({ amount: profile.currentAsk.amount, token: tokenAskProfile })
+        ) : (
+          <Link
+            href={`${process.env.NEXT_PUBLIC_MATATAKI}/token/${tokenMatataki.tokenId}`}>
+            <a target='_blank' rel='noopener noreferrer'>
+              {price({
+                amount: profile.currentAsk.amount,
+                token: tokenAskProfile,
+              })}
+            </a>
+          </Link>
+        )}
+      </>
+    );
+  }, [tokenMatataki, price, profile.currentAsk.amount, tokenAskProfile]);
+
   if (!id) {
     return (
       <StyledPermissions>
@@ -205,13 +243,7 @@ export default function AskPage() {
           {isAskExist && (
             <GreyCard>
               <p className='title'>CURRENT ASK</p>
-              <p className='value'>
-                {utils.formatUnits(
-                  profile.currentAsk.amount,
-                  tokenAskProfile.decimals
-                )}{' '}
-                {tokenAskProfile?.symbol}({tokenAskProfile?.name})
-              </p>
+              <p className='value'>{priceDom()}</p>
               <Button onClick={() => removeAsk()}>Remove Ask</Button>
             </GreyCard>
           )}
@@ -242,11 +274,14 @@ export default function AskPage() {
                 onChange={setAmount}
                 style={FullWidth}
                 formatter={value =>
-                  utils.formatUnits(value as string, getDecimalOf(currency))
+                  utils.formatUnits(
+                    value as string,
+                    currentToken.decimals || 18
+                  )
                 }
                 parser={value =>
                   utils
-                    .parseUnits(value as string, getDecimalOf(currency))
+                    .parseUnits(value as string, currentToken.decimals || 18)
                     .toString()
                 }
                 stringMode
@@ -261,6 +296,11 @@ export default function AskPage() {
               onClick={() => router.back()}></StyledBackBtn>
             {wallet.status === 'connected' ? (
               <Button
+                disabled={
+                  !currency ||
+                  isEmpty(currentToken) ||
+                  BigNumber.from(amount).lte(0)
+                }
                 style={FullWidth}
                 loading={isSigning}
                 onClick={() => setAsk()}>
@@ -316,6 +356,9 @@ const GreyCard = styled.div`
     font-size: 16px;
     padding: 0;
     margin: 10px 0;
+    a {
+      color: #000;
+    }
   }
 `;
 
