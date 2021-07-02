@@ -80,16 +80,19 @@ export default function AskPage() {
     description,
     duration = 4.5,
     key = '',
+    icon,
   }: {
     description: string;
     duration?: number | null;
     key?: string;
+    icon?: any;
   }) => {
     notification.open({
       message: 'Notification Title',
       description: description,
       duration: duration,
       key: key,
+      icon: icon || <Spin />,
     });
   };
 
@@ -242,16 +245,20 @@ export default function AskPage() {
                 onChange={setAmount}
                 style={FullWidth}
                 formatter={value =>
-                  utils.formatUnits(value as string, getDecimalOf(currency))
+                  utils.formatUnits(
+                    value as string,
+                    currentToken.decimals || 18
+                  )
                 }
                 parser={value =>
                   utils
-                    .parseUnits(value as string, getDecimalOf(currency))
+                    .parseUnits(value as string, currentToken.decimals || 18)
                     .toString()
                 }
                 stringMode
                 min='0'
               />
+              {JSON.stringify(currentToken)}
             </Col>
           </Row>
 

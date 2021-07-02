@@ -30,6 +30,7 @@ const BidsCard: React.FC<Props> = ({
     return date;
   };
   const price = (amount: string, currency: string) => {
+    // TODO 如果组件使用 需要修改
     return `${utils.formatUnits(amount, getDecimalOf(currency))} ${getSymbolOf(
       currency
     )}`;
