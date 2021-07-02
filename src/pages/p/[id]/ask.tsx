@@ -258,7 +258,6 @@ export default function AskPage() {
                 stringMode
                 min='0'
               />
-              {JSON.stringify(currentToken)}
             </Col>
           </Row>
 
