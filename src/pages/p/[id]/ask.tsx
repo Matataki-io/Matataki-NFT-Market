@@ -1,4 +1,4 @@
-import React, { useState, CSSProperties, useEffect } from 'react';
+import React, { useState, CSSProperties, useEffect, useCallback } from 'react';
 import { Grid } from '@geist-ui/react';
 import { useRouter } from 'next/router';
 import {
@@ -33,6 +33,7 @@ import { useBoolean } from 'ahooks';
 import TokenListComponents from '../../../components/TokenListSelect';
 import { StandardTokenProfile } from '../../../types/TokenList';
 import { useERC20Single } from '../../../hooks/useERC20Single';
+import useTokenInMatataki from '../../../hooks/useTokenInMatataki';
 
 const { Title, Text } = Typography;
 
@@ -68,6 +69,8 @@ export default function AskPage() {
   const { tokenProfile: tokenAskProfile } = useERC20Single(
     profile.currentAsk.currency
   );
+  // token profile in matataki
+  const { tokenMatataki } = useTokenInMatataki(profile.currentAsk.currency);
 
   // 处理 选择 Token 事件
   const handlerSelectCurrentToken = (token: StandardTokenProfile) => {
@@ -157,6 +160,34 @@ export default function AskPage() {
     id && getMediaByIdFn(String(id));
   }, [id]);
 
+  // token current price
+  const price = useCallback(() => {
+    return (
+      <>
+        {utils.formatUnits(profile.currentAsk.amount, tokenAskProfile.decimals)}{' '}
+        {tokenAskProfile?.symbol}({tokenAskProfile?.name})
+      </>
+    );
+  }, [profile.currentAsk.amount, tokenAskProfile]);
+
+  // price dom
+  const priceDom = useCallback(() => {
+    return (
+      <>
+        {isEmpty(tokenMatataki) ? (
+          price()
+        ) : (
+          <Link
+            href={`${process.env.NEXT_PUBLIC_MATATAKI}/token/${tokenMatataki.tokenId}`}>
+            <a target='_blank' rel='noopener noreferrer'>
+              {price()}
+            </a>
+          </Link>
+        )}
+      </>
+    );
+  }, [tokenMatataki, price]);
+
   if (!id) {
     return (
       <StyledPermissions>
@@ -208,13 +239,7 @@ export default function AskPage() {
           {isAskExist && (
             <GreyCard>
               <p className='title'>CURRENT ASK</p>
-              <p className='value'>
-                {utils.formatUnits(
-                  profile.currentAsk.amount,
-                  tokenAskProfile.decimals
-                )}{' '}
-                {tokenAskProfile?.symbol}({tokenAskProfile?.name})
-              </p>
+              <p className='value'>{priceDom()}</p>
               <Button onClick={() => removeAsk()}>Remove Ask</Button>
             </GreyCard>
           )}
@@ -322,6 +347,9 @@ const GreyCard = styled.div`
     font-size: 16px;
     padding: 0;
     margin: 10px 0;
+    a {
+      color: #000;
+    }
   }
 `;
 
