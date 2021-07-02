@@ -17,9 +17,12 @@ export default function useTokenInMatataki(address: string) {
       const res = await getInfoByAddress({ address: address, chain: 'bsc' });
       if (res.code === 0 && res.data.length) {
         setTokenMatataki(res.data[0]);
+      } else {
+        setTokenMatataki({} as MatatakiGetInfoByAddress);
       }
     } catch (e) {
       console.log(e);
+      setTokenMatataki({} as MatatakiGetInfoByAddress);
     }
   };
 

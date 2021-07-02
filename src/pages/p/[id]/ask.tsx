@@ -161,32 +161,35 @@ export default function AskPage() {
   }, [id]);
 
   // token current price
-  const price = useCallback(() => {
+  const price = useCallback(({ amount, token }) => {
     return (
       <>
-        {utils.formatUnits(profile.currentAsk.amount, tokenAskProfile.decimals)}{' '}
-        {tokenAskProfile?.symbol}({tokenAskProfile?.name})
+        {utils.formatUnits(amount, token.decimals)} {token?.symbol}(
+        {token?.name})
       </>
     );
-  }, [profile.currentAsk.amount, tokenAskProfile]);
+  }, []);
 
   // price dom
   const priceDom = useCallback(() => {
     return (
       <>
         {isEmpty(tokenMatataki) ? (
-          price()
+          price({ amount: profile.currentAsk.amount, token: tokenAskProfile })
         ) : (
           <Link
             href={`${process.env.NEXT_PUBLIC_MATATAKI}/token/${tokenMatataki.tokenId}`}>
             <a target='_blank' rel='noopener noreferrer'>
-              {price()}
+              {price({
+                amount: profile.currentAsk.amount,
+                token: tokenAskProfile,
+              })}
             </a>
           </Link>
         )}
       </>
     );
-  }, [tokenMatataki, price]);
+  }, [tokenMatataki, price, profile.currentAsk.amount, tokenAskProfile]);
 
   if (!id) {
     return (
