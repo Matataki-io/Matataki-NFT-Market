@@ -350,11 +350,14 @@ export default function BidPage() {
                   onChange={setAmount}
                   style={FullWidth}
                   formatter={value =>
-                    utils.formatUnits(value as string, tokenProfile.decimals)
+                    utils.formatUnits(
+                      value as string,
+                      tokenProfile.decimals || 18
+                    )
                   }
                   parser={value =>
                     utils
-                      .parseUnits(value as string, tokenProfile.decimals)
+                      .parseUnits(value as string, tokenProfile.decimals || 18)
                       .toString()
                   }
                   stringMode

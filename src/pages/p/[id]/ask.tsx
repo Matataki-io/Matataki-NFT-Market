@@ -22,7 +22,7 @@ import { currentSupportedTokens as tokens } from '../../../constant/contracts';
 import { useMedia } from '../../../hooks/useMedia';
 import { constructAsk } from '../../../utils/zdkUtils';
 import { useWallet } from 'use-wallet';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useMediaToken } from '../../../hooks/useMediaToken';
 import Link from 'next/link';
 import { getDecimalOf, getSymbolOf } from '../../../utils/tokens';
@@ -104,6 +104,7 @@ export default function AskPage() {
       message.info('Wallet have to be connected');
       return;
     }
+
     signingActions.setTrue();
     const theAsk = constructAsk(currency, amount);
     try {
@@ -295,6 +296,11 @@ export default function AskPage() {
               onClick={() => router.back()}></StyledBackBtn>
             {wallet.status === 'connected' ? (
               <Button
+                disabled={
+                  !currency ||
+                  isEmpty(currentToken) ||
+                  BigNumber.from(amount).lte(0)
+                }
                 style={FullWidth}
                 loading={isSigning}
                 onClick={() => setAsk()}>
