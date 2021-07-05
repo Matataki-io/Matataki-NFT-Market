@@ -338,10 +338,11 @@ const StyledNfts = styled.div`
   @media screen and (max-width: 1140px) {
     grid-template-columns: repeat(2, minmax(0px, 330px));
   }
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 576px) {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 0;
   }
   .loading-container {
     margin-top: 20px;

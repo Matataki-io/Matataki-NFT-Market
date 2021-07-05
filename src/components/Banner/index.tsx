@@ -39,7 +39,10 @@ const StyledItem = styled.div`
   height: 648px;
   position: relative;
   @media screen and (max-width: 768px) {
-    height: 160px;
+    height: 400px;
+  }
+  @media screen and (max-width: 576px) {
+    height: 200px;
   }
   img {
     width: 100%;
@@ -58,6 +61,7 @@ const StyledItemText = styled.div`
   @media screen and (max-width: 768px) {
     padding: 10px;
   }
+
   p {
     color: #fff;
     line-height: 1.2;
@@ -70,6 +74,9 @@ const StyledItemText = styled.div`
     white-space: nowrap;
     @media screen and (max-width: 768px) {
       font-size: 18px;
+    }
+    @media screen and (max-width: 576px) {
+      font-size: 14px;
     }
   }
 `;

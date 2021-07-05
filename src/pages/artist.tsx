@@ -86,6 +86,9 @@ const StyledWrapper = styled.div`
   padding: 48px 20px 256px;
   box-sizing: border-box;
   margin: 0 auto;
+  @media screen and (max-width: 576px) {
+    padding: 20px 10px 80px;
+  }
 `;
 const StyledHead = styled.div``;
 const StyledHeadTitle = styled.h2`
@@ -96,8 +99,8 @@ const StyledHeadTitle = styled.h2`
   line-height: 1.2;
   padding: 0;
   margin: 0;
-  @media screen and (max-width: 678px) {
-    font-size: 30px;
+  @media screen and (max-width: 576px) {
+    font-size: 22px;
   }
 `;
 
@@ -105,6 +108,9 @@ const StyledLine = styled.div`
   width: 100%;
   height: 1px;
   background: #dbdbdb;
+  @media screen and (max-width: 576px) {
+    display: none;
+  }
 `;
 
 export default Artist;

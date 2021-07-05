@@ -113,8 +113,12 @@ const StyledNFTContent = styled.div`
   justify-content: space-between;
   align-items: center;
   /* flex: 1; */
-  border: 1px solid rgb(0 0 0 / 5%);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   box-sizing: border;
+
+  @media screen and (max-width: 576px) {
+    max-width: 100%;
+  }
 
   .media-video,
   .media-text,
@@ -165,8 +169,12 @@ const StyledNFTFooter = styled.div`
   justify-content: flex-end;
   align-items: flex-start;
 
+  @media screen and (max-width: 576px) {
+    padding: 10px;
+  }
+
   h5 {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 30px;
     margin-bottom: 10px;

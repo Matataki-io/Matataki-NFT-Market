@@ -108,9 +108,14 @@ const StyledCreatorsComponents = styled.div`
     font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
-    line-height: 24px;
+    line-height: 1.5;
     padding: 0;
     margin: 24px 0 0 0;
+
+    @media screen and (max-width: 576px) {
+      font-size: 14px;
+      margin: 10px 0 0 0;
+    }
   }
 `;
 
