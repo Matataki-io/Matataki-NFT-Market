@@ -80,9 +80,8 @@ const StyledWrapper = styled.div`
   margin: 0 auto;
   width: 100%;
 
-  @media screen and (max-width: 768px) {
-    padding-left: 10px;
-    padding-right: 10px;
+  @media screen and (max-width: 576px) {
+    padding: 20px 10px 80px;
   }
 `;
 const StyledHead = styled.div``;
@@ -94,8 +93,8 @@ const StyledHeadTitle = styled.h2`
   line-height: 1.2;
   padding: 0;
   margin: 0;
-  @media screen and (max-width: 678px) {
-    font-size: 30px;
+  @media screen and (max-width: 576px) {
+    font-size: 22px;
   }
 `;
 
@@ -122,6 +121,11 @@ const StyledGallery = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  @media screen and (max-width: 576px) {
+    margin-top: 20px;
+    gap: 10px 0;
   }
 
   .loading-container {

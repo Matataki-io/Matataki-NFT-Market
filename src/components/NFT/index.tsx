@@ -198,6 +198,9 @@ const StyledNFTContent = styled.div`
     align-items: center;
     justify-content: center;
   }
+  @media screen and (max-width: 576px) {
+    max-width: 100%;
+  }
 `;
 const StyledNFTFooter = styled.div`
   width: 100%;
@@ -215,7 +218,14 @@ const StyledNFTFooter = styled.div`
     font-family: 'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
-    line-height: 28px;
+    line-height: 1.4;
+    @media screen and (max-width: 576px) {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+  }
+  @media screen and (max-width: 576px) {
+    padding: 10px;
   }
 `;
 const StyledNFTFooterPrice = styled.div`

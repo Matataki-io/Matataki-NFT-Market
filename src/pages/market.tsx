@@ -11,6 +11,7 @@ import { getTags } from '../backend/tag';
 import { Tag as TagType } from '../types/Tag';
 import useSWR from 'swr';
 import { isEmpty } from 'lodash';
+import { isMobile } from 'react-device-detect';
 
 const { Option } = Select;
 
@@ -148,12 +149,12 @@ const Market: React.FC = () => {
       <StyledHeadTitle>Market Place</StyledHeadTitle>
       <StyledHead>
         <div>
-          <h3>DEPARTMENT</h3>
+          <h3 className='title'>DEPARTMENT</h3>
           <StyledHeadContainer className='filter'>
             <Select
+              className='tags'
               allowClear
-              style={{ width: '400px' }}
-              placeholder='Select tag to filter media'
+              placeholder='Select tag'
               onSelect={handleTagSelect}
               onClear={() => setCurrentTag([])}>
               {tagList.map((i: TagType, idx: number) => (
@@ -165,7 +166,7 @@ const Market: React.FC = () => {
           </StyledHeadContainer>
         </div>
         <div>
-          <h3>SORT BY</h3>
+          <h3 className='title'>SORT BY</h3>
           <StyledHeadContainer className='filter'>
             <Radio.Group onChange={e => setSort(e.target.value)} value={sort}>
               <Radio value={SortBy.DESC}>New</Radio>
@@ -226,9 +227,8 @@ const StyledWrapper = styled.div`
   margin: 0px auto;
   width: 100%;
 
-  @media screen and (max-width: 768px) {
-    padding-left: 10px;
-    padding-right: 10px;
+  @media screen and (max-width: 576px) {
+    padding: 20px 10px 80px;
   }
 `;
 
@@ -240,8 +240,8 @@ const StyledHeadTitle = styled.h2`
   line-height: 1.2;
   padding: 0;
   margin: 0;
-  @media screen and (max-width: 678px) {
-    font-size: 30px;
+  @media screen and (max-width: 576px) {
+    font-size: 22px;
   }
 `;
 const StyledHead = styled.div`
@@ -251,20 +251,32 @@ const StyledHead = styled.div`
   padding: 48px 0;
   flex-wrap: wrap;
   .title {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 500;
     color: #333333;
-    line-height: 24px;
+    line-height: 1.5;
     padding: 0;
     margin: 0;
+  }
+  @media screen and (max-width: 576px) {
+    padding: 20px 0;
   }
 `;
 const StyledHeadContainer = styled.div`
   margin: 24px 0 0 0;
+  @media screen and (max-width: 576px) {
+    margin-top: 10px;
+  }
   &.filter {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     grid-row-gap: 24px;
+    .tags {
+      width: 300px;
+      @media screen and (max-width: 576px) {
+        width: 160px;
+      }
+    }
   }
 `;
 
@@ -295,6 +307,10 @@ const StyledNfts = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  @media screen and (max-width: 576px) {
+    margin-top: 20px;
+    gap: 10px 0;
   }
   .loading-container {
     margin-top: 20px;

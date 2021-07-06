@@ -366,7 +366,6 @@ const StyledHeaderNavLink = styled.a<{ active: boolean }>`
 `;
 const StyledHeaderNavMobile = styled.nav`
   a {
-    color: #333333;
     padding: 0;
     display: block;
     margin: 10px 0;

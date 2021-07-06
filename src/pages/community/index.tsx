@@ -75,9 +75,8 @@ const StyledWrapper = styled.div`
   margin: 0px auto;
   width: 100%;
 
-  @media screen and (max-width: 768px) {
-    padding-left: 10px;
-    padding-right: 10px;
+  @media screen and (max-width: 576px) {
+    padding: 20px 10px 80px;
   }
 `;
 const StyledHead = styled.div``;
@@ -89,15 +88,16 @@ const StyledHeadTitle = styled.h2`
   line-height: 1.2;
   padding: 0;
   margin: 0;
-  @media screen and (max-width: 678px) {
-    font-size: 30px;
+
+  @media screen and (max-width: 576px) {
+    font-size: 22px;
   }
 `;
 const StyledItem = styled.div`
   & > a {
     display: block;
     margin: 48px 0;
-    @media screen and (max-width: 678px) {
+    @media screen and (max-width: 576px) {
       margin: 20px 0;
     }
   }
