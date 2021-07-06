@@ -277,20 +277,18 @@ export default function BidPage() {
   }
   return (
     <StyledWrapper justify='center'>
-      <Grid
-        xs={24}
-        md={12}
-        style={{ background: '#f2f2f2', padding: 50 }}
-        justify='center'
-        alignItems='center'>
-        <NFTPreview
-          src={mediaData?.media.tokenURI}
-          type={
-            mediaData?.metadata.mimeType
-              ? mediaData.metadata.mimeType.split('/')[0]
-              : ''
-          }></NFTPreview>
-      </Grid>
+      <StyledNFT>
+        <Grid xs={24} md={12} justify='center' alignItems='center'>
+          <NFTPreview
+            src={mediaData?.media.tokenURI}
+            type={
+              mediaData?.metadata.mimeType
+                ? mediaData.metadata.mimeType.split('/')[0]
+                : ''
+            }></NFTPreview>
+        </Grid>
+      </StyledNFT>
+
       <Grid xs={24} md={12}>
         <BiddingBox>
           <GreyCard>
@@ -442,6 +440,14 @@ const StyledWrapper = styled(Grid.Container)`
   flex: 1;
 `;
 
+const StyledNFT = styled.div`
+  background: rgb(242, 242, 242);
+  padding: 50px;
+  @media screen and (max-width: 567px) {
+    padding: 20px;
+  }
+`;
+
 const StyledPermissions = styled.div`
   flex: 1;
   text-align: center;
@@ -457,6 +463,9 @@ const BiddingBox = styled.div`
   padding: 40px 20px;
   margin: auto;
   box-sizing: border;
+  @media screen and (max-width: 567px) {
+    padding: 20px 10px;
+  }
 `;
 
 const GreyCard = styled.div`

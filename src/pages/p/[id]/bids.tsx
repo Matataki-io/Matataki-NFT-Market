@@ -154,38 +154,57 @@ export default function Bids() {
     return list.map(log => {
       const bidder = () => {
         return (
-          <a
-            href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${log.bidder}`}
-            target='_blank'
-            rel='noopener noreferrer'>
-            {log.bidder || ''}
-          </a>
+          <StyledTableColumn>
+            <a
+              href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${log.bidder}`}
+              target='_blank'
+              rel='noopener noreferrer'>
+              {shortedWalletAccount(log.bidder) || ''}
+            </a>
+          </StyledTableColumn>
         );
       };
 
       const price = () => {
-        return <BidsPrice log={log}></BidsPrice>;
+        return (
+          <StyledTableColumn>
+            <BidsPrice log={log}></BidsPrice>
+          </StyledTableColumn>
+        );
       };
       const acceptBidBtn = () => {
         if (wallet.status !== 'connected')
           return (
-            <Button size='small' onClick={() => wallet.connect('injected')}>
-              Connect Wallet
-            </Button>
+            <StyledTableColumn>
+              <Button size='small' onClick={() => wallet.connect('injected')}>
+                Connect Wallet
+              </Button>
+            </StyledTableColumn>
           );
-        return isMeTheOwner ? (
-          <Button type='primary' size='small' onClick={() => acceptBid(log)}>
-            Accept Bid and Transfer
-          </Button>
-        ) : log.bidder === wallet.account ? (
-          <Button size='small' danger onClick={() => removeBid()}>
-            Remove Bid
-          </Button>
-        ) : (
-          <></>
+        return (
+          <StyledTableColumn>
+            {isMeTheOwner ? (
+              <Button
+                type='primary'
+                size='small'
+                onClick={() => acceptBid(log)}>
+                Accept Bid and Transfer
+              </Button>
+            ) : log.bidder === wallet.account ? (
+              <Button size='small' danger onClick={() => removeBid()}>
+                Remove Bid
+              </Button>
+            ) : (
+              <></>
+            )}
+          </StyledTableColumn>
         );
       };
-      const sellOnShare = `${utils.formatUnits(log.sellOnShare.value, 18)}%`;
+      const sellOnShare = (
+        <StyledTableColumn>
+          {`${utils.formatUnits(log.sellOnShare.value, 18)}%`}
+        </StyledTableColumn>
+      );
       return { ...log, bidder, price, acceptBidBtn, sellOnShare };
     });
   }, [activeBids, isMeTheOwner, acceptBid, removeBid, wallet]);
@@ -203,21 +222,36 @@ export default function Bids() {
     const renderedData = data?.map(log => {
       const bidder = () => {
         return (
-          <a
-            href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${log.bidder}`}
-            target='_blank'
-            rel='noopener noreferrer'>
-            {log.bidder || ''}
-          </a>
+          <StyledTableColumn>
+            <a
+              href={`${process.env.NEXT_PUBLIC_SCAN_PREFIX}/address/${log.bidder}`}
+              target='_blank'
+              rel='noopener noreferrer'>
+              {shortedWalletAccount(log.bidder) || ''}
+            </a>
+          </StyledTableColumn>
         );
       };
 
       dayjs.extend(relativeTime);
-      const date = dayjs(log.at.timestamp * 1000).fromNow();
-      const price = () => {
-        return <BidsPrice log={log}></BidsPrice>;
+      const date = () => {
+        return (
+          <StyledTableColumn>
+            {dayjs(log.at.timestamp * 1000).fromNow()}
+          </StyledTableColumn>
+        );
       };
-      return { ...log, bidder, date, price };
+      const price = () => {
+        return (
+          <StyledTableColumn>
+            <BidsPrice log={log}></BidsPrice>
+          </StyledTableColumn>
+        );
+      };
+      const status = () => {
+        return <StyledTableColumn>{log.status}</StyledTableColumn>;
+      };
+      return { ...log, bidder, date, status, price };
     });
 
     return (
@@ -246,7 +280,7 @@ export default function Bids() {
           </StyledBox>
         </StyledItem>
 
-        <StyledItem>
+        <StyledItem className='mr'>
           <Text h2>历史出价日志</Text>
           <Table data={renderedData}>
             <Table.Column prop='bidder' label='买家' />
@@ -271,9 +305,12 @@ const StyledWrapper = styled.div`
   flex: 1;
   width: 900px;
   margin: 0 auto;
-  padding: 40px 0 100px;
+  padding: 40px 10px 100px;
   @media screen and (max-width: 900px) {
     width: 100%;
+  }
+  @media screen and (max-width: 567px) {
+    padding: 20px 10px 80px;
   }
 `;
 
@@ -290,4 +327,21 @@ const StyledBox = styled.div`
 
 const StyledItem = styled.div`
   margin: 40px 0;
+  @media screen and (max-width: 567px) {
+    margin: 0;
+    &.mr {
+      margin-top: 40px;
+    }
+  }
+`;
+
+const StyledTableColumn = styled.div`
+  @media screen and (max-width: 567px) {
+    width: 50px;
+    word-break: break-word;
+    button {
+      white-space: break-spaces;
+      height: auto;
+    }
+  }
 `;

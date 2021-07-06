@@ -282,10 +282,10 @@ const WaitForPublish: React.FC = () => {
       <Table
         dataSource={publishNFTs}
         columns={publishNFTColumns}
-        scroll={{ x: 1100 }}
         pagination={{
           position: ['bottomCenter'],
         }}
+        scroll={{ x: 1100 }}
       />
       <PublishFixTool
         data={publishNFTs}

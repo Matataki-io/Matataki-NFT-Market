@@ -222,20 +222,17 @@ export default function AskPage() {
   }
   return (
     <StyledWrapper justify='center'>
-      <Grid
-        xs={24}
-        md={12}
-        style={{ background: '#f2f2f2', padding: 50 }}
-        justify='center'
-        alignItems='center'>
-        <NFTPreview
-          src={mediaData?.media.tokenURI}
-          type={
-            mediaData?.metadata.mimeType
-              ? mediaData.metadata.mimeType.split('/')[0]
-              : ''
-          }></NFTPreview>
-      </Grid>
+      <StyledNFT>
+        <Grid xs={24} md={12} justify='center' alignItems='center'>
+          <NFTPreview
+            src={mediaData?.media.tokenURI}
+            type={
+              mediaData?.metadata.mimeType
+                ? mediaData.metadata.mimeType.split('/')[0]
+                : ''
+            }></NFTPreview>
+        </Grid>
+      </StyledNFT>
       <Grid xs={24} md={12}>
         <BiddingBox>
           <Title level={3}>Your ask</Title>
@@ -333,6 +330,14 @@ const StyledPermissions = styled.div`
   padding: 100px 0 0;
 `;
 
+const StyledNFT = styled.div`
+  background: rgb(242, 242, 242);
+  padding: 50px;
+  @media screen and (max-width: 567px) {
+    padding: 20px;
+  }
+`;
+
 const GreyCard = styled.div`
   box-sizing: border-box;
   margin: 0;
@@ -368,6 +373,9 @@ const BiddingBox = styled.div`
   padding: 40px 20px;
   margin: auto;
   box-sizing: border;
+  @media screen and (max-width: 567px) {
+    padding: 20px 10px;
+  }
 `;
 
 const ActionsBox = styled.div`
