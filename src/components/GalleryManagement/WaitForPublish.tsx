@@ -201,6 +201,8 @@ const WaitForPublish: React.FC = () => {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+      width: 60,
+      fixed: 'left',
     },
     {
       title: 'Cover',
@@ -280,6 +282,7 @@ const WaitForPublish: React.FC = () => {
       <Table
         dataSource={publishNFTs}
         columns={publishNFTColumns}
+        scroll={{ x: 1100 }}
         pagination={{
           position: ['bottomCenter'],
         }}
