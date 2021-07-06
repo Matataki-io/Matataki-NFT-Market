@@ -12,7 +12,7 @@ const StyledWrapper = styled.div`
   box-sizing: border-box;
   margin: 0 auto;
   flex: 1;
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     padding: 0 10px 80px;
   }
 `;

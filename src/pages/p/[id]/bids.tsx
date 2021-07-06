@@ -309,7 +309,7 @@ const StyledWrapper = styled.div`
   @media screen and (max-width: 900px) {
     width: 100%;
   }
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     padding: 20px 10px 80px;
   }
 `;
@@ -327,7 +327,7 @@ const StyledBox = styled.div`
 
 const StyledItem = styled.div`
   margin: 40px 0;
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     margin: 0;
     &.mr {
       margin-top: 40px;
@@ -336,7 +336,7 @@ const StyledItem = styled.div`
 `;
 
 const StyledTableColumn = styled.div`
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     width: 50px;
     word-break: break-word;
     button {
