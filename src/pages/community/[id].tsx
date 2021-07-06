@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { Article } from '../../types/Article';
 import { getArticle } from '../../backend/article';
 import moment from 'moment';
+import { isMobile } from 'react-device-detect';
 
 const CommunityId: React.FC = () => {
   const router = useRouter();
@@ -51,11 +52,19 @@ const CommunityId: React.FC = () => {
           </Head>
 
           {article?.cover ? (
-            <Image
-              width={'100%'}
-              height={400}
-              style={{ objectFit: 'cover' }}
-              src={article?.cover}></Image>
+            isMobile ? (
+              <Image
+                width={'100%'}
+                height={200}
+                style={{ objectFit: 'cover' }}
+                src={article?.cover}></Image>
+            ) : (
+              <Image
+                width={'100%'}
+                height={400}
+                style={{ objectFit: 'cover' }}
+                src={article?.cover}></Image>
+            )
           ) : null}
           <StyledTitle>{article?.title}</StyledTitle>
           <StyledTime>
@@ -85,9 +94,8 @@ const StyledWrapper = styled.div`
   margin: 0px auto;
   width: 100%;
 
-  @media screen and (max-width: 768px) {
-    padding-left: 10px;
-    padding-right: 10px;
+  @media screen and (max-width: 576px) {
+    padding: 10px 10px 80px;
   }
 `;
 
@@ -99,6 +107,9 @@ const StyledTitle = styled.h1`
   line-height: 1.4;
   padding: 0;
   margin: 0;
+  @media screen and (max-width: 576px) {
+    font-size: 24px;
+  }
 `;
 const StyledTime = styled.time`
   font-size: 14px;
@@ -108,6 +119,9 @@ const StyledTime = styled.time`
   padding: 0;
   margin: 24px 0 16px 0;
   display: inline-block;
+  @media screen and (max-width: 576px) {
+    margin: 10px 0;
+  }
 `;
 const StyledUser = styled.div`
   display: flex;
