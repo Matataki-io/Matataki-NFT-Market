@@ -421,7 +421,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     icon?: any;
   }) => {
     notification.open({
-      message: 'Notification Title',
+      message: 'Notification',
       description: description,
       duration: duration,
       key: key,
@@ -466,7 +466,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         creatorShare,
         signer
       );
-      setMediaSubmitLoading(false);
       console.log('res', res);
 
       const keyOne = `open${Date.now()}`;
@@ -501,6 +500,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         }
 
         setIsCreate(false);
+        setMediaSubmitLoading(false);
 
         // 如果没有 tokenId 一般不会这样
         if (resMedia.data && ~resMedia.data.data.tokenId) {
@@ -512,6 +512,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
         throw new Error('not hash');
       }
     } catch (e) {
+      setMediaSubmitLoading(false);
       console.log('e', e);
       message.error(e.toString());
     }
@@ -870,7 +871,10 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
             <ButtonCustom color='gray' onClick={() => setStep(1)}>
               Back
             </ButtonCustom>
-            <ButtonCustom color='dark' disabled={false} type='submit'>
+            <ButtonCustom
+              color='dark'
+              disabled={mediaSubmitLoading}
+              type='submit'>
               Continue
             </ButtonCustom>
           </StyledMultiiMediaFormItem>

@@ -170,7 +170,7 @@ export default function BidPage() {
     key?: string;
   }) => {
     notification.open({
-      message: 'Notification Title',
+      message: 'Notification',
       description: description,
       duration: duration,
       key: key,
