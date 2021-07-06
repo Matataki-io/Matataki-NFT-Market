@@ -201,8 +201,6 @@ const WaitForPublish: React.FC = () => {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      width: 60,
-      fixed: 'left',
     },
     {
       title: 'Cover',
