@@ -896,7 +896,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
             )}
             <CreateFixTool tags={tagsList}></CreateFixTool>
           </StyledContainerGridCol>
-          <StyledContainerGridCol start='7' end='12'>
+          <StyledContainerGridCol start='7' end='12' className='mr'>
             <StyledSubtitle>Preview</StyledSubtitle>
             <div style={{ width: '100%', minHeight: '113%' }}>
               <NFT {...mediaData} />
@@ -939,6 +939,10 @@ const StyledWrapper = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+
+  @media screen and (max-width: 576px) {
+    overflow: auto;
+  }
 `;
 const StyledHead = styled.div`
   display: flex;
@@ -952,12 +956,18 @@ const StyledContainer = styled.div`
   margin: 0px auto;
   width: 100%;
   max-width: calc(1246px);
+  @media screen and (max-width: 576px) {
+    padding-top: 0;
+  }
 `;
 const StyledContainerGrid = styled.div`
   width: 100%;
   display: inline-grid;
   column-gap: 30px;
   grid-template-columns: repeat(12, 1fr);
+  @media screen and (max-width: 576px) {
+    display: block;
+  }
 `;
 const StyledContainerGridCol = styled.div<{ start?: string; end?: string }>`
   width: 100%;
@@ -973,6 +983,11 @@ const StyledContainerGridCol = styled.div<{ start?: string; end?: string }>`
       height: auto;
       grid-column: ${Number(props.start) + 1} / ${Number(props.end) + 1};
     `}
+  @media screen and (max-width: 576px) {
+    &.mr {
+      margin-top: 20px;
+    }
+  }
 `;
 const StyledTitle = styled.h2`
   font-size: 30px;
