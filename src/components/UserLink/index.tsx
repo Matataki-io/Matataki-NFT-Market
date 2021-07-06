@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { IconVerified } from '../Icons';
 import { UserOutlined } from '@ant-design/icons';
+import { shortedAccount } from '../../utils/index';
 
 export interface UserLinkProps {
   label: string;
@@ -31,7 +32,9 @@ const UserLink: React.FC<UserLinkProps> = ({
       <HeadLabel>{label}</HeadLabel>
       <UserInfo>
         <AccountAvatar icon={<UserOutlined />} size={30} src={avatar} />
-        <UserName>{nickname ? nickname : '@' + username}</UserName>
+        <UserName>
+          {nickname ? shortedAccount(nickname) : '@' + username}
+        </UserName>
         {isVerified && (
           <VerifiedIcon>
             <IconVerified />

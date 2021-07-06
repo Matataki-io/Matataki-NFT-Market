@@ -13,6 +13,20 @@ export const shortedWalletAccount = (account: string | null) => {
   return account.slice(0, 6) + '...' + account.slice(-4);
 };
 
+/**
+ * 短截取
+ * @param account
+ * @param len
+ * @returns
+ */
+export const shortedAccount = (account: string | null, len = 12) => {
+  if (!account) return '';
+  if (account.length > len) {
+    return account.slice(0, len) + '...';
+  }
+  return account;
+};
+
 // diff
 export const diffData = (newData: any, oldData: any) => {
   let data: any = {};
