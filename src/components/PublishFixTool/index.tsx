@@ -86,8 +86,11 @@ const PublishFixTool: React.FC<Props> = ({ data, galleryId }) => {
 const StyledContainer = styled.div`
   margin: 20px 0 0 0;
   @media screen and (max-width: 576px) {
-    .wrapper > div {
-      margin: 10px 0;
+    .wrapper {
+      display: block;
+      & > div {
+        margin: 10px 0;
+      }
     }
   }
 `;
