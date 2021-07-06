@@ -68,7 +68,7 @@ const PublishFixTool: React.FC<Props> = ({ data, galleryId }) => {
             You can manually synchronize data, enter transactionHash and select
             nft and submit
           </Paragraph>
-          <Space>
+          <Space className='wrapper'>
             <Input
               onChange={e => setFixToolTxHash(e.target.value)}
               placeholder='Enter transactionHash'></Input>
@@ -85,6 +85,11 @@ const PublishFixTool: React.FC<Props> = ({ data, galleryId }) => {
 
 const StyledContainer = styled.div`
   margin: 20px 0 0 0;
+  @media screen and (max-width: 576px) {
+    .wrapper > div {
+      margin: 10px 0;
+    }
+  }
 `;
 
 export default PublishFixTool;
