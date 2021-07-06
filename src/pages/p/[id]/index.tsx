@@ -289,6 +289,10 @@ const StyledWrapper = styled.div`
   margin: 0px auto;
   width: 100%;
   max-width: calc(1330px);
+
+  @media screen and (max-width: 567px) {
+    padding: 0;
+  }
 `;
 
 const StyledContentWrapper = styled.div`
@@ -332,6 +336,9 @@ const StyledMarketContainer = styled.div`
   right: 0px;
   padding: 50px;
   box-sizing: border-box;
+  @media screen and (max-width: 576px) {
+    padding: 20px;
+  }
 `;
 
 const StyledMediaTitle = styled.h1`
@@ -340,6 +347,9 @@ const StyledMediaTitle = styled.h1`
   margin-top: 0px;
   margin-bottom: 10px;
   word-break: break-word;
+  @media screen and (max-width: 576px) {
+    font-size: 30px;
+  }
 `;
 
 const StyledAuthor = styled.p`
@@ -484,6 +494,9 @@ const LargeValue = styled.h2`
   font-size: 30px;
   margin-bottom: 30px;
   margin-top: 0;
+  @media screen and (max-width: 576px) {
+    font-size: 20px;
+  }
 `;
 
 export default PostPage;

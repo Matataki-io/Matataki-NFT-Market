@@ -230,7 +230,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
   const collectionContainer = () => {
     return (
       <>
-        <StyledTitle>Collection</StyledTitle>
+        <StyledItemTitle style={{ marginTop: 20 }}>Collection</StyledItemTitle>
         <StyledMediaCardContainer>
           {nftListData.map(item => (
             <Link href={`/p/${item.id}`} key={`media-card-${item.id}`}>
@@ -421,24 +421,14 @@ const StyledWrapper = styled.div`
   margin: 0 auto;
   width: 100%;
 
-  @media screen and (max-width: 768px) {
-    padding-left: 10px;
-    padding-right: 10px;
+  @media screen and (max-width: 576px) {
+    padding: 0 10px 80px;
   }
 `;
 const StyledLine = styled.div`
   width: 100%;
   height: 1px;
   background: #dbdbdb;
-`;
-const StyledTitle = styled.div`
-  font-size: 32px;
-  font-family: 'Playfair Display', serif;
-  font-weight: 500;
-  color: #333333;
-  line-height: 39px;
-  padding: 0;
-  margin: 24px 0 0 0;
 `;
 const StyledHead = styled.div`
   display: flex;
@@ -474,7 +464,7 @@ const StyledHeadUserInfo = styled.div`
     line-height: 1;
     padding: 0;
     margin: 0;
-    @media screen and (max-width: 678px) {
+    @media screen and (max-width: 576px) {
       font-size: 20px;
     }
   }
@@ -574,6 +564,10 @@ const StyledMediaCardContainer = styled.div`
     flex-direction: column;
     align-items: center;
   }
+  @media screen and (max-width: 576px) {
+    margin-top: 20px;
+    gap: 20px 0;
+  }
 `;
 
 // artist start
@@ -628,6 +622,11 @@ const StyledArtworks = styled.div`
     font-size: inherit;
     color: currentColor;
   }
+
+  @media screen and (max-width: 567px) {
+    margin: 20px auto 0;
+    max-width: 86%;
+  }
 `;
 
 const StyledAbout = styled.div`
@@ -667,10 +666,10 @@ const StyledAbout = styled.div`
     font-weight: 500;
     color: #333333;
     padding: 0;
-    margin: 40px 0 0 0;
+    margin: 0;
     word-break: break-word;
-    &:nth-child(1) {
-      margin-top: 0;
+    @media screen and (max-width: 567px) {
+      margin-bottom: 10px;
     }
   }
 
@@ -802,6 +801,10 @@ const StyledGallery = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  @media screen and (max-width: 567px) {
+    margin-top: 20px;
+    gap: 20px 0;
   }
 
   .loading-container {

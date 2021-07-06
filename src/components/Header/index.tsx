@@ -178,6 +178,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
           <Button className='hover-underline'>Learn</Button>
         </a>
+        {isMobile && <div></div>}
         {wallet.status === 'connected' ? (
           <>
             {isRegistered ? (
@@ -202,9 +203,12 @@ const HeaderComponents: React.FC<HeaderProps> = ({
               userDataByWallet.role
             )
           : false) ? (
-          <Button color='dark' onClick={() => setIsCreate(true)}>
-            Create
-          </Button>
+          <>
+            {isMobile && <div></div>}
+            <Button color='dark' onClick={() => setIsCreate(true)}>
+              Create
+            </Button>
+          </>
         ) : null}
 
         {/* {userDataByWallet?.role === UserRole.SuperAdmin && (
@@ -260,7 +264,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         )}
       </StyledHeaderWrapper>
       <Drawer
-        title='Basic Drawer'
+        title='Header'
         placement='right'
         closable={false}
         onClose={onClose}
@@ -313,6 +317,9 @@ const StyledHeaderWrapper = styled.div`
   @media screen and (max-width: 768px) {
     padding: 0 10px;
   }
+  @media screen and (max-width: 576px) {
+    min-height: 50px;
+  }
 `;
 const StyledHeaderLeft = styled.div`
   display: flex;
@@ -324,6 +331,9 @@ const StyledHeaderLogo = styled.a`
   align-items: center;
   img {
     height: 40px;
+    @media screen and (max-width: 576px) {
+      height: 26px;
+    }
   }
   h1 {
     padding: 0;
@@ -356,7 +366,6 @@ const StyledHeaderNavLink = styled.a<{ active: boolean }>`
 `;
 const StyledHeaderNavMobile = styled.nav`
   a {
-    color: #333333;
     padding: 0;
     display: block;
     margin: 10px 0;
@@ -376,4 +385,7 @@ const StyledMoreIcon = styled(MenuOutlined)`
   color: #000;
   font-size: 20px;
   cursor: pointer;
+  @media screen and (max-width: 1120px) {
+    font-size: 16px;
+  }
 `;

@@ -379,9 +379,8 @@ const StyledWrapper = styled.div`
   margin: 0 auto;
   width: 100%;
 
-  @media screen and (max-width: 768px) {
-    padding-left: 10px;
-    padding-right: 10px;
+  @media screen and (max-width: 567px) {
+    padding: 0 10px 80px;
   }
 `;
 const StyledLine = styled.div`
@@ -440,6 +439,8 @@ const StyledHeadUserInfo = styled.div`
 const StyledHeadRight = styled.div`
   @media screen and (max-width: 678px) {
     width: 100%;
+    text-align: center;
+    margin: 10px 0 0 0;
   }
 `;
 const StyledItemTitle = styled.h3`
@@ -484,6 +485,11 @@ const StyledArtworks = styled.div`
     font-size: inherit;
     color: currentColor;
   }
+
+  @media screen and (max-width: 567px) {
+    margin: 20px auto 0;
+    max-width: 86%;
+  }
 `;
 
 const StyledAbout = styled.div`
@@ -524,11 +530,11 @@ const StyledAbout = styled.div`
     color: #333333;
     line-height: 24px;
     padding: 0;
-    margin: 40px 0 0 0;
+    margin: 0;
     word-break: break-word;
 
-    &:nth-child(1) {
-      margin-top: 0;
+    @media screen and (max-width: 567px) {
+      margin-bottom: 10px;
     }
   }
 
@@ -580,6 +586,10 @@ const StyledMediaCardContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  @media screen and (max-width: 567px) {
+    margin: 20px auto 0;
+    gap: 10px 0;
   }
 `;
 

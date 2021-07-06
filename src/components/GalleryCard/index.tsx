@@ -10,7 +10,7 @@ const GalleryCard: React.FC<Gallery> = ({ name, cover, intro, children }) => {
       </StyledCover>
       <StyledTitle>{name}</StyledTitle>
       {intro && <Styleddescription>{intro}</Styleddescription>}
-      <StyledActions>{children}</StyledActions>
+      {/* <StyledActions>{children}</StyledActions> */}
     </StyledWrapper>
   );
 };
@@ -32,10 +32,14 @@ const StyledTitle = styled.p`
   font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
-  line-height: 28px;
+  line-height: 1.5;
   padding: 0;
   margin: 24px 0 16px;
   word-break: break-word;
+  @media screen and (max-width: 576px) {
+    font-size: 18px;
+    margin: 10px 0;
+  }
 `;
 const Styleddescription = styled.p`
   font-size: 14px;
@@ -47,6 +51,6 @@ const Styleddescription = styled.p`
   word-break: break-word;
 `;
 const StyledActions = styled.div`
-  margin: 24px 0 16px;
+  padding: 24px 0 16px;
 `;
 export default GalleryCard;

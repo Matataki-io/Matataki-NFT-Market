@@ -42,7 +42,11 @@ const StyledWord = styled.div`
     /* 防止多列布局，分页媒体和多区域上下文中的意外中断 */
     break-inside: avoid;
     padding: 48px 0 0 0;
+    margin: 0;
     list-style: none;
+    @media screen and (max-width: 567px) {
+      padding-top: 20px;
+    }
     li {
       margin: 9px 0;
       font-family: 'Playfair Display', serif;

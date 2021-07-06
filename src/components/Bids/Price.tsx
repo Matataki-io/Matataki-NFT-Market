@@ -7,6 +7,7 @@ import { BidLog } from '../../types/Bid';
 import { useERC20Single } from '../../hooks/useERC20Single';
 import useTokenInMatataki from '../../hooks/useTokenInMatataki';
 import { isEmpty } from 'lodash';
+import { isMobile } from 'react-device-detect';
 
 interface Props {
   log: Bid | BidLog;
@@ -22,8 +23,8 @@ const BidsPrice = ({ log }: Props) => {
   const price = useCallback(({ amount, token }) => {
     return (
       <StyledToken>
-        {utils.formatUnits(amount, token.decimals)} {token?.symbol}(
-        {token?.name})
+        {utils.formatUnits(amount, token.decimals)} {token?.symbol}
+        {isMobile ? null : <>({token?.name})</>}
       </StyledToken>
     );
   }, []);

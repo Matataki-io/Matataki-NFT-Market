@@ -43,6 +43,9 @@ const StyledWrapper = styled.div`
   border-radius: 4px;
   border: 2px solid #f2f2f2;
   display: flex;
+  @media screen and (max-width: 576px) {
+    padding: 10px 10px 0;
+  }
   .username {
     font-weight: 500;
     color: rgb(0, 0, 0);

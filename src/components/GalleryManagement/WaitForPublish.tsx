@@ -201,6 +201,8 @@ const WaitForPublish: React.FC = () => {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+      width: 60,
+      fixed: 'left',
     },
     {
       title: 'Cover',
@@ -283,6 +285,7 @@ const WaitForPublish: React.FC = () => {
         pagination={{
           position: ['bottomCenter'],
         }}
+        scroll={{ x: 1100 }}
       />
       <PublishFixTool
         data={publishNFTs}

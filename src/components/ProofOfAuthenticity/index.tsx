@@ -40,6 +40,10 @@ const Root = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+
+  @media screen and (max-width: 576px) {
+    padding: 10px;
+  }
 `;
 
 const Label = styled.div`
@@ -47,6 +51,10 @@ const Label = styled.div`
   line-height: 30px;
   margin-bottom: 20px;
   font-weight: 500;
+
+  @media screen and (max-width: 576px) {
+    font-size: 16px;
+  }
 `;
 
 const Container = styled.div`
