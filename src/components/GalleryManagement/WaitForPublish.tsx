@@ -106,7 +106,7 @@ const WaitForPublish: React.FC = () => {
     key?: string;
   }) => {
     notification.open({
-      message: 'Notification Title',
+      message: 'Notification',
       description: description,
       duration: duration,
       key: key,
