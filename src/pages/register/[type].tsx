@@ -137,9 +137,8 @@ const StyledWrapper = styled.div`
   margin: 0px auto;
   width: 100%;
 
-  @media screen and (max-width: 768px) {
-    padding-left: 10px;
-    padding-right: 10px;
+  @media screen and (max-width: 576px) {
+    padding: 60px 10px 160px;
   }
 `;
 const StyledTitle = styled.h1`
@@ -147,10 +146,13 @@ const StyledTitle = styled.h1`
   font-family: 'Playfair Display', serif;
   font-weight: 500;
   color: #333333;
-  line-height: 58px;
+  line-height: 1.4;
   padding: 0;
   margin: 0;
   text-align: center;
+  @media screen and (max-width: 576px) {
+    font-size: 30px;
+  }
 `;
 const StyledSubtitle = styled.p`
   font-size: 16px;
@@ -160,6 +162,9 @@ const StyledSubtitle = styled.p`
   padding: 0;
   margin: 16px 0 0 0;
   text-align: center;
+  @media screen and (max-width: 576px) {
+    font-size: 14px;
+  }
 `;
 const StyledForm = styled(Form)`
   margin-top: 56px;
