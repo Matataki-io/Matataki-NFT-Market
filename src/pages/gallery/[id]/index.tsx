@@ -379,7 +379,7 @@ const StyledWrapper = styled.div`
   margin: 0 auto;
   width: 100%;
 
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     padding: 0 10px 80px;
   }
 `;
@@ -486,7 +486,7 @@ const StyledArtworks = styled.div`
     color: currentColor;
   }
 
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     margin: 20px auto 0;
     max-width: 86%;
   }
@@ -533,7 +533,7 @@ const StyledAbout = styled.div`
     margin: 0;
     word-break: break-word;
 
-    @media screen and (max-width: 567px) {
+    @media screen and (max-width: 576px) {
       margin-bottom: 10px;
     }
   }
@@ -587,7 +587,7 @@ const StyledMediaCardContainer = styled.div`
     flex-direction: column;
     align-items: center;
   }
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     margin: 20px auto 0;
     gap: 10px 0;
   }

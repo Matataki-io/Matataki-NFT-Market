@@ -487,7 +487,7 @@ const StyledWrapper = styled.div`
   margin: 0px auto;
   width: 100%;
 
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     padding: 48px 10px 80px;
   }
 `;
@@ -583,7 +583,7 @@ const StyledArtworks = styled.div`
   grid-template-columns: repeat(3, 1fr);
   grid-column-gap: 10px;
   grid-row-gap: 10px;
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     grid-template-columns: repeat(2, 1fr);
   }
 `;

@@ -290,7 +290,7 @@ const StyledWrapper = styled.div`
   width: 100%;
   max-width: calc(1330px);
 
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     padding: 0;
   }
 `;

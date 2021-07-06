@@ -44,7 +44,7 @@ const StyledWord = styled.div`
     padding: 48px 0 0 0;
     margin: 0;
     list-style: none;
-    @media screen and (max-width: 567px) {
+    @media screen and (max-width: 576px) {
       padding-top: 20px;
     }
     li {

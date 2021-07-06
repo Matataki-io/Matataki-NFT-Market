@@ -623,7 +623,7 @@ const StyledArtworks = styled.div`
     color: currentColor;
   }
 
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     margin: 20px auto 0;
     max-width: 86%;
   }
@@ -668,7 +668,7 @@ const StyledAbout = styled.div`
     padding: 0;
     margin: 0;
     word-break: break-word;
-    @media screen and (max-width: 567px) {
+    @media screen and (max-width: 576px) {
       margin-bottom: 10px;
     }
   }
@@ -802,7 +802,7 @@ const StyledGallery = styled.div`
     flex-direction: column;
     align-items: center;
   }
-  @media screen and (max-width: 567px) {
+  @media screen and (max-width: 576px) {
     margin-top: 20px;
     gap: 20px 0;
   }
