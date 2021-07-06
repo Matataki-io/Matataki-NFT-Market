@@ -20,7 +20,6 @@ import { message, Drawer } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
-import { isMobile } from 'react-device-detect';
 // import Search from '../Search';
 
 interface HeaderProps {
@@ -178,7 +177,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         <a href='https://matataki.io/' target='_blank' rel='noreferrer'>
           <Button className='hover-underline'>Learn</Button>
         </a>
-        {isMobile && <div></div>}
+        <StyledMobile></StyledMobile>
         {wallet.status === 'connected' ? (
           <>
             {isRegistered ? (
@@ -204,7 +203,7 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             )
           : false) ? (
           <>
-            {isMobile && <div></div>}
+            <StyledMobile></StyledMobile>
             <Button color='dark' onClick={() => setIsCreate(true)}>
               Create
             </Button>
@@ -249,16 +248,16 @@ const HeaderComponents: React.FC<HeaderProps> = ({
                   <img src={Logo} alt='Logo' />
                 </StyledHeaderLogo>
               </Link>
-              {isMobile ? null : NavComponents()}
+              <StyledPc>{NavComponents()}</StyledPc>
             </StyledHeaderLeft>
             {/* <Search></Search> */}
 
             <StyledHeaderContainer>
-              {isMobile ? (
+              <StyledPc>{ContainerComponents()}</StyledPc>
+
+              <StyledMobile>
                 <StyledMoreIcon onClick={showDrawer} />
-              ) : (
-                ContainerComponents()
-              )}
+              </StyledMobile>
             </StyledHeaderContainer>
           </Fragment>
         )}
@@ -387,5 +386,17 @@ const StyledMoreIcon = styled(MenuOutlined)`
   cursor: pointer;
   @media screen and (max-width: 1120px) {
     font-size: 16px;
+  }
+`;
+
+const StyledMobile = styled.div`
+  @media screen and (min-width: 576px) {
+    display: none;
+  }
+`;
+
+const StyledPc = styled.div`
+  @media screen and (max-width: 576px) {
+    display: none;
   }
 `;
