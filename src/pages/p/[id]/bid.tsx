@@ -254,6 +254,7 @@ export default function BidPage() {
       </StyledPermissions>
     );
   }
+  // 这里可以不需要判断 profile.owner
   if (isMeTheOwner) {
     return (
       <StyledPermissions>
@@ -443,6 +444,9 @@ const StyledWrapper = styled(Grid.Container)`
 const StyledNFT = styled.div`
   background: rgb(242, 242, 242);
   padding: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   @media screen and (max-width: 576px) {
     padding: 20px;
   }

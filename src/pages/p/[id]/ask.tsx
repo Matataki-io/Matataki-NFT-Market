@@ -199,7 +199,8 @@ export default function AskPage() {
       </StyledPermissions>
     );
   }
-  if (!isMeTheOwner && wallet.status === 'connected') {
+  // 需要判断 profile.owner， 默认是 ‘’ 会直接进入这个条件
+  if (profile.owner && !isMeTheOwner && wallet.status === 'connected') {
     return (
       <StyledPermissions>
         <Title level={3}>Sorry, but...</Title>
@@ -333,6 +334,9 @@ const StyledPermissions = styled.div`
 const StyledNFT = styled.div`
   background: rgb(242, 242, 242);
   padding: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   @media screen and (max-width: 576px) {
     padding: 20px;
   }
