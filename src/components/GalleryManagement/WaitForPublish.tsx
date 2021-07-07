@@ -14,6 +14,7 @@ import { useLogin } from '../../hooks/useLogin';
 import { useWallet } from 'use-wallet';
 import { useBoolean } from 'ahooks';
 import { useMedia } from '../../hooks/useMedia';
+import { shortedAccount } from '../../utils/index';
 
 import type {
   MediaToScreen,
@@ -228,7 +229,8 @@ const WaitForPublish: React.FC = () => {
       // eslint-disable-next-line react/display-name
       render: (creator: User) => (
         <div className='user-card'>
-          <Avatar src={creator.avatar} /> {creator.nickname}({creator.username})
+          <Avatar src={creator.avatar} /> {shortedAccount(creator.nickname)}(
+          {creator.username})
         </div>
       ),
     },

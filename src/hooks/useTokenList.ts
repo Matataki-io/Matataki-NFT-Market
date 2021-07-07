@@ -17,13 +17,13 @@ export enum TokenListURL {
 
 // token 列表类型 用户用户选择
 const tokenListType: tokenListTypeProps[] = [
-  {
-    logoURI:
-      'https://ipfs.io/ipfs/QmNa8mQkrNKp1WEEeGjFezDmDeodkWRevGFN8JCV7b4Xir',
-    name: 'Unisave Default List',
-    key: 'Unisave',
-    value: 'unisave',
-  },
+  // {
+  //   logoURI:
+  //     'https://ipfs.io/ipfs/QmNa8mQkrNKp1WEEeGjFezDmDeodkWRevGFN8JCV7b4Xir',
+  //   name: 'Unisave Default List',
+  //   key: 'Unisave',
+  //   value: 'unisave',
+  // },
   {
     logoURI:
       'https://raw.githubusercontent.com/Matataki-io/Matataki-FE/master/assets/img/matataki_logo_small.png',
@@ -69,6 +69,33 @@ export default function useTokenList() {
             currentChainId === 97
           ) {
             setTokenList([
+              {
+                name: '粉丝币123',
+                symbol: 'FSB',
+                address: '0x8689e5AD15E4FB26d1Ca6552f471f2Bf9b37573D',
+                decimals: 4,
+                chainId: 97,
+                logoURI:
+                  'https://raw.githubusercontent.com/ant-design/ant-design-icons/master/packages/icons-svg/svg/outlined/question-circle.svg',
+              },
+              {
+                name: '岛岛币',
+                symbol: 'DAO',
+                address: '0xa34749BA10cb2f0becC15d8478a9531C7a93310F',
+                decimals: 4,
+                chainId: 97,
+                logoURI:
+                  'https://raw.githubusercontent.com/ant-design/ant-design-icons/master/packages/icons-svg/svg/outlined/question-circle.svg',
+              },
+              {
+                name: '开发币',
+                symbol: 'DEV',
+                address: '0x1232EDcbAFaeBE0AFB8B7e9bFCA9cc8415AA5f4e',
+                decimals: 4,
+                chainId: 97,
+                logoURI:
+                  'https://raw.githubusercontent.com/ant-design/ant-design-icons/master/packages/icons-svg/svg/outlined/question-circle.svg',
+              },
               {
                 name: 'Bestswap Token',
                 symbol: 'BEST',

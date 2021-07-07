@@ -154,11 +154,11 @@ const TokenListSelectComponents = ({
       width={420}
       className='custom-modal'>
       <StyledSearchWrapper>
-        {/* <StyledSearch
+        <StyledSearch
           placeholder='Search name or paste address'
           onChange={onChangeSearchInput}
           allowClear
-        /> */}
+        />
       </StyledSearchWrapper>
 
       {Item()}

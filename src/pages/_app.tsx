@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import type { AppProps /*, AppContext */ } from 'next/app';
 import NextHead from 'next/head';
 import { light, dark } from '../themes';
+import { BackTop } from 'antd';
 
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import Create from '../components/Create';
 import Profile from '../components/Profile';
+import ApplicationBtn from '../components/Application/Btn';
 
 import { removeCookie } from '../utils/cookie';
 
@@ -136,6 +138,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         setIsProfile={setIsProfile}
       />
       <Component {...pageProps} setIsProfile={setIsProfile} />
+      <ApplicationBtn></ApplicationBtn>
+      <BackTop />
       <Footer />
     </Providers>
   );

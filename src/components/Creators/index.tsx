@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Media } from '../../types/Media.entity';
+import { shortedAccount } from '../../utils/index';
 interface CreatorsProps {
   avatar: string;
   nickname: string;
@@ -29,7 +30,7 @@ const CreatorsComponents: React.FC<CreatorsProps> = ({
         </div>
       </div>
       <p>
-        {nickname}({username})
+        {shortedAccount(nickname)}({username})
       </p>
     </StyledCreatorsComponents>
   );
