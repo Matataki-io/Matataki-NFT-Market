@@ -98,6 +98,7 @@ const StyledPassedText = styled.p`
   font-size: 14px;
   margin: 20px 0;
   padding: 0;
+  color: #f28dfd;
 `;
 
 export default Application;
