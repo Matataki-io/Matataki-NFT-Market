@@ -16,6 +16,7 @@ import { Gallery } from '../../types/Gallery';
 import { isEmpty } from 'lodash';
 import Link from 'next/link';
 import styled from 'styled-components';
+import { shortedAccount } from '../../utils/index';
 
 const JoinRequest: React.FC = () => {
   const router = useRouter();
@@ -93,7 +94,7 @@ const JoinRequest: React.FC = () => {
           <Avatar src={item.artist.avatar}></Avatar>{' '}
           <Link href={`/${item.artist.username}`}>
             <a target='_blank'>
-              {item.artist.nickname}({item.artist.username})
+              {shortedAccount(item.artist.nickname)}({item.artist.username})
             </a>
           </Link>
           <Space style={{ margin: '0 0 0 20px' }}>

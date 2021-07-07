@@ -31,6 +31,7 @@ import IconFacebook from '../../assets/icons/facebook.svg';
 import useSWR from 'swr';
 import GalleryCard from '../../components/GalleryCard';
 import { Gallery } from '../../types/Gallery';
+import { shortedAccount } from '../../utils/index';
 
 interface Props {
   setIsProfile: (value: boolean) => void;
@@ -353,7 +354,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
             {userInfo.nickname || userInfo.username ? (
               <>
                 <h1>
-                  {userInfo.nickname}({userInfo.username})
+                  {shortedAccount(userInfo.nickname)}({userInfo.username})
                 </h1>
                 <p>{userInfo.bio || 'Not...'}</p>
               </>

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { User } from '../../types/User.types.d';
 import { WordItemState } from '../../types/utiils.d';
+import { shortedAccount } from '../../utils/index';
 
 interface Props {
   list: WordItemState;
@@ -20,7 +21,7 @@ const Word = ({ list }: Props) => {
             <li key={idx}>
               <Link href={`/${i.username}`}>
                 <a>
-                  {i.username}({i.nickname})
+                  {i.username}({shortedAccount(i.nickname)})
                 </a>
               </Link>
             </li>

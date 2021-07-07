@@ -11,6 +11,7 @@ import { Media } from '../../types/Media.entity';
 import { User } from '../../types/User.types';
 import { isEmpty } from 'lodash';
 import NFTPreview from '../NFTPreview';
+import { shortedAccount } from '../../utils/index';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -82,7 +83,7 @@ const Search = () => {
                           <a target='_blank' className='item'>
                             <Avatar src={user.avatar}></Avatar>
                             <span className='author'>
-                              {user.nickname}({user.username})
+                              {shortedAccount(user.nickname)}({user.username})
                             </span>
                             <ArrowRightOutlined className='icon' />
                           </a>

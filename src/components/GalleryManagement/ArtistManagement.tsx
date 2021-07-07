@@ -9,6 +9,7 @@ import { Gallery } from '../../types/Gallery';
 import { cloneDeep } from 'lodash';
 import Link from 'next/link';
 import styled from 'styled-components';
+import { shortedAccount } from '../../utils/index';
 
 const ArtistManagement: React.FC = () => {
   const router = useRouter();
@@ -54,7 +55,7 @@ const ArtistManagement: React.FC = () => {
           <Avatar src={item.avatar}></Avatar>{' '}
           <Link href={`/${item.username}`}>
             <a target='_blank'>
-              {item.nickname}({item.username})
+              {shortedAccount(item.nickname)}({item.username})
             </a>
           </Link>
           <Space style={{ margin: '0 0 0 20px' }}>

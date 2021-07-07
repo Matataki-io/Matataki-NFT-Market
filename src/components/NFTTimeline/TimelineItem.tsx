@@ -8,7 +8,7 @@ import styled from 'styled-components';
 
 import { getDecimalOf, getSymbolOf } from '../../utils/tokens';
 import { ZERO_ADDRESS } from '../../constant';
-import { shortedWalletAccount } from '../../utils/index';
+import { shortedWalletAccount, shortedAccount } from '../../utils/index';
 import { BidActionType } from '../../types/Bid.d';
 import { MediaActionType } from '../../types/MediaLog.d';
 import { isBackendAsk } from '../../utils/TypeGuards';
@@ -56,17 +56,22 @@ const TimeLineItem = ({ log, idx, timeline, creator }: Props) => {
       if (log.type === MediaActionType.Transfer) {
         return (
           <p className='logs'>
-            {log.fromUser?.nickname || shortedWalletAccount(log.from)} Transfer
-            the ownership to{' '}
-            {log.toUser?.nickname || shortedWalletAccount(log.to)}
+            {shortedAccount(log.fromUser?.nickname as string) ||
+              shortedWalletAccount(log.from)}{' '}
+            Transfer the ownership to{' '}
+            {shortedAccount(log.toUser?.nickname as string) ||
+              shortedWalletAccount(log.to)}
           </p>
         );
       } else {
         return (
           <p className='logs'>
-            {log.fromUser?.nickname || shortedWalletAccount(log.from)} Approve
-            {log.toUser?.nickname || shortedWalletAccount(log.to)} to manage the
-            token.
+            {shortedAccount(log.fromUser?.nickname as string) ||
+              shortedWalletAccount(log.from)}{' '}
+            Approve
+            {shortedAccount(log.toUser?.nickname as string) ||
+              shortedWalletAccount(log.to)}{' '}
+            to manage the token.
           </p>
         );
       }
