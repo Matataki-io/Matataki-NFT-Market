@@ -47,7 +47,7 @@ const Application: React.FC = () => {
           </li>
         </StyledUl>
       </StyledItem>
-      {userDataByWallet && userDataByWallet.role === UserRole.SuperAdmin && (
+      {userDataByWallet && userDataByWallet.role === UserRole.Artist && (
         <>
           <StyledPassedImg src={passed} />
           <StyledPassedText>
