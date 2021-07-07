@@ -141,11 +141,11 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             Artists
           </StyledHeaderNavLink>
         </Link>
-        <Link href='/gallery'>
+        {/* <Link href='/gallery'>
           <StyledHeaderNavLink active={matchNav('gallery')}>
             Gallery
           </StyledHeaderNavLink>
-        </Link>
+        </Link> */}
         <Link href='/market'>
           <StyledHeaderNavLink active={matchNav('market')}>
             Market

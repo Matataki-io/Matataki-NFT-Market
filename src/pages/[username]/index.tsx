@@ -326,25 +326,25 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
     );
   };
 
-  const galleryContainer = () => {
-    return (
-      <>
-        <StyledItem>
-          <StyledItemTitle>My Gallery</StyledItemTitle>
-          <StyledGallery>
-            {galleryOwner?.ownedGalleries.map((gallery: Gallery) => (
-              <Link key={gallery.id} href={`/gallery/${gallery.id}`}>
-                <a target='_blank'>
-                  <GalleryCard {...gallery}></GalleryCard>
-                </a>
-              </Link>
-            ))}
-          </StyledGallery>
-        </StyledItem>
-        <StyledLine />
-      </>
-    );
-  };
+  // const galleryContainer = () => {
+  //   return (
+  //     <>
+  //       <StyledItem>
+  //         <StyledItemTitle>My Gallery</StyledItemTitle>
+  //         <StyledGallery>
+  //           {galleryOwner?.ownedGalleries.map((gallery: Gallery) => (
+  //             <Link key={gallery.id} href={`/gallery/${gallery.id}`}>
+  //               <a target='_blank'>
+  //                 <GalleryCard {...gallery}></GalleryCard>
+  //               </a>
+  //             </Link>
+  //           ))}
+  //         </StyledGallery>
+  //       </StyledItem>
+  //       <StyledLine />
+  //     </>
+  //   );
+  // };
   return (
     <StyledWrapper>
       <StyledHead>
@@ -391,7 +391,7 @@ const UserInfoPage: React.FC<Props> = ({ setIsProfile }) => {
         </StyledHeadRight>
       </StyledHead>
       <StyledLine />
-      {!isEmpty(galleryOwner?.ownedGalleries) && galleryContainer()}
+      {/* {!isEmpty(galleryOwner?.ownedGalleries) && galleryContainer()} */}
       {userInfo?.role === 'COLLECTOR' ? (
         collectionContainer()
       ) : userInfo?.role === 'ARTIST' ? (

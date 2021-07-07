@@ -65,25 +65,14 @@ import {
 import { isEmpty } from 'lodash';
 import { Gallery } from '../../types/Gallery';
 import { OptionsType } from 'rc-select/lib/interface';
-
 import CreateFixTool from '../CreateFixTool';
+import { mediaPlaceholder, mediaAcceptList, mediaSizeList } from './media';
 
 // 非负整数
 const creatorShare = /^\d+$/;
 
 interface mediaDataState extends NFTProps {
   storage?: any;
-}
-
-interface mediaTypeState {
-  [key: string]: string;
-
-  image: string;
-  video: string;
-  audio: string;
-  text: string;
-  file: string;
-  url: string;
 }
 
 interface Props {
@@ -114,25 +103,25 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const mediaContract = useMedia();
   const router = useRouter();
 
-  useEffect(() => {
-    const fetch = async () => {
-      if (isEmpty(userDataByWallet) || isEmpty(userDataByWallet?.username)) {
-        return;
-      }
-      try {
-        // 获取用户加入的画廊
-        const data: any = await getUserRelation(
-          userDataByWallet?.username || '',
-          'belongsTo'
-        );
-        console.log('data', data);
-        setGalleryList(data.belongsTo);
-      } catch (e) {
-        console.log(`e: ${e.toString()}`);
-      }
-    };
-    fetch();
-  }, [userDataByWallet]);
+  // useEffect(() => {
+  //   const fetch = async () => {
+  //     if (isEmpty(userDataByWallet) || isEmpty(userDataByWallet?.username)) {
+  //       return;
+  //     }
+  //     try {
+  //       // 获取用户加入的画廊
+  //       const data: any = await getUserRelation(
+  //         userDataByWallet?.username || '',
+  //         'belongsTo'
+  //       );
+  //       console.log('data', data);
+  //       setGalleryList(data.belongsTo);
+  //     } catch (e) {
+  //       console.log(`e: ${e.toString()}`);
+  //     }
+  //   };
+  //   fetch();
+  // }, [userDataByWallet]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -151,41 +140,13 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     fetch();
   }, []);
 
-  // 媒体类型 placeholder
-  const mediaPlaceholder: mediaTypeState = {
-    image: `You can drag and drop your file here.\n.png, .jpg, and .gif are supported`,
-    video: `You can drag and drop your file here.\n.mp4, and .mov are supported`,
-    audio: `You can drag and drop your file here.\n.mp3, and .wav are supported`,
-    text: `You can drag and drop your file here.\n.txt, and .md are supported`,
-    file: `You can drag and drop your file here.\n.pdf, .psd, and .ai are supported`,
-    url: ``,
-  };
   // 媒体上传 accept
   const mediaAccept: string = useMemo(() => {
-    let list: { [key: string]: string } = {
-      image: 'image/jpeg, image/png, image/gif',
-      video: 'video/mp4, video/quicktime',
-      audio:
-        'audio/mpeg, audio/mp3, audio/vnd.wav, audio/wav, audio/vnd.wave, audio/wave, audio/x-wav',
-      text: 'text/markdown, text/x-markdown, text/plain',
-      file:
-        'image/vnd.adobe.photoshop, application/pdf, application/postscript',
-      url: '',
-    };
-
-    return list[mediaType] || '';
+    return mediaAcceptList[mediaType] || '';
   }, [mediaType]);
   // 媒体上传 size
   const mediaSize = useMemo(() => {
-    let list: { [key: string]: number } = {
-      image: 50,
-      video: 100,
-      audio: 100,
-      file: 100,
-      url: 0,
-    };
-
-    return list[mediaType] || 2;
+    return mediaSizeList[mediaType] || 2;
   }, [mediaType]);
 
   // 媒体上传 props
@@ -618,7 +579,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     if (!values.gallery) {
       mintToken();
     } else {
-      mintTokenToGallery();
+      // mintTokenToGallery();
     }
   };
   // price填写失败
@@ -836,7 +797,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                   max={100}
                 />
               </Form.Item>
-              <Form.Item label='Gallery' name='gallery'>
+              {/* <Form.Item label='Gallery' name='gallery'>
                 <Select placeholder='Select a gallery'>
                   {galleryList.map((i, idx: number) => (
                     <Option key={`${idx}`} value={i.id}>
@@ -851,7 +812,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
                     </Option>
                   ))}
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item label='Tags' name='tags'>
                 <Select
                   mode='multiple'
