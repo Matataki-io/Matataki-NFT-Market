@@ -100,6 +100,28 @@ export function useLogin() {
     }
   }, [wallet, requestToSign]);
 
+  // 查询用户最新状态
+  useEffect(() => {
+    async function fetchData() {
+      if (!wallet.account) return;
+      try {
+        const { isUserExist, user } = await checkIsWalletRegistered(
+          wallet.account
+        );
+        if (isUserExist) {
+          updateUserData(user);
+        } else updateUserData(null);
+      } catch (e) {
+        console.error('e', e);
+        updateUserData(null);
+      }
+    }
+
+    fetchData();
+    let time = setInterval(fetchData, 5000);
+    return () => clearInterval(time);
+  }, [wallet]);
+
   return {
     requestToSign,
     loginWithSignature,

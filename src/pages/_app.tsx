@@ -9,6 +9,7 @@ import Header from '../components/Header';
 import Create from '../components/Create';
 import Profile from '../components/Profile';
 import ApplicationBtn from '../components/Application/Btn';
+import { useRouter } from 'next/router';
 
 import { removeCookie } from '../utils/cookie';
 
@@ -22,6 +23,7 @@ import Providers from '../providers';
 function MyApp({ Component, pageProps }: AppProps) {
   const [isCreate, setIsCreate] = useState<boolean>(false);
   const [isProfile, setIsProfile] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     console.log('pageProps', pageProps);
@@ -34,7 +36,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         console.log('accounts', accounts);
 
         removeCookie('token');
-        (window as any).location.reload();
+        router.reload();
       });
 
       ethereum.on('chainChanged', (chainId: number) => {
@@ -43,7 +45,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         // We recommend reloading the page unless you have good reason not to.
         console.log('chainId', chainId);
 
-        (window as any).location.reload();
+        router.reload();
       });
     }
   });

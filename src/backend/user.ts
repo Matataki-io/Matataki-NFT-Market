@@ -1,6 +1,6 @@
 import { default as BACKEND_CLIENT } from './client';
 import { PaginationResult } from '../types/PaginationResult';
-import { User } from '../types/User.types';
+import { User, BindMatataki, UpgradeToArtist } from '../types/User.types';
 import { BidLog } from '../types/Bid.d';
 import { setCookie } from '../utils/cookie';
 import { GeneralResponse } from '../types/Backend.types';
@@ -164,5 +164,26 @@ export async function userFeaturedArtist() {
   return await BACKEND_CLIENT.get<GeneralResponse<User[]>>(
     '/user/featuredArtist',
     { cache: true }
+  );
+}
+
+/**
+ * 查询 MTK 状态 Bind issued
+ * @param address
+ * @returns
+ */
+export async function userIsBindMatataki(address: string) {
+  return await BACKEND_CLIENT.get<GeneralResponse<BindMatataki>>(
+    `/user/isBindMatataki/${address}`
+  );
+}
+
+/**
+ * 请求升级为 artist
+ * @returns
+ */
+export async function userUpgradeToArtist() {
+  return await BACKEND_CLIENT.post<GeneralResponse<UpgradeToArtist>>(
+    'user/matataki/upgradeToArtist'
   );
 }
