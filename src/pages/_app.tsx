@@ -140,7 +140,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         setIsProfile={setIsProfile}
       />
       <Component {...pageProps} setIsProfile={setIsProfile} />
-      <ApplicationBtn></ApplicationBtn>
+      {/* <ApplicationBtn></ApplicationBtn> */}
       <BackTop />
       <Footer />
     </Providers>

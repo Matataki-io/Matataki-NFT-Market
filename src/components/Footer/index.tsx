@@ -2,11 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { ReactSVG } from 'react-svg';
 // import { Button, Tooltip } from 'antd';
+import Link from 'next/link';
 
 import IconGithub from '../../assets/icons/github.svg';
 import IconTelegram from '../../assets/icons/telegram.svg';
 import IconDiscord from '../../assets/icons/discord.svg';
 import IconTwitter from '../../assets/icons/twitter.svg';
+
+import logoMtk from '../../assets/images/logo-mtk.png';
 
 const StyledFooter = styled.div`
   background: #f1f1f1;
@@ -82,13 +85,19 @@ const StyledFooterNav = styled.div`
 const StyledFooterSocial = styled.div`
   display: flex;
   align-items: center;
-  .icon {
-    width: 32px;
-    height: 32px;
+  & > a {
     margin-left: 48px;
     &:nth-of-type(1) {
       margin-left: 0;
     }
+  }
+  .img {
+    width: 32px;
+    height: 32px;
+  }
+  .icon {
+    width: 32px;
+    height: 32px;
     svg {
       font-size: 32px;
       color: #333333;
@@ -104,35 +113,33 @@ export default function Footer() {
           <StyledFooterNav>
             <ul>
               <li>
-                <h3>SUPPORT</h3>
-              </li>
-              <li>
-                <a href='#'>About</a>
-              </li>
-              <li>
-                <a href='#'>Suggestions</a>
-              </li>
-              <li>
-                <a href='#'>FAQ</a>
-              </li>
-            </ul>
-            <ul>
-              <li>
-                <h3>MORE</h3>
-              </li>
-              <li>
-                <a href='#'>Privacy Policy</a>
-              </li>
-              <li>
-                <a href='#'>Terms of Service</a>
+                <Link href='/application'>
+                  <a>Be creator</a>
+                </Link>
               </li>
             </ul>
           </StyledFooterNav>
           <StyledFooterSocial>
-            <ReactSVG className='icon' src={IconGithub} />
-            <ReactSVG className='icon' src={IconTelegram} />
-            <ReactSVG className='icon' src={IconDiscord} />
-            <ReactSVG className='icon' src={IconTwitter} />
+            {/* <ReactSVG className='icon' src={IconGithub} /> */}
+            <a
+              href={process.env.NEXT_PUBLIC_MATATAKI}
+              target='_blank'
+              rel='noopener noreferrer'>
+              <img className='img' src={logoMtk}></img>
+            </a>
+            <a
+              href='https://t.me/smartsignature_io'
+              target='_blank'
+              rel='noopener noreferrer'>
+              <ReactSVG className='icon' src={IconTelegram} />
+            </a>
+            <a
+              href='https://twitter.com/realmatataki'
+              target='_blank'
+              rel='noopener noreferrer'>
+              <ReactSVG className='icon' src={IconTwitter} />
+            </a>
+            {/* <ReactSVG className='icon' src={IconDiscord} /> */}
           </StyledFooterSocial>
         </StyledFooterItem>
         <StyledFooterItem className='item-rights'>

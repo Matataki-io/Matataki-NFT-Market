@@ -156,6 +156,13 @@ const HeaderComponents: React.FC<HeaderProps> = ({
             Community
           </StyledHeaderNavLink>
         </Link>
+        {userDataByWallet?.role === UserRole.Collector && (
+          <Link href='/application'>
+            <StyledHeaderNavLink active={matchNav('application')}>
+              Be creator
+            </StyledHeaderNavLink>
+          </Link>
+        )}
         {/* {
           // do not just `ts-ignore`, use expression to do typesafe check~
           // need to have user data
