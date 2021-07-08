@@ -88,13 +88,18 @@ const Application: React.FC = () => {
             </a>{' '}
             {bindMatataki.isFanPiaoIssued ? '✅' : '❌'}
           </li>
-          {userDataByWallet && userDataByWallet.role !== UserRole.Artist && (
+          {userDataByWallet && userDataByWallet.role === UserRole.Collector && (
             <Tooltip placement='top' title={'完成所有条件后'}>
               <Button loading={loading} onClick={userUpgradeToArtistFn}>
                 成为艺术家
               </Button>
             </Tooltip>
           )}
+
+          {userDataByWallet &&
+            userDataByWallet.role === UserRole.SuperAdmin && (
+              <Button disabled>您是超管，无需操作</Button>
+            )}
         </StyledUl>
       </StyledItem>
 
