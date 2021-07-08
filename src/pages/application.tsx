@@ -66,7 +66,6 @@ const Application: React.FC = () => {
     <StyledWrapper>
       <StyledTitle>申请成为艺术家</StyledTitle>
       <StyledItem>
-        <StyledSubtitle>条件一</StyledSubtitle>
         <StyledUl>
           <li>
             登入钱包已经绑定 Matatkai 账号{' '}
@@ -103,19 +102,6 @@ const Application: React.FC = () => {
         </StyledUl>
       </StyledItem>
 
-      <StyledItem>
-        <StyledSubtitle>条件二</StyledSubtitle>
-        <StyledUl>
-          <li>
-            <a
-              href={`${process.env.NEXT_PUBLIC_WJ}`}
-              target='_blank'
-              rel='noopener noreferrer'>
-              填写表单
-            </a>
-          </li>
-        </StyledUl>
-      </StyledItem>
       {userDataByWallet && userDataByWallet.role === UserRole.Artist && (
         <>
           <StyledPassedImg src={passed} />
@@ -140,7 +126,7 @@ const StyledTitle = styled.h1`
 const StyledSubtitle = styled.h2``;
 const StyledItem = styled.div`
   max-width: 500px;
-  margin: 20px auto;
+  margin: 40px auto;
 `;
 const StyledUl = styled.ul`
   margin: 0;
@@ -155,7 +141,7 @@ const StyledUl = styled.ul`
   }
 `;
 const StyledPassedImg = styled.img`
-  margin: 80px auto 40px;
+  margin: 100px auto 80px;
   width: 500px;
   display: block;
   @media screen and (max-width: 576px) {
