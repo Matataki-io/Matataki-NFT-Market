@@ -122,3 +122,12 @@ export interface MediaToScreen {
   tags: Tag[];
   isPublished: Boolean;
 }
+
+export interface BindMatataki {
+  isMatatakiBinded: boolean;
+  isFanPiaoIssued: boolean;
+}
+
+export interface UpgradeToArtist {
+  isAccountUpgraded: boolean;
+}
