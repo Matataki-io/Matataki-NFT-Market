@@ -12,7 +12,7 @@ import { useERC20Single } from './useERC20Single';
 
 export enum TokenListURL {
   Unisave = 'https://unpkg.com/@lychees/default-token-list@1.1.10/build/uniscam-default.tokenlist.json',
-  MatatakiBsc = 'https://unpkg.com/@lychees/matataki-token-list@1.0.5/build/unisave-matataki.tokenlist.json',
+  MatatakiBsc = 'https://unpkg.com/@lychees/matataki-token-list@1.2.0/build/unisave-matataki.tokenlist.json',
 }
 
 // token 列表类型 用户用户选择
@@ -62,52 +62,6 @@ export default function useTokenList() {
         );
 
         setTokenList(list);
-        if (!list.length) {
-          // 临时 mock 数据 97
-          if (
-            res.data.name === 'Unisave Matataki List' &&
-            currentChainId === 97
-          ) {
-            setTokenList([
-              {
-                name: '粉丝币123',
-                symbol: 'FSB',
-                address: '0x8689e5AD15E4FB26d1Ca6552f471f2Bf9b37573D',
-                decimals: 4,
-                chainId: 97,
-                logoURI:
-                  'https://raw.githubusercontent.com/ant-design/ant-design-icons/master/packages/icons-svg/svg/outlined/question-circle.svg',
-              },
-              {
-                name: '岛岛币',
-                symbol: 'DAO',
-                address: '0xa34749BA10cb2f0becC15d8478a9531C7a93310F',
-                decimals: 4,
-                chainId: 97,
-                logoURI:
-                  'https://raw.githubusercontent.com/ant-design/ant-design-icons/master/packages/icons-svg/svg/outlined/question-circle.svg',
-              },
-              {
-                name: '开发币',
-                symbol: 'DEV',
-                address: '0x1232EDcbAFaeBE0AFB8B7e9bFCA9cc8415AA5f4e',
-                decimals: 4,
-                chainId: 97,
-                logoURI:
-                  'https://raw.githubusercontent.com/ant-design/ant-design-icons/master/packages/icons-svg/svg/outlined/question-circle.svg',
-              },
-              {
-                name: 'Bestswap Token',
-                symbol: 'BEST',
-                address: '0x36eb1b02cb7be3ffa1ee7bd2a3c7d036002730f7',
-                decimals: 18,
-                chainId: 97,
-                logoURI:
-                  'https://raw.githubusercontent.com/ant-design/ant-design-icons/master/packages/icons-svg/svg/outlined/question-circle.svg',
-              },
-            ]);
-          }
-        }
         setTokens(res.data);
       } else {
         throw new Error('status is not 200');

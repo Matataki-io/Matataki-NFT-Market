@@ -154,11 +154,16 @@ const TokenListSelectComponents = ({
       width={420}
       className='custom-modal'>
       <StyledSearchWrapper>
-        {/* <StyledSearch
-          placeholder='Search name or paste address'
-          onChange={onChangeSearchInput}
-          allowClear
-        /> */}
+        {process.env.NODE_ENV !== 'production' && (
+          <>
+            <StyledSearch
+              placeholder='Search name or paste address'
+              onChange={onChangeSearchInput}
+              allowClear
+            />
+            <span>搜索框仅在 NODE_ENV !== production 显示 方便测试使用 </span>
+          </>
+        )}
       </StyledSearchWrapper>
 
       {Item()}
