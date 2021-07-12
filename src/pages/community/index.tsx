@@ -7,6 +7,12 @@ import { isEmpty } from 'lodash';
 import useSWR from 'swr';
 import { backendSWRFetcher } from '../../backend/media';
 import { Pagination, Spin } from 'antd';
+import {
+  useTransition,
+  useChain,
+  animated,
+  useSpringRef,
+} from '@react-spring/web';
 
 const Community: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(1);
@@ -15,6 +21,19 @@ const Community: React.FC = () => {
     `/article?page=${pageIndex}&limit=${pageLimit}`,
     backendSWRFetcher
   );
+
+  // -------- card animated -----------
+  const transApi = useSpringRef();
+  const transition = useTransition(data ? data.items || [] : [], {
+    ref: transApi,
+    trail: 400 / data ? (data.items ? data.items.length : 0) : 0,
+    from: { opacity: 0, y: 10 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 10 },
+  });
+
+  useChain([transApi], [0, 0.1]);
+  // -----------------------------------
 
   if (!data && !error) {
     return (
@@ -40,12 +59,14 @@ const Community: React.FC = () => {
         <StyledHeadTitle>Community</StyledHeadTitle>
       </StyledHead>
       <StyledItem>
-        {data.items.map((i: Article) => (
-          <Link key={i.id} href={`/community/${i.id}`}>
-            <a>
-              <CommunityCard article={i}></CommunityCard>
-            </a>
-          </Link>
+        {transition((style, i: Article, _, idx) => (
+          <animated.a
+            style={{ ...style }}
+            href={`/community/${i.id}`}
+            target='_blank'
+            key={i.id}>
+            <CommunityCard article={i}></CommunityCard>
+          </animated.a>
         ))}
         {isEmpty(data.items) ? <div>Empty</div> : ''}
         <StyledPagination>

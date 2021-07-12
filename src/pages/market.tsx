@@ -11,7 +11,12 @@ import { getTags } from '../backend/tag';
 import { Tag as TagType } from '../types/Tag';
 import useSWR from 'swr';
 import { isEmpty } from 'lodash';
-import { isMobile } from 'react-device-detect';
+import {
+  useTransition,
+  useChain,
+  animated,
+  useSpringRef,
+} from '@react-spring/web';
 
 const { Option } = Select;
 
@@ -106,6 +111,19 @@ const Market: React.FC = () => {
     }
   }, [mediaList]);
 
+  // -------- card animated -----------
+  const transApi = useSpringRef();
+  const transition = useTransition(NFTList, {
+    ref: transApi,
+    trail: 400 / NFTList.length,
+    from: { opacity: 0, y: 10 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: 10 },
+  });
+
+  useChain([transApi], [0, 0.1]);
+  // -----------------------------------
+
   useEffect(() => {
     if (!isEmpty(mediaList)) {
       fetchNFTData();
@@ -187,12 +205,14 @@ const Market: React.FC = () => {
       ) : (
         <>
           <StyledNfts>
-            {NFTList.map((i, idx) => (
-              <Link href={`/p/${i.id}`} key={`${idx}-${i.id}`}>
-                <a target='_blank'>
-                  <NFT {...i} currentAsk={priceBook[i.id as number]}></NFT>
-                </a>
-              </Link>
+            {transition((style, i, _, idx) => (
+              <animated.a
+                style={{ ...style }}
+                href={`/p/${i.id}`}
+                target='_blank'
+                key={`${idx}-${i.id}`}>
+                <NFT {...i} currentAsk={priceBook[i.id as number]}></NFT>
+              </animated.a>
             ))}
           </StyledNfts>
           <div style={{ textAlign: 'center', marginTop: '40px' }}>
@@ -321,4 +341,5 @@ const StyledNfts = styled.div`
     height: 456px;
   }
 `;
+
 export default Market;
