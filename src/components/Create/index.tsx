@@ -143,6 +143,26 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     fetch();
   }, []);
 
+  const openNotification = ({
+    description,
+    duration = 4.5,
+    key = '',
+    icon,
+  }: {
+    description: string;
+    duration?: number | null;
+    key?: string;
+    icon?: any;
+  }) => {
+    notification.open({
+      message: 'Notification',
+      description: description,
+      duration: duration,
+      key: key,
+      icon: icon || <Spin />,
+    });
+  };
+
   // 媒体上传 accept
   const mediaAccept: string = useMemo(() => {
     return mediaAcceptList[mediaType] || '';
@@ -153,9 +173,14 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   }, [mediaType]);
 
   const onDropFn = async ([file]: File[]) => {
-    try {
-      message.success(`Loading...`);
+    const keyOne = `open${Date.now()}`;
+    openNotification({
+      description: 'Uploading...',
+      duration: null,
+      key: keyOne,
+    });
 
+    try {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('name', nameAndDescription?.name);
@@ -183,6 +208,8 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     } catch (e) {
       console.log(e);
       message.error('upload fail');
+    } finally {
+      notification.close(keyOne);
     }
   };
 
@@ -349,26 +376,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     } else {
       message.warning('请上传资源');
     }
-  };
-
-  const openNotification = ({
-    description,
-    duration = 4.5,
-    key = '',
-    icon,
-  }: {
-    description: string;
-    duration?: number | null;
-    key?: string;
-    icon?: any;
-  }) => {
-    notification.open({
-      message: 'Notification',
-      description: description,
-      duration: duration,
-      key: key,
-      icon: icon || <Spin />,
-    });
   };
 
   // 自己mint
@@ -674,12 +681,12 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
             <StyledMultiiMediaInputWrapper>
               <Dropzone accept={mediaAccept} maxFiles={1} onDrop={onDropFn}>
                 {({ getRootProps, getInputProps }) => (
-                  <section>
-                    <div {...getRootProps()}>
+                  <StyledUpload>
+                    <StyledUpload {...getRootProps()}>
                       <input {...getInputProps()} />
                       <p>{mediaPlaceholder[mediaType]}</p>
-                    </div>
-                  </section>
+                    </StyledUpload>
+                  </StyledUpload>
                 )}
               </Dropzone>
             </StyledMultiiMediaInputWrapper>
@@ -1046,6 +1053,13 @@ const StyledMultiiMediaInputWrapper = styled.div`
   .ant-upload-list {
     display: none;
   }
+`;
+const StyledUpload = styled.section`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 const StyledMultiiMediaInputContainer = styled.div`
   width: 100%;
