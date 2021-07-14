@@ -118,8 +118,8 @@ const PostPage: NextPage<Props> = ({ post, isError }) => {
     );
   //   if (!data || !metadata) return <div>loading...</div>;
 
-  const metaTitle = metadata?.name || 'Matataki NFT';
-  const metaDescription = metadata.description || 'Matataki NFT 交易市场';
+  const metaTitle = metadata?.name || 'Meta NFT';
+  const metaDescription = metadata.description || 'Meta NFT 交易市场';
   const metaImage =
     backendData.tokenURI ||
     'https://ssimg.frontenduse.top/article/2021/06/30/4cd78197b0ebf60abc5e54c04fee6770.png';

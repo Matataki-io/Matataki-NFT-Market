@@ -59,10 +59,10 @@ function MyApp({ Component, pageProps }: AppProps) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
   <![endif]-->`;
 
-  const metaTitle = 'Matataki NFT';
-  const metaDescription = 'Matataki NFT 交易市场';
+  const metaTitle = 'Meta NFT';
+  const metaDescription = 'Meta NFT 交易市场';
   const metaKeywords =
-    'NFT、MTTK NFT、NFT Market、NFT 交易市场、Matataki、瞬MATATAKI、仙女座科技、小岛美奈子、岛娘';
+    'NFT、Meta NFT、NFT Market、NFT 交易市场、Matataki、瞬MATATAKI、仙女座科技、小岛美奈子、岛娘';
   const metaImage =
     'https://ssimg.frontenduse.top/article/2021/06/30/4cd78197b0ebf60abc5e54c04fee6770.png';
 
