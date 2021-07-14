@@ -152,28 +152,24 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
     return mediaSizeList[mediaType] || 2;
   }, [mediaType]);
 
-  // 媒体上传 props
-  const uploadProps: UploadProps = {
-    accept: mediaAccept,
-    name: 'file',
-    action: storageUploadToIpfsUrl,
-    data: {
-      name: nameAndDescription?.name,
-      description: nameAndDescription?.description,
-    },
-    method: 'PUT',
-    maxCount: 1,
-    onChange(info: any) {
-      console.log('info', info);
-      const { status } = info.file;
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
+  const onDropFn = async ([file]: File[]) => {
+    try {
+      message.success(`Loading...`);
 
-        let url = info.file.response.data.MediaData.tokenURI;
-        let storage = info.file.response.data;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('name', nameAndDescription?.name);
+      formData.append('description', nameAndDescription?.description);
+      const res = await backendClient.put(storageUploadToIpfsUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (res.status === 200 && res.data.code === 200) {
+        message.success(`${file.name} file uploaded successfully.`);
+
+        let url = res.data.data.MediaData.tokenURI;
+        let storage = res.data.data;
 
         setMediaLoading(false);
         setMediaDataFn({
@@ -181,31 +177,13 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           type: mediaType,
           storage: storage,
         });
-      } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+      } else {
+        message.error('upload fail');
       }
-    },
-    beforeUpload(file: File): boolean {
-      console.log('file', file);
-      message.info('Uploading...');
-
-      let mediaAcceptList = mediaAccept.split(',');
-      const mediaAcceptResult = mediaAcceptList.find(
-        i => i.trim() === file.type
-      );
-      // console.log('mediaAcceptResult', mediaAcceptResult);
-
-      if (!mediaAcceptResult) {
-        message.error(`You can only upload ${mediaAccept} file!`);
-      }
-      const isLtSize = file.size / 1024 / 1024 < mediaSize;
-      if (!isLtSize) {
-        message.error(
-          `${firstUpperCase(mediaType)} must smaller than ${mediaSize}MB!`
-        );
-      }
-      return !!mediaAcceptResult && isLtSize;
-    },
+    } catch (e) {
+      console.log(e);
+      message.error('upload fail');
+    }
   };
 
   // 设置 media 数据
@@ -694,9 +672,16 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
           </StyledMultiiMediaInputHead>
           {mediaType !== 'url' ? (
             <StyledMultiiMediaInputWrapper>
-              <Dragger {...uploadProps} className='upload'>
-                <p>{mediaPlaceholder[mediaType]}</p>
-              </Dragger>
+              <Dropzone accept={mediaAccept} maxFiles={1} onDrop={onDropFn}>
+                {({ getRootProps, getInputProps }) => (
+                  <section>
+                    <div {...getRootProps()}>
+                      <input {...getInputProps()} />
+                      <p>{mediaPlaceholder[mediaType]}</p>
+                    </div>
+                  </section>
+                )}
+              </Dropzone>
             </StyledMultiiMediaInputWrapper>
           ) : (
             // bottom, type is url show
@@ -718,32 +703,6 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
             </StyledMultiiMediaInputContainer>
           )}
         </StyledMultiiMediaInput>
-        <Dropzone
-          onDrop={async ([file]) => {
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('name', 'test upload');
-            formData.append('description', 'gogogo');
-            const res = await backendClient.put(
-              storageUploadToIpfsUrl,
-              formData,
-              {
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                },
-              }
-            );
-            console.info('upload res', res);
-          }}>
-          {({ getRootProps, getInputProps }) => (
-            <section>
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <p>Drag and drop some files here, or click to select files</p>
-              </div>
-            </section>
-          )}
-        </Dropzone>
         <StyledMultiiMediaActions>
           <Popconfirm
             placement='top'
@@ -1061,6 +1020,7 @@ const StyledMultiiMediaInputWrapper = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
+  cursor: pointer;
 
   p {
     text-align: center;
