@@ -67,6 +67,8 @@ import { Gallery } from '../../types/Gallery';
 import { OptionsType } from 'rc-select/lib/interface';
 import CreateFixTool from '../CreateFixTool';
 import { mediaPlaceholder, mediaAcceptList, mediaSizeList } from './media';
+import Dropzone from 'react-dropzone';
+import backendClient from '../../backend/client';
 
 // 非负整数
 const creatorShare = /^\d+$/;
@@ -86,6 +88,7 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
   const { signer, isSignerReady } = useSigner();
   const { userDataByWallet } = useLogin();
   const [step, setStep] = useState<number>(0); // 步骤
+
   const [mediaType, setMediaType] = useState<mediaTypeProps>('image'); // 当前上传媒体类型
   const [mediaUrl, setMediaUrl] = useState<string>(''); // 媒体类型为Url的Value
   const [formNameAndDescription] = Form.useForm();
@@ -715,6 +718,32 @@ const CreateComponents: React.FC<Props> = ({ setIsCreate }) => {
             </StyledMultiiMediaInputContainer>
           )}
         </StyledMultiiMediaInput>
+        <Dropzone
+          onDrop={async ([file]) => {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('name', 'test upload');
+            formData.append('description', 'gogogo');
+            const res = await backendClient.put(
+              storageUploadToIpfsUrl,
+              formData,
+              {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              }
+            );
+            console.info('upload res', res);
+          }}>
+          {({ getRootProps, getInputProps }) => (
+            <section>
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                <p>Drag and drop some files here, or click to select files</p>
+              </div>
+            </section>
+          )}
+        </Dropzone>
         <StyledMultiiMediaActions>
           <Popconfirm
             placement='top'
