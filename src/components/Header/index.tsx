@@ -67,16 +67,25 @@ const HeaderComponents: React.FC<HeaderProps> = ({
     [router]
   );
 
-  // TODO: 这里可能要改 暂时用来显示 network error
-  useMount(() => {
-    if (process.browser && (window as any).ethereum) {
-      let network = (window as any).ethereum.networkVersion;
-      console.log('network', network);
-      if (network) {
-        setNetworkVersion(network);
+  useEffect(() => {
+    const fetchNetwork = () => {
+      try {
+        if (process.browser && (window as any).ethereum) {
+          let network = (window as any).ethereum.networkVersion;
+          console.log('network', network);
+          if (network) {
+            setNetworkVersion(network);
+          }
+        }
+      } catch (e) {
+        console.log(e);
       }
-    }
-  });
+    };
+
+    fetchNetwork();
+    let timer = setInterval(fetchNetwork, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!isEmpty(caughtError)) {
@@ -224,10 +233,14 @@ const HeaderComponents: React.FC<HeaderProps> = ({
         )} */}
 
         {Number(networkVersion) !== Number(currentChainId) &&
-        networkVersion !== ''
-          ? // <Button color='error'>Wrong Network</Button>
-            null
-          : null}
+        networkVersion !== '' ? (
+          <Button color='error'>
+            Switch to{' '}
+            {process.env.NODE_ENV === 'production'
+              ? 'BSC Mainnet'
+              : 'BSC Testnet'}
+          </Button>
+        ) : null}
       </div>
     );
   };
