@@ -359,7 +359,8 @@ const StyledHeaderLogo = styled.a`
     padding: 0;
     margin: 0;
     font-size: 32px;
-    font-family: 'Playfair Display', serif;
+    font-family: bigCaslonMedium, BigCaslon-Medium, BigCaslon,
+      'Playfair Display', serif;
     font-weight: 500;
     color: #000000;
   }
