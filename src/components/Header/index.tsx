@@ -8,7 +8,7 @@ import React, {
 import { useMount } from 'ahooks';
 import Link from 'next/link';
 import styled from 'styled-components';
-import Logo from '../../assets/images/logo-nft.png';
+import Logo from '../../assets/images/logo-metanft.png';
 import Button from '../Button/index';
 import { useWallet } from 'use-wallet';
 import UserDropdown from '../UserDropdown';
@@ -21,6 +21,7 @@ import { MenuOutlined } from '@ant-design/icons';
 import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 // import Search from '../Search';
+// import { MetaNFTIcon } from '../IconAnt/index';
 
 interface HeaderProps {
   isCreate: boolean;
