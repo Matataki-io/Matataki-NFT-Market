@@ -50,7 +50,8 @@ const StyledWord = styled.div`
     }
     li {
       margin: 9px 0;
-      font-family: 'Playfair Display', serif;
+      font-family: bigCaslonMedium, BigCaslon-Medium, BigCaslon,
+        'Playfair Display', serif;
       font-weight: 500;
       color: #333333;
       a {

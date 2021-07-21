@@ -574,7 +574,8 @@ const StyledMediaCardContainer = styled.div`
 // artist start
 const StyledItemTitle = styled.h3`
   font-size: 32px;
-  font-family: 'Playfair Display', serif;
+  font-family: bigCaslonMedium, BigCaslon-Medium, BigCaslon, 'Playfair Display',
+    serif;
   font-weight: 500;
   color: #333333;
   line-height: 1.2;
@@ -663,7 +664,8 @@ const StyledAbout = styled.div`
 
   .text {
     font-size: 16px;
-    font-family: 'Playfair Display', serif;
+    font-family: bigCaslonMedium, BigCaslon-Medium, BigCaslon,
+      'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
     padding: 0;
@@ -690,7 +692,8 @@ const StyledAbout = styled.div`
 
   .gallery-name {
     font-size: 24px;
-    font-family: 'Playfair Display', serif;
+    font-family: bigCaslonMedium, BigCaslon-Medium, BigCaslon,
+      'Playfair Display', serif;
     font-weight: 500;
     color: #333333;
     line-height: 28px;
@@ -747,7 +750,8 @@ const StyledWord = styled.div`
 
     li {
       margin: 9px 0;
-      font-family: 'Playfair Display', serif;
+      font-family: bigCaslonMedium, BigCaslon-Medium, BigCaslon,
+        'Playfair Display', serif;
       font-weight: 500;
       color: #333333;
 
