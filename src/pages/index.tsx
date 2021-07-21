@@ -197,7 +197,8 @@ const StyledWrapper = styled.div`
 
 const StyledTitle = styled.h3`
   font-size: 32px;
-  font-family: 'Playfair Display', serif;
+  font-family: bigCaslonMedium, BigCaslon-Medium, BigCaslon, 'Playfair Display',
+    serif;
   font-weight: 500;
   color: #333333;
   line-height: 1.2;
@@ -206,11 +207,13 @@ const StyledTitle = styled.h3`
   position: relative;
   span {
     position: absolute;
-    top: -10px;
+    top: -14px;
     font-size: 24px;
     font-weight: normal;
     color: #f4cf1f;
     line-height: 37px;
+    margin: 0 0 0 4px;
+    font-family: 'playlist', Playlist-Script, Playlist;
   }
   @media screen and (max-width: 768px) {
     font-size: 18px;

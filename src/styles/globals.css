@@ -1,5 +1,14 @@
 /* 衬线字体 */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+/* playlist */
+@font-face {
+  font-family: 'playlist';
+  src: url('/fonts/Playlist-Script.ttf');
+}
+@font-face {
+  font-family: 'bigCaslonMedium';
+  src: url('/fonts/Big-Caslon-Medium.ttf');
+}
 
 html,
 body {
